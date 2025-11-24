@@ -26,13 +26,18 @@ public class CardsController : ControllerBase
             Include(b => b.CardLists)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null) return NotFound();
+
+        if (board.CardLists.Any(existingCardList => existingCardList.CardName == cardListPostDto.CardName))
+        {
+            return Conflict("Card list with the same name already exists");
+        }
         
         CardList cardList = new()
         {
             CardName = cardListPostDto.CardName
         };
         
-        board.CardLists!.Add(cardList);
+        board.CardLists.Add(cardList);
         await _board.SaveChangesAsync();
         
         return Ok();
@@ -44,12 +49,12 @@ public class CardsController : ControllerBase
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
         Board? board = await _board.Boards
-            .Include(b => b.CardLists)!
+            .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null) return NotFound();
 
-        CardList? cardList = board.CardLists!.Find((CardList cardList) => cardList.CardListId == cardListId);
+        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
         if (cardList == null) return NotFound();
 
         Card card = new()
@@ -66,6 +71,6 @@ public class CardsController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_board.Boards.Include(b => b.CardLists)!.ThenInclude(cl => cl.Cards));
+        return Ok(_board.Boards.Include(b => b.CardLists).ThenInclude(cl => cl.Cards));
     }
 }
