@@ -43,6 +43,23 @@ public class CardsController : ControllerBase
         return Ok();
     }
 
+    [HttpDelete("postcardlist/")]
+    public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
+    {
+        Board? board = await _board.Boards
+            .Include(b => b.CardLists)
+            .FirstOrDefaultAsync(b => b.BoardId == boardId);
+        if (board == null) return NotFound();
+        
+        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
+        if (cardList == null) return NotFound();
+
+        board.CardLists.Remove(cardList);
+        await _board.SaveChangesAsync();
+        
+        return Ok();
+    }
+
     [HttpPost("postcard/")]
     public async Task<IActionResult> PostCard(int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
     {
@@ -63,6 +80,27 @@ public class CardsController : ControllerBase
         };
         
         cardList.Cards!.Add(card);
+        await _board.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpDelete("postcard/")]
+    public async Task<IActionResult> DeleteCard(int boardId, int cardListId, int cardId)
+    {
+        Board? board = await _board.Boards
+            .Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+            .FirstOrDefaultAsync(b => b.BoardId == boardId);
+        if (board == null) return NotFound();
+        
+        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
+        if (cardList == null) return NotFound();
+        
+        Card? card = cardList.Cards.Find(card => card.CardId == cardId);
+        if (card == null) return NotFound();
+        
+        cardList.Cards.Remove(card);
         await _board.SaveChangesAsync();
 
         return Ok();

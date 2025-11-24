@@ -39,6 +39,18 @@ public class BoardController : ControllerBase
         return Ok(new { board.BoardId });
     }
 
+    [HttpDelete]
+    public async Task<IActionResult> DeleteBoard([FromQuery] int boardId)
+    {
+        Board? board = await _board.Boards.FindAsync(boardId);
+        if (board == null) return NotFound();
+        
+        _board.Boards.Remove(board);
+        await _board.SaveChangesAsync();
+
+        return Ok();
+    }
+
     [HttpGet]
     public IActionResult GetBoard()
     {
