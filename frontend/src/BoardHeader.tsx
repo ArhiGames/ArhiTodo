@@ -2,10 +2,11 @@ import {useEffect, useState} from "react";
 import type { Board } from "./Models/Board.ts";
 
 const BoardHeader = () => {
-    const [boardName, setBoardName] = useState<string>('')
+    const [board, setBoard] = useState<Board>();
+    const [inputBoardName, setInputBoardName] = useState<string>('')
 
     const refreshBoardInformation = () => {
-        fetch('https://localhost:7069/api/Board', { method: 'GET' })
+        fetch(`https://localhost:7069/api/Cards?boardId=${1}`, { method: 'GET' })
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Unable to get board')
@@ -13,13 +14,18 @@ const BoardHeader = () => {
 
                 return res.json();
             })
-            .then((res: Board[])  => {
-                setBoardName(res[0].boardName);
+            .then((res: Board)  => {
+                setBoard(res);
+                setInputBoardName(res.boardName);
             })
             .catch(console.error);
     }
 
     const onBoardNameConfirmed = (newBoardName: string) => {
+        if (newBoardName === board?.boardName) {
+            return;
+        }
+
         fetch(`https://localhost:7069/api/Board`,
             {
                 method: 'PUT',
@@ -49,8 +55,8 @@ const BoardHeader = () => {
 
     return (
         <div className="board-header">
-            <input type="text" placeholder="Board name" value={boardName}
-                   onChange={(e) => setBoardName(e.target.value)}
+            <input type="text" placeholder="Board name" value={inputBoardName}
+                   onChange={(e) => setInputBoardName(e.target.value)}
                    onBlur={(e) => onBoardNameConfirmed(e.target.value)}>
             </input>
         </div>
