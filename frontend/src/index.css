@@ -1,68 +1,63 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+    --primary-color: violet;
+    --text-color: gray;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+    --bg-dark: hsl(0, 0%, 5%);
+    --bg: hsl(0, 0%, 10%);
+    --bg-light: hsl(0, 0%, 20%);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    --border: hsl(0, 0%, 45%);
+
+    --text-color: hsl(0, 0%, 95%);
+    --text-muted: hsl(0, 0%, 65%);
+
+    --color-border: #4E8098;
+
+    --text: white;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+.App {
+    width: 100%;
+    display: block;
+    padding: 1rem;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    background-color: var(--bg-dark);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.board-header {
+    display: flex;
+    background-color: var(--bg);
+    border-radius: 1rem;
+    padding: 1rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.board-header input {
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: large;
+
+    transition: background-color 0.3s;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.board-header input:hover {
+    background-color: var(--bg-light);
+}
+
+.board-header input:focus {
+    border: none;
+    outline: none;
+    background-color: var(--bg-light);
 }

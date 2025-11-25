@@ -1,7 +1,9 @@
 using ArhiTodo.DataBase;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Put;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Controllers;
 
@@ -39,6 +41,22 @@ public class BoardController : ControllerBase
         return Ok(new { board.BoardId });
     }
 
+    [HttpPut]
+    public async Task<IActionResult> UpdateBoard([FromBody] BoardPutDto boardPutDto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        Board? board = await  _board.Boards.FirstOrDefaultAsync(existingBoard => existingBoard.BoardId == boardPutDto.BoardId);
+        if (board == null) return NotFound();
+
+        await Task.Delay(1000);
+        
+        board.BoardName = boardPutDto.BoardName;
+        await _board.SaveChangesAsync();
+
+        return Ok(new { board.BoardId });
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeleteBoard([FromQuery] int boardId)
     {
@@ -52,8 +70,9 @@ public class BoardController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetBoard()
+    public async Task<IActionResult> GetBoard()
     {
-        return Ok(_board.Boards);
+        List<Board> boards = await _board.Boards.ToListAsync();
+        return Ok(boards);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ArhiTodo.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CardsController : ControllerBase
 {
     private readonly BoardDataBase _board;
@@ -107,8 +107,14 @@ public class CardsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get(int boardId)
     {
-        return Ok(_board.Boards.Include(b => b.CardLists).ThenInclude(cl => cl.Cards));
+        Board? board = await _board.Boards
+            .Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+            .FirstOrDefaultAsync(b => b.BoardId == boardId);
+        if (board == null) return NotFound();
+            
+        return Ok(board);
     }
 }
