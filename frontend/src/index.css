@@ -11,8 +11,8 @@
     --text-color: gray;
 
     --bg-dark: hsl(0, 0%, 5%);
-    --bg: hsl(0, 0%, 10%);
-    --bg-light: hsl(0, 0%, 20%);
+    --bg: hsl(0, 0%, 15%);
+    --bg-light: hsl(0, 0%, 25%);
 
     --border: hsl(0, 0%, 45%);
 
@@ -33,6 +33,7 @@
 body {
     background-color: var(--bg-dark);
 }
+
 
 .board-header {
     display: flex;
@@ -60,4 +61,34 @@ body {
     border: none;
     outline: none;
     background-color: var(--bg-light);
+}
+
+.board-body {
+    display: inline-flex;
+}
+
+.cardlist-background {
+    background-color: var(--bg);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0.5rem;
+    width: 320px;
+}
+
+.cardlist-background h3 {
+    color: var(--text-color);
+}
+
+.card {
+    background-color: var(--bg-light);
+    border-radius: 5px;
+    margin: 0.5rem 0;
+    padding: 1rem;
+    color: var(--text-muted);
+
+    transition: color 0.3s;
+}
+
+.card:hover {
+    color: var(--text-color);
 }

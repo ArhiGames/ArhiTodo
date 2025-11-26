@@ -27,14 +27,14 @@ public class CardsController : ControllerBase
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null) return NotFound();
 
-        if (board.CardLists.Any(existingCardList => existingCardList.CardName == cardListPostDto.CardName))
+        if (board.CardLists.Any(existingCardList => existingCardList.CardListName == cardListPostDto.CardListName))
         {
             return Conflict("Card list with the same name already exists");
         }
         
         CardList cardList = new()
         {
-            CardName = cardListPostDto.CardName
+            CardListName = cardListPostDto.CardListName
         };
         
         board.CardLists.Add(cardList);
@@ -79,7 +79,7 @@ public class CardsController : ControllerBase
             CardName = cardPostDto.CardName
         };
         
-        cardList.Cards!.Add(card);
+        cardList.Cards.Add(card);
         await _board.SaveChangesAsync();
 
         return Ok();

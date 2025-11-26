@@ -6,5 +6,5 @@ public class CardListPostDto
 {
     [Required]
     [MinLength(3)] [MaxLength(35)]
-    public required string CardName { get; set; }
+    public required string CardListName { get; set; }
 }
