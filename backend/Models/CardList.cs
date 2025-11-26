@@ -8,7 +8,7 @@ namespace ArhiTodo.Models
         public int CardListId { get; set; }
         
         [Required]
-        [MinLength(3)] [MaxLength(35)]
+        [MinLength(1)] [MaxLength(35)]
         public required string CardListName { get; set; }
 
         public List<Card> Cards { get; set; } = null!;

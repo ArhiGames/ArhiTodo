@@ -54,15 +54,11 @@ const BoardHeader = () => {
     }, [])
 
     return (
-        <div>
-            <div className="fake-header"></div>
-
-            <div className="board-header">
-                <input type="text" placeholder="Board name" value={inputBoardName}
-                       onChange={(e) => setInputBoardName(e.target.value)}
-                       onBlur={(e) => onBoardNameConfirmed(e.target.value)}>
-                </input>
-            </div>
+        <div className="board-header">
+            <input type="text" placeholder="Board name" value={inputBoardName}
+                   onChange={(e) => setInputBoardName(e.target.value)}
+                   onBlur={(e) => onBoardNameConfirmed(e.target.value)}>
+            </input>
         </div>
     )
 }

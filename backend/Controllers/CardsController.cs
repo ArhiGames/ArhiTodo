@@ -109,6 +109,8 @@ public class CardsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(int boardId)
     {
+        await Task.Delay(1000);
+        
         Board? board = await _board.Boards
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)

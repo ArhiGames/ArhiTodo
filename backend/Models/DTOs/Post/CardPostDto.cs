@@ -5,6 +5,6 @@ namespace ArhiTodo.Models.DTOs;
 public class CardPostDto
 {
     [Required]
-    [MinLength(3)] [MaxLength(35)]
+    [MinLength(1)] [MaxLength(35)]
     public required string CardName { get; set; }
 }
