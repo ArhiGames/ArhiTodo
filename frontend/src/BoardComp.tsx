@@ -29,7 +29,7 @@ const BoardComp = (props: { boardId: number }) => {
             {board?.cardLists &&
                 board?.cardLists.map((cardList: CardList) => {
                 return (
-                    <CardListComp cardList={cardList} key={cardList.cardListId}></CardListComp>
+                    <CardListComp boardId={props.boardId} cardList={cardList} key={cardList.cardListId}></CardListComp>
                 );
             })}
         </div>
