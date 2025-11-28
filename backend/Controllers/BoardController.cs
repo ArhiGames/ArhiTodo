@@ -1,9 +1,8 @@
-using ArhiTodo.DataBase;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Put;
+using ArhiTodo.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Controllers;
 
@@ -11,11 +10,11 @@ namespace ArhiTodo.Controllers;
 [Route("api/[controller]")]
 public class BoardController : ControllerBase
 {
-    private readonly ProjectDataBase _projectsDatabase;
+    private readonly BoardService _boardService;
     
-    public BoardController(ProjectDataBase projectsDatabase, ILogger<BoardController> logger)
+    public BoardController(BoardService boardService, ILogger<BoardController> logger)
     {
-        _projectsDatabase = projectsDatabase;
+        _boardService = boardService;
         
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
@@ -25,25 +24,16 @@ public class BoardController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        Project? project = await _projectsDatabase.Projects
-            .Include(project => project.Boards)
-            .FirstOrDefaultAsync(existingProject => existingProject.ProjectId == projectId);
-        if (project == null) return NotFound();
-        
-        if (project.Boards.Any(existingBoard => existingBoard.BoardName == boardPostDto.BoardName))
+        try
         {
-            return Conflict("Board with that name already exists");
+            Board? board = await _boardService.CreateBoard(projectId, boardPostDto);
+            if (board == null) return NotFound();
+            return Ok(board);
         }
-        
-        Board board = new()
+        catch (InvalidOperationException)
         {
-            BoardName = boardPostDto.BoardName
-        };
-        
-        project.Boards.Add(board);
-        await _projectsDatabase.SaveChangesAsync();
-        
-        return Ok(new { board.BoardId });
+            return NotFound();
+        }
     }
 
     [HttpPut]
@@ -51,48 +41,45 @@ public class BoardController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null) return NotFound();
-        
-        Board? board = project.Boards.FirstOrDefault(existingBoard => existingBoard.BoardId == boardPutDto.BoardId);
-        if (board == null) return NotFound();
-
-        await Task.Delay(1000);
-        
-        board.BoardName = boardPutDto.BoardName;
-        await _projectsDatabase.SaveChangesAsync();
-
-        return Ok(new { board.BoardId });
+        try
+        {
+            Board? board = await _boardService.UpdateBoard(projectId, boardPutDto);
+            if (board == null) return NotFound();
+            return Ok(board);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(existingProject => existingProject.ProjectId == projectId);
-        if (project == null) return NotFound();
-        
-        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-        
-        project.Boards.Remove(board);
-        await _projectsDatabase.SaveChangesAsync();
-
-        return Ok();
+        try
+        {
+            bool removed = await _boardService.DeleteBoard(projectId, boardId);
+            if (!removed) return NotFound();
+            return Ok();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet]
     public async Task<IActionResult> GetBoards(int projectId)
     {
-        Project? project = await  _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(existingProject => existingProject.ProjectId == projectId);
-        if (project == null) return NotFound();
-
-        List<Board> boards = project.Boards;
-        return Ok(boards);
+        try
+        {
+            List<Board> boards = await _boardService.GetBoards(projectId);
+            if (boards.Count == 0) return NoContent();
+            return Ok(boards);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 }

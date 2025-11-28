@@ -8,6 +8,7 @@ namespace ArhiTodo.Models
         public int BoardId { get; set; }
         
         public int ProjectId { get; set; }
+        public Project Project { get; set; } = null!;
         
         [Required]
         [MinLength(1)] [MaxLength(50)]

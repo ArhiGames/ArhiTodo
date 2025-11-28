@@ -1,4 +1,6 @@
 using ArhiTodo.DataBase;
+using ArhiTodo.Models;
+using ArhiTodo.Services;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,9 @@ builder.Services.AddDbContext<ProjectDataBase>((options) =>
 {
     options.UseSqlite("Data Source=board.db");
 });
+
+builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<BoardService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

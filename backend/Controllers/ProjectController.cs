@@ -1,8 +1,6 @@
-using ArhiTodo.DataBase;
-using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
+using ArhiTodo.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Controllers;
 
@@ -10,11 +8,11 @@ namespace ArhiTodo.Controllers;
 [Route("[controller]")]
 public class ProjectController : ControllerBase
 {
-    private readonly ProjectDataBase _project;
-
-    public ProjectController(ProjectDataBase project)
+    private  readonly ProjectService _projectService;
+    
+    public ProjectController(ProjectService projectService)
     {
-        _project = project;
+        _projectService = projectService;
     }
 
     [HttpPost]
@@ -22,13 +20,7 @@ public class ProjectController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        Project newProject = new()
-        {
-            ProjectName = projectPostDto.ProjectName,
-        };
-
-        _project.Projects.Add(newProject);
-        await _project.SaveChangesAsync();
+        await _projectService.CreateProject(projectPostDto);
 
         return Ok();
     }
@@ -36,12 +28,9 @@ public class ProjectController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DeleteProject(int id)
     {
-        Project? project = await _project.Projects.FirstOrDefaultAsync((Project p) => p.ProjectId == id);
-        if (project == null) return NotFound();
+        bool success = await _projectService.DeleteProject(id);
+        if (!success) return NotFound();
 
-        _project.Projects.Remove(project);
-        await _project.SaveChangesAsync();
-        
         return Ok();
     }
 }
