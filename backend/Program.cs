@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<BoardDataBase>((options) =>
+builder.Services.AddDbContext<ProjectDataBase>((options) =>
 {
     options.UseSqlite("Data Source=board.db");
 });

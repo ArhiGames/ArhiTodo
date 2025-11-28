@@ -10,11 +10,11 @@ namespace ArhiTodo.Controllers;
 [Route("api/[controller]")]
 public class CardsController : ControllerBase
 {
-    private readonly BoardDataBase _board;
+    private readonly ProjectDataBase _project;
 
-    public CardsController(BoardDataBase board)
+    public CardsController(ProjectDataBase project)
     {
-        _board = board;
+        _project = project;
     }
 
     [HttpPost("postcardlist/")]
@@ -22,7 +22,7 @@ public class CardsController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
-        Board? board = await _board.Boards.
+        Board? board = await _project.Projects.
             Include(b => b.CardLists)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null) return NotFound();
@@ -38,7 +38,7 @@ public class CardsController : ControllerBase
         };
         
         board.CardLists.Add(cardList);
-        await _board.SaveChangesAsync();
+        await _project.SaveChangesAsync();
         
         return Ok();
     }
@@ -46,7 +46,7 @@ public class CardsController : ControllerBase
     [HttpDelete("postcardlist/")]
     public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
     {
-        Board? board = await _board.Boards
+        Board? board = await _project.Projects
             .Include(b => b.CardLists)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null) return NotFound();
@@ -55,7 +55,7 @@ public class CardsController : ControllerBase
         if (cardList == null) return NotFound();
 
         board.CardLists.Remove(cardList);
-        await _board.SaveChangesAsync();
+        await _project.SaveChangesAsync();
         
         return Ok();
     }
@@ -65,7 +65,7 @@ public class CardsController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         
-        Board? board = await _board.Boards
+        Board? board = await _project.Projects
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
@@ -80,7 +80,7 @@ public class CardsController : ControllerBase
         };
         
         cardList.Cards.Add(card);
-        await _board.SaveChangesAsync();
+        await _project.SaveChangesAsync();
 
         return Ok();
     }
@@ -88,7 +88,7 @@ public class CardsController : ControllerBase
     [HttpDelete("postcard/")]
     public async Task<IActionResult> DeleteCard(int boardId, int cardListId, int cardId)
     {
-        Board? board = await _board.Boards
+        Board? board = await _project.Projects
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
@@ -101,7 +101,7 @@ public class CardsController : ControllerBase
         if (card == null) return NotFound();
         
         cardList.Cards.Remove(card);
-        await _board.SaveChangesAsync();
+        await _project.SaveChangesAsync();
 
         return Ok();
     }
@@ -111,7 +111,7 @@ public class CardsController : ControllerBase
     {
         await Task.Delay(1000);
         
-        Board? board = await _board.Boards
+        Board? board = await _project.Projects
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);

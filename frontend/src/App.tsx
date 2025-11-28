@@ -1,12 +1,18 @@
 import BoardHeader from "./BoardHeader.tsx";
 import BoardComp from "./BoardComp.tsx";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-        <BoardHeader/>
-        <BoardComp boardId={1}></BoardComp>
-    </div>
+      <Router>
+          <div className="App">
+              <Routes>
+                  <Route path="/" element={<BoardComp boardId={3}/>}/>
+              </Routes>
+              <BoardHeader/>
+              <BoardComp boardId={3}></BoardComp>
+          </div>
+      </Router>
   )
 }
 

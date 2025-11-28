@@ -118,6 +118,11 @@ body {
     font-size: medium;
 }
 
+.creation-card input:focus {
+    border: none;
+    outline: none;
+}
+
 .creation-card:hover {
     background-color: var(--bg-x-light);
     cursor: pointer;

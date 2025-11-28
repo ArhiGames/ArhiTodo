@@ -7,6 +7,8 @@ namespace ArhiTodo.Models
         [Key]
         public int BoardId { get; set; }
         
+        public int ProjectId { get; set; }
+        
         [Required]
         [MinLength(1)] [MaxLength(50)]
         public required string BoardName { get; set; }

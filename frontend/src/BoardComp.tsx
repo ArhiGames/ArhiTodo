@@ -21,6 +21,7 @@ const BoardComp = (props: { boardId: number }) => {
                 setBoard(res);
             })
             .catch(console.error);
+
     }, [props.boardId]);
 
     return (

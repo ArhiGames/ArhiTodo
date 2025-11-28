@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.DataBase;
 
-public class BoardDataBase : DbContext
+public class ProjectDataBase : DbContext
 {
+    public DbSet<Project> Projects { get; set; }
     public DbSet<Board> Boards { get; set; }
 
-    public BoardDataBase(DbContextOptions<BoardDataBase> options)
+    public ProjectDataBase(DbContextOptions<ProjectDataBase> options)
         : base(options)
     {
     }

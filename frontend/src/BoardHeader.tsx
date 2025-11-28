@@ -6,7 +6,7 @@ const BoardHeader = () => {
     const [inputBoardName, setInputBoardName] = useState<string>('')
 
     const refreshBoardInformation = () => {
-        fetch(`https://localhost:7069/api/Cards?boardId=${1}`, { method: 'GET' })
+        fetch(`https://localhost:7069/api/Cards?boardId=${3}`, { method: 'GET' })
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Unable to get board')
