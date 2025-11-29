@@ -38,4 +38,10 @@ public class ProjectService
         
         return true;
     }
+
+    public async Task<List<Project>> GetAllProjects()
+    {
+        List<Project> projects = await _projectDatabase.Projects.ToListAsync();
+        return projects;
+    }
 }

@@ -1,3 +1,4 @@
+using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -30,5 +31,12 @@ public class ProjectController : ControllerBase
         if (!success) return NotFound();
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetProjects()
+    {
+        List<Project> projects = await _projectService.GetAllProjects();
+        return Ok(projects);
     }
 }
