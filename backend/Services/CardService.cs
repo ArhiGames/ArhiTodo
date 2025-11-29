@@ -1,7 +1,6 @@
 using ArhiTodo.DataBase;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
-using ArhiTodo.Models.DTOs.Get;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Services;
@@ -127,47 +126,5 @@ public class CardService
         cardList.Cards.Remove(card);
         await _projectDataBase.SaveChangesAsync();
         return true;
-    }
-
-    // ReSharper disable once InconsistentNaming
-    public async Task<ProjectGetDto?> GetAllCardsDTOs(int projectId, int boardId)
-    {
-        Project? project = await _projectDataBase.Projects
-            .Include(p => p.Boards)
-                .ThenInclude(b => b.CardLists)
-                    .ThenInclude(cl => cl.Cards)
-            .Where(p => p.ProjectId == projectId)
-            .FirstOrDefaultAsync();
-        if (project == null)
-        {
-            throw new InvalidOperationException("Not found");
-        }
-
-        List<Board> boards = project.Boards
-            .Where(b => b.BoardId == boardId)
-            .ToList();
-
-        ProjectGetDto projectGetDto = new ProjectGetDto
-        {
-            ProjectId = project.ProjectId,
-            ProjectName = project.ProjectName,
-            Boards = boards.Select(b => new BoardGetDto
-            {
-                BoardId = b.BoardId,
-                BoardName = b.BoardName,
-                CardLists = b.CardLists.Select(cl => new CardListGetDto
-                {
-                    CardListId = cl.CardListId,
-                    CardListName = cl.CardListName,
-                    Cards = cl.Cards.Select(c => new CardGetDto
-                    {
-                        CardId = c.CardId,
-                        CardName = c.CardName
-                    }).ToList()
-                }).ToList()
-            }).ToList()
-        };
-        
-        return projectGetDto;
     }
 }
