@@ -22,8 +22,6 @@ public class BoardController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardPostDto boardPostDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
         try
         {
             Board? board = await _boardService.CreateBoard(projectId, boardPostDto);
@@ -39,8 +37,6 @@ public class BoardController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardPutDto boardPutDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
         try
         {
             Board? board = await _boardService.UpdateBoard(projectId, boardPutDto);

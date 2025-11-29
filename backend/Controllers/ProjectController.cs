@@ -18,8 +18,6 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateProject([FromBody] ProjectPostDto projectPostDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
         await _projectService.CreateProject(projectPostDto);
 
         return Ok();

@@ -1,8 +1,8 @@
-using ArhiTodo.DataBase;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Get;
+using ArhiTodo.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Controllers;
 
@@ -10,113 +10,85 @@ namespace ArhiTodo.Controllers;
 [Route("api/[controller]")]
 public class CardsController : ControllerBase
 {
-    private readonly ProjectDataBase _project;
+    private readonly CardService _cardService;
 
-    public CardsController(ProjectDataBase project)
+    public CardsController(CardService cardService)
     {
-        _project = project;
+        _cardService = cardService;
     }
 
     [HttpPost("postcardlist/")]
-    public async Task<IActionResult> PostCardList(int boardId, [FromBody] CardListPostDto cardListPostDto)
+    public async Task<IActionResult> PostCardList(int projectId, int boardId, [FromBody] CardListPostDto cardListPostDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        Board? board = await _project.Projects.
-            Include(b => b.CardLists)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-
-        if (board.CardLists.Any(existingCardList => existingCardList.CardListName == cardListPostDto.CardListName))
+        try
         {
-            return Conflict("Card list with the same name already exists");
+            CardList? cardList = await _cardService.PostCardList(projectId, boardId, cardListPostDto);
+            if (cardList == null) return NotFound();
+            return Ok(cardList);
         }
-        
-        CardList cardList = new()
+        catch (InvalidOperationException)
         {
-            CardListName = cardListPostDto.CardListName
-        };
-        
-        board.CardLists.Add(cardList);
-        await _project.SaveChangesAsync();
-        
-        return Ok();
+            return NotFound();
+        }
     }
 
     [HttpDelete("postcardlist/")]
-    public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
+    public async Task<IActionResult> DeleteCardList(int projectId, int boardId, int cardListId)
     {
-        Board? board = await _project.Projects
-            .Include(b => b.CardLists)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-        
-        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
-        if (cardList == null) return NotFound();
-
-        board.CardLists.Remove(cardList);
-        await _project.SaveChangesAsync();
-        
-        return Ok();
+        try
+        {
+            bool success = await _cardService.DeleteCardList(projectId, boardId, cardListId);
+            if (!success) return NotFound();
+            return Ok();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost("postcard/")]
-    public async Task<IActionResult> PostCard(int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
+    public async Task<IActionResult> PostCard(int projectId, int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        Board? board = await _project.Projects
-            .Include(b => b.CardLists)
-                .ThenInclude(cl => cl.Cards)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-
-        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
-        if (cardList == null) return NotFound();
-
-        Card card = new()
+        try
         {
-            CardName = cardPostDto.CardName
-        };
-        
-        cardList.Cards.Add(card);
-        await _project.SaveChangesAsync();
-
-        return Ok();
+            Card? card = await _cardService.PostCard(projectId, boardId, cardListId, cardPostDto);
+            if (card == null) return NotFound();
+            return Ok(card);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpDelete("postcard/")]
-    public async Task<IActionResult> DeleteCard(int boardId, int cardListId, int cardId)
+    public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardListId, int cardId)
     {
-        Board? board = await _project.Projects
-            .Include(b => b.CardLists)
-                .ThenInclude(cl => cl.Cards)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-        
-        CardList? cardList = board.CardLists.Find(cardList => cardList.CardListId == cardListId);
-        if (cardList == null) return NotFound();
-        
-        Card? card = cardList.Cards.Find(card => card.CardId == cardId);
-        if (card == null) return NotFound();
-        
-        cardList.Cards.Remove(card);
-        await _project.SaveChangesAsync();
-
-        return Ok();
+        try
+        {
+            bool success = await _cardService.DeleteCard(projectId, boardId, cardListId, cardId);
+            if (!success) return NotFound();
+            return Ok();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(int boardId)
+    public async Task<IActionResult> Get(int projectId, int boardId)
     {
-        await Task.Delay(1000);
-        
-        Board? board = await _project.Projects
-            .Include(b => b.CardLists)
-                .ThenInclude(cl => cl.Cards)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null) return NotFound();
-            
-        return Ok(board);
+        try
+        {
+            ProjectGetDto? projectGetDto = await _cardService.GetAllCardsDTOs(projectId, boardId);
+            if (projectGetDto == null) return NotFound();
+            return Ok(projectGetDto);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 }
