@@ -10,10 +10,12 @@
     --primary-color: violet;
     --text-color: gray;
 
-    --bg-dark: hsl(0, 0%, 5%);
-    --bg: hsl(0, 0%, 15%);
-    --bg-light: hsl(0, 0%, 25%);
-    --bg-x-light: hsl(0, 0%, 35%);
+    --bg-dark: hsl(192, 5%, 20%);
+    --bg: hsl(192, 10%, 30%);
+    --bg-light: hsl(192, 20%, 40%);
+    --bg-x-light: hsl(192, 20%, 50%);
+
+    --box-shadow: hsl(0, 0%, 5%);
 
     --border: hsl(0, 0%, 45%);
 
@@ -35,6 +37,43 @@ body {
     background-color: var(--bg-dark);
 }
 
+.projects-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1127px;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.project-card {
+    background-color: var(--bg);
+    color: var(--text-color);
+    box-shadow: 2px 2px 4px 0 var(--box-shadow);
+
+    padding: 1rem;
+    min-height: 150px;
+    width: 25%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 15px;
+    text-decoration: none;
+
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.project-card:hover {
+    cursor: pointer;
+    background-color: var(--bg-light);
+    transform: translateY(-4px);
+}
 
 .board-header {
     display: flex;
