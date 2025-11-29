@@ -24,7 +24,14 @@ public class CardsController : ControllerBase
         {
             CardList? cardList = await _cardService.PostCardList(projectId, boardId, cardListPostDto);
             if (cardList == null) return NotFound();
-            return Ok(cardList);
+
+            CardGetDto cardGetDto = new()
+            {
+                CardName = cardList.CardListName,
+                CardId = cardList.CardListId
+            };
+            
+            return Ok(cardGetDto);
         }
         catch (InvalidOperationException)
         {
@@ -54,7 +61,14 @@ public class CardsController : ControllerBase
         {
             Card? card = await _cardService.PostCard(projectId, boardId, cardListId, cardPostDto);
             if (card == null) return NotFound();
-            return Ok(card);
+
+            CardGetDto cardGetDto = new()
+            {
+                CardName = card.CardName,
+                CardId = card.CardId
+            };
+            
+            return Ok(cardGetDto);
         }
         catch (InvalidOperationException)
         {

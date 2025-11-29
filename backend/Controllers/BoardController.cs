@@ -1,5 +1,6 @@
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Put;
 using ArhiTodo.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public class BoardController : ControllerBase
         {
             Board? board = await _boardService.CreateBoard(projectId, boardPostDto);
             if (board == null) return NotFound();
-            return Ok(board);
+            return Ok(new { board.BoardId } );
         }
         catch (InvalidOperationException)
         {
@@ -41,7 +42,7 @@ public class BoardController : ControllerBase
         {
             Board? board = await _boardService.UpdateBoard(projectId, boardPutDto);
             if (board == null) return NotFound();
-            return Ok(board);
+            return Ok(new { board.BoardId} );
         }
         catch (InvalidOperationException)
         {
@@ -71,7 +72,9 @@ public class BoardController : ControllerBase
         {
             List<Board> boards = await _boardService.GetBoards(projectId);
             if (boards.Count == 0) return NoContent();
-            return Ok(boards);
+
+            List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
+            return Ok(boardGetDtos);
         }
         catch (InvalidOperationException)
         {
