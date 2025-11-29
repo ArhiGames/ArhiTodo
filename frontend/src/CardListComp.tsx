@@ -5,15 +5,17 @@ import CreateNewCardComp from "./CreateNewCardComp.tsx";
 
 const CardListComp = (props: { boardId: number, cardList: CardList }) => {
     return (
-        <div className="cardlist-background">
-            <h3>{props.cardList.cardListName}</h3>
-            <div className="cards">
-                {props.cardList.cards.map((card: Card)=> {
-                    return (
-                        <CardComp card={card} key={card.cardId}></CardComp>
-                    )
-                })}
-                <CreateNewCardComp boardId={props.boardId} cardList={props.cardList} />
+        <div className="cardlist">
+            <div className="cardlist-background">
+                <h3>{props.cardList.cardListName}</h3>
+                <div className="cards">
+                    {props.cardList.cards.map((card: Card)=> {
+                        return (
+                            <CardComp card={card} key={card.cardId}></CardComp>
+                        )
+                    })}
+                    <CreateNewCardComp boardId={props.boardId} cardList={props.cardList} />
+                </div>
             </div>
         </div>
     )

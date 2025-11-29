@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import type {Board} from "./Models/Board.ts";
 import type {CardList} from "./Models/CardList.ts";
 import CardListComp from "./CardListComp.tsx";
+import CreateNewCardListComp from "./CreateNewCardListComp.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 
@@ -26,13 +27,19 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
     return (
         <div className="board-body">
-            {!board && <p>Loading...</p>}
-            {board?.cardLists &&
-                board?.cardLists.map((cardList: CardList) => {
-                return (
-                    <CardListComp boardId={props.boardId} cardList={cardList} key={cardList.cardListId}></CardListComp>
-                );
-            })}
+            {board ? (
+                <>
+                    {board.cardLists &&
+                        board.cardLists.map((cardList: CardList) => {
+                            return (
+                                <CardListComp boardId={props.boardId} cardList={cardList} key={cardList.cardListId}></CardListComp>
+                            );
+                        })}
+                    <CreateNewCardListComp/>
+                </>
+            ) : (
+                <p>Loading...</p>
+            )}
         </div>
     )
 }

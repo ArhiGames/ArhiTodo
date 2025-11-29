@@ -100,7 +100,7 @@ public class CardService
         };
         
         cardList.Cards.Add(newCard);
-        await  _projectDataBase.SaveChangesAsync();
+        await _projectDataBase.SaveChangesAsync();
         return newCard;
     }
 
@@ -109,8 +109,8 @@ public class CardService
         Project? project = await _projectDataBase.Projects
             .Where(p => p.ProjectId == projectId)
             .Include(p => p.Boards)
-            .ThenInclude(b => b.CardLists)
-            .ThenInclude(cl => cl.Cards)
+                .ThenInclude(b => b.CardLists)
+                    .ThenInclude(cl => cl.Cards)
             .FirstOrDefaultAsync();
         if (project == null) throw new InvalidOperationException("Not found");
         

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
 import type {Board} from "./Models/Board.ts";
 import BoardHeader from "./BoardHeader.tsx";
@@ -8,9 +8,11 @@ const ProjectViewComp = () => {
 
     const { projectId, boardId } = useParams();
     const [boards, setBoards] = useState<Board[]>();
+    const navigate = useNavigate();
 
     const projectIdNum: number = Number(projectId ?? 0);
-    const boardIdNum: number = Number(boardId ?? 0);
+
+    const [activeBoardId, setActiveBoardId] = useState<number | null>(null);
 
     useEffect(() => {
 
@@ -23,11 +25,35 @@ const ProjectViewComp = () => {
                 return res.json();
             })
             .then((fetchedBoards: Board[]) => {
+
                 setBoards(fetchedBoards);
+
             })
             .catch(console.error);
 
     }, [projectId]);
+
+    useEffect(() => {
+
+        if (!boards || boards.length === 0) return;
+        if (boardId) return;
+
+        const firstId = boards[0].boardId;
+
+        queueMicrotask(() => {
+            setActiveBoardId(firstId);
+            navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
+        })
+
+    }, [boards, boardId, projectId, navigate]);
+
+    useEffect(() => {
+        if (boardId) {
+            queueMicrotask(() => {
+                setActiveBoardId(Number(boardId));
+            })
+        }
+    }, [boardId]);
 
     return (
         <div className="project-view">
@@ -38,7 +64,11 @@ const ProjectViewComp = () => {
                     )
                 })}
             </div>
-            <BoardComp projectId={projectIdNum} boardId={boardIdNum}/>
+            {activeBoardId ? (
+                <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
+            ) : (
+                <p>No board selected...</p>
+            )}
         </div>
     )
 }

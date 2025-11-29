@@ -114,17 +114,39 @@ body {
     color: var(--text-color);
 }
 
+.creation-cardlist {
+    margin: 0.5rem 0.5rem;
+    width: 320px;
+}
+
+.creation-cardlist button {
+    padding: 15px;
+    width: 100%;
+
+    border: none;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+
+    font-size: large;
+
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    opacity: 60%;
+
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.creation-cardlist button:hover {
+    cursor: pointer;
+    background-color: var(--bg-x-light);
+    opacity: 80%;
+}
+
 .card {
     background-color: var(--bg-x-light);
     border-radius: 5px;
     margin: 0.5rem 0;
     padding: 1rem;
-    color: var(--text-color);
-
-    transition: color 0.3s;
-}
-
-.card:hover {
     color: var(--text-color);
 }
 
