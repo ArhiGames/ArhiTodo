@@ -20,7 +20,6 @@
     --border: hsl(0, 0%, 45%);
 
     --text-color: hsl(0, 0%, 95%);
-    --text-muted: hsl(0, 0%, 65%);
 
     --color-border: #4E8098;
 
@@ -75,40 +74,36 @@ body {
     transform: translateY(-4px);
 }
 
+.board-selectors {
+    display: flex;
+    color: var(--text-color);
+}
+
 .board-header {
     display: flex;
     background-color: var(--bg);
-    border-radius: 1rem;
-    padding: 1rem;
-}
-
-.board-header input {
-    border: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    background-color: transparent;
+    text-decoration: none;
     color: var(--text-color);
-    font-size: large;
+    border-radius: 15px 15px 0 0;
+    padding: 1rem;
 
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
-.board-header input:hover {
+.board-header:hover {
+    cursor: pointer;
     background-color: var(--bg-light);
-}
-
-.board-header input:focus {
-    border: none;
-    outline: none;
-    background-color: var(--bg-light);
+    transform: translateY(-2px);
 }
 
 .board-body {
-    display: inline-flex;
+    background-color: var(--bg);
+    border-radius: 0 0 15px 15px;
+    display: flex;
 }
 
 .cardlist-background {
-    background-color: var(--bg);
+    background-color: var(--bg-light);
     border-radius: 10px;
     padding: 1rem;
     margin: 1rem 0.5rem;
@@ -120,11 +115,11 @@ body {
 }
 
 .card {
-    background-color: var(--bg-light);
+    background-color: var(--bg-x-light);
     border-radius: 5px;
     margin: 0.5rem 0;
     padding: 1rem;
-    color: var(--text-muted);
+    color: var(--text-color);
 
     transition: color 0.3s;
 }
@@ -145,7 +140,7 @@ body {
 .creation-card p {
     font-size: xx-large;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text-color);
 }
 
 .creation-card input {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArhiTodo.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class CardsController : ControllerBase
 {
     private readonly CardService _cardService;
@@ -17,7 +17,7 @@ public class CardsController : ControllerBase
         _cardService = cardService;
     }
 
-    [HttpPost("postcardlist/")]
+    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist")]
     public async Task<IActionResult> PostCardList(int projectId, int boardId, [FromBody] CardListPostDto cardListPostDto)
     {
         try
@@ -39,7 +39,7 @@ public class CardsController : ControllerBase
         }
     }
 
-    [HttpDelete("postcardlist/")]
+    [HttpDelete("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}")]
     public async Task<IActionResult> DeleteCardList(int projectId, int boardId, int cardListId)
     {
         try
@@ -54,7 +54,7 @@ public class CardsController : ControllerBase
         }
     }
 
-    [HttpPost("postcard/")]
+    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}")]
     public async Task<IActionResult> PostCard(int projectId, int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
     {
         try
@@ -76,7 +76,7 @@ public class CardsController : ControllerBase
         }
     }
 
-    [HttpDelete("postcard/")]
+    [HttpDelete("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}/card/{cardId:int}")]
     public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardListId, int cardId)
     {
         try
@@ -84,21 +84,6 @@ public class CardsController : ControllerBase
             bool success = await _cardService.DeleteCard(projectId, boardId, cardListId, cardId);
             if (!success) return NotFound();
             return Ok();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Get(int projectId, int boardId)
-    {
-        try
-        {
-            ProjectGetDto? projectGetDto = await _cardService.GetAllCardsDTOs(projectId, boardId);
-            if (projectGetDto == null) return NotFound();
-            return Ok(projectGetDto);
         }
         catch (InvalidOperationException)
         {

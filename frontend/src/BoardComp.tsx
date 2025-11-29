@@ -3,16 +3,16 @@ import type {Board} from "./Models/Board.ts";
 import type {CardList} from "./Models/CardList.ts";
 import CardListComp from "./CardListComp.tsx";
 
-const BoardComp = (props: { boardId: number }) => {
+const BoardComp = (props: { projectId: number, boardId: number }) => {
 
     const [board, setBoard] = useState<Board>();
 
     useEffect(() => {
 
-        fetch(`https://localhost:7069/api/Cards?boardId=${props.boardId}`, { method: 'GET' })
+        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`, { method: 'GET' })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Could not fetch /api/Cards?boardId=${props.boardId}: ${res.type}`)
+                    throw new Error(`Could not fetch /api/Cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
                 }
 
                 return res.json()
@@ -22,7 +22,7 @@ const BoardComp = (props: { boardId: number }) => {
             })
             .catch(console.error);
 
-    }, [props.boardId]);
+    }, [props.projectId, props.boardId]);
 
     return (
         <div className="board-body">

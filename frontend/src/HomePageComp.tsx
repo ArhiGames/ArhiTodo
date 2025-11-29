@@ -7,7 +7,7 @@ const HomePageComp = () => {
 
     useEffect(() => {
 
-        fetch('https://localhost:7069/api/Project', { method: 'GET' })
+        fetch('https://localhost:7069/api/project', { method: 'GET' })
             .then(res => {
                 if (!res.ok) {
                     throw new Error('Failed to fetch projects');

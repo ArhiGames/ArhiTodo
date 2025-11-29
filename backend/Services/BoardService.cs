@@ -93,4 +93,27 @@ public class BoardService
 
         return project.Boards.ToList();
     }
+
+    public async Task<Board?> GetBoard(int projectId, int boardId)
+    {
+        Board? board = await _projectsDatabase.Boards
+            .Where(b => b.BoardId == boardId)
+            .Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+            .Include(b => b.Project)
+            .FirstOrDefaultAsync();
+
+        if (board == null)
+        {
+            return null;
+        }
+
+        Project? project = board.Project;
+        if (project == null || project.ProjectId != projectId)
+        {
+            throw new InvalidOperationException();
+        }
+        
+        return board;
+    }
 }

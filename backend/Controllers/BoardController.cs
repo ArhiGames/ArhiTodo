@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArhiTodo.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class BoardController : ControllerBase
 {
     private readonly BoardService _boardService;
@@ -20,7 +20,7 @@ public class BoardController : ControllerBase
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
 
-    [HttpPost]
+    [HttpPost("/project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardPostDto boardPostDto)
     {
         try
@@ -35,7 +35,7 @@ public class BoardController : ControllerBase
         }
     }
 
-    [HttpPut]
+    [HttpPut("/project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardPutDto boardPutDto)
     {
         try
@@ -50,7 +50,7 @@ public class BoardController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("/project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
         try
@@ -65,7 +65,7 @@ public class BoardController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("project/{projectId:int}/board/")]
     public async Task<IActionResult> GetBoards(int projectId)
     {
         try
@@ -75,6 +75,38 @@ public class BoardController : ControllerBase
 
             List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
             return Ok(boardGetDtos);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("project/{projectId:int}/board/{boardId:int}")]
+    public async Task<IActionResult> GetBoard(int projectId, int boardId)
+    {
+        try
+        {
+            Board? board = await _boardService.GetBoard(projectId, boardId);
+            if (board == null) return NotFound();
+
+            BoardGetDto boardGetDto = new()
+            {
+                BoardName = board.BoardName,
+                BoardId = board.BoardId,
+                CardLists = board.CardLists.Select(cl => new CardListGetDto()
+                {
+                    CardListName = cl.CardListName,
+                    CardListId = cl.CardListId,
+                    Cards = cl.Cards.Select(c => new CardGetDto()
+                    {
+                        CardName = c.CardName,
+                        CardId = c.CardId
+                    }).ToList()
+                }).ToList()
+            };
+            
+            return Ok(boardGetDto);
         }
         catch (InvalidOperationException)
         {

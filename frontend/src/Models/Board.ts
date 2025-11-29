@@ -1,7 +1,7 @@
 import type { CardList } from "./CardList.ts";
 
 export interface Board {
-    id: number;
+    boardId: number;
     boardName: string;
     cardLists: CardList[];
 }

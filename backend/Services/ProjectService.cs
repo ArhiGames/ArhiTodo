@@ -44,4 +44,15 @@ public class ProjectService
         List<Project> projects = await _projectDatabase.Projects.ToListAsync();
         return projects;
     }
+
+    public async Task<Project?> GetProject(int projectId)
+    {
+        Project? project = await _projectDatabase.Projects
+            .Include(p => p.Boards)
+                .ThenInclude(b => b.CardLists)
+                    .ThenInclude(cl => cl.Cards)
+            .Where(p => p.ProjectId == projectId)
+            .FirstOrDefaultAsync();
+        return project ?? throw new InvalidOperationException("Not found");
+    }
 }
