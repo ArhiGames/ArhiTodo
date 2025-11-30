@@ -114,14 +114,19 @@ body {
     background-color: var(--bg);
     border-radius: 0 0 15px 15px;
     display: flex;
+    min-height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
 }
 
 .cardlist-background {
+    display: flex;
+    flex-direction: column;
     background-color: var(--bg-light);
     border-radius: 10px;
     padding: 1rem;
     margin: 1rem 0.5rem;
     width: 320px;
+    max-height: 95%;
 }
 
 .cardlist-background h3 {
@@ -154,6 +159,11 @@ body {
     cursor: pointer;
     background-color: var(--bg-x-light);
     opacity: 80%;
+}
+
+.cards {
+    overflow-y: auto;
+    flex-grow: 1;
 }
 
 .card {

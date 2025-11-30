@@ -14,8 +14,8 @@ const CardListComp = (props: { boardId: number, cardList: CardList }) => {
                             <CardComp card={card} key={card.cardId}></CardComp>
                         )
                     })}
-                    <CreateNewCardComp boardId={props.boardId} cardList={props.cardList} />
                 </div>
+                <CreateNewCardComp boardId={props.boardId} cardList={props.cardList} />
             </div>
         </div>
     )

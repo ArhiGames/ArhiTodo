@@ -54,7 +54,7 @@ public class CardsController : ControllerBase
         }
     }
 
-    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}")]
+    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}/card")]
     public async Task<IActionResult> PostCard(int projectId, int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
     {
         try
