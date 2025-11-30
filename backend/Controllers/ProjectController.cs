@@ -49,7 +49,7 @@ public class ProjectController : ControllerBase
             Project? project = await _projectService.GetProject(projectId);
             if (project == null) return NotFound();
             
-            ProjectGetDto projectGetDto = new ProjectGetDto
+            ProjectGetDto projectGetDto = new()
             {
                 ProjectId = project.ProjectId,
                 ProjectName = project.ProjectName,
