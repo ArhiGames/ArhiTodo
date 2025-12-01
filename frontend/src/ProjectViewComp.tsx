@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type {Board} from "./Models/Board.ts";
 import BoardHeader from "./BoardHeader.tsx";
 import BoardComp from "./BoardComp.tsx";
+import CreateNewBoardHeaderComp from "./CreateNewBoardHeaderComp.tsx";
 
 const ProjectViewComp = () => {
 
@@ -63,6 +64,7 @@ const ProjectViewComp = () => {
                         <BoardHeader key={board.boardId} projectId={projectIdNum} board={board}/>
                     )
                 })}
+                <CreateNewBoardHeaderComp/>
             </div>
             {activeBoardId ? (
                 <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
