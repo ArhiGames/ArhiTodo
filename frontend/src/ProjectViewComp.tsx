@@ -66,11 +66,7 @@ const ProjectViewComp = () => {
                 })}
                 <CreateNewBoardHeaderComp/>
             </div>
-            {activeBoardId ? (
-                <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
-            ) : (
-                <p>No board selected...</p>
-            )}
+            <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
         </div>
     )
 }
