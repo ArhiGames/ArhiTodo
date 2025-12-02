@@ -11,6 +11,6 @@ namespace ArhiTodo.Models
         [MinLength(1)] [MaxLength(30)]
         public required string ProjectName { get; set; }
 
-        public List<Board> Boards { get; set; } = null!;
+        public List<Board> Boards { get; set; } = new();
     }    
 }

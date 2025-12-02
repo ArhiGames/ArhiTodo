@@ -1,3 +1,4 @@
+using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
@@ -10,7 +11,7 @@ namespace ArhiTodo.Controllers;
 [Route("api/project")]
 public class ProjectController : ControllerBase
 {
-    private  readonly ProjectService _projectService;
+    private readonly ProjectService _projectService;
     
     public ProjectController(ProjectService projectService)
     {
@@ -20,9 +21,9 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateProject([FromBody] ProjectPostDto projectPostDto)
     {
-        await _projectService.CreateProject(projectPostDto);
+        Project project = await _projectService.CreateProject(projectPostDto);
 
-        return Ok();
+        return CreatedAtAction(nameof(GetProject), new { projectId = project.ProjectId }, project.ToGetDto());
     }
 
     [HttpDelete("{projectId:int}")]
@@ -48,28 +49,8 @@ public class ProjectController : ControllerBase
         {
             Project? project = await _projectService.GetProject(projectId);
             if (project == null) return NotFound();
-            
-            ProjectGetDto projectGetDto = new()
-            {
-                ProjectId = project.ProjectId,
-                ProjectName = project.ProjectName,
-                Boards = project.Boards.Select(b => new BoardGetDto
-                {
-                    BoardId = b.BoardId,
-                    BoardName = b.BoardName,
-                    CardLists = b.CardLists.Select(cl => new CardListGetDto
-                    {
-                        CardListId = cl.CardListId,
-                        CardListName = cl.CardListName,
-                        Cards = cl.Cards.Select(c => new CardGetDto
-                        {
-                            CardId = c.CardId,
-                            CardName = c.CardName
-                        }).ToList()
-                    }).ToList()
-                }).ToList()
-            };
-            
+
+            ProjectGetDto projectGetDto = project.ToGetDto();
             return Ok(projectGetDto);
         }
         catch (InvalidOperationException)

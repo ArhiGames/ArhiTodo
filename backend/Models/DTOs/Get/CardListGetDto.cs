@@ -11,5 +11,5 @@ public class CardListGetDto
     [MinLength(1)] [MaxLength(35)]
     public required string CardListName { get; set; }
 
-    public List<CardGetDto> Cards { get; set; } = null!;
+    public List<CardGetDto> Cards { get; set; } = new();
 }

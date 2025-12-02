@@ -14,6 +14,6 @@ namespace ArhiTodo.Models
         [MinLength(1)] [MaxLength(50)]
         public required string BoardName { get; set; }
         
-        public List<CardList> CardLists { get; set; } = null!;
+        public List<CardList> CardLists { get; set; } = new();
     }    
 }

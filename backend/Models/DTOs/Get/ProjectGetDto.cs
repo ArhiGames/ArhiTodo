@@ -11,5 +11,5 @@ public class ProjectGetDto
     [MinLength(1)] [MaxLength(30)]
     public required string ProjectName { get; set; }
 
-    public List<BoardGetDto> Boards { get; set; } = null!;
+    public List<BoardGetDto> Boards { get; set; } = new();
 }

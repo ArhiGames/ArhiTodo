@@ -1,3 +1,4 @@
+using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
@@ -27,7 +28,7 @@ public class BoardController : ControllerBase
         {
             Board? board = await _boardService.CreateBoard(projectId, boardPostDto);
             if (board == null) return NotFound();
-            return Ok(new { board.BoardId } );
+            return CreatedAtAction(nameof(GetBoard), new { projectId, boardId = board.BoardId }, board.ToBoardGetDto());
         }
         catch (InvalidOperationException)
         {
@@ -90,22 +91,7 @@ public class BoardController : ControllerBase
             Board? board = await _boardService.GetBoard(projectId, boardId);
             if (board == null) return NotFound();
 
-            BoardGetDto boardGetDto = new()
-            {
-                BoardName = board.BoardName,
-                BoardId = board.BoardId,
-                CardLists = board.CardLists.Select(cl => new CardListGetDto()
-                {
-                    CardListName = cl.CardListName,
-                    CardListId = cl.CardListId,
-                    Cards = cl.Cards.Select(c => new CardGetDto()
-                    {
-                        CardName = c.CardName,
-                        CardId = c.CardId
-                    }).ToList()
-                }).ToList()
-            };
-            
+            BoardGetDto boardGetDto = board.ToBoardGetDto();
             return Ok(boardGetDto);
         }
         catch (InvalidOperationException)

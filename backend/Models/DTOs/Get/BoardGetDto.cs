@@ -11,5 +11,5 @@ public class BoardGetDto
     [MinLength(1)] [MaxLength(50)]
     public required string BoardName { get; set; }
         
-    public List<CardListGetDto> CardLists { get; set; } = null!;
+    public List<CardListGetDto> CardLists { get; set; } = new();
 }
