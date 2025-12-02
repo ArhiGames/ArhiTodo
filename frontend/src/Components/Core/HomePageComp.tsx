@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Project } from "./Models/Project.ts";
-import ProjectCardComp from "./ProjectCardComp.tsx";
+import type { Project } from "../../Models/Project.ts";
+import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 
 const HomePageComp = () => {
     const [projects, setProjects] = useState<Project[]>();

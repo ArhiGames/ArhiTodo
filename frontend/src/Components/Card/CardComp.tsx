@@ -1,4 +1,4 @@
-import type {Card} from "./Models/Card.ts";
+import type {Card} from "../../Models/Card.ts";
 
 const CardComp = (props: { card: Card }) => {
 

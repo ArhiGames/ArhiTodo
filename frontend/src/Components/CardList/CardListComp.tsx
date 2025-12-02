@@ -1,7 +1,7 @@
-import type {CardList} from "./Models/CardList.ts";
-import type {Card} from "./Models/Card.ts";
-import CardComp from "./CardComp.tsx";
-import CreateNewCardComp from "./CreateNewCardComp.tsx";
+import type {CardList} from "../../Models/CardList.ts";
+import type {Card} from "../../Models/Card.ts";
+import CardComp from "../Card/CardComp.tsx";
+import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
 
 const CardListComp = (props: { boardId: number, cardList: CardList }) => {
     return (

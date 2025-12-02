@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import type {CardList} from "./Models/CardList.ts";
+import type {CardList} from "../../Models/CardList.ts";
 
 const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
 

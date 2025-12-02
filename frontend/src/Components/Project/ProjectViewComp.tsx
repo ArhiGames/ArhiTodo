@@ -1,9 +1,9 @@
 import {useNavigate, useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
-import type {Board} from "./Models/Board.ts";
-import BoardHeader from "./BoardHeader.tsx";
-import BoardComp from "./BoardComp.tsx";
-import CreateNewBoardHeaderComp from "./CreateNewBoardHeaderComp.tsx";
+import type {Board} from "../../Models/Board.ts";
+import BoardHeader from "../Board/BoardHeader.tsx";
+import BoardComp from "../Board/BoardComp.tsx";
+import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 
 const ProjectViewComp = () => {
 

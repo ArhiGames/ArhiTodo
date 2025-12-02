@@ -1,5 +1,4 @@
 using ArhiTodo.DataBase;
-using ArhiTodo.Models;
 using ArhiTodo.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +14,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<ProjectDataBase>((options) =>
+builder.Services.AddDbContext<ProjectDataBase>(options =>
 {
-    options.UseSqlite("Data Source=board.db");
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddScoped<ProjectService>();

@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
-import type {Board} from "./Models/Board.ts";
-import type {CardList} from "./Models/CardList.ts";
-import CardListComp from "./CardListComp.tsx";
-import CreateNewCardListComp from "./CreateNewCardListComp.tsx";
+import type {Board} from "../../Models/Board.ts";
+import type {CardList} from "../../Models/CardList.ts";
+import CardListComp from "../CardList/CardListComp.tsx";
+import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
