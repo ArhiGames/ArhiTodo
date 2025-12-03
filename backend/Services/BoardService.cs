@@ -32,7 +32,7 @@ public class BoardService
         };
 
         project.Boards.Add(board);
-        await  _projectsDatabase.SaveChangesAsync();
+        await _projectsDatabase.SaveChangesAsync();
         return board;
     }
 

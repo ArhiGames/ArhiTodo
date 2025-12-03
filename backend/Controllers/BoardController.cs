@@ -58,7 +58,7 @@ public class BoardController : ControllerBase
         {
             bool removed = await _boardService.DeleteBoard(projectId, boardId);
             if (!removed) return NotFound();
-            return Ok();
+            return NoContent();
         }
         catch (InvalidOperationException)
         {
@@ -72,7 +72,7 @@ public class BoardController : ControllerBase
         try
         {
             List<Board> boards = await _boardService.GetBoards(projectId);
-            if (boards.Count == 0) return NoContent();
+            if (boards.Count == 0) return NotFound();
 
             List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
             return Ok(boardGetDtos);

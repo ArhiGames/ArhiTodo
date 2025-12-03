@@ -42,7 +42,7 @@ public class CardsController : ControllerBase
         {
             bool success = await _cardService.DeleteCardList(projectId, boardId, cardListId);
             if (!success) return NotFound();
-            return Ok();
+            return NoContent();
         }
         catch (InvalidOperationException)
         {
@@ -75,7 +75,7 @@ public class CardsController : ControllerBase
         {
             bool success = await _cardService.DeleteCard(projectId, boardId, cardListId, cardId);
             if (!success) return NotFound();
-            return Ok();
+            return NoContent();
         }
         catch (InvalidOperationException)
         {

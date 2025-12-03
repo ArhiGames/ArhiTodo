@@ -31,8 +31,7 @@ public class ProjectController : ControllerBase
     {
         bool success = await _projectService.DeleteProject(projectId);
         if (!success) return NotFound();
-
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet]

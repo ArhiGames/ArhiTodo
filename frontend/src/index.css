@@ -20,6 +20,9 @@
     --border: hsl(192, 30%, 40%);
 
     --text-color: hsl(0, 0%, 95%);
+    --text-color-dark: hsl(0, 0%, 25%);
+
+    --success-color: hsl(113, 100%, 50%);
 
     --color-border: #4E8098;
 
@@ -68,7 +71,7 @@ body {
 
     padding: 1rem;
     min-height: 150px;
-    width: 25%;
+    width: 23%;
 
     display: flex;
     flex-direction: column;
@@ -80,6 +83,11 @@ body {
     text-decoration: none;
 
     transition: background-color 0.3s, transform 0.3s;
+}
+
+.create-project-card {
+    width: 100%;
+    opacity: 75%;
 }
 
 .project-card:hover {
@@ -172,7 +180,16 @@ body {
     width: 320px;
 }
 
-.creation-cardlist button {
+.creation-cardlist form {
+    background-color: var(--bg-light);
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 0;
+}
+
+.creation-cardlist .add-cardlist-button {
     padding: 15px;
     width: 100%;
 
@@ -189,7 +206,7 @@ body {
     transition: background-color 0.3s, opacity 0.3s;
 }
 
-.creation-cardlist button:hover {
+.creation-cardlist .add-cardlist-button:hover {
     cursor: pointer;
     background-color: var(--bg-x-light);
     opacity: 80%;
@@ -240,4 +257,12 @@ body {
 .creation-card:hover {
     background-color: var(--bg-x-light);
     cursor: pointer;
+}
+
+.add-button {
+    background-color: var(--success-color);
+    border: none;
+    padding: 15px;
+    border-radius: 5px;
+    color: var(--text-color-dark);
 }

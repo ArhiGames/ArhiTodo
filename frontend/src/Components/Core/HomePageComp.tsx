@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Project } from "../../Models/Project.ts";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
+import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 
 const HomePageComp = () => {
     const [projects, setProjects] = useState<Project[]>();
@@ -29,6 +30,7 @@ const HomePageComp = () => {
                     <ProjectCardComp key={project.projectId} project={project}/>
                 )
             })}
+            <CreateNewProjectCardComp/>
         </div>
     )
 }
