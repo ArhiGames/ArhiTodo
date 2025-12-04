@@ -17,9 +17,10 @@
     --border: hsl(192, 30%, 40%);
 
     --text-color: hsl(0, 0%, 95%);
-    --text-color-dark: hsl(0, 0%, 25%);
+    --text-color-dark: hsl(0, 0%, 15%);
 
-    --success-color: hsl(113, 100%, 50%);
+    --success-color: hsl(113, 60%, 60%);
+    --success-color-highlight: hsl(113, 80%, 80%);
 
     --color-border: #4E8098;
 }
@@ -157,17 +158,13 @@ body {
     color: var(--text-color);
 }
 
-.creation-cardlist {
-    margin: 0.5rem 0.5rem;
-    width: 320px;
-}
-
-.creation-cardlist .add-cardlist-button {
+.add-cardlist-button {
     padding: 15px;
-    width: 100%;
+    width: 320px;
+    height: 100%;
+    margin: 1rem 0.5rem;
 
     border: none;
-    margin: 0.5rem 0;
     border-radius: 10px;
 
     font-size: large;
@@ -179,10 +176,57 @@ body {
     transition: background-color 0.3s, opacity 0.3s;
 }
 
-.creation-cardlist .add-cardlist-button:hover {
+.add-cardlist-button:hover {
     cursor: pointer;
     background-color: var(--bg-x-light);
     opacity: 80%;
+}
+
+.creation-cardlist {
+    background-color: var(--bg-light);
+    height: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    margin: 1rem 0.5rem;
+    width: 320px;
+}
+
+.creation-cardlist form {
+    display: flex;
+    flex-direction: column;
+}
+
+.creation-cardlist form input {
+    margin: 0 0 0.5rem 0;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    color: var(--text-color);
+    background-color: var(--bg-x-light);
+    font-size: medium;
+
+    transition: box-shadow 0.3s;
+}
+
+.creation-cardlist form input:focus {
+    outline: none;
+    box-shadow: 0 0 2px 0 var(--box-shadow);
+}
+
+.creation-cardlist form button {
+    background-color: var(--success-color);
+    border: none;
+    border-radius: 15px;
+    padding: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: medium;
+    color: var(--text-color);
+}
+
+.creation-cardlist form button:hover {
+    cursor: pointer;
+    background-color: var(--success-color-highlight);
+    transform: translateY(-2px);
 }
 
 /*-----------------------------------------------*/

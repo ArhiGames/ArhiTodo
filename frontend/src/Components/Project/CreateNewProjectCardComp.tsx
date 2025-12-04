@@ -2,7 +2,7 @@ const CreateNewProjectCardComp = () => {
     return (
         <div className="create-project-card">
             <div className="project-card hover-lift">
-                <h2>Create project</h2>
+                <h1>+</h1>
             </div>
         </div>
     )

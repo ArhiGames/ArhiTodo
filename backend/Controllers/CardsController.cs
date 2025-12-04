@@ -3,7 +3,6 @@ using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
-using ArhiTodo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;

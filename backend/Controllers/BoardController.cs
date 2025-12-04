@@ -4,7 +4,6 @@ using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Put;
-using ArhiTodo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
