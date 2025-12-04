@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ArhiTodo.Models.DTOs;
+namespace ArhiTodo.Models.DTOs.Post;
 
 public class ProjectPostDto
 {

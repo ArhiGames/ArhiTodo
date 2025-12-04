@@ -1,5 +1,5 @@
 using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Post;
 
 namespace ArhiTodo.Interfaces;
 

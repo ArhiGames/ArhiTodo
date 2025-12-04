@@ -1,7 +1,8 @@
 using ArhiTodo.DataBase;
 using ArhiTodo.Interfaces;
+using ArhiTodo.Mappers;
 using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Post;
 using ArhiTodo.Models.DTOs.Put;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,10 +28,7 @@ public class BoardRepository : IBoardRepository
             throw new InvalidOperationException();
         }
 
-        Board board = new()
-        {
-            BoardName = boardPostDto.BoardName
-        };
+        Board board = boardPostDto.FromPostDto();
 
         project.Boards.Add(board);
         await _projectsDatabase.SaveChangesAsync();

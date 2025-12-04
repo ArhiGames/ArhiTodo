@@ -1,8 +1,8 @@
 using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
+using ArhiTodo.Models.DTOs.Post;
 using ArhiTodo.Models.DTOs.Put;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,8 @@
 using ArhiTodo.DataBase;
 using ArhiTodo.Interfaces;
+using ArhiTodo.Mappers;
 using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Repositories;
@@ -32,10 +33,7 @@ public class CardlistRepository : ICardlistRepository
             throw new InvalidOperationException("Not found");
         }
 
-        CardList newCardList = new()
-        {
-            CardListName = cardListPostDto.CardListName
-        };
+        CardList newCardList = cardListPostDto.FromCardListPostDto();
         
         board.CardLists.Add(newCardList);
         await _projectDataBase.SaveChangesAsync();

@@ -1,7 +1,7 @@
 using ArhiTodo.DataBase;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs;
+using ArhiTodo.Models.DTOs.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Repositories;
