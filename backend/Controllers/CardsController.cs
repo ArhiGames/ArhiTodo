@@ -1,8 +1,9 @@
+using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
-using ArhiTodo.Services;
+using ArhiTodo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -11,11 +12,13 @@ namespace ArhiTodo.Controllers;
 [Route("api")]
 public class CardsController : ControllerBase
 {
-    private readonly CardService _cardService;
+    private readonly ICardlistRepository _cardlistRepository;
+    private readonly ICardRepository _cardRepository;
 
-    public CardsController(CardService cardService)
+    public CardsController(ICardlistRepository cardlistRepository, ICardRepository cardRepository)
     {
-        _cardService = cardService;
+        _cardlistRepository = cardlistRepository;
+        _cardRepository = cardRepository;
     }
 
     [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist")]
@@ -23,7 +26,7 @@ public class CardsController : ControllerBase
     {
         try
         {
-            CardList? cardList = await _cardService.PostCardList(projectId, boardId, cardListPostDto);
+            CardList? cardList = await _cardlistRepository.CreateAsync(projectId, boardId, cardListPostDto);
             if (cardList == null) return NotFound();
 
             CardListGetDto cardListGetDto = cardList.ToCardlistGetDto();
@@ -40,7 +43,7 @@ public class CardsController : ControllerBase
     {
         try
         {
-            bool success = await _cardService.DeleteCardList(projectId, boardId, cardListId);
+            bool success = await _cardlistRepository.DeleteAsync(projectId, boardId, cardListId);
             if (!success) return NotFound();
             return NoContent();
         }
@@ -55,7 +58,7 @@ public class CardsController : ControllerBase
     {
         try
         {
-            Card? card = await _cardService.PostCard(projectId, boardId, cardListId, cardPostDto);
+            Card? card = await _cardRepository.CreateAsync(projectId, boardId, cardListId, cardPostDto);
             if (card == null) return NotFound();
 
             CardGetDto cardGetDto = card.ToCardGetDto();
@@ -73,7 +76,7 @@ public class CardsController : ControllerBase
     {
         try
         {
-            bool success = await _cardService.DeleteCard(projectId, boardId, cardListId, cardId);
+            bool success = await _cardRepository.DeleteAsync(projectId, boardId, cardListId, cardId);
             if (!success) return NotFound();
             return NoContent();
         }

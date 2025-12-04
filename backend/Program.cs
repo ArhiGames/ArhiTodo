@@ -1,5 +1,6 @@
 using ArhiTodo.DataBase;
-using ArhiTodo.Services;
+using ArhiTodo.Interfaces;
+using ArhiTodo.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -19,9 +20,10 @@ builder.Services.AddDbContext<ProjectDataBase>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<ProjectService>();
-builder.Services.AddScoped<BoardService>();
-builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
+builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

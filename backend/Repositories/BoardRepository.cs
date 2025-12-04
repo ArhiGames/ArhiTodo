@@ -1,21 +1,22 @@
 using ArhiTodo.DataBase;
+using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Put;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArhiTodo.Services;
+namespace ArhiTodo.Repositories;
 
-public class BoardService
+public class BoardRepository : IBoardRepository
 {
     private readonly ProjectDataBase _projectsDatabase;
 
-    public BoardService(ProjectDataBase projectsDatabase)
+    public BoardRepository(ProjectDataBase projectsDatabase)
     {
         _projectsDatabase = projectsDatabase;
     }
 
-    public async Task<Board?> CreateBoard(int projectId, BoardPostDto boardPostDto)
+    public async Task<Board?> CreateAsync(int projectId, BoardPostDto boardPostDto)
     {
         Project? project = await _projectsDatabase.Projects
             .Include(p => p.Boards)
@@ -36,7 +37,7 @@ public class BoardService
         return board;
     }
 
-    public async Task<Board?> UpdateBoard(int projectId, BoardPutDto boardPutDto)
+    public async Task<Board?> UpdateAsync(int projectId, BoardPutDto boardPutDto)
     {
         Project? project = await _projectsDatabase.Projects
             .Include(p => p.Boards)
@@ -58,7 +59,7 @@ public class BoardService
         return board;
     }
 
-    public async Task<bool> DeleteBoard(int projectId, int boardId)
+    public async Task<bool> DeleteAsync(int projectId, int boardId)
     {
         Project? project = await _projectsDatabase.Projects
             .Include(p => p.Boards)
@@ -79,7 +80,7 @@ public class BoardService
         return removed;
     }
 
-    public async Task<List<Board>> GetBoards(int projectId)
+    public async Task<List<Board>> GetAllAsync(int projectId)
     {
         Project? project = await _projectsDatabase.Projects
             .Include(p => p.Boards)
@@ -94,7 +95,7 @@ public class BoardService
         return project.Boards.ToList();
     }
 
-    public async Task<Board?> GetBoard(int projectId, int boardId)
+    public async Task<Board?> GetAsync(int projectId, int boardId)
     {
         Board? board = await _projectsDatabase.Boards
             .Where(b => b.BoardId == boardId)

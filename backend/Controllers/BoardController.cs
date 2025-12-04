@@ -1,9 +1,10 @@
+using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Put;
-using ArhiTodo.Services;
+using ArhiTodo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -12,11 +13,11 @@ namespace ArhiTodo.Controllers;
 [Route("api")]
 public class BoardController : ControllerBase
 {
-    private readonly BoardService _boardService;
+    private readonly IBoardRepository _boardRepository;
     
-    public BoardController(BoardService boardService, ILogger<BoardController> logger)
+    public BoardController(IBoardRepository boardRepository, ILogger<BoardController> logger)
     {
-        _boardService = boardService;
+        _boardRepository = boardRepository;
         
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
@@ -26,7 +27,7 @@ public class BoardController : ControllerBase
     {
         try
         {
-            Board? board = await _boardService.CreateBoard(projectId, boardPostDto);
+            Board? board = await _boardRepository.CreateAsync(projectId, boardPostDto);
             if (board == null) return NotFound();
             return CreatedAtAction(nameof(GetBoard), new { projectId, boardId = board.BoardId }, board.ToBoardGetDto());
         }
@@ -41,7 +42,7 @@ public class BoardController : ControllerBase
     {
         try
         {
-            Board? board = await _boardService.UpdateBoard(projectId, boardPutDto);
+            Board? board = await _boardRepository.UpdateAsync(projectId, boardPutDto);
             if (board == null) return NotFound();
             return Ok(new { board.BoardId} );
         }
@@ -56,7 +57,7 @@ public class BoardController : ControllerBase
     {
         try
         {
-            bool removed = await _boardService.DeleteBoard(projectId, boardId);
+            bool removed = await _boardRepository.DeleteAsync(projectId, boardId);
             if (!removed) return NotFound();
             return NoContent();
         }
@@ -71,7 +72,7 @@ public class BoardController : ControllerBase
     {
         try
         {
-            List<Board> boards = await _boardService.GetBoards(projectId);
+            List<Board> boards = await _boardRepository.GetAllAsync(projectId);
             if (boards.Count == 0) return NotFound();
 
             List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
@@ -88,7 +89,7 @@ public class BoardController : ControllerBase
     {
         try
         {
-            Board? board = await _boardService.GetBoard(projectId, boardId);
+            Board? board = await _boardRepository.GetAsync(projectId, boardId);
             if (board == null) return NotFound();
 
             BoardGetDto boardGetDto = board.ToBoardGetDto();

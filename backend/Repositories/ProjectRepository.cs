@@ -1,20 +1,21 @@
 using ArhiTodo.DataBase;
+using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArhiTodo.Services;
+namespace ArhiTodo.Repositories;
 
-public class ProjectService
+public class ProjectRepository : IProjectRepository
 {
     private readonly ProjectDataBase _projectDatabase;
     
-    public ProjectService(ProjectDataBase projectDatabase)
+    public ProjectRepository(ProjectDataBase projectDatabase)
     {
         _projectDatabase = projectDatabase;
     }
 
-    public async Task<Project> CreateProject(ProjectPostDto projectPostDto)
+    public async Task<Project> CreateAsync(ProjectPostDto projectPostDto)
     {
         Project newProject = new()
         {
@@ -27,10 +28,10 @@ public class ProjectService
         return newProject;
     }
 
-    public async Task<bool> DeleteProject(int id)
+    public async Task<bool> DeleteAsync(int projectId)
     {
         Project? project = await _projectDatabase.Projects
-            .FirstOrDefaultAsync(p => p.ProjectId == id);
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null) return false;
 
         _projectDatabase.Projects.Remove(project);
@@ -39,13 +40,7 @@ public class ProjectService
         return true;
     }
 
-    public async Task<List<Project>> GetAllProjects()
-    {
-        List<Project> projects = await _projectDatabase.Projects.ToListAsync();
-        return projects;
-    }
-
-    public async Task<Project?> GetProject(int projectId)
+    public async Task<Project?> GetAsync(int projectId)
     {
         Project? project = await _projectDatabase.Projects
             .Include(p => p.Boards)
@@ -54,5 +49,11 @@ public class ProjectService
             .Where(p => p.ProjectId == projectId)
             .FirstOrDefaultAsync();
         return project ?? throw new InvalidOperationException("Not found");
+    }
+
+    public async Task<List<Project>> GetAllAsync()
+    {
+        List<Project> projects = await _projectDatabase.Projects.ToListAsync();
+        return projects;
     }
 }
