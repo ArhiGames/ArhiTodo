@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 
 const ProjectCardComp = (props: { project: Project } ) => {
     return (
-        <Link to={`/projects/${props.project.projectId}/board`} className="project-card">
+        <Link to={`/projects/${props.project.projectId}/board`} className="project-card hover-lift">
             <div >
                 <h2>{props.project.projectName}</h2>
             </div>

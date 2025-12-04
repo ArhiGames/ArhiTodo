@@ -29,7 +29,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     if (!props.boardId) {
         return (
-            <div className="no-board-selected-body">
+            <div className="board-body no-board-selected">
                 <p>No board selected</p>
             </div>
         )

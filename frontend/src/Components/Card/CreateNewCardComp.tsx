@@ -47,7 +47,7 @@ const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
     }, [isCreating]);
 
     return (
-        <div className="creation-card" onClick={() => onCreatingClicked()}>
+        <div className="card creation-card" onClick={() => onCreatingClicked()}>
             {isCreating ? (
                 <input ref={inputRef} type="text" placeholder="Enter you todo..."
                        onBlur={(e) => onInputCommited(e.target.value)}

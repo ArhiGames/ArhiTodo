@@ -1,6 +1,6 @@
 const CreateNewBoardHeaderComp = () => {
     return (
-        <button className="create-board-header">Create new board...</button>
+        <button className="board-header create-board-header">Create new board...</button>
     )
 }
 
