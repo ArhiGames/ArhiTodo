@@ -1,9 +1,10 @@
 using ArhiTodo.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.DataBase;
 
-public class ProjectDataBase : DbContext
+public class ProjectDataBase : IdentityDbContext<AppUser>
 {
     public DbSet<Project> Projects { get; set; }
     public DbSet<Board> Boards { get; set; }
