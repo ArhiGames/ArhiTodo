@@ -3,6 +3,8 @@ using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Accounts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ArhiTodo.Controllers;
 
@@ -11,11 +13,13 @@ namespace ArhiTodo.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
+    private readonly SignInManager<AppUser> _signInManager;
     private readonly ITokenService _tokenService;
     
-    public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _tokenService = tokenService;
     }
 
@@ -48,5 +52,27 @@ public class AccountController : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginDto loginDto)
+    {
+        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName! == loginDto.UserName);
+
+        if (appUser == null)
+        {
+            return Unauthorized("Invalid user name!");
+        }
+
+        SignInResult signInAsync = await _signInManager.CheckPasswordSignInAsync(appUser, loginDto.Password, false);
+
+        if (!signInAsync.Succeeded) return Unauthorized("Username not found / wrong password");
+
+        return Ok(new UserGetDto()
+        {
+            UserName = appUser.UserName!,
+            Email = appUser.Email!,
+            Token = _tokenService.CreateToken(appUser)
+        });
     }
 }
