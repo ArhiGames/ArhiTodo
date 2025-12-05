@@ -27,7 +27,7 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
         };
 
-        SigningCredentials credentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha512Signature);
+        SigningCredentials credentials = new(_securityKey, SecurityAlgorithms.HmacSha512Signature);
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
@@ -37,7 +37,7 @@ public class TokenService : ITokenService
             Audience = _configuration["JWT:Audience"]
         };
 
-        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        JwtSecurityTokenHandler tokenHandler = new();
         SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
         
         return tokenHandler.WriteToken(securityToken);
