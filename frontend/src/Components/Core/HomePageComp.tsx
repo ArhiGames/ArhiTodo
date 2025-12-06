@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import type { Project } from "../../Models/Project.ts";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
+import {loginApi} from "../../Services/AuthService.tsx";
 
 const HomePageComp = () => {
     const [projects, setProjects] = useState<Project[]>();
 
     useEffect(() => {
+
+        loginApi("Admin", "P@asswOrd_111!");
 
         fetch('https://localhost:7069/api/project', { method: 'GET' })
             .then(res => {
