@@ -20,12 +20,12 @@ public class TokenService : ITokenService
     
     public string CreateToken(AppUser user)
     {
-        List<Claim> claims = new()
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName!),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-        };
+        List<Claim> claims =
+        [
+            new(JwtRegisteredClaimNames.Sub, user.Id),
+            new(ClaimTypes.Name, user.UserName!),
+            new(JwtRegisteredClaimNames.Email, user.Email!)
+        ];
 
         SigningCredentials credentials = new(_securityKey, SecurityAlgorithms.HmacSha512Signature);
         SecurityTokenDescriptor tokenDescriptor = new()
