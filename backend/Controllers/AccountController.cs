@@ -37,18 +37,15 @@ public class AccountController : ControllerBase
             
             IdentityResult identityResult = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (identityResult.Succeeded)
+            if (!identityResult.Succeeded) return StatusCode(500, identityResult.Errors);
+            
+            IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+            return Ok(new UserGetDto()
             {
-                IList<Claim> claims = await _userManager.GetClaimsAsync(user);
-                return Ok(new UserGetDto()
-                {
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    Token = _tokenService.CreateToken(user, claims)
-                });
-            }
-
-            return StatusCode(500, identityResult.Errors);
+                UserName = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user, claims)
+            });
         }
         catch (Exception e)
         {

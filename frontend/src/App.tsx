@@ -3,7 +3,7 @@ import HomePageComp from "./Components/Core/HomePageComp.tsx";
 import ProjectViewComp from "./Components/Project/ProjectViewComp.tsx";
 import NavbarHeaderComp from "./Components/Core/NavbarHeaderComp.tsx";
 import LoginPage from "./Components/Authentication/LoginPage.tsx";
-import {AuthProvider} from "./Contexts/AuthProvider.tsx";
+import { AuthProvider } from "./Contexts/AuthProvider.tsx";
 import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
 
 function AppContent() {

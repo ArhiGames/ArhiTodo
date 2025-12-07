@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArhiTodo.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api")]
 public class BoardController : ControllerBase
 {

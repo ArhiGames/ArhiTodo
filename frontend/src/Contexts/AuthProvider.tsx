@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
     const [appUser, setAppUser] = useState<AppUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (decoded.exp > now) {
                 setToken(savedToken);
                 setAppUser( { id: decoded.sub, unique_name: decoded.unique_name, email: decoded.email} );
+                setIsLoaded(true);
             } else {
                 localStorage.removeItem("token");
             }
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         setToken(localStorage.getItem("token"));
         setAppUser( { id: jwt.sub, unique_name: jwt.unique_name, email: jwt.email} );
+        setIsLoaded(true);
 
     }
 
@@ -67,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 appUser,
                 token,
+                isLoaded,
                 login,
                 logout,
                 isAuthenticated}}>

@@ -4,7 +4,9 @@ import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = (props: { children: ReactNode }) => {
 
-    const { isAuthenticated } = useAuth();
+    const { isLoaded, isAuthenticated } = useAuth();
+
+    if (!isLoaded) return null;
 
     return isAuthenticated()
         ? <>{props.children}</>
