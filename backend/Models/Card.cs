@@ -11,7 +11,7 @@ namespace ArhiTodo.Models
         public CardList CardList { get; set; } = null!;
         
         [Required]
-        [MinLength(1)] [MaxLength(35)]
+        [MinLength(1)] [MaxLength(90)]
         public required string CardName { get; set; }
     }    
 }

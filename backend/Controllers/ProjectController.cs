@@ -3,6 +3,7 @@ using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -19,6 +20,7 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "MayCreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectPostDto projectPostDto)
     {
         Project project = await _projectRepository.CreateAsync(projectPostDto);

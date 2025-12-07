@@ -18,14 +18,11 @@ public class TokenService : ITokenService
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SigningKey"]!));
     }
     
-    public string CreateToken(AppUser user)
-    {
-        List<Claim> claims =
-        [
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(ClaimTypes.Name, user.UserName!),
-            new(JwtRegisteredClaimNames.Email, user.Email!)
-        ];
+    public string CreateToken(AppUser user, IList<Claim> claims)
+    { 
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+        claims.Add(new Claim(ClaimTypes.Name, user.UserName!));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email!));
 
         SigningCredentials credentials = new(_securityKey, SecurityAlgorithms.HmacSha512Signature);
         SecurityTokenDescriptor tokenDescriptor = new()

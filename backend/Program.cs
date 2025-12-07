@@ -1,4 +1,4 @@
-using ArhiTodo.DataBase;
+using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Repositories;
@@ -42,8 +42,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
+}).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters()
     {
@@ -56,6 +55,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MayCreateProjects", policy =>  policy.RequireClaim("may_create_projects", "true"));
+});
+
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
@@ -64,6 +68,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(option =>
 {
@@ -94,6 +99,14 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 WebApplication app = builder.Build();
+
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+    UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
+    RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    await ProjectDbContextSeed.CreateInitialUsers(userManager, roleManager);
+}
 
 app.UseCors("AllowFrontend");
 

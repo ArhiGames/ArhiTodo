@@ -2,7 +2,7 @@ using ArhiTodo.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArhiTodo.DataBase;
+namespace ArhiTodo.Data;
 
 public class ProjectDataBase : IdentityDbContext<AppUser>
 {

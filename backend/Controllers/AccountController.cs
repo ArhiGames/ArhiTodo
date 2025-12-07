@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Accounts;
@@ -38,11 +39,12 @@ public class AccountController : ControllerBase
 
             if (identityResult.Succeeded)
             {
+                IList<Claim> claims = await _userManager.GetClaimsAsync(user);
                 return Ok(new UserGetDto()
                 {
                     UserName = user.UserName,
                     Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
+                    Token = _tokenService.CreateToken(user, claims)
                 });
             }
 
@@ -68,11 +70,13 @@ public class AccountController : ControllerBase
 
         if (!signInAsync.Succeeded) return Unauthorized("Wrong password!");
 
+        IList<Claim> claims = await _userManager.GetClaimsAsync(appUser);
+        
         return Ok(new UserGetDto()
         {
             UserName = appUser.UserName!,
             Email = appUser.Email!,
-            Token = _tokenService.CreateToken(appUser)
+            Token = _tokenService.CreateToken(appUser, claims)
         });
     }
 }

@@ -4,6 +4,7 @@ using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Post;
 using ArhiTodo.Models.DTOs.Put;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
