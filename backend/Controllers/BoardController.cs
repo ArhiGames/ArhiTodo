@@ -72,7 +72,7 @@ public class BoardController : ControllerBase
         try
         {
             List<Board> boards = await _boardRepository.GetAllAsync(projectId);
-            if (boards.Count == 0) return NotFound();
+            if (boards.Count == 0) return Ok();
 
             List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
             return Ok(boardGetDtos);

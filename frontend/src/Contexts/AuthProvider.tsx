@@ -1,10 +1,9 @@
 import { type ReactNode, useEffect, useState } from "react";
-import type {JwtPayload} from "../Models/JwtPayload.ts";
+import type { JwtPayload } from "../Models/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext} from "./AuthContext.ts";
 import { loginApi } from "../Services/AuthService.tsx";
-import {useNavigate} from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
@@ -23,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (decoded.exp > now) {
                 setToken(savedToken);
                 setUserName(decoded.unique_name);
+                navigate("/");
             } else {
                 localStorage.removeItem("token");
             }

@@ -20,7 +20,7 @@ const ProjectViewComp = () => {
         fetch(`https://localhost:7069/api/project/${projectId}/board`, { method: "GET" })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error("Failed to fetch board");
+                    throw new Error("Failed to fetch boards");
                 }
 
                 return res.json();

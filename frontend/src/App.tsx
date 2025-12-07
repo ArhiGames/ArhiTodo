@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
+import { Routes, Route, useLocation, BrowserRouter } from 'react-router-dom';
 import HomePageComp from "./Components/Core/HomePageComp.tsx";
 import ProjectViewComp from "./Components/Project/ProjectViewComp.tsx";
 import NavbarHeaderComp from "./Components/Core/NavbarHeaderComp.tsx";
@@ -29,11 +29,11 @@ function AppContent() {
 function App() {
 
     return (
-        <AuthProvider>
-            <Router>
+        <BrowserRouter>
+            <AuthProvider>
                 <AppContent/>
-            </Router>
-        </AuthProvider>
+            </AuthProvider>
+        </BrowserRouter>
     )
 
 }
