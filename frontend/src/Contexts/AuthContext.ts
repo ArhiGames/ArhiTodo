@@ -1,7 +1,8 @@
 import { createContext } from "react";
+import type {AppUser} from "../Models/AppUser.ts";
 
 export type AuthContextType = {
-    userName: string | null;
+    appUser: AppUser | null;
     token: string | null;
     login: (userName: string, password: string) => void;
     logout: () => void;
@@ -9,7 +10,7 @@ export type AuthContextType = {
 }
 
 export const AuthContext = createContext<AuthContextType>({
-    userName: null,
+    appUser: null,
     token: null,
     login: () => {},
     logout: () => {},

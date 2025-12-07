@@ -1,15 +1,16 @@
 import { type ReactNode, useEffect, useState } from "react";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
-import { AuthContext} from "./AuthContext.ts";
+import { AuthContext } from "./AuthContext.ts";
 import { loginApi } from "../Services/AuthService.tsx";
 import { useNavigate } from "react-router-dom";
+import type { AppUser } from "../Models/AppUser.ts";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const navigate = useNavigate();
+    const [appUser, setAppUser] = useState<AppUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [userName, setUserName] = useState<string | null>(null);
 
     useEffect(() => {
 
@@ -21,8 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const now = Date.now() / 1000;
             if (decoded.exp > now) {
                 setToken(savedToken);
-                setUserName(decoded.unique_name);
-                navigate("/");
+                setAppUser( { id: decoded.sub, unique_name: decoded.unique_name, email: decoded.email} );
             } else {
                 localStorage.removeItem("token");
             }
@@ -42,15 +42,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         localStorage.setItem("user", JSON.stringify(userObj));
+
         setToken(localStorage.getItem("token"));
-        setUserName(jwt.unique_name);
+        setAppUser( { id: jwt.sub, unique_name: jwt.unique_name, email: jwt.email} );
 
     }
 
     const logout = () => {
 
         setToken(null);
-        setUserName(null);
+        setAppUser(null);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         navigate("/login");
@@ -63,7 +64,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <AuthContext.Provider
-            value={{token, userName, login, logout, isAuthenticated}}>
+            value={{
+                appUser,
+                token,
+                login,
+                logout,
+                isAuthenticated}}>
             {children}
         </AuthContext.Provider>
     )

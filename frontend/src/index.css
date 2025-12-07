@@ -39,17 +39,32 @@ body {
 }
 
 .navbar-header {
+    display: flex;
     background-color: var(--bg);
     padding: 10px;
     margin: 10px 0;
     border-radius: 15px;
     border-bottom: 2px solid var(--border);
+    font-size: larger;
 }
 
 .navbar-header a {
-    color: var(--text-color);
     text-decoration: none;
-    font-size: larger;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.app-user {
+    color: var(--text-color);
+    padding: 10px;
+    margin-left: auto;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.app-user:hover {
+    background-color: var(--bg-light);
+    cursor: pointer;
 }
 
 /*-----------------------------------------------*/
