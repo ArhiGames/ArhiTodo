@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-[ApiController]
 [Authorize]
+[ApiController]
 [Route("api/project")]
 public class ProjectController : ControllerBase
 {

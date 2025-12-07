@@ -4,9 +4,11 @@ import type {Board} from "../../Models/Board.ts";
 import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
+import {useAuth} from "../../Contexts/useAuth.ts";
 
 const ProjectViewComp = () => {
 
+    const { token } = useAuth();
     const { projectId, boardId } = useParams();
     const [boards, setBoards] = useState<Board[]>();
     const navigate = useNavigate();
@@ -17,7 +19,11 @@ const ProjectViewComp = () => {
 
     useEffect(() => {
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board`, { method: "GET" })
+        fetch(`https://localhost:7069/api/project/${projectId}/board`,
+            {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` },
+            })
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to fetch boards");
@@ -32,7 +38,7 @@ const ProjectViewComp = () => {
             })
             .catch(console.error);
 
-    }, [projectId]);
+    }, [projectId, token]);
 
     useEffect(() => {
 

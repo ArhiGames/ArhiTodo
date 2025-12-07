@@ -3,16 +3,22 @@ import type {Board} from "../../Models/Board.ts";
 import type {CardList} from "../../Models/CardList.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
+import {useAuth} from "../../Contexts/useAuth.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     const [board, setBoard] = useState<Board>();
+    const { token } = useAuth();
 
     useEffect(() => {
 
         if (!props.boardId) return;
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`, { method: 'GET' })
+        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`,
+            {
+                method: 'GET',
+                headers: { "Authorization": `Bearer ${token}` }
+            })
             .then(res => {
                 if (!res.ok) {
                     throw new Error(`Could not fetch /api/Cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
@@ -25,7 +31,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             })
             .catch(console.error);
 
-    }, [props.projectId, props.boardId]);
+    }, [props.projectId, props.boardId, token]);
 
     if (!props.boardId) {
         return (
