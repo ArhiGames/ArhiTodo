@@ -12,25 +12,27 @@ export const getJwtPayloadFromToken = () => {
 
 export const loginApi = async (userName: string, password: string) => {
 
-    try {
-
-        const response = await fetch(api + "account/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userName: userName,
-                password: password
-            })
+    const response = await fetch(api + "account/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            userName: userName,
+            password: password
         })
+    })
 
-        const data = await response.json();
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Unable to login");
+    }
 
-        if (data.token) {
-            localStorage.setItem("token", data.token);
-            alert("Logged in with account name: " + getJwtPayloadFromToken()?.unique_name)
-        }
+    const data = await response.json();
+
+    if (!data.token) {
+        throw new Error("Unable to parse token from Server response!");
     }
-    catch (e) {
-        console.error(e);
-    }
+
+    localStorage.setItem("token", data.token);
+    return getJwtPayloadFromToken();
+
 }

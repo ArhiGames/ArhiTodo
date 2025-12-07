@@ -66,7 +66,7 @@ public class AccountController : ControllerBase
 
         SignInResult signInAsync = await _signInManager.CheckPasswordSignInAsync(appUser, loginDto.Password, false);
 
-        if (!signInAsync.Succeeded) return Unauthorized("Username not found / wrong password");
+        if (!signInAsync.Succeeded) return Unauthorized("Wrong password!");
 
         return Ok(new UserGetDto()
         {

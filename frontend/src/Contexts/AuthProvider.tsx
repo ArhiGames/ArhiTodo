@@ -1,25 +1,14 @@
-import {createContext, type ReactNode, useEffect, useState} from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import type {JwtPayload} from "../Models/JwtPayload.ts";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import { AuthContext} from "./AuthContext.ts";
+import { loginApi } from "../Services/AuthService.tsx";
+import {useNavigate} from "react-router-dom";
 
-type AuthContextType = {
-    userName: string | null;
-    token: string | null;
-    login: (token: string | null) => void;
-    logout: () => void;
-    isAuthenticated: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>({
-    userName: null,
-    token: null,
-    login: () => {},
-    logout: () => {},
-    isAuthenticated: false
-})
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
+    const navigate = useNavigate();
     const [token, setToken] = useState<string | null>(null);
     const [userName, setUserName] = useState<string | null>(null);
 
@@ -41,13 +30,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     }, []);
 
-    const login = (newToken: string | null) => {
+    const login = async (userName: string, password: string) => {
 
-        if (!newToken) return;
-        const decoded: JwtPayload = jwtDecode(newToken);
-        setToken(newToken);
-        setUserName(decoded.unique_name);
-        localStorage.setItem("token", newToken);
+        const jwt: JwtPayload | null = await loginApi(userName, password);
+
+        if (!jwt) return;
+
+        const userObj = {
+            userName: jwt.unique_name,
+            email: jwt.email,
+        }
+
+        localStorage.setItem("user", JSON.stringify(userObj));
+        setToken(localStorage.getItem("token"));
+        setUserName(jwt.unique_name);
 
     }
 
@@ -56,12 +52,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setToken(null);
         setUserName(null);
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
 
+    }
+
+    const isAuthenticated = () => {
+        return !!token;
     }
 
     return (
         <AuthContext.Provider
-            value={{token, userName, login, logout, isAuthenticated: !!token}}>
+            value={{token, userName, login, logout, isAuthenticated}}>
             {children}
         </AuthContext.Provider>
     )

@@ -17,6 +17,7 @@
     --border: hsl(192, 30%, 40%);
 
     --text-color: hsl(0, 0%, 95%);
+    --text-color-failure: hsl(0, 100%, 60%);
     --text-color-dark: hsl(0, 0%, 15%);
 
     --success-color: hsl(113, 60%, 60%);
@@ -55,7 +56,7 @@ body {
 /*-----------------------------------------------*/
 
 .login-page {
-    min-height: 100vh;
+    min-height: 90vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -64,10 +65,17 @@ body {
 
 .login {
     background-color: var(--bg-light);
+    box-shadow: 4px 4px 8px 0 var(--box-shadow);
     border-radius: 15px;
     padding: 15px;
     min-width: 420px;
     color: var(--text-color);
+}
+
+.login p {
+    color: var(--text-color-failure);
+    font-size: larger;
+    text-align: center;
 }
 
 .login h2 {

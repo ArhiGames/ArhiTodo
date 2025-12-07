@@ -3,6 +3,8 @@ import HomePageComp from "./Components/Core/HomePageComp.tsx";
 import ProjectViewComp from "./Components/Project/ProjectViewComp.tsx";
 import NavbarHeaderComp from "./Components/Core/NavbarHeaderComp.tsx";
 import LoginPage from "./Components/Authentication/LoginPage.tsx";
+import {AuthProvider} from "./Contexts/AuthProvider.tsx";
+import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
 
 function AppContent() {
 
@@ -15,9 +17,9 @@ function AppContent() {
         <div className="App">
             { !hideNavbar && <NavbarHeaderComp/> }
             <Routes>
-                <Route path="/" element={<HomePageComp/>}/>
+                <Route path="/" element={<ProtectedRoute><HomePageComp/></ProtectedRoute>}/>
                 <Route path="/login" element={<LoginPage/>}></Route>
-                <Route path="/projects/:projectId/board/:boardId?" element={<ProjectViewComp/>}/>
+                <Route path="/projects/:projectId/board/:boardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
             </Routes>
         </div>
     )
@@ -27,9 +29,11 @@ function AppContent() {
 function App() {
 
     return (
-        <Router>
-            <AppContent/>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <AppContent/>
+            </Router>
+        </AuthProvider>
     )
 
 }
