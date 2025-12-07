@@ -3,11 +3,13 @@ using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api")]
 public class CardsController : ControllerBase
 {

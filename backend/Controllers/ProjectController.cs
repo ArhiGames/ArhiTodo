@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArhiTodo.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/project")]
 public class ProjectController : ControllerBase
 {
