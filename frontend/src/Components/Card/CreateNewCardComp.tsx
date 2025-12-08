@@ -44,9 +44,9 @@ const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
 
         function handleClickOutside(e: MouseEvent) {
 
-            if (!cardListRef.current) return;
+            if (!formRef.current) return;
 
-            if (!cardListRef.current.contains(e.target as Node)) {
+            if (!formRef.current.contains(e.target as Node)) {
                 resetForm();
             }
         }

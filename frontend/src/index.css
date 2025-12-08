@@ -13,8 +13,8 @@
     --bg-x-light: hsl(192, 20%, 50%);
     --bg-xx-light: hsl(192, 20%, 60%);
 
-    --button-cancel: hsl(192, 10%, 80%);
-    --button-cancel-focus: hsl(192, 20%, 100%);
+    --button-cancel: hsl(192, 20%, 50%);
+    --button-cancel-focus: hsl(192, 40%, 60%);
 
     --box-shadow: hsl(0, 0%, 5%);
 
@@ -375,6 +375,7 @@ body {
 }
 
 .creation-card-form button[type="reset"] {
+    color: var(--text-color);
     padding: 10px;
     border-radius: 15px;
     border: none;
