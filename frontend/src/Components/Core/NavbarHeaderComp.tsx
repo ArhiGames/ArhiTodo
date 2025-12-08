@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import UserCardComp from "../User/UserCardComp.tsx";
+import LoggedInUserCardComp from "../User/LoggedInUserCardComp.tsx";
 import {useAuth} from "../../Contexts/useAuth.ts";
 
 const NavbarHeaderComp = () => {
@@ -9,7 +9,7 @@ const NavbarHeaderComp = () => {
     return (
         <nav className="navbar-header">
             <Link to="/">ArhiTodo</Link>
-            { appUser ? <UserCardComp appUser={appUser}/> : null }
+            { appUser ? <LoggedInUserCardComp appUser={appUser}/> : null }
         </nav>
     )
 }

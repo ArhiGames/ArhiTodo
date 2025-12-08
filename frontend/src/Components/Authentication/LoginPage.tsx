@@ -16,7 +16,6 @@ const LoginPage = () => {
         try {
             await login(userName, password);
             navigate("/");
-            console.log("test");
         }
         catch (e: unknown) {
             if (e instanceof Error) {

@@ -58,7 +58,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("MayCreateProjects", policy =>  policy.RequireClaim("may_create_projects", "true"));
+    options.AddPolicy("MayCreateProjects", policy => policy.RequireClaim("may_create_projects", "true"));
 });
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

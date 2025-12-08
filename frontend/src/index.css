@@ -11,6 +11,7 @@
     --bg: hsl(192, 10%, 30%);
     --bg-light: hsl(192, 20%, 40%);
     --bg-x-light: hsl(192, 20%, 50%);
+    --bg-xx-light: hsl(192, 20%, 60%);
 
     --box-shadow: hsl(0, 0%, 5%);
 
@@ -31,11 +32,11 @@
     width: 100%;
     display: block;
     padding: 1rem;
-    font-family: Arial, serif;
 }
 
 body {
     background-color: var(--bg-dark);
+    font-family: Arial, serif;
 }
 
 .navbar-header {
@@ -352,4 +353,36 @@ body {
 .creation-card:hover {
     background-color: var(--bg-x-light);
     cursor: pointer;
+}
+
+/*-----------------------------------------------*/
+/*---------------------Pop overs-----------------*/
+/*-----------------------------------------------*/
+.popover {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.logged-in-user-popover {
+    display: flex;
+    flex-direction: column;
+}
+
+.logged-in-user-popover button {
+    background-color: var(--bg-x-light);
+    color: var(--text-color);
+    border: none;
+    border-radius: 10px;
+    font-size: large;
+    margin: 0.5rem 0 0 0;
+    padding: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.logged-in-user-popover button:hover {
+    cursor: pointer;
+    background-color: var(--bg-xx-light);
+    transform: translateY(-2px);
 }
