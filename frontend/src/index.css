@@ -13,6 +13,9 @@
     --bg-x-light: hsl(192, 20%, 50%);
     --bg-xx-light: hsl(192, 20%, 60%);
 
+    --button-cancel: hsl(192, 10%, 80%);
+    --button-cancel-focus: hsl(192, 20%, 100%);
+
     --box-shadow: hsl(0, 0%, 5%);
 
     --border: hsl(192, 30%, 40%);
@@ -305,22 +308,6 @@ body {
     box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
-.creation-cardlist form button {
-    background-color: var(--success-color);
-    border: none;
-    border-radius: 15px;
-    padding: 0.5rem;
-    transition: background-color 0.3s, transform 0.3s;
-    font-size: medium;
-    color: var(--text-color);
-}
-
-.creation-cardlist form button:hover {
-    cursor: pointer;
-    background-color: var(--success-color-highlight);
-    transform: translateY(-2px);
-}
-
 /*-----------------------------------------------*/
 /*---------------------CARDS---------------------*/
 /*-----------------------------------------------*/
@@ -355,6 +342,54 @@ body {
     cursor: pointer;
 }
 
+.creation-card-form {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.creation-card-form input {
+    margin: 0 0 0.5rem 0;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    color: var(--text-color);
+    background-color: var(--bg-x-light);
+    font-size: medium;
+
+    transition: box-shadow 0.3s;
+}
+
+.creation-card-form input:focus {
+    outline: none;
+    box-shadow: 0 0 2px 0 var(--box-shadow);
+}
+
+.creation-card-form span {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.creation-card-form .submit-button {
+    width: 100%;
+}
+
+.creation-card-form button[type="reset"] {
+    padding: 10px;
+    border-radius: 15px;
+    border: none;
+    margin-left: auto;
+    background-color: var(--button-cancel);
+    opacity: 60%;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.creation-card-form button[type="reset"]:hover {
+    cursor: pointer;
+    background-color: var(--button-cancel-focus);
+    transform: translateY(-2px);
+}
+
 /*-----------------------------------------------*/
 /*---------------------Pop overs-----------------*/
 /*-----------------------------------------------*/
@@ -386,5 +421,25 @@ body {
 .logged-in-user-popover button:hover {
     cursor: pointer;
     background-color: var(--bg-xx-light);
+    transform: translateY(-2px);
+}
+
+/*-----------------------------------------------*/
+/*---------------------Utils---------------------*/
+/*-----------------------------------------------*/
+
+.submit-button {
+    background-color: var(--success-color);
+    border: none;
+    border-radius: 15px;
+    padding: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: medium;
+    color: var(--text-color);
+}
+
+.submit-button:hover {
+    cursor: pointer;
+    background-color: var(--success-color-highlight);
     transform: translateY(-2px);
 }

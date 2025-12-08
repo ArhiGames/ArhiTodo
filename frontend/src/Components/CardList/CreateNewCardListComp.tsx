@@ -63,7 +63,7 @@ const CreateNewCardListComp = () => {
                                onChange={(e) => setCardListName(e.target.value)}
                                maxLength={25}>
                         </input>
-                        <button className="add-button" type="submit">Add list</button>
+                        <button className="submit-button" type="submit">Add list</button>
                     </form>
                 </div>
             ) : (
