@@ -366,8 +366,10 @@ body {
 }
 
 .logged-in-user-popover {
+    width: 260px;
     display: flex;
     flex-direction: column;
+    text-align: center;
 }
 
 .logged-in-user-popover button {

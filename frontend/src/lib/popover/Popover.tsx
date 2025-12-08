@@ -1,17 +1,41 @@
-import {type ReactNode, type RefObject, useLayoutEffect, useRef, useState} from "react";
+import {type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
 import { createPortal } from "react-dom";
 
 interface PopoverProps {
     element: RefObject<HTMLElement | null>;
     children: ReactNode;
+    close: () => void;
+    closeIfClickedOutside?: boolean;
     offsetX?: number;
     offsetY?: number;
 }
 
-const Popover = ( { element, children, offsetX = 0, offsetY = 0 }: PopoverProps ) => {
+const Popover = ( { element, children, close, closeIfClickedOutside = true, offsetX = 0, offsetY = 0 }: PopoverProps ) => {
 
     const [position, setPosition] = useState({top: 0, left: 0});
     const popoverRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+
+        if (!closeIfClickedOutside) return;
+
+        function handleClicked(e: MouseEvent) {
+
+            if (!popoverRef.current) return;
+
+            if (!popoverRef.current.contains(e.target as Node)) {
+                close();
+            }
+
+        }
+
+        document.addEventListener("mousedown", handleClicked);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClicked)
+        }
+
+    }, [close, closeIfClickedOutside]);
 
     useLayoutEffect(() => {
 

@@ -6,22 +6,28 @@ import {useAuth} from "../../Contexts/useAuth.ts";
 const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
 
     const [popoverOpened, setPopoverOpened] = useState<boolean>(false);
-    const { logout } = useAuth();
+    const { appUser, logout } = useAuth();
     const element = useRef<HTMLDivElement | null>(null);
 
     function handleOnClicked() {
         setPopoverOpened(!popoverOpened);
     }
 
+    function closePopover() {
+        setPopoverOpened(false);
+    }
+
     return (
         <div className="app-user" ref={element} onClick={handleOnClicked}>
             <p>{props.appUser.unique_name}</p>
             {popoverOpened && (
-            <Popover element={element} offsetX={-10} offsetY={5}>
+            <Popover element={element} close={closePopover} offsetX={-10} offsetY={5}>
                 <div className="logged-in-user-popover">
-                    <h3>User configurations</h3>
-                    <button>Settings</button>
-                    <button onClick={logout}>Logout</button>
+                    <h2>{appUser?.unique_name}</h2>
+                    <p>{appUser?.email}</p>
+                    <button>Account settings</button>
+                    <button>Administration</button>
+                    <button onClick={logout}>Sign out</button>
                 </div>
             </Popover>) }
         </div>
