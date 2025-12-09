@@ -1,4 +1,5 @@
 import {type FormEvent, useRef, useState} from "react";
+import {useAuth} from "../../../Contexts/useAuth.ts";
 
 const PasswordManagerPageComp = () => {
 
@@ -6,6 +7,24 @@ const PasswordManagerPageComp = () => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
+    const { logout, token } = useAuth();
+
+    function changePassword() {
+
+        fetch("https://localhost:7069/api/account/change/password",
+        {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ oldPassword: currentPassword, newPassword: password }),
+        }).then((res) => {
+            if (!res.ok) {
+                return;
+            }
+
+            logout();
+        })
+
+    }
 
     function onHandleSubmit(e: FormEvent<HTMLFormElement>) {
 
@@ -17,7 +36,7 @@ const PasswordManagerPageComp = () => {
             return;
         }
 
-
+        changePassword();
 
     }
 

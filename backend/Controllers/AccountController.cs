@@ -2,6 +2,7 @@ using System.Security.Claims;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Accounts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -77,9 +78,28 @@ public class AccountController : ControllerBase
         });
     }
 
-    [HttpPut]
+    [HttpPut("change/password")]
+    [Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
-        return Ok();
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return NotFound();
+        }
+        
+        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (appUser == null)
+        {
+            return NotFound();
+        }
+
+        IdentityResult identityResult = await _userManager.ChangePasswordAsync(appUser, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
+        if (identityResult.Succeeded)
+        {
+            return Ok();
+        }
+
+        return Unauthorized(identityResult.Errors);
     }
 }

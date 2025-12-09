@@ -20,7 +20,7 @@ public class TokenService : ITokenService
     
     public string CreateToken(AppUser user, IList<Claim> claims)
     { 
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
         claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!));
         claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email!));
 
