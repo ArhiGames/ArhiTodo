@@ -5,6 +5,8 @@ import NavbarHeaderComp from "./Components/Core/NavbarHeaderComp.tsx";
 import LoginPage from "./Components/Authentication/LoginPage.tsx";
 import { AuthProvider } from "./Contexts/AuthProvider.tsx";
 import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
+import AccountPreferencesPageComp from "./Components/User/AccountSettingsPage/AccountPreferencesPageComp.tsx";
+import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/AccountSettingsNavbarComp.tsx";
 
 function AppContent() {
 
@@ -18,8 +20,14 @@ function AppContent() {
             { !hideNavbar && <NavbarHeaderComp/> }
             <Routes>
                 <Route path="/" element={<ProtectedRoute><HomePageComp/></ProtectedRoute>}/>
-                <Route path="/login" element={<LoginPage/>}></Route>
-                <Route path="/projects/:projectId/board/:boardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
+                <Route path="login" element={<LoginPage/>}></Route>
+                <Route path="projects/:projectId/board/:boardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
+                <Route path="user">
+                    <Route path="settings" element={<ProtectedRoute><AccountSettingsNavbarComp/></ProtectedRoute>}>
+                        <Route index element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
+                        <Route path="prefs" element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
+                    </Route>
+                </Route>
             </Routes>
         </div>
     )

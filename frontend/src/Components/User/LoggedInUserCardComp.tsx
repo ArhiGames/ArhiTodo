@@ -2,12 +2,14 @@ import type {AppUser} from "../../Models/AppUser.ts";
 import Popover from "../../lib/popover/Popover.tsx";
 import {useRef, useState} from "react";
 import {useAuth} from "../../Contexts/useAuth.ts";
+import {useNavigate} from "react-router-dom";
 
 const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
 
     const [popoverOpened, setPopoverOpened] = useState<boolean>(false);
     const { appUser, logout } = useAuth();
     const element = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
 
     function handleOnClicked() {
         setPopoverOpened(!popoverOpened);
@@ -15,6 +17,10 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
 
     function closePopover() {
         setPopoverOpened(false);
+    }
+
+    function handleAccountSettingsButtonPressed() {
+        navigate("/user/settings")
     }
 
     return (
@@ -25,7 +31,7 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
                 <div className="logged-in-user-popover">
                     <h2>{appUser?.unique_name}</h2>
                     <p>{appUser?.email}</p>
-                    <button>Account settings</button>
+                    <button onClick={handleAccountSettingsButtonPressed}>Account settings</button>
                     <button>Administration</button>
                     <button onClick={logout}>Sign out</button>
                 </div>
