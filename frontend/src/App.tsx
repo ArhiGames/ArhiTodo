@@ -7,6 +7,7 @@ import { AuthProvider } from "./Contexts/AuthProvider.tsx";
 import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
 import AccountPreferencesPageComp from "./Components/User/AccountSettingsPage/AccountPreferencesPageComp.tsx";
 import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/AccountSettingsNavbarComp.tsx";
+import PasswordManagerPageComp from "./Components/User/AccountSettingsPage/PasswordManagerPageComp.tsx";
 
 function AppContent() {
 
@@ -26,6 +27,7 @@ function AppContent() {
                     <Route path="settings" element={<ProtectedRoute><AccountSettingsNavbarComp/></ProtectedRoute>}>
                         <Route index element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
                         <Route path="prefs" element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
+                        <Route path="pswman" element={<ProtectedRoute><PasswordManagerPageComp/></ProtectedRoute>}></Route>
                     </Route>
                 </Route>
             </Routes>

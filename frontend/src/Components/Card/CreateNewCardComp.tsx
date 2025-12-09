@@ -63,7 +63,7 @@ const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
         <>
             { isCreating ? (
                 <form className="creation-card-form" onSubmit={handleSubmit} onReset={handleReset} ref={formRef}>
-                    <input ref={cardListRef} type="text" placeholder="Enter a cardlist name..."></input>
+                    <input ref={cardListRef} type="text" placeholder="Enter a cardlist name..." className="classic-input"></input>
                     <span>
                         <button className="submit-button" type="submit" value={cardListName} onChange={(e) => setCardListName(e.currentTarget.value)}>
                             Submit

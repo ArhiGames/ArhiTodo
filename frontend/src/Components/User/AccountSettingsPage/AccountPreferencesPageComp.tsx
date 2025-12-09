@@ -1,8 +1,9 @@
 const AccountPreferencesPageComp = () => {
 
     return (
-        <div className="account-preferences-page">
-            <h2>test</h2>
+        <div className="account-settings-content account-preferences-page">
+            <h2>Preferences</h2>
+            <p>Change the way your frontend looks</p>
         </div>
     )
 

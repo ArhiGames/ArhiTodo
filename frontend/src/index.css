@@ -46,7 +46,7 @@ body {
     display: flex;
     background-color: var(--bg);
     padding: 10px;
-    margin: 10px 0;
+    margin-bottom: 10px;
     border-radius: 15px;
     border-bottom: 2px solid var(--border);
     font-size: larger;
@@ -291,23 +291,6 @@ body {
     flex-direction: column;
 }
 
-.creation-cardlist form input {
-    margin: 0 0 0.5rem 0;
-    padding: 15px;
-    border: none;
-    border-radius: 15px;
-    color: var(--text-color);
-    background-color: var(--bg-x-light);
-    font-size: medium;
-
-    transition: box-shadow 0.3s;
-}
-
-.creation-cardlist form input:focus {
-    outline: none;
-    box-shadow: 0 0 2px 0 var(--box-shadow);
-}
-
 /*-----------------------------------------------*/
 /*---------------------CARDS---------------------*/
 /*-----------------------------------------------*/
@@ -346,23 +329,6 @@ body {
     margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
-}
-
-.creation-card-form input {
-    margin: 0 0 0.5rem 0;
-    padding: 15px;
-    border: none;
-    border-radius: 15px;
-    color: var(--text-color);
-    background-color: var(--bg-x-light);
-    font-size: medium;
-
-    transition: box-shadow 0.3s;
-}
-
-.creation-card-form input:focus {
-    outline: none;
-    box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
 .creation-card-form span {
@@ -407,13 +373,13 @@ body {
     gap: 0.6rem;
     height: calc(100vh - 200px);
     min-width: 20vw;
-    background-color: var(--bg-light);
+    background-color: var(--bg);
     border-radius: 15px;
 }
 
 .account-settings-navbar a {
     text-decoration: none;
-    background-color: var(--bg-x-light);
+    background-color: var(--bg-light);
     color: var(--text-color);
     font-size: medium;
     padding: 20px;
@@ -424,17 +390,36 @@ body {
 
 .account-settings-navbar a:hover {
     cursor: pointer;
-    background-color: var(--bg-xx-light);
+    background-color: var(--bg-x-light);
     transform: translateY(-2px);
 }
 
 .detailed-settings-panel {
     margin: 0.6rem 0 0 0;
     height: calc(100vh - 200px);
-    background-color: var(--bg-light);
+    background-color: var(--bg);
     width: 100vw;
     border-radius: 15px;
     padding: 10px;
+    color: var(--text-color);
+}
+
+.account-settings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 25rem
+}
+
+.account-pwsmanager-page form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.4rem;
+    width: 100%;
+}
+
+.account-pwsmanager-page form label {
+    margin-top: 0.6rem;
 }
 
 /*-----------------------------------------------*/
@@ -489,4 +474,21 @@ body {
     cursor: pointer;
     background-color: var(--success-color-highlight);
     transform: translateY(-2px);
+}
+
+.classic-input {
+    margin: 0 0 0.5rem 0;
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+    color: var(--text-color);
+    background-color: var(--bg-x-light);
+    font-size: medium;
+
+    transition: box-shadow 0.3s;
+}
+
+.classic-input:focus {
+    outline: none;
+    box-shadow: 0 0 2px 0 var(--box-shadow);
 }

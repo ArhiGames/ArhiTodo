@@ -76,4 +76,10 @@ public class AccountController : ControllerBase
             Token = _tokenService.CreateToken(appUser, claims)
         });
     }
+
+    [HttpPut]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+    {
+        return Ok();
+    }
 }
