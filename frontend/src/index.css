@@ -365,35 +365,6 @@ body {
     display: flex;
 }
 
-.account-settings-navbar {
-    display: flex;
-    padding: 10px;
-    flex-direction: column;
-    margin: 0.6rem 1rem 0 0;
-    gap: 0.6rem;
-    height: calc(100vh - 200px);
-    min-width: 20vw;
-    background-color: var(--bg);
-    border-radius: 15px;
-}
-
-.account-settings-navbar a {
-    text-decoration: none;
-    background-color: var(--bg-light);
-    color: var(--text-color);
-    font-size: medium;
-    padding: 20px;
-    border: none;
-    border-radius: 15px;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.account-settings-navbar a:hover {
-    cursor: pointer;
-    background-color: var(--bg-x-light);
-    transform: translateY(-2px);
-}
-
 .detailed-settings-panel {
     margin: 0.6rem 0 0 0;
     height: calc(100vh - 200px);
@@ -408,7 +379,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 25rem
+    margin: 0 25%
 }
 
 .account-pwsmanager-page form {
@@ -420,6 +391,64 @@ body {
 
 .account-pwsmanager-page form label {
     margin-top: 0.6rem;
+}
+
+/*-----------------------------------------------*/
+/*-------------------Admin dashboard-------------*/
+/*-----------------------------------------------*/
+
+.admin-dashboard-page {
+    display: flex;
+}
+
+.admin-dashboard-detailed {
+    margin: 0.6rem 0 0 0;
+    height: calc(100vh - 200px);
+    background-color: var(--bg);
+    width: 100vw;
+    border-radius: 15px;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.admin-settings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 25%
+}
+
+/*-----------------------------------------------*/
+/*-------------------Side bar--------------------*/
+/*-----------------------------------------------*/
+
+.settings-sidebar {
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    margin: 0.6rem 1rem 0 0;
+    gap: 0.6rem;
+    height: calc(100vh - 200px);
+    min-width: 20vw;
+    background-color: var(--bg);
+    border-radius: 15px;
+}
+
+.settings-sidebar a {
+    text-decoration: none;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-size: medium;
+    padding: 20px;
+    border: none;
+    border-radius: 15px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.settings-sidebar a:hover {
+    cursor: pointer;
+    background-color: var(--bg-x-light);
+    transform: translateY(-2px);
 }
 
 /*-----------------------------------------------*/

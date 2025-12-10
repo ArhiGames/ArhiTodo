@@ -8,6 +8,9 @@ import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
 import AccountPreferencesPageComp from "./Components/User/AccountSettingsPage/AccountPreferencesPageComp.tsx";
 import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/AccountSettingsNavbarComp.tsx";
 import PasswordManagerPageComp from "./Components/User/AccountSettingsPage/PasswordManagerPageComp.tsx";
+import AdminDashboardNavbarComp from "./Components/Admin/AdminDashboardNavbarComp.tsx";
+import AdminAppSettingsComp from "./Components/Admin/AdminDashboardPages/AdminAppSettingsComp.tsx";
+import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/AdminUserManagementComp.tsx";
 
 function AppContent() {
 
@@ -28,6 +31,13 @@ function AppContent() {
                         <Route index element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
                         <Route path="prefs" element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>
                         <Route path="pswman" element={<ProtectedRoute><PasswordManagerPageComp/></ProtectedRoute>}></Route>
+                    </Route>
+                </Route>
+                <Route path="admin">
+                    <Route path="dashboard" element={<ProtectedRoute><AdminDashboardNavbarComp/></ProtectedRoute>}>
+                        <Route index element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
+                        <Route path="appsettings" element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
+                        <Route path="users" element={<ProtectedRoute><AdminUserManagementComp/></ProtectedRoute>}></Route>
                     </Route>
                 </Route>
             </Routes>

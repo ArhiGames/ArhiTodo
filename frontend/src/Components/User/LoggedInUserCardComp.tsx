@@ -23,6 +23,10 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
         navigate("/user/settings")
     }
 
+    function handleAdministrationButtonPressed() {
+        navigate("/admin/dashboard")
+    }
+
     return (
         <div className="app-user" ref={element} onClick={handleOnClicked}>
             <p>{props.appUser.unique_name}</p>
@@ -32,7 +36,7 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
                     <h2>{appUser?.unique_name}</h2>
                     <p>{appUser?.email}</p>
                     <button onClick={handleAccountSettingsButtonPressed}>Account settings</button>
-                    <button>Administration</button>
+                    <button onClick={handleAdministrationButtonPressed}>Administration</button>
                     <button onClick={logout}>Sign out</button>
                 </div>
             </Popover>) }
