@@ -89,8 +89,14 @@ public class AccountController : ControllerBase
         {
             return NotFound();
         }
+        
+        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (appUser == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
 
-        IdentityResult identityResult = await _userRepository.ChangePasswordAsync(userId, changePasswordDto);
+        IdentityResult identityResult = await _userRepository.ChangePasswordAsync(appUser, changePasswordDto);
         if (identityResult.Succeeded)
         {
             return Ok();
@@ -103,7 +109,19 @@ public class AccountController : ControllerBase
     [Authorize(Policy = "ManageUsers")]
     public async Task<IActionResult> GetAllUsers()
     {
-        //string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Ok();
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return NotFound();
+        }
+        
+        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (appUser == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
+        UserUserManagementGetDto[] userManagementGetDtos = await _userRepository.GetAllUsersAsync();
+        return Ok(userManagementGetDtos);
     }
 }

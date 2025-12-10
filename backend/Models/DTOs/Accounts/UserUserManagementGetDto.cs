@@ -16,5 +16,5 @@ public class UserUserManagementGetDto
     public required string Email { get; set; } = string.Empty;
 
     [Required] 
-    public required List<Claim> UserClaims { get; set; } = [];
+    public List<ClaimGetDto> UserClaims { get; set; } = [];
 }
