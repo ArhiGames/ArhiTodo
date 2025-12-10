@@ -59,6 +59,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("MayCreateProjects", policy => policy.RequireClaim("may_create_projects", "true"));
+    options.AddPolicy("ManageUsers", policy =>
+    {
+        policy.RequireClaim("access_admin_dashboard", "true");
+        policy.RequireClaim("manage_users", "true");
+    });
 });
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -66,6 +71,7 @@ builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -16,12 +16,14 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly IUserRepository _userRepository;
     private readonly ITokenService _tokenService;
     
-    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IUserRepository userRepository, ITokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _userRepository = userRepository;
         _tokenService = tokenService;
     }
 
@@ -41,7 +43,7 @@ public class AccountController : ControllerBase
             if (!identityResult.Succeeded) return StatusCode(500, identityResult.Errors);
             
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);
-            return Ok(new UserGetDto()
+            return Ok(new UserRegisterLoginDto()
             {
                 UserName = user.UserName,
                 Email = user.Email,
@@ -70,7 +72,7 @@ public class AccountController : ControllerBase
 
         IList<Claim> claims = await _userManager.GetClaimsAsync(appUser);
         
-        return Ok(new UserGetDto()
+        return Ok(new UserRegisterLoginDto()
         {
             UserName = appUser.UserName!,
             Email = appUser.Email!,
@@ -87,19 +89,21 @@ public class AccountController : ControllerBase
         {
             return NotFound();
         }
-        
-        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        if (appUser == null)
-        {
-            return NotFound();
-        }
 
-        IdentityResult identityResult = await _userManager.ChangePasswordAsync(appUser, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
+        IdentityResult identityResult = await _userRepository.ChangePasswordAsync(userId, changePasswordDto);
         if (identityResult.Succeeded)
         {
             return Ok();
         }
 
         return Unauthorized(identityResult.Errors);
+    }
+
+    [HttpGet("admin/accountmanagement")]
+    [Authorize(Policy = "ManageUsers")]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        //string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Ok();
     }
 }
