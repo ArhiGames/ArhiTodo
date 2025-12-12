@@ -424,23 +424,29 @@ body {
 }
 
 .admin-editable-user {
+    display: flex;
     background-color: var(--bg-light);
     width: 100%;
     margin-top: 1rem;
     padding: 1rem;
     border-radius: 15px;
-    text-align: center;
 }
 
-.admin-editable-user-claims {
-    margin-top: 0.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.admin-editable-user button {
+    font-size: medium;
+    color: var(--text-color);
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    margin-left: auto;
+    background-color: var(--bg-x-light);
+    transition: background-color 0.3s, transform 0.3s;
 }
 
-.editable-claim {
-    font-size: small;
+.admin-editable-user button:hover {
+    background-color: var(--bg-xx-light);
+    transform: translateY(-2px);
+    cursor: pointer;
 }
 
 /*-----------------------------------------------*/

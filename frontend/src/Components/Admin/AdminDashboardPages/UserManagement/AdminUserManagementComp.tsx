@@ -35,7 +35,7 @@ const AdminUserManagementComp = () => {
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
             {users.map((user: UserWithClaims) => (
-                <EditableUserComp user={user}></EditableUserComp>
+                <EditableUserComp user={user} key={user.userId}></EditableUserComp>
             ))}
         </div>
     )
