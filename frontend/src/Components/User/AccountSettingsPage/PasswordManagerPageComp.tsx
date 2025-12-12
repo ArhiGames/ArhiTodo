@@ -59,7 +59,10 @@ const PasswordManagerPageComp = () => {
                        placeholder="Confirm your new password..."
                        ref={confirmPasswordInputRef}>
                 </input>
-                <button type="submit" className="submit-button">Change password</button>
+                <button type="submit" className={`button ${ password == confirmPassword && password.length > 0 && confirmPassword.length > 0
+                    ? "valid-submit-button" : "submit-button" }`}>
+                    Change password
+                </button>
             </form>
         </div>
     )
