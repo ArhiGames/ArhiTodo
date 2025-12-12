@@ -10,7 +10,8 @@ import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/Acc
 import PasswordManagerPageComp from "./Components/User/AccountSettingsPage/PasswordManagerPageComp.tsx";
 import AdminDashboardNavbarComp from "./Components/Admin/AdminDashboardNavbarComp.tsx";
 import AdminAppSettingsComp from "./Components/Admin/AdminDashboardPages/AdminAppSettingsComp.tsx";
-import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/AdminUserManagementComp.tsx";
+import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/UserManagement/AdminUserManagementComp.tsx";
+import AdminUserGroupsSettingsComp from "./Components/Admin/AdminDashboardPages/AdminUserGroupsSettingsComp.tsx";
 
 function AppContent() {
 
@@ -38,6 +39,7 @@ function AppContent() {
                         <Route index element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
                         <Route path="appsettings" element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
                         <Route path="users" element={<ProtectedRoute><AdminUserManagementComp/></ProtectedRoute>}></Route>
+                        <Route path="usergroups" element={<ProtectedRoute><AdminUserGroupsSettingsComp/></ProtectedRoute>}></Route>
                     </Route>
                 </Route>
             </Routes>

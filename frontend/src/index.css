@@ -413,13 +413,34 @@ body {
     border-radius: 15px;
     padding: 10px;
     color: var(--text-color);
+    overflow: auto;
 }
 
 .admin-settings-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 25%
+    margin: 0 15%;
+}
+
+.admin-editable-user {
+    background-color: var(--bg-light);
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.admin-editable-user-claims {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.editable-claim {
+    font-size: small;
 }
 
 /*-----------------------------------------------*/
