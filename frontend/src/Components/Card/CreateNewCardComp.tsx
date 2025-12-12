@@ -4,22 +4,22 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [cardListName, setCardListName] = useState<string>("");
+    const [cardName, setCardName] = useState<string>("");
     const formRef = useRef<HTMLFormElement>(null);
-    const cardListRef = useRef<HTMLInputElement>(null);
+    const cardRef = useRef<HTMLInputElement>(null);
 
     function handleClicked() {
 
         setIsCreating(true);
         setTimeout(() => {
-            cardListRef.current?.focus();
+            cardRef.current?.focus();
         }, 0)
 
     }
 
     function resetForm() {
 
-        setCardListName("");
+        setCardName("");
         setIsCreating(false);
 
     }
@@ -63,9 +63,15 @@ const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
         <>
             { isCreating ? (
                 <form className="creation-card-form" onSubmit={handleSubmit} onReset={handleReset} ref={formRef}>
-                    <input ref={cardListRef} type="text" placeholder="Enter a cardlist name..." className="classic-input"></input>
+                    <input ref={cardRef}
+                           type="text"
+                           placeholder="Enter a cardlist name..."
+                           className="classic-input"
+                           value={cardName}
+                           onChange={(e) => setCardName(e.target.value)}
+                    ></input>
                     <span>
-                        <button className="submit-button" type="submit" value={cardListName} onChange={(e) => setCardListName(e.currentTarget.value)}>
+                        <button className={`button ${ cardName.length > 0 ? "valid-submit-button" : "submit-button" }`} type="submit">
                             Submit
                         </button>
                         <button type="reset">X</button>

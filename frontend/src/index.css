@@ -7,27 +7,31 @@
 }
 
 :root {
-    --bg-dark: hsl(192, 5%, 20%);
-    --bg: hsl(192, 10%, 30%);
-    --bg-light: hsl(192, 20%, 40%);
-    --bg-x-light: hsl(192, 20%, 50%);
-    --bg-xx-light: hsl(192, 20%, 60%);
+    --bg-dark: hsl(0, 0%, 10%);
+    --bg: hsl(0, 0%, 15%);
+    --bg-light: hsl(0, 0%, 22%);
+    --bg-x-light: hsl(0, 0%, 35%);
+    --bg-xx-light: hsl(0, 0%, 45%);
 
-    --button-cancel: hsl(192, 20%, 50%);
-    --button-cancel-focus: hsl(192, 40%, 60%);
+    --color-border: hsl(0, 0%, 5%);
+
+    --button-cancel: hsl(0, 0%, 50%);
+    --button-cancel-focus: hsl(0, 0%, 60%);
 
     --box-shadow: hsl(0, 0%, 5%);
-
-    --border: hsl(192, 30%, 40%);
 
     --text-color: hsl(0, 0%, 95%);
     --text-color-failure: hsl(0, 100%, 60%);
     --text-color-dark: hsl(0, 0%, 15%);
 
+    --std-button: hsl(0, 0%, 65%);
+    --std-button-highlight: hsl(0, 0%, 73%);
     --success-color: hsl(113, 60%, 60%);
     --success-color-highlight: hsl(113, 80%, 80%);
 
-    --color-border: #4E8098;
+    --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
+    0 1px 2px hsl(0, 0%, 30%),
+    0 2px 4px hsl(0, 0%, 15%)
 }
 
 .App {
@@ -48,7 +52,7 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 15px;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--color-border);
     font-size: larger;
 }
 
@@ -85,7 +89,7 @@ body {
 
 .login {
     background-color: var(--bg-light);
-    box-shadow: 4px 4px 8px 0 var(--box-shadow);
+    box-shadow: var(--shadow-m);
     border-radius: 15px;
     padding: 15px;
     min-width: 420px;
@@ -489,19 +493,35 @@ body {
 /*---------------------Utils---------------------*/
 /*-----------------------------------------------*/
 
-.submit-button {
-    background-color: var(--success-color);
+.button {
     border: none;
     border-radius: 15px;
     padding: 0.5rem;
-    transition: background-color 0.3s, transform 0.3s;
     font-size: medium;
+    color: var(--text-color);
+    width: 100%;
+}
+
+.submit-button {
+    background-color: var(--std-button);
+    transition: background-color 0.3s, transform 0.3s;
     color: var(--text-color);
 }
 
 .submit-button:hover {
     cursor: pointer;
-    background-color: var(--success-color-highlight);
+    background-color: var(--std-button-highlight);
+    transform: translateY(-2px);
+}
+
+.valid-submit-button {
+    background-color: var(--success-color);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.valid-submit-button:hover {
+    cursor: pointer;
+    background-color: var(--success-color);
     transform: translateY(-2px);
 }
 
