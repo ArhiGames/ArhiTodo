@@ -1,10 +1,13 @@
-import {useEffect, useState} from "react";
-import {useAuth} from "../../../../Contexts/useAuth.ts";
-import type {UserWithClaims} from "../../../../Models/Administration/UserWithClaims.ts";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../../Contexts/useAuth.ts";
+import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
 import EditableUserComp from "../EditableUserComp.tsx";
-import {useNavigate, useParams} from "react-router-dom";
-import {createPortal} from "react-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { createPortal } from "react-dom";
 import Modal from "../../../../lib/Modal/Modal.tsx";
+import EditableClaimsComp from "./EditableClaimsComp.tsx";
+import { defaultAppClaims, type DefaultClaim } from "./Claims.ts";
+import type { Claim } from "../../../../Models/Claim.ts";
 
 const AdminUserManagementComp = () => {
 
@@ -85,17 +88,21 @@ const AdminUserManagementComp = () => {
             {
                 currentViewingUser && (
                     createPortal(
-                        <Modal title="Edit user details" footer=
-                            {
+                        <Modal title="Edit user details" footer={
                                 <>
                                     <button className="button submit-button">Save</button>
                                     <button onClick={() => navigate("/admin/dashboard/users/")} className="button submit-button">Abort</button>
-                                </>
-                            } onClosed={() => navigate("/admin/dashboard/users/")}>
-                            <div className="edit-user-details">
+                                </> }
+                            onClosed={() => navigate("/admin/dashboard/users/")}>
+                            <div className="edit-user-claims">
                                 <p>User id: {currentViewingUser.userId}</p>
                                 <p>Username: {currentViewingUser.userName}</p>
                                 <p>Email: {currentViewingUser.email}</p>
+                                { defaultAppClaims.claim.map((defaultClaim: DefaultClaim, index: number) => (
+                                    <EditableClaimsComp defaultClaim={defaultClaim}
+                                                        claim={currentViewingUser.userClaims.find((claim: Claim) => claim.type == defaultClaim.claimType)}
+                                                        key={index}/>
+                                )) }
                             </div>
                         </Modal>, document.body)
                 )

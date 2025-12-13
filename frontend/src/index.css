@@ -9,8 +9,8 @@
 :root {
     --bg-dark: hsl(0, 0%, 10%);
     --bg: hsl(0, 0%, 15%);
-    --bg-light: hsl(0, 0%, 22%);
-    --bg-x-light: hsl(0, 0%, 35%);
+    --bg-light: hsl(0, 0%, 20%);
+    --bg-x-light: hsl(0, 0%, 28%);
     --bg-xx-light: hsl(0, 0%, 45%);
 
     --color-border: hsl(0, 0%, 5%);
@@ -449,12 +449,25 @@ body {
     cursor: pointer;
 }
 
-.edit-user-details {
+.edit-user-claims {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     font-size: medium;
     color: var(--text-color);
+}
+
+.editable-claim {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-x-light);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.editable-claim input {
+    margin-left: auto;
 }
 
 /*-----------------------------------------------*/
@@ -535,6 +548,11 @@ body {
     font-size: medium;
     color: var(--text-color);
     width: 100%;
+}
+
+.checkbox {
+    width: 35px;
+    height: 35px;;
 }
 
 .submit-button {
