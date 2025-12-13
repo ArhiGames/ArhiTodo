@@ -6,7 +6,7 @@ const EditableClaimsComp = (props: { claim: Claim | undefined, defaultClaim: Def
     return (
         <div className="editable-claim">
             <div>
-                <p>{props.defaultClaim.claimType}</p>
+                <p>{props.defaultClaim.claimName}</p>
                 <p style={{ fontStyle: "italic", opacity: "75%"} }>{props.defaultClaim.claimDescription}</p>
             </div>
             { props.defaultClaim.claimDatatype === "boolean" ? (
