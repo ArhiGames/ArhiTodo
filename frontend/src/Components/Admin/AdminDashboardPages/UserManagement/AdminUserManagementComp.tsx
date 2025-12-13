@@ -5,9 +5,7 @@ import EditableUserComp from "../EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Modal from "../../../../lib/Modal/Modal.tsx";
-import EditableClaimsComp from "./EditableClaimsComp.tsx";
-import { defaultAppClaims, type DefaultClaim } from "./Claims.ts";
-import type { Claim } from "../../../../Models/Claim.ts";
+import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
 
 const AdminUserManagementComp = () => {
 
@@ -98,11 +96,7 @@ const AdminUserManagementComp = () => {
                                 <p>User id: {currentViewingUser.userId}</p>
                                 <p>Username: {currentViewingUser.userName}</p>
                                 <p>Email: {currentViewingUser.email}</p>
-                                { defaultAppClaims.claim.map((defaultClaim: DefaultClaim, index: number) => (
-                                    <EditableClaimsComp defaultClaim={defaultClaim}
-                                                        claim={currentViewingUser.userClaims.find((claim: Claim) => claim.type == defaultClaim.claimType)}
-                                                        key={index}/>
-                                )) }
+                                <ClaimsOverviewComp currentViewingUser={currentViewingUser}/>
                             </div>
                         </Modal>, document.body)
                 )
