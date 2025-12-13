@@ -1,7 +1,11 @@
 import type { Claim } from "../../../../Models/Claim.ts";
 import type { DefaultClaim } from "./Claims.ts";
+import FancyToggleComp from "../../../../lib/FancyToggle/FancyToggleComp.tsx";
+import { useState } from "react";
 
 const EditableClaimsComp = (props: { claim: Claim | undefined, defaultClaim: DefaultClaim }) => {
+
+    const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.value == "true");
 
     return (
         <div className="editable-claim">
@@ -9,13 +13,9 @@ const EditableClaimsComp = (props: { claim: Claim | undefined, defaultClaim: Def
                 <p>{props.defaultClaim.claimName}</p>
                 <p style={{ fontStyle: "italic", opacity: "75%"} }>{props.defaultClaim.claimDescription}</p>
             </div>
-            { props.defaultClaim.claimDatatype === "boolean" ? (
-                <div>
-                    <input className="checkbox" type="checkbox" checked={props.claim?.value === "true"}/>
-                </div>
-            ) : (
-                <h2>Not a valid claim datatype</h2>
-            )}
+            <div>
+                <FancyToggleComp checked={claimBooleanValue} setChecked={setClaimBooleanValue}></FancyToggleComp>
+            </div>
         </div>
     )
 

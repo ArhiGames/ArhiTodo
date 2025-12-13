@@ -1,0 +1,27 @@
+.fancy-toggle-background {
+    display: flex;
+    background-color: var(--bg-dark);
+    width: 60px;
+    height: 30px;
+    align-items: center;
+    border-radius: 15px;
+}
+
+.fancy-toggle {
+    width: 25px;
+    height: 25px;
+    margin-left: 3px;
+    background-color: var(--bg-xx-light);
+    border-radius: 15px;
+    transition: transform 0.15s, background-color 0.15s;
+}
+
+.fancy-toggle-checked {
+    width: 25px;
+    height: 25px;
+    margin-left: 3px;
+    background-color: var(--success-color);
+    border-radius: 15px;
+    transform: translateX(29px);
+    transition: transform 0.15s, background-color 0.15s;
+}
