@@ -6,14 +6,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Modal from "../../../../lib/Modal/Modal.tsx";
 import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
+import type {Claim} from "../../../../Models/Claim.ts";
 
 const AdminUserManagementComp = () => {
 
+    const navigate = useNavigate();
     const { token } = useAuth();
     const { userId } = useParams();
-    const navigate = useNavigate();
     const [users, setUsers] = useState<UserWithClaims[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
+    const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
+
+    useEffect(() => {
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUpdatedClaims([]);
+
+    }, [userId]);
 
     useEffect(() => {
 
@@ -81,14 +90,14 @@ const AdminUserManagementComp = () => {
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
             {users.map((user: UserWithClaims) => (
-                <EditableUserComp onEdit={onEditUser} user={user} key={user.userId}></EditableUserComp>
+                <EditableUserComp onEdit={onEditUser} user={user} key={user.userId}/>
             ))}
             {
                 currentViewingUser && (
                     createPortal(
                         <Modal title="Edit user details" footer={
                                 <>
-                                    <button className="button submit-button">Save</button>
+                                    <button className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "submit-button"}`}>Save</button>
                                     <button onClick={() => navigate("/admin/dashboard/users/")} className="button submit-button">Abort</button>
                                 </> }
                             onClosed={() => navigate("/admin/dashboard/users/")}>
@@ -96,7 +105,8 @@ const AdminUserManagementComp = () => {
                                 <p>User id: {currentViewingUser.userId}</p>
                                 <p>Username: {currentViewingUser.userName}</p>
                                 <p>Email: {currentViewingUser.email}</p>
-                                <ClaimsOverviewComp currentViewingUser={currentViewingUser}/>
+                                <ClaimsOverviewComp currentViewingUser={currentViewingUser}
+                                                    updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims}/>
                             </div>
                         </Modal>, document.body)
                 )

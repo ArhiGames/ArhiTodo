@@ -3,9 +3,31 @@ import type { DefaultClaim } from "./Claims.ts";
 import FancyToggleComp from "../../../../lib/FancyToggle/FancyToggleComp.tsx";
 import { useState } from "react";
 
-const EditableClaimsComp = (props: { claim: Claim | undefined, defaultClaim: DefaultClaim }) => {
+interface Props {
+    claim: Claim | undefined;
+    defaultClaim: DefaultClaim;
+    updatedClaims: Claim[];
+    setUpdatedClaims: (value: Claim[]) => void;
+}
+
+const EditableClaimsComp = (props: Props) => {
 
     const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.value == "true");
+
+    function onToggleValueChanged(newValue: boolean) {
+
+        setClaimBooleanValue(newValue);
+
+        const foundClaim: Claim | undefined = props.updatedClaims.find((predicate: Claim) => (predicate.type === props.defaultClaim.claimType));
+        if (foundClaim) {
+            const newClaims: Claim[] = props.updatedClaims.filter((predicate: Claim) => (predicate.type !== props.defaultClaim.claimType));
+            props.setUpdatedClaims(newClaims);
+        } else {
+            const newClaims: Claim[] = [...props.updatedClaims, { type: props.defaultClaim.claimType, value: String(newValue) } ];
+            props.setUpdatedClaims(newClaims);
+        }
+
+    }
 
     return (
         <div className="editable-claim">
@@ -14,7 +36,7 @@ const EditableClaimsComp = (props: { claim: Claim | undefined, defaultClaim: Def
                 <p style={{ fontStyle: "italic", opacity: "75%"} }>{props.defaultClaim.claimDescription}</p>
             </div>
             <div>
-                <FancyToggleComp checked={claimBooleanValue} setChecked={setClaimBooleanValue}></FancyToggleComp>
+                <FancyToggleComp checked={claimBooleanValue} setChecked={onToggleValueChanged}/>
             </div>
         </div>
     )
