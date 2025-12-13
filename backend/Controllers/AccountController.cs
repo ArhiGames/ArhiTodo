@@ -121,7 +121,27 @@ public class AccountController : ControllerBase
             throw new InvalidOperationException("User not found");
         }
 
-        UserUserManagementGetDto[] userManagementGetDtos = await _userRepository.GetAllUsersAsync();
+        List<UserUserManagementGetDto> userManagementGetDtos = await _userRepository.GetAllUsersAsync();
         return Ok(userManagementGetDtos);
+    }
+
+    [HttpGet("admin/accountmanagement/users/{userId}")]
+    [Authorize(Policy = "ManageUsers")]
+    public async Task<IActionResult> GetUserWithClaims(string userId)
+    {
+        string? requestingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (requestingUserId == null)
+        {
+            return NotFound();
+        }
+        
+        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == requestingUserId);
+        if (appUser == null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+        
+        UserUserManagementGetDto userManagementGetDto = await _userRepository.GetUserWithClaimsAsync(userId);
+        return Ok(userManagementGetDto);
     }
 }

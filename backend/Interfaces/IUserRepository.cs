@@ -7,5 +7,6 @@ namespace ArhiTodo.Interfaces;
 public interface IUserRepository
 {
     Task<IdentityResult> ChangePasswordAsync(AppUser appUser, ChangePasswordDto changePasswordDto);
-    Task<UserUserManagementGetDto[]> GetAllUsersAsync();
+    Task<List<UserUserManagementGetDto>> GetAllUsersAsync();
+    Task<UserUserManagementGetDto> GetUserWithClaimsAsync(string userId);
 }

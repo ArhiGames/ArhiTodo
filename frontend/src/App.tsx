@@ -38,7 +38,7 @@ function AppContent() {
                     <Route path="dashboard" element={<ProtectedRoute><AdminDashboardNavbarComp/></ProtectedRoute>}>
                         <Route index element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
                         <Route path="appsettings" element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
-                        <Route path="users" element={<ProtectedRoute><AdminUserManagementComp/></ProtectedRoute>}></Route>
+                        <Route path="users/:userId?" element={<ProtectedRoute><AdminUserManagementComp/></ProtectedRoute>}></Route>
                         <Route path="usergroups" element={<ProtectedRoute><AdminUserGroupsSettingsComp/></ProtectedRoute>}></Route>
                     </Route>
                 </Route>

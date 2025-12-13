@@ -22,26 +22,41 @@ public class UserRepository : IUserRepository
         return identityResult;
     }
 
-    public async Task<UserUserManagementGetDto[]> GetAllUsersAsync()
+    public async Task<List<UserUserManagementGetDto>> GetAllUsersAsync()
     {
         List<AppUser> users = await _userManager.Users.ToListAsync();
 
-        IEnumerable<Task<UserUserManagementGetDto>> userManagementGetDtos = users.Select(async u =>
+        IEnumerable<UserUserManagementGetDto> userManagementGetDtos = users.Select(u => new UserUserManagementGetDto
         {
-            IList<Claim> claims = await _userManager.GetClaimsAsync(u);
-            return new UserUserManagementGetDto
-            {
-                UserId = u.Id,
-                UserName = u.UserName!,
-                Email = string.IsNullOrEmpty(u.Email) ? "" : u.Email,
-                UserClaims = claims.Select(c => new ClaimGetDto
-                {
-                    Type = c.Type,
-                    Value = c.Value
-                }).ToList()
-            };
+            UserId = u.Id,
+            UserName = u.UserName!,
+            Email = string.IsNullOrEmpty(u.Email) ? "" : u.Email
         });
 
-        return await Task.WhenAll(userManagementGetDtos);
+        return userManagementGetDtos.ToList();
+    }
+
+    public async Task<UserUserManagementGetDto> GetUserWithClaimsAsync(string userId)
+    {
+        AppUser? user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw new InvalidOperationException();
+        }
+        
+        IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+        UserUserManagementGetDto userManagementGetDto = new()
+        {
+            UserId = user.Id,
+            UserName = user.UserName!,
+            Email = user.Email!,
+            UserClaims = claims.Select(c => new ClaimGetDto
+            {
+                Type = c.Type,
+                Value = c.Value
+            }).ToList()
+        };
+
+        return userManagementGetDto;
     }
 }

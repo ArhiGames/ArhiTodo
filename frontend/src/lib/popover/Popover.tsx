@@ -21,6 +21,7 @@ const Popover = ( { element, children, close, closeIfClickedOutside = true, offs
 
         function handleClicked(e: MouseEvent) {
 
+            e.stopPropagation();
             if (!popoverRef.current) return;
 
             if (!popoverRef.current.contains(e.target as Node)) {

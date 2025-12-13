@@ -31,7 +31,8 @@ public static class ProjectDbContextSeed
                 new("access_admin_dashboard", "true"),
                 new("invite_other_users", "true"),
                 new("manage_users", "true"),
-                new("delete_users", "true")
+                new("delete_users", "true"),
+                new("update_app_settings", "true")
             ];
             await userManager.AddClaimsAsync(adminUser, defaultAdminClaims);
         }

@@ -449,6 +449,14 @@ body {
     cursor: pointer;
 }
 
+.edit-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: medium;
+    color: var(--text-color);
+}
+
 /*-----------------------------------------------*/
 /*-------------------Side bar--------------------*/
 /*-----------------------------------------------*/
