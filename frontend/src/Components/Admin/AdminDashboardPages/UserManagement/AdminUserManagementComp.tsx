@@ -85,6 +85,32 @@ const AdminUserManagementComp = () => {
 
     }
 
+    function trySubmitChanges() {
+
+        if (updatedClaims.length <= 0) return;
+        if (!currentViewingUser) return;
+
+        const abortController = new AbortController();
+        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+            {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                signal: abortController.signal,
+                body: JSON.stringify(updatedClaims)
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to update user claims");
+                }
+
+                navigate("/admin/dashboard/users/");
+            })
+            .catch(console.error);
+
+        return () => abortController.abort();
+
+    }
+
     return (
         <div className="admin-settings-content admin-usermanagement-page">
             <h2>User management</h2>
@@ -97,7 +123,7 @@ const AdminUserManagementComp = () => {
                     createPortal(
                         <Modal title="Edit user details" footer={
                                 <>
-                                    <button className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "submit-button"}`}>Save</button>
+                                    <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "submit-button"}`}>Save</button>
                                     <button onClick={() => navigate("/admin/dashboard/users/")} className="button submit-button">Abort</button>
                                 </> }
                             onClosed={() => navigate("/admin/dashboard/users/")}>
