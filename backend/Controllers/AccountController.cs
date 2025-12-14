@@ -171,4 +171,40 @@ public class AccountController : ControllerBase
             return Unauthorized();
         }
     }
+
+    [HttpDelete("admin/accountmanagement/users/{userToDeleteId}")]
+    [Authorize(Policy = "DeleteUsers")]
+    public async Task<IActionResult> DeleteUser(string userToDeleteId, [FromBody] UserPasswordDto confirmationPassword)
+    {
+        string? requestingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (requestingUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        AppUser? requestingAppUser = await _userManager.FindByIdAsync(requestingUserId);
+        if (requestingAppUser == null)
+        {
+            return Unauthorized();
+        }
+
+        bool correctPassword = await _userManager.CheckPasswordAsync(requestingAppUser, confirmationPassword.Password);
+        if (!correctPassword)
+        {
+            return Unauthorized();
+        }
+        
+        AppUser? userToDelete = await _userManager.FindByIdAsync(userToDeleteId);
+        if (userToDelete == null)
+        {
+            return NotFound();
+        }
+        bool bSuccessful = await _userRepository.DeleteAppUser(userToDelete);
+        if (bSuccessful)
+        {
+            return NoContent();
+        }
+
+        return Conflict("Could not delete user");
+    }
 }

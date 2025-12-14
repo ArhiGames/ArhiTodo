@@ -64,6 +64,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("access_admin_dashboard", "true");
         policy.RequireClaim("manage_users", "true");
     });
+    options.AddPolicy("DeleteUsers", policy =>
+    {
+        policy.RequireClaim("access_admin_dashboard", "true");
+        policy.RequireClaim("delete_users", "true");
+    });
 });
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

@@ -78,4 +78,10 @@ public class UserRepository : IUserRepository
 
         return userManagementGetDto;
     }
+
+    public async Task<bool> DeleteAppUser(AppUser appUser)
+    {
+        IdentityResult identityResult = await _userManager.DeleteAsync(appUser);
+        return identityResult.Succeeded;
+    }
 }

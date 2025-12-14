@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<List<UserUserManagementGetDto>> GetAllUsersAsync();
     Task<int> UpdateUserClaims(AppUser appUser, List<ClaimPostDto> updatedClaims);
     Task<UserUserManagementGetDto> GetUserWithClaimsAsync(AppUser appUser);
+    Task<bool> DeleteAppUser(AppUser appUser);
 }

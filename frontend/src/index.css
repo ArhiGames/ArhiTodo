@@ -29,6 +29,9 @@
     --success-color: hsl(113, 60%, 60%);
     --success-color-highlight: hsl(113, 80%, 80%);
 
+    --red-warning: hsl(0, 100%, 22%);
+    --red-warning-highlight: hsl(0, 100%, 35%);
+
     --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
     0 1px 2px hsl(0, 0%, 30%),
     0 2px 4px hsl(0, 0%, 15%)
@@ -556,18 +559,13 @@ body {
     width: 100%;
 }
 
-.checkbox {
-    width: 35px;
-    height: 35px;;
-}
-
-.submit-button {
+.standard-button {
     background-color: var(--std-button);
     transition: background-color 0.3s, transform 0.3s;
     color: var(--text-color);
 }
 
-.submit-button:hover {
+.standard-button:hover {
     cursor: pointer;
     background-color: var(--std-button-highlight);
     transform: translateY(-2px);
@@ -580,7 +578,18 @@ body {
 
 .valid-submit-button:hover {
     cursor: pointer;
-    background-color: var(--success-color);
+    background-color: var(--success-color-highlight);
+    transform: translateY(-2px);
+}
+
+.heavy-action-button {
+    background-color: var(--red-warning);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.heavy-action-button:hover {
+    cursor: pointer;
+    background-color: var(--red-warning-highlight);
     transform: translateY(-2px);
 }
 
