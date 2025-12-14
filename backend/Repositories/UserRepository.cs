@@ -36,6 +36,37 @@ public class UserRepository : IUserRepository
         return userManagementGetDtos.ToList();
     }
 
+    public async Task<int> UpdateUserClaims(string userId, List<ClaimPostDto> updatedClaims)
+    {
+        AppUser? appUser = await _userManager.FindByIdAsync(userId);
+        if (appUser == null)
+        {
+            throw new InvalidOperationException();
+        }
+        
+        IList<Claim> currentClaims = await _userManager.GetClaimsAsync(appUser);
+        int changedClaims = 0;
+        
+        foreach (ClaimPostDto newClaim in updatedClaims)
+        {
+            Claim? existingClaim = currentClaims.FirstOrDefault(claim => claim.Type == newClaim.Type);
+            if (existingClaim == null)
+            {
+                IdentityResult identityResult = await _userManager.AddClaimAsync(appUser, new Claim(newClaim.Type, newClaim.Value));
+                if (identityResult.Succeeded) changedClaims++;
+            }
+            else
+            {
+                if (existingClaim.Value == newClaim.Value) continue;
+                
+                IdentityResult identityResult = await _userManager.ReplaceClaimAsync(appUser, existingClaim, new Claim(newClaim.Type, newClaim.Value));
+                if (identityResult.Succeeded) changedClaims++;
+            }
+        }
+
+        return changedClaims;
+    }
+
     public async Task<UserUserManagementGetDto> GetUserWithClaimsAsync(string userId)
     {
         AppUser? user = await _userManager.FindByIdAsync(userId);

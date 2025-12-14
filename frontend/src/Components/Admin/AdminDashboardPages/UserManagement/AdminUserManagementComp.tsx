@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Modal from "../../../../lib/Modal/Modal.tsx";
 import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
-import type {Claim} from "../../../../Models/Claim.ts";
+import type { Claim } from "../../../../Models/Claim.ts";
 
 const AdminUserManagementComp = () => {
 
