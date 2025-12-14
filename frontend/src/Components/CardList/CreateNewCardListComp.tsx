@@ -64,7 +64,7 @@ const CreateNewCardListComp = () => {
                                maxLength={25}
                                className="classic-input">
                         </input>
-                        <button className={`button ${ cardListName.length > 0 ? "valid-submit-button" : "submit-button" }`} type="submit">Add list</button>
+                        <button className={`button ${ cardListName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">Add list</button>
                     </form>
                 </div>
             ) : (

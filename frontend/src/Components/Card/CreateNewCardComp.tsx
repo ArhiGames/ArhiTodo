@@ -71,7 +71,7 @@ const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
                            onChange={(e) => setCardName(e.target.value)}
                     ></input>
                     <span>
-                        <button className={`button ${ cardName.length > 0 ? "valid-submit-button" : "submit-button" }`} type="submit">
+                        <button className={`button ${ cardName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">
                             Submit
                         </button>
                         <button type="reset">X</button>
