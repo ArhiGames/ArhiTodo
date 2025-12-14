@@ -36,14 +36,8 @@ public class UserRepository : IUserRepository
         return userManagementGetDtos.ToList();
     }
 
-    public async Task<int> UpdateUserClaims(string userId, List<ClaimPostDto> updatedClaims)
+    public async Task<int> UpdateUserClaims(AppUser appUser, List<ClaimPostDto> updatedClaims)
     {
-        AppUser? appUser = await _userManager.FindByIdAsync(userId);
-        if (appUser == null)
-        {
-            throw new InvalidOperationException();
-        }
-        
         IList<Claim> currentClaims = await _userManager.GetClaimsAsync(appUser);
         int changedClaims = 0;
         
@@ -67,20 +61,14 @@ public class UserRepository : IUserRepository
         return changedClaims;
     }
 
-    public async Task<UserUserManagementGetDto> GetUserWithClaimsAsync(string userId)
+    public async Task<UserUserManagementGetDto> GetUserWithClaimsAsync(AppUser appUser)
     {
-        AppUser? user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            throw new InvalidOperationException();
-        }
-        
-        IList<Claim> claims = await _userManager.GetClaimsAsync(user);
+        IList<Claim> claims = await _userManager.GetClaimsAsync(appUser);
         UserUserManagementGetDto userManagementGetDto = new()
         {
-            UserId = user.Id,
-            UserName = user.UserName!,
-            Email = user.Email!,
+            UserId = appUser.Id,
+            UserName = appUser.UserName!,
+            Email = appUser.Email!,
             UserClaims = claims.Select(c => new ClaimGetDto
             {
                 Type = c.Type,

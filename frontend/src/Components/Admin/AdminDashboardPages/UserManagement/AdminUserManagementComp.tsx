@@ -27,7 +27,8 @@ const AdminUserManagementComp = () => {
     useEffect(() => {
 
         if (!userId) {
-            setTimeout(() => setCurrentViewingUser(null), 0);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setCurrentViewingUser(null);
             return;
         }
 
@@ -100,7 +101,7 @@ const AdminUserManagementComp = () => {
             })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error("Failed to update user claims");
+                    throw new Error(`Failed to update user claims`);
                 }
 
                 navigate("/admin/dashboard/users/");
@@ -116,16 +117,17 @@ const AdminUserManagementComp = () => {
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
             {users.map((user: UserWithClaims) => (
-                <EditableUserComp onEdit={onEditUser} user={user} key={user.userId}/>
+                <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
             ))}
             {
                 currentViewingUser && (
                     createPortal(
                         <Modal title="Edit user details" footer={
-                                <>
-                                    <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "submit-button"}`}>Save</button>
-                                    <button onClick={() => navigate("/admin/dashboard/users/")} className="button submit-button">Abort</button>
-                                </> }
+                            <>
+                                { currentViewingUser.userName === "admin" ? null :
+                                    <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "submit-button"}`}>Save</button> }
+                                <button onClick={() => navigate("/admin/dashboard/users/")} className="button submit-button">Abort</button>
+                            </> }
                             onClosed={() => navigate("/admin/dashboard/users/")}>
                             <div className="edit-user-claims">
                                 <p>User id: {currentViewingUser.userId}</p>

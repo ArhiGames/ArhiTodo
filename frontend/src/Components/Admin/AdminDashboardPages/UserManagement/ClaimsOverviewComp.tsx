@@ -16,6 +16,7 @@ const ClaimsOverviewComp = (props: Props) => {
             { defaultAppClaims.claim.map((defaultClaim: DefaultClaim, index: number) => (
                 <EditableClaimsComp defaultClaim={defaultClaim}
                                     claim={props.currentViewingUser.userClaims.find((claim: Claim) => claim.type == defaultClaim.claimType)}
+                                    isAdminUser={props.currentViewingUser.userName === "admin"}
                                     updatedClaims={props.updatedClaims} setUpdatedClaims={props.setUpdatedClaims}
                                     key={index}/>
             )) }

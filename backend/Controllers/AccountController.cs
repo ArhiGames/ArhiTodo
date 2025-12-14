@@ -129,26 +129,25 @@ public class AccountController : ControllerBase
     [Authorize(Policy = "ManageUsers")]
     public async Task<IActionResult> UpdateUserClaims(string userId, [FromBody] List<ClaimPostDto> updatedClaims)
     {
-        string? requestingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (requestingUserId == null)
-        {
-            return Unauthorized();
-        }
-        
-        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == requestingUserId);
+        AppUser? appUser = await _userManager.FindByIdAsync(userId);
         if (appUser == null)
         {
-            throw new InvalidOperationException("User not found");
+            return NotFound();
         }
 
+        if (appUser.UserName == "admin")
+        {
+            return Conflict("The claims of the admin user cannot be changed!");
+        }
+        
         try
         {
-            int changedClaims = await _userRepository.UpdateUserClaims(userId, updatedClaims);
+            int changedClaims = await _userRepository.UpdateUserClaims(appUser, updatedClaims);
             return Ok(changedClaims);
         }
         catch (InvalidOperationException)
         {
-            return Unauthorized();    
+            return Unauthorized();
         }
     }
 
@@ -156,21 +155,15 @@ public class AccountController : ControllerBase
     [Authorize(Policy = "ManageUsers")]
     public async Task<IActionResult> GetUserWithClaims(string userId)
     {
-        string? requestingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (requestingUserId == null)
-        {
-            return Unauthorized();
-        }
-        
-        AppUser? appUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == requestingUserId);
+        AppUser? appUser = await _userManager.FindByIdAsync(userId);
         if (appUser == null)
         {
-            throw new InvalidOperationException("User not found");
+            return NotFound();
         }
-
+        
         try
         {
-            UserUserManagementGetDto userManagementGetDto = await _userRepository.GetUserWithClaimsAsync(userId);
+            UserUserManagementGetDto userManagementGetDto = await _userRepository.GetUserWithClaimsAsync(appUser);
             return Ok(userManagementGetDto);
         }
         catch (InvalidOperationException)

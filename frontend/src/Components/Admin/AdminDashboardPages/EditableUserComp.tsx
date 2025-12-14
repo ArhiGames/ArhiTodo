@@ -1,6 +1,6 @@
 import type { UserWithClaims } from "../../../Models/Administration/UserWithClaims.ts";
 
-const EditableUserComp = (props: { user: UserWithClaims, onEdit: (user: UserWithClaims) => void }) => {
+const EditableUserComp = (props: { user: UserWithClaims, onEdit: (user: UserWithClaims) => void, canEdit: boolean }) => {
 
     return (
         <div className="admin-editable-user">
@@ -8,7 +8,7 @@ const EditableUserComp = (props: { user: UserWithClaims, onEdit: (user: UserWith
                 <h2>{props.user.userName}</h2>
                 <p style={{ fontStyle: "italic", opacity: "60%" }}>({props.user.email})</p>
             </span>
-            <button onClick={() => props.onEdit(props.user)}>Edit</button>
+            <button onClick={() => props.onEdit(props.user)}>{ props.canEdit ? "Edit" : "View" }</button>
         </div>
     )
 
