@@ -1,4 +1,5 @@
 using ArhiTodo.Models;
+using ArhiTodo.Models.Accounts;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,19 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
     public DbSet<Board> Boards { get; set; }
     public DbSet<CardList> CardLists { get; set; }
     public DbSet<Card> Cards { get; set; }
+    public DbSet<InvitationLink> InvitationLinks { get; set; }
 
     public ProjectDataBase(DbContextOptions<ProjectDataBase> options)
         : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<InvitationLink>()
+            .HasIndex(i => i.InvitationKey)
+            .IsUnique();
     }
 }

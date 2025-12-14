@@ -11,7 +11,7 @@ public static class ProjectDbContextSeed
         AppUser? adminUser = await userManager.FindByNameAsync("admin");
         if (adminUser != null) return;
 
-        adminUser = new AppUser()
+        adminUser = new AppUser
         {
             UserName = "admin",
             Email = "admin@admin.admin",

@@ -69,6 +69,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("access_admin_dashboard", "true");
         policy.RequireClaim("delete_users", "true");
     });
+    options.AddPolicy("InviteUsers", policy =>
+    {
+        policy.RequireClaim("access_admin_dashboard", "true");
+        policy.RequireClaim("invite_other_users", "true");
+    });
 });
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -77,6 +82,7 @@ builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

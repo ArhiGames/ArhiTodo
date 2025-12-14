@@ -19,7 +19,8 @@ public class AccountController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly ITokenService _tokenService;
     
-    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IUserRepository userRepository, ITokenService tokenService)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
+        IUserRepository userRepository, ITokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -63,16 +64,16 @@ public class AccountController : ControllerBase
 
         if (appUser == null)
         {
-            return Unauthorized("Invalid user name!");
+            return Unauthorized("Wrong credentials!");
         }
 
         SignInResult signInAsync = await _signInManager.CheckPasswordSignInAsync(appUser, loginDto.Password, false);
 
-        if (!signInAsync.Succeeded) return Unauthorized("Wrong password!");
+        if (!signInAsync.Succeeded) return Unauthorized("Wrong credentials!");
 
         IList<Claim> claims = await _userManager.GetClaimsAsync(appUser);
         
-        return Ok(new UserRegisterLoginDto()
+        return Ok(new UserRegisterLoginDto
         {
             UserName = appUser.UserName!,
             Email = appUser.Email!,
