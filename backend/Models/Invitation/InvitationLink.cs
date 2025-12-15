@@ -8,7 +8,7 @@ public class InvitationLink
     public int InvitationLinkId { get; set; }
     
     [Required]
-    [MinLength(16)] [MaxLength(16)]
+    [MinLength(32)] [MaxLength(32)]
     public required string InvitationKey { get; set; }
     
     [Required]

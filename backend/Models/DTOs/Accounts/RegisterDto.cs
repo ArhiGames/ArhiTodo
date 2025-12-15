@@ -19,6 +19,6 @@ public class RegisterDto
     public required string Password { get; set; }
     
     [Required]
-    [Range(32, 32)]
+    [MinLength(32)] [MaxLength(32)]
     public required string InvitationKey { get; set; }
 }

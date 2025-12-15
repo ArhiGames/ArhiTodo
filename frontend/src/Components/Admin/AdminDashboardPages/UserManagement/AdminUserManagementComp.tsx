@@ -4,10 +4,7 @@ import type { UserWithClaims } from "../../../../Models/Administration/UserWithC
 import EditableUserComp from "../EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
-import Modal from "../../../../lib/Modal/Default/Modal.tsx";
-import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
-import type { Claim } from "../../../../Models/Claim.ts";
-import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
 
 const AdminUserManagementComp = () => {
 
@@ -16,24 +13,12 @@ const AdminUserManagementComp = () => {
     const { userId } = useParams();
     const [users, setUsers] = useState<UserWithClaims[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
-    const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
-    const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
-
-    const isViewingAdminUser = currentViewingUser?.userName === "admin";
-
-    useEffect(() => {
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUpdatedClaims([]);
-
-    }, [userId]);
 
     useEffect(() => {
 
         if (!userId) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentViewingUser(null);
-            setIsTryingToDelete(false);
             return;
         }
 
@@ -93,59 +78,6 @@ const AdminUserManagementComp = () => {
 
     }
 
-    function trySubmitChanges() {
-
-        if (updatedClaims.length <= 0) return;
-        if (!currentViewingUser) return;
-
-        const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
-            {
-                method: "PUT",
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                signal: abortController.signal,
-                body: JSON.stringify(updatedClaims)
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Failed to update user claims`);
-                }
-
-                navigate("/admin/dashboard/users/");
-            })
-            .catch(console.error);
-
-        return () => abortController.abort();
-
-    }
-
-    function confirmUserDelete(password?: string) {
-
-        if (!password) return;
-        if (!currentViewingUser) return;
-        if (password.length < 8) return;
-
-        const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
-            {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify( { password: password } ),
-                signal: abortController.signal,
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Failed to delete user claims`);
-                }
-
-                navigate("/admin/dashboard/users/")
-            })
-            .catch(console.error);
-
-        return () => abortController.abort();
-
-    }
-
     return (
         <div className="admin-settings-content admin-usermanagement-page">
             <h2>User management</h2>
@@ -155,38 +87,10 @@ const AdminUserManagementComp = () => {
             ))}
             {
                 currentViewingUser && (
-                    createPortal(
-                        <Modal title="Edit user details"
-                               onClosed={() => navigate("/admin/dashboard/users/")}
-                               footer={
-                                <>
-                                    { !isViewingAdminUser &&
-                                        <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button> }
-                                    <button onClick={() => navigate("/admin/dashboard/users/")} className="button standard-button">Abort</button>
-                                    { !isViewingAdminUser && <button onClick={() => setIsTryingToDelete(true)} className="button heavy-action-button">Delete user</button> }
-                                </> }>
-                                <div className="edit-user-claims">
-                                    <p>User id: {currentViewingUser.userId}</p>
-                                    <p>Username: {currentViewingUser.userName}</p>
-                                    <p>Email: {currentViewingUser.email}</p>
-                                    <ClaimsOverviewComp currentViewingUser={currentViewingUser}
-                                                        updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims}/>
-                                </div>
-                        </Modal>, document.body)
+                    createPortal(<UserDetailsModalComp currentViewingUser={currentViewingUser}/>, document.body)
                 )
             }
-            {
-                isTryingToDelete && (
-                    createPortal(
-                        <ConfirmationModal onConfirmed={confirmUserDelete}
-                                           onClosed={() => setIsTryingToDelete(false)}
-                                           title="Confirm your identity!"
-                                           actionDescription="To delete an user, authentication is required!"
-                                           requirePassword={true}
-                        />, document.body
-                    )
-                )
-            }
+
         </div>
     )
 
