@@ -1,0 +1,34 @@
+.nin-number-input {
+    display: inline-flex;
+    padding: 10px;
+    background-color: var(--bg-x-light);
+    border-radius: 15px;
+    align-items: center;
+    width: fit-content;
+}
+
+.nin-number-input div {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.5rem;
+}
+
+.nin-number-input button {
+    border: none;
+    padding: 2px;
+    background-color: var(--std-button);
+    color: var(--text-color);
+    transition: background-color 0.3s;
+}
+
+.nin-number-input button:hover {
+    background-color: var(--std-button-highlight);
+}
+
+.nin-increase {
+    border-radius: 15px 15px 0 0;
+}
+
+.nin-decrease {
+    border-radius: 0 0 15px 15px;
+}

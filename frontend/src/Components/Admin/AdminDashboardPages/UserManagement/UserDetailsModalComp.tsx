@@ -95,7 +95,8 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
                                <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button> }
                            <button onClick={() => navigate("/admin/dashboard/users/")} className="button standard-button">Abort</button>
                            { !isViewingAdminUser && <button onClick={() => setIsTryingToDelete(true)} className="button heavy-action-button">Delete user</button> }
-                       </> }>
+                       </>
+                   }>
                 <div className="edit-user-claims">
                     <p>User id: {currentViewingUser.userId}</p>
                     <p>Username: {currentViewingUser.userName}</p>

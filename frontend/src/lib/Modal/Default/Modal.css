@@ -49,6 +49,8 @@
 
 .modal-body {
     margin-top: 15px;
+    height: 100%;
+    overflow: auto;
 }
 
 .modal-footer {

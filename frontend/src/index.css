@@ -32,6 +32,9 @@
     --red-warning: hsl(0, 100%, 22%);
     --red-warning-highlight: hsl(0, 100%, 35%);
 
+    --notice-warning: hsla(0, 55%, 43%, 0.6);
+    --notice-warning-border: hsl(0, 100%, 15%);
+
     --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
     0 1px 2px hsl(0, 0%, 30%),
     0 2px 4px hsl(0, 0%, 15%)
@@ -436,17 +439,20 @@ body {
 }
 
 .admin-editable-user button {
+    margin-left: auto;
+}
+
+.admin-editable-user button, .invite-user button {
     font-size: medium;
     color: var(--text-color);
     border: none;
     padding: 15px;
     border-radius: 15px;
-    margin-left: auto;
     background-color: var(--bg-x-light);
     transition: background-color 0.3s, transform 0.3s;
 }
 
-.admin-editable-user button:hover {
+.admin-editable-user button:hover, .invite-user button:hover {
     background-color: var(--bg-xx-light);
     transform: translateY(-2px);
     cursor: pointer;
@@ -477,6 +483,41 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+}
+
+/*-----------------------------------------------*/
+/*-------------------Invitation------------------*/
+/*-----------------------------------------------*/
+
+.invite-user {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--bg-light);
+    opacity: 75%;
+    border-radius: 15px;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
+}
+
+.invite-user:hover {
+    background-color: var(--bg-x-light);
+    transform: translateY(-2px);
+    opacity: 90%;
+    cursor: pointer;
+}
+
+.invite-user p {
+    font-size: xx-large;
+}
+
+.invitation-creator form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem
 }
 
 /*-----------------------------------------------*/
@@ -608,4 +649,10 @@ body {
 .classic-input:focus {
     outline: none;
     box-shadow: 0 0 2px 0 var(--box-shadow);
+}
+
+.warning-notice {
+    padding: 15px;
+    background-color: var(--notice-warning);
+    border-left: var(--notice-warning-border) solid 5px;
 }

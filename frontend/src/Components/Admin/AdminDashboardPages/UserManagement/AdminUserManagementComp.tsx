@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../../Contexts/useAuth.ts";
 import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
-import EditableUserComp from "../EditableUserComp.tsx";
+import EditableUserComp from "./EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
+import InviteUserComp from "./InviteUserComp.tsx";
 
 const AdminUserManagementComp = () => {
 
@@ -85,6 +86,7 @@ const AdminUserManagementComp = () => {
             {users.map((user: UserWithClaims) => (
                 <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
             ))}
+            <InviteUserComp/>
             {
                 currentViewingUser && (
                     createPortal(<UserDetailsModalComp currentViewingUser={currentViewingUser}/>, document.body)

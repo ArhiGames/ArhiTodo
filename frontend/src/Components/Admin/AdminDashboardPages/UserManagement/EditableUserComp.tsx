@@ -1,4 +1,4 @@
-import type { UserWithClaims } from "../../../Models/Administration/UserWithClaims.ts";
+import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
 
 const EditableUserComp = (props: { user: UserWithClaims, onEdit: (user: UserWithClaims) => void, canEdit: boolean }) => {
 
