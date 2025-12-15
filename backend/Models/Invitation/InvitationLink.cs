@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ArhiTodo.Models.Accounts;
+namespace ArhiTodo.Models.Invitation;
 
 public class InvitationLink
 {
@@ -19,6 +19,13 @@ public class InvitationLink
     
     [Required] [MaxLength(256)]
     public required string CreatedByUser { get; set; }
+    
+    // 0 => infinite
+    [Required]
+    [Range(0, 50)]
+    public required int MaxUses { get; set; }
+
+    public int Uses { get; set; } = 0;
     
     // If the invitation link is active, can be active even if the expire date has been crossed
     // Just means if someone manually deactivated this key 

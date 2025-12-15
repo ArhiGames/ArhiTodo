@@ -1,10 +1,12 @@
 ﻿using ArhiTodo.Models;
-using ArhiTodo.Models.Accounts;
+using ArhiTodo.Models.DTOs.Invitation;
+using ArhiTodo.Models.Invitation;
 
 namespace ArhiTodo.Interfaces;
 
 public interface IInvitationRepository
 {
-    Task<InvitationLink> GenerateInvitationLink(AppUser createdByUser);
-    Task<bool> InvalidateInvitationLink(int invitationLinkId);
+    Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto);
+    Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId);
+    Task<List<InvitationLink>> GetAllInvitationLinksAsync();
 }

@@ -2,7 +2,8 @@
 using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
-using ArhiTodo.Models.Accounts;
+using ArhiTodo.Models.DTOs.Invitation;
+using ArhiTodo.Models.Invitation;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Repositories;
@@ -16,7 +17,7 @@ public class InvitationRepository : IInvitationRepository
         _dataBase = dataBase;
     }
     
-    public async Task<InvitationLink> GenerateInvitationLink(AppUser createdByUser)
+    public async Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto)
     {
         Random random = new();
         StringBuilder stringBuilder = new();
@@ -35,11 +36,22 @@ public class InvitationRepository : IInvitationRepository
             }
         }
 
+        DateTime expireDate = DateTime.UtcNow;
+        expireDate = generateInvitationDto.ExpireType switch
+        {
+            ExpireType.Minutes => expireDate.AddMinutes(generateInvitationDto.ExpireNum),
+            ExpireType.Hours => expireDate.AddHours(generateInvitationDto.ExpireNum),
+            ExpireType.Days => expireDate.AddDays(generateInvitationDto.ExpireNum),
+            ExpireType.Never => expireDate.AddYears(1000),
+            _ => throw new InvalidOperationException()
+        };
+
         InvitationLink invitationLink = new()
         {
             InvitationKey = stringBuilder.ToString(),
-            ExpiresDate = DateTime.UtcNow.AddDays(7),
-            CreatedByUser = createdByUser.Id
+            ExpiresDate = expireDate,
+            CreatedByUser = createdByUser.Id,
+            MaxUses = generateInvitationDto.MaxUses
         };
         
         await _dataBase.InvitationLinks.AddAsync(invitationLink);
@@ -47,7 +59,7 @@ public class InvitationRepository : IInvitationRepository
         return invitationLink;
     }
 
-    public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
+    public async Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId)
     {
         InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationLinkId == invitationLinkId);
         if (invitationLink == null)
@@ -58,5 +70,10 @@ public class InvitationRepository : IInvitationRepository
         invitationLink.IsActive = false;
         await _dataBase.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<List<InvitationLink>> GetAllInvitationLinksAsync()
+    {
+        return await _dataBase.InvitationLinks.ToListAsync();
     }
 }

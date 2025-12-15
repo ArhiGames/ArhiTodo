@@ -1,7 +1,8 @@
 ﻿using System.Security.Claims;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
-using ArhiTodo.Models.Accounts;
+using ArhiTodo.Models.DTOs.Invitation;
+using ArhiTodo.Models.Invitation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,9 @@ public class InvitationController : ControllerBase
         _invitationRepository = invitationRepository;
     }
     
-    [HttpPost("invitationlink/generate")]
+    [HttpPost("generate")]
     [Authorize(Policy = "InviteUsers")]
-    public async Task<IActionResult> GenerateInvitationLink()
+    public async Task<IActionResult> GenerateInvitationLink([FromBody] GenerateInvitationDto generateInvitationDto)
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
@@ -37,11 +38,11 @@ public class InvitationController : ControllerBase
             return Unauthorized();
         }
         
-        InvitationLink createdInvitationLink = await _invitationRepository.GenerateInvitationLink(appUser);
+        InvitationLink createdInvitationLink = await _invitationRepository.GenerateInvitationLinkAsync(appUser, generateInvitationDto);
         return Ok(createdInvitationLink);
     }
 
-    [HttpPatch("invitationlink/invalidate/{invitationLinkId:int}")]
+    [HttpPatch("invalidate/{invitationLinkId:int}")]
     [Authorize(Policy = "InviteUsers")]
     public async Task<IActionResult> InvalidateInvitationLink(int invitationLinkId)
     {
@@ -59,7 +60,7 @@ public class InvitationController : ControllerBase
 
         try
         {
-            bool bChanged = await _invitationRepository.InvalidateInvitationLink(invitationLinkId);
+            bool bChanged = await _invitationRepository.InvalidateInvitationLinkAsync(invitationLinkId);
             if (bChanged)
             {
                 return Ok();
@@ -71,5 +72,25 @@ public class InvitationController : ControllerBase
         {
             return NotFound();
         }
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "InviteUsers")]
+    public async Task<IActionResult> GetInvitationLinks()
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        AppUser? appUser = await _userManager.FindByIdAsync(userId);
+        if (appUser == null)
+        {
+            return Unauthorized();
+        }
+
+        List<InvitationLink> invitationLinks = await _invitationRepository.GetAllInvitationLinksAsync();
+        return Ok(invitationLinks);
     }
 }

@@ -1,5 +1,5 @@
 using ArhiTodo.Models;
-using ArhiTodo.Models.Accounts;
+using ArhiTodo.Models.Invitation;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
