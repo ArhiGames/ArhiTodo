@@ -1,5 +1,5 @@
 import type {AppUser} from "../../Models/AppUser.ts";
-import Popover from "../../lib/popover/Popover.tsx";
+import Popover from "../../lib/Popover/Popover.tsx";
 import {useRef, useState} from "react";
 import {useAuth} from "../../Contexts/useAuth.ts";
 import {useNavigate} from "react-router-dom";

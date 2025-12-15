@@ -1,6 +1,7 @@
 .nin-number-input {
     display: inline-flex;
     padding: 10px;
+    min-width: 55px;
     background-color: var(--bg-x-light);
     border-radius: 15px;
     align-items: center;
@@ -10,7 +11,7 @@
 .nin-number-input div {
     display: flex;
     flex-direction: column;
-    margin-left: 0.5rem;
+    margin-left: auto;
 }
 
 .nin-number-input button {
