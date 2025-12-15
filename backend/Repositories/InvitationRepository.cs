@@ -3,6 +3,7 @@ using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.Accounts;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Repositories;
 
@@ -19,7 +20,7 @@ public class InvitationRepository : IInvitationRepository
     {
         Random random = new();
         StringBuilder stringBuilder = new();
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 32; i++)
         {
             bool capitalLetter = random.Next(2) == 0;
             if (capitalLetter)
@@ -44,5 +45,18 @@ public class InvitationRepository : IInvitationRepository
         await _dataBase.InvitationLinks.AddAsync(invitationLink);
         await _dataBase.SaveChangesAsync();
         return invitationLink;
+    }
+
+    public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
+    {
+        InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationLinkId == invitationLinkId);
+        if (invitationLink == null)
+        {
+            throw new InvalidOperationException("Not found");
+        }
+
+        invitationLink.IsActive = false;
+        await _dataBase.SaveChangesAsync();
+        return true;
     }
 }

@@ -21,7 +21,7 @@ public class InvitationController : ControllerBase
         _invitationRepository = invitationRepository;
     }
     
-    [HttpPost("generate/invitationlink")]
+    [HttpPost("invitationlink/generate")]
     [Authorize(Policy = "InviteUsers")]
     public async Task<IActionResult> GenerateInvitationLink()
     {
@@ -39,5 +39,37 @@ public class InvitationController : ControllerBase
         
         InvitationLink createdInvitationLink = await _invitationRepository.GenerateInvitationLink(appUser);
         return Ok(createdInvitationLink);
+    }
+
+    [HttpPatch("invitationlink/invalidate/{invitationLinkId:int}")]
+    [Authorize(Policy = "InviteUsers")]
+    public async Task<IActionResult> InvalidateInvitationLink(int invitationLinkId)
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        AppUser? appUser = await _userManager.FindByIdAsync(userId);
+        if (appUser == null)
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            bool bChanged = await _invitationRepository.InvalidateInvitationLink(invitationLinkId);
+            if (bChanged)
+            {
+                return Ok();
+            }
+
+            return NotFound();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
     }
 }
