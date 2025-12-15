@@ -3,7 +3,7 @@ import InvitationCreatorModalComp from "./InvitationCreatorModalComp.tsx";
 
 const InviteUserComp = () => {
 
-    const [isCreatingInvitationLink, setIsCreatingInvitationLink] = useState<boolean>(true);
+    const [isCreatingInvitationLink, setIsCreatingInvitationLink] = useState<boolean>(false);
 
     return (
         <>

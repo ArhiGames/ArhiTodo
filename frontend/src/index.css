@@ -513,7 +513,7 @@ body {
     font-size: xx-large;
 }
 
-.invitation-creator form {
+.invitation-settings {
     margin-top: 1rem;
     display: flex;
     flex-direction: column;

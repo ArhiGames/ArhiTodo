@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import "./NumberInput.css"
 
 interface Props {
@@ -7,12 +7,18 @@ interface Props {
     step?: number;
     defaultValue?: number;
     numberForInfinite?: number;
-    onChange?: (value: number) => void;
+    onChange: (value: number) => void;
 }
 
 const NumberInput = (props: Props) => {
 
     const [value, setValue] = useState<number>(props?.defaultValue ?? 0);
+
+    useEffect(() => {
+
+        props.onChange(value);
+
+    }, [value]);
 
     function increase() {
 
