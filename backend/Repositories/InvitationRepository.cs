@@ -16,6 +16,52 @@ public class InvitationRepository : IInvitationRepository
     {
         _dataBase = dataBase;
     }
+
+    public async Task<bool> TryToUseInvitationLink(string invitationKey)
+    {
+        InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationKey == invitationKey);
+        if (invitationLink == null)
+        {
+            return false;
+        }
+
+        bool bIsActive = invitationLink.IsActive;
+        bool bExpired = DateTime.UtcNow > invitationLink.ExpiresDate;
+        bool bOverused = invitationLink.Uses >= invitationLink.MaxUses;
+        if (!bIsActive || bExpired || bOverused)
+        {
+            return false;
+        }
+
+        invitationLink.Uses++;
+        await _dataBase.SaveChangesAsync();
+        
+        return true;
+    }
+
+    public async Task FailedToUseInvitationLink(string invitationKey)
+    {
+        InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationKey == invitationKey);
+        if (invitationLink == null)
+        {
+            return;
+        }
+
+        invitationLink.Uses--;
+        await _dataBase.SaveChangesAsync();
+    }
+
+    public async Task UsedInvitationLink(AppUser usedByUser, string invitationKey)
+    {
+        InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationKey == invitationKey);
+        if (invitationLink == null)
+        {
+            return;
+        }
+
+        usedByUser.InvitationLinkId = invitationLink.InvitationLinkId;
+        await _dataBase.SaveChangesAsync();
+    }
     
     public async Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto)
     {

@@ -24,6 +24,7 @@
 
 .nin-number-input button:hover {
     background-color: var(--std-button-highlight);
+    cursor: pointer;
 }
 
 .nin-increase {

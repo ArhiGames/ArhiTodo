@@ -6,6 +6,9 @@ namespace ArhiTodo.Interfaces;
 
 public interface IInvitationRepository
 {
+    Task<bool> TryToUseInvitationLink(string invitationKey);
+    Task FailedToUseInvitationLink(string invitationKey);
+    Task UsedInvitationLink(AppUser usedByUser, string invitationKey);
     Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto);
     Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId);
     Task<List<InvitationLink>> GetAllInvitationLinksAsync();

@@ -58,7 +58,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("MayCreateProjects", policy => policy.RequireClaim("may_create_projects", "true"));
+    options.AddPolicy("CreateProjects", policy =>
+    {
+        policy.RequireClaim("create_projects", "true");
+    });
     options.AddPolicy("ManageUsers", policy =>
     {
         policy.RequireClaim("access_admin_dashboard", "true");

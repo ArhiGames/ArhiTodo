@@ -16,14 +16,16 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly IInvitationRepository _invitationRepository;
     private readonly IUserRepository _userRepository;
     private readonly ITokenService _tokenService;
     
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
-        IUserRepository userRepository, ITokenService tokenService)
+        IInvitationRepository invitationRepository, IUserRepository userRepository, ITokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _invitationRepository = invitationRepository;
         _userRepository = userRepository;
         _tokenService = tokenService;
     }
@@ -33,6 +35,12 @@ public class AccountController : ControllerBase
     {
         try
         {
+            bool mayUseInvitationLink = await _invitationRepository.TryToUseInvitationLink(registerDto.InvitationKey);
+            if (!mayUseInvitationLink)
+            {
+                return Unauthorized("Invalid invitation link");
+            }
+            
             AppUser user = new()
             {
                 UserName = registerDto.UserName,
@@ -41,10 +49,16 @@ public class AccountController : ControllerBase
             
             IdentityResult identityResult = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (!identityResult.Succeeded) return StatusCode(500, identityResult.Errors);
+            if (!identityResult.Succeeded)
+            {
+                await _invitationRepository.FailedToUseInvitationLink(registerDto.InvitationKey);
+                return StatusCode(500, identityResult.Errors);
+            }
+
+            await _invitationRepository.UsedInvitationLink(user, registerDto.InvitationKey);
             
             IList<Claim> claims = await _userManager.GetClaimsAsync(user);
-            return Ok(new UserRegisterLoginDto()
+            return Ok(new UserRegisterLoginDto
             {
                 UserName = user.UserName,
                 Email = user.Email,
@@ -53,6 +67,7 @@ public class AccountController : ControllerBase
         }
         catch (Exception e)
         {
+            await _invitationRepository.FailedToUseInvitationLink(registerDto.InvitationKey);
             return StatusCode(500, e.Message);
         }
     }
