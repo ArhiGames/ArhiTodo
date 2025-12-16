@@ -27,7 +27,7 @@ public class InvitationRepository : IInvitationRepository
 
         bool bIsActive = invitationLink.IsActive;
         bool bExpired = DateTime.UtcNow > invitationLink.ExpiresDate;
-        bool bOverused = invitationLink.Uses >= invitationLink.MaxUses;
+        bool bOverused = invitationLink.MaxUses != 0 && invitationLink.Uses >= invitationLink.MaxUses;
         if (!bIsActive || bExpired || bOverused)
         {
             return false;
