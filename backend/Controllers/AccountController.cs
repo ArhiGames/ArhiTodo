@@ -51,7 +51,6 @@ public class AccountController : ControllerBase
 
             if (!identityResult.Succeeded)
             {
-                await _invitationRepository.FailedToUseInvitationLink(registerDto.InvitationKey);
                 return StatusCode(500, identityResult.Errors);
             }
 
@@ -67,7 +66,6 @@ public class AccountController : ControllerBase
         }
         catch (Exception e)
         {
-            await _invitationRepository.FailedToUseInvitationLink(registerDto.InvitationKey);
             return StatusCode(500, e.Message);
         }
     }

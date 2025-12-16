@@ -28,27 +28,7 @@ public class InvitationRepository : IInvitationRepository
         bool bIsActive = invitationLink.IsActive;
         bool bExpired = DateTime.UtcNow > invitationLink.ExpiresDate;
         bool bOverused = invitationLink.MaxUses != 0 && invitationLink.Uses >= invitationLink.MaxUses;
-        if (!bIsActive || bExpired || bOverused)
-        {
-            return false;
-        }
-
-        invitationLink.Uses++;
-        await _dataBase.SaveChangesAsync();
-        
-        return true;
-    }
-
-    public async Task FailedToUseInvitationLink(string invitationKey)
-    {
-        InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationKey == invitationKey);
-        if (invitationLink == null)
-        {
-            return;
-        }
-
-        invitationLink.Uses--;
-        await _dataBase.SaveChangesAsync();
+        return bIsActive && !bExpired && !bOverused;
     }
 
     public async Task UsedInvitationLink(AppUser usedByUser, string invitationKey)
@@ -59,6 +39,7 @@ public class InvitationRepository : IInvitationRepository
             return;
         }
 
+        invitationLink.Uses++;
         usedByUser.InvitationLinkId = invitationLink.InvitationLinkId;
         await _dataBase.SaveChangesAsync();
     }
