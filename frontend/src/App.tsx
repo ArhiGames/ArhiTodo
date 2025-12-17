@@ -12,13 +12,15 @@ import AdminDashboardNavbarComp from "./Components/Admin/AdminDashboardNavbarCom
 import AdminAppSettingsComp from "./Components/Admin/AdminDashboardPages/AdminAppSettingsComp.tsx";
 import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/UserManagement/AdminUserManagementComp.tsx";
 import AdminUserGroupsSettingsComp from "./Components/Admin/AdminDashboardPages/AdminUserGroupsSettingsComp.tsx";
+import RegisterPage from "./Components/Authentication/RegisterPage.tsx";
 
 function AppContent() {
 
     const location = useLocation();
 
-    const hideNavbarOn = ["/login"];
-    const hideNavbar = hideNavbarOn.includes(location.pathname);
+    const hideNavbar =
+        location.pathname.startsWith("/login") ||
+        location.pathname.startsWith("/register");
 
     return (
         <div className="App">
@@ -26,6 +28,7 @@ function AppContent() {
             <Routes>
                 <Route path="/" element={<ProtectedRoute><HomePageComp/></ProtectedRoute>}/>
                 <Route path="login" element={<LoginPage/>}></Route>
+                <Route path="register/:invitationKey" element={<RegisterPage/>}></Route>
                 <Route path="projects/:projectId/board/:boardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
                 <Route path="user">
                     <Route path="settings" element={<ProtectedRoute><AccountSettingsNavbarComp/></ProtectedRoute>}>

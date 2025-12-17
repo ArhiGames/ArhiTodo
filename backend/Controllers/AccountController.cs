@@ -67,7 +67,7 @@ public class AccountController : ControllerBase
         catch (Exception e)
         {
             return StatusCode(500, e.Message);
-        }
+        } 
     }
 
     [HttpPost("login")]

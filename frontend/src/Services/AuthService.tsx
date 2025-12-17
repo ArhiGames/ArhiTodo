@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
-import type {JwtPayload} from "../Models/JwtPayload.ts";
+import type { JwtPayload } from "../Models/JwtPayload.ts";
+import type { UserLoginResponseDto } from "../Models/DTOs/UserLoginResponseDto.ts";
 
 const api = "https://localhost:7069/api/";
 
@@ -8,6 +9,34 @@ export const getJwtPayloadFromToken = () => {
     if (!token) return null;
 
     return jwtDecode<JwtPayload>(token);
+}
+
+export const registerApi = async (userName: string, email: string, password: string, invitationKey: string) => {
+
+    const response = await fetch(api + "account/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            userName: userName,
+            email: email,
+            password: password,
+            invitationKey: invitationKey,
+        }),
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Unable to register account");
+    }
+
+    const data: UserLoginResponseDto = await response.json();
+
+    if (!data.token) {
+        throw new Error("Unable to parse token from Server response!");
+    }
+
+    localStorage.setItem("token", data.token);
+    return getJwtPayloadFromToken();
 }
 
 export const loginApi = async (userName: string, password: string) => {
@@ -19,14 +48,14 @@ export const loginApi = async (userName: string, password: string) => {
             userName: userName,
             password: password
         })
-    })
+    });
 
     if (!response.ok) {
         const message = await response.text();
         throw new Error(message || "Unable to login");
     }
 
-    const data = await response.json();
+    const data: UserLoginResponseDto = await response.json();
 
     if (!data.token) {
         throw new Error("Unable to parse token from Server response!");

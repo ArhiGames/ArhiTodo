@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "./AuthContext.ts";
-import { loginApi } from "../Services/AuthService.tsx";
+import { loginApi, registerApi } from "../Services/AuthService.tsx";
 import { useNavigate } from "react-router-dom";
 import type { AppUser } from "../Models/AppUser.ts";
 
@@ -34,11 +34,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     }, []);
 
+    const register = async (userName: string, email: string, password: string, invitationKey: string) => {
+
+        const jwt: JwtPayload | null = await registerApi(userName, email, password, invitationKey);
+
+        if (!jwt) return;
+        onLoggedIn(jwt);
+    }
+
     const login = async (userName: string, password: string) => {
 
         const jwt: JwtPayload | null = await loginApi(userName, password);
 
         if (!jwt) return;
+        onLoggedIn(jwt);
+    }
+
+    function onLoggedIn(jwt: JwtPayload) {
 
         const userObj = {
             userName: jwt.unique_name,
@@ -72,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 appUser,
                 token,
                 isLoaded,
+                register,
                 login,
                 logout,
                 isAuthenticated}}>
