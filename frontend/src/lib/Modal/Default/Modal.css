@@ -10,10 +10,21 @@
     z-index: 999;
 }
 
-.modal-container {
+.modal-large {
     width: 900px;
-    height: calc(100vh - 200px);
     max-width: 90%;
+    height: calc(100vh - 200px);
+}
+
+.modal-medium {
+
+}
+
+.modal-small {
+    width: 475px;
+}
+
+.modal-container {
     border-radius: 12px;
     background-color: var(--bg-light);
     box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;

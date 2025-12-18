@@ -520,6 +520,22 @@ body {
     gap: 0.5rem
 }
 
+.generated-invitation-link-body {
+    margin-top: 5px;
+}
+
+.generated-invitation-link-div {
+    display: flex;
+}
+
+.generated-link-text {
+    margin-right: 0.5rem;
+    color: var(--text-color);
+    background-color: var(--bg-x-light);
+    padding: 1rem;
+    border-radius: 15px;
+}
+
 /*-----------------------------------------------*/
 /*-------------------Side bar--------------------*/
 /*-----------------------------------------------*/

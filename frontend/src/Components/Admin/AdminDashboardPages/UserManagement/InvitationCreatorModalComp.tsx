@@ -3,6 +3,9 @@ import NumberInput from "../../../../lib/Input/Number/NumberInput.tsx";
 import { useState } from "react";
 import {useAuth} from "../../../../Contexts/useAuth.ts";
 import Dropdown from "../../../../lib/Input/Dropdown/Dropdown.tsx";
+import {createPortal} from "react-dom";
+import GeneratedLinkInfoComp from "./GeneratedLinkInfoComp.tsx";
+import type {InvitationLink} from "../../../../Models/InvitationLink.ts";
 
 interface Props {
     onClose: () => void;
@@ -13,10 +16,11 @@ const InvitationCreatorModalComp = (props: Props) => {
     const options: string[] = ["Never", "Minutes", "Hours", "Days"];
 
     const { token } = useAuth();
-    const [expireInNum, setExpireInNum] = useState<number>(0);
+    const [expireInNum, setExpireInNum] = useState<number>(1);
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
     const [currentExpireType, setCurrentExpireType] = useState<string>(options[0]);
+    const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
 
     function requestInvitationLink() {
 
@@ -36,6 +40,9 @@ const InvitationCreatorModalComp = (props: Props) => {
 
                 return res.json();
             })
+            .then((res: InvitationLink) => {
+                setGeneratedInvitationLink(res);
+            })
             .catch(console.error);
 
         return () => abortController.abort();
@@ -49,47 +56,51 @@ const InvitationCreatorModalComp = (props: Props) => {
     }
 
     return (
-        <Modal
-            title="Creating an invitation link..."
-            onClosed={props.onClose}
-            footer={
-                <>
-                    <button disabled={submitBlocked} onClick={requestInvitationLink} className={`button ${!submitBlocked ? "valid-submit-button" : "standard-button"}`}>Generate</button>
-                    <button onClick={props.onClose} className="button standard-button">Cancel</button>
-                </>
-            }>
-            <div className="invitation-creator">
-                <p className="warning-notice">
-                    By creating an invitation link, anyone with this link can create an account for this application.
-                    Please ensure your settings are configured correctly and that <strong>only people you trust</strong> receive this link.
-                </p>
-                <div className="invitation-settings">
-                    <h2>Expire</h2>
-                    <p>Controls how long the invitation link remains valid and how often it can be used</p>
-                    <div>
+        <>
+            <Modal
+                title="Creating an invitation link..."
+                modalSize="modal-large"
+                onClosed={props.onClose}
+                footer={
+                    <>
+                        <button disabled={submitBlocked} onClick={requestInvitationLink} className={`button ${!submitBlocked ? "valid-submit-button" : "standard-button"}`}>Generate</button>
+                        <button onClick={props.onClose} className="button standard-button">Cancel</button>
+                    </>
+                }>
+                <div className="invitation-creator">
+                    <p className="warning-notice">
+                        By creating an invitation link, anyone with this link can create an account for this application.
+                        Please ensure your settings are configured correctly and that <strong>only people you trust</strong> receive this link.
+                    </p>
+                    <div className="invitation-settings">
+                        <h2>Expire</h2>
+                        <p>Controls how long the invitation link remains valid and how often it can be used</p>
+                        <div>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <p>Expire in: </p>
                             { currentExpireType === "Never" ? null : <NumberInput onChange={(value: number) => setExpireInNum(value)}
                                                                                   defaultValue={5} step={5} min={5} max={60}/> }
                             <Dropdown onChange={onDropdownSelectionChanged} values={options} defaultValue={options[0]}></Dropdown>
                         </span>
-                        { currentExpireType === "Never" ? (
-                            <p style={{ opacity: "75%" }}>The link will never expire unless manually revoked</p>
-                        ) : (
-                            <p style={{ opacity: "75%" }}>The link will automatically stop working after this time</p>
-                        )}
-                    </div>
-                    <hr/>
-                    <div>
+                            { currentExpireType === "Never" ? (
+                                <p style={{ opacity: "75%" }}>The link will never expire unless manually revoked</p>
+                            ) : (
+                                <p style={{ opacity: "75%" }}>The link will automatically stop working after this time</p>
+                            )}
+                        </div>
+                        <hr/>
+                        <div>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <p>Max uses: </p>
                             <NumberInput onChange={(value: number) => setMaxUses(value)} defaultValue={1} step={1} min={0} max={50} numberForInfinite={0}/>
                         </span>
-                        <p style={{ opacity: "75%" }}>Number of accounts that can be created using this link</p>
+                            <p style={{ opacity: "75%" }}>Number of accounts that can be created using this link</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Modal>
+            </Modal>
+            { generatedInvitationLink && createPortal(<GeneratedLinkInfoComp onClosed={props.onClose} invitationLink={generatedInvitationLink}/>, document.body) }
+        </>
     )
 
 }
