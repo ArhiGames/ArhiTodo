@@ -63,19 +63,20 @@ public class InvitationRepository : IInvitationRepository
             }
         }
 
-        DateTime expireDate = DateTime.UtcNow;
-        expireDate = generateInvitationDto.ExpireType switch
+        DateTime createdDate = DateTime.UtcNow;
+        DateTime expireDate = generateInvitationDto.ExpireType switch
         {
-            ExpireType.Minutes => expireDate.AddMinutes(generateInvitationDto.ExpireNum),
-            ExpireType.Hours => expireDate.AddHours(generateInvitationDto.ExpireNum),
-            ExpireType.Days => expireDate.AddDays(generateInvitationDto.ExpireNum),
-            ExpireType.Never => expireDate.AddYears(1000),
+            ExpireType.Minutes => createdDate.AddMinutes(generateInvitationDto.ExpireNum),
+            ExpireType.Hours => createdDate.AddHours(generateInvitationDto.ExpireNum),
+            ExpireType.Days => createdDate.AddDays(generateInvitationDto.ExpireNum),
+            ExpireType.Never => createdDate,
             _ => throw new InvalidOperationException()
         };
 
         InvitationLink invitationLink = new()
         {
             InvitationKey = stringBuilder.ToString(),
+            CreatedDate = createdDate,
             ExpiresDate = expireDate,
             CreatedByUser = createdByUser.Id,
             MaxUses = generateInvitationDto.MaxUses

@@ -88,6 +88,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
     return (
         <>
             <Modal title="Edit user details"
+                   modalSize="modal-large"
                    onClosed={() => navigate("/admin/dashboard/users/")}
                    footer={
                        <>

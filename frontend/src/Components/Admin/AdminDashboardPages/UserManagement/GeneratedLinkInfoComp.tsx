@@ -38,6 +38,7 @@ const GeneratedLinkInfoComp = (props: Props) => {
                     <p className="generated-link-text">{finalUrl}</p>
                     <button onClick={onCopyButtonPressed} className={`button ${copied ? "standard-button" : "valid-submit-button"}`}>{copied ? "Copied" : "Copy"}</button>
                 </div>
+                <p className="generated-link-active-for-text">Active for: </p>
             </div>
         </Modal>
     )

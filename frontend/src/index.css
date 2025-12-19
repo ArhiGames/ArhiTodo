@@ -521,6 +521,7 @@ body {
 }
 
 .generated-invitation-link-body {
+    color: var(--text-color);
     margin-top: 5px;
 }
 

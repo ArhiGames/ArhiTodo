@@ -12,7 +12,7 @@ public class InvitationLink
     public required string InvitationKey { get; set; }
     
     [Required]
-    public DateTime CreatedDate { get; } = DateTime.UtcNow;
+    public required DateTime CreatedDate { get; set; }
     
     [Required]
     public required DateTime ExpiresDate { get; set; }
