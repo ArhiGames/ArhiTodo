@@ -67,7 +67,7 @@ const RegisterPage = () => {
                     <label>Password</label>
                     <input value={password} onChange={onPasswordChanged}
                            required minLength={8} type="password" placeholder="Enter your password..."></input>
-                    <button type="submit">Login</button>
+                    <button type="submit">Register</button>
                 </form>
             </div>
         </div>

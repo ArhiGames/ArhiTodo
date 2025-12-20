@@ -12,10 +12,10 @@ public class InvitationLink
     public required string InvitationKey { get; set; }
     
     [Required]
-    public required DateTime CreatedDate { get; set; }
+    public required DateTimeOffset CreatedDate { get; set; }
     
     [Required]
-    public required DateTime ExpiresDate { get; set; }
+    public required DateTimeOffset ExpiresDate { get; set; }
     
     [Required] [MaxLength(256)]
     public required string CreatedByUser { get; set; }

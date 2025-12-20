@@ -537,6 +537,20 @@ body {
     border-radius: 15px;
 }
 
+.view-invitation-links-div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.view-invitation-link-div {
+    display: flex;
+    background-color: var(--bg-x-light);
+    border-radius: 15px;
+    color: var(--text-color);
+    padding: 1rem;
+}
+
 /*-----------------------------------------------*/
 /*-------------------Side bar--------------------*/
 /*-----------------------------------------------*/

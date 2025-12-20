@@ -6,6 +6,11 @@
     border-radius: 15px;
     align-items: center;
     width: fit-content;
+    transition: opacity 0.2s;
+}
+
+.nin-disabled {
+    opacity: 50%;
 }
 
 .nin-number-input div {

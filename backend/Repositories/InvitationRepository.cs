@@ -26,7 +26,7 @@ public class InvitationRepository : IInvitationRepository
         }
 
         bool bIsActive = invitationLink.IsActive;
-        bool bExpired = DateTime.UtcNow > invitationLink.ExpiresDate;
+        bool bExpired = invitationLink.CreatedDate != invitationLink.ExpiresDate && DateTime.UtcNow > invitationLink.ExpiresDate;
         bool bOverused = invitationLink.MaxUses != 0 && invitationLink.Uses >= invitationLink.MaxUses;
         return bIsActive && !bExpired && !bOverused;
     }
@@ -63,8 +63,8 @@ public class InvitationRepository : IInvitationRepository
             }
         }
 
-        DateTime createdDate = DateTime.UtcNow;
-        DateTime expireDate = generateInvitationDto.ExpireType switch
+        DateTimeOffset createdDate = DateTimeOffset.UtcNow;
+        DateTimeOffset expireDate = generateInvitationDto.ExpireType switch
         {
             ExpireType.Minutes => createdDate.AddMinutes(generateInvitationDto.ExpireNum),
             ExpireType.Hours => createdDate.AddHours(generateInvitationDto.ExpireNum),
@@ -84,6 +84,7 @@ public class InvitationRepository : IInvitationRepository
         
         await _dataBase.InvitationLinks.AddAsync(invitationLink);
         await _dataBase.SaveChangesAsync();
+        
         return invitationLink;
     }
 

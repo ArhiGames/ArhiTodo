@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
 import InviteUserComp from "./InviteUserComp.tsx";
+import ViewInvitationLinksComp from "./ViewInvitationLinksComp.tsx";
 
 const AdminUserManagementComp = () => {
 
@@ -14,6 +15,7 @@ const AdminUserManagementComp = () => {
     const { userId } = useParams();
     const [users, setUsers] = useState<UserWithClaims[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
+    const [isViewingCreatedInvitationsLinks, setIsViewingCreatedInvitationsLinks] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -86,7 +88,12 @@ const AdminUserManagementComp = () => {
             {users.map((user: UserWithClaims) => (
                 <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
             ))}
-            <InviteUserComp/>
+            <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
+            {
+                (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
+                    <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
+                )
+            }
             {
                 currentViewingUser && (
                     createPortal(<UserDetailsModalComp currentViewingUser={currentViewingUser}/>, document.body)

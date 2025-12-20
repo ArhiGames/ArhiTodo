@@ -7,6 +7,7 @@ interface Props {
     step?: number;
     defaultValue?: number;
     numberForInfinite?: number;
+    disabled?: boolean;
     onChange: (value: number) => void;
 }
 
@@ -47,11 +48,11 @@ const NumberInput = (props: Props) => {
     }
 
     return (
-        <div className="nin-number-input">
+        <div className={ `${(props.disabled !== undefined && props.disabled) ? "nin-disabled" : null} nin-number-input` }>
             <p>{props.numberForInfinite !== undefined ? (props.numberForInfinite == value ? "Infinite" : value) : value}</p>
             <div>
-                <button onClick={increase} className="nin-increase" type="button">+</button>
-                <button onClick={decrease} className="nin-decrease" type="button">-</button>
+                <button disabled={props.disabled} onClick={increase} className="nin-increase" type="button">+</button>
+                <button disabled={props.disabled} onClick={decrease} className="nin-decrease" type="button">-</button>
             </div>
         </div>
     )

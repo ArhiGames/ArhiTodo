@@ -87,7 +87,7 @@ const InvitationCreatorModalComp = (props: Props) => {
         <>
             <Modal
                 title="Creating an invitation link..."
-                modalSize="modal-large"
+                modalSize="modal-medium"
                 onClosed={props.onClose}
                 footer={
                     <>
@@ -106,9 +106,10 @@ const InvitationCreatorModalComp = (props: Props) => {
                         <div>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <p>Expire in: </p>
-                            { currentExpireType === "Never" ? null : <NumberInput onChange={(value: number) => setExpireInNum(value)}
+                            <NumberInput onChange={(value: number) => setExpireInNum(value)}
                                                                                   defaultValue={5} step={getExpireDateStepValue()}
-                                                                                  min={getExpireDateMinValue()} max={60}/> }
+                                                                                  min={getExpireDateMinValue()} max={60}
+                                                                                  disabled={currentExpireType === "Never"}/>
                             <Dropdown onChange={onDropdownSelectionChanged} values={options} defaultValue={options[0]}></Dropdown>
                         </span>
                             { currentExpireType === "Never" ? (
@@ -117,7 +118,6 @@ const InvitationCreatorModalComp = (props: Props) => {
                                 <p style={{ opacity: "75%" }}>The link will automatically stop working after this time</p>
                             )}
                         </div>
-                        <hr/>
                         <div>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <p>Max uses: </p>
