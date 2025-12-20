@@ -5,19 +5,17 @@ const InviteUserComp = (props: { onInvitationViewClicked: () => void }) => {
 
     const [isCreatingInvitationLink, setIsCreatingInvitationLink] = useState<boolean>(false);
 
-    function onCurrentLinksClicked(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    function onCurrentLinksClicked() {
 
-        e.stopPropagation();
         props.onInvitationViewClicked();
 
     }
 
     return (
         <>
-            <div onClick={() => setIsCreatingInvitationLink(true)} className="invite-user">
-                <h2>Invite users</h2>
-                <p>+</p>
-                <a onClick={onCurrentLinksClicked} style={{ textDecoration: "underline" }}>Invitations</a>
+            <div className="invite-user">
+                <button onClick={() => setIsCreatingInvitationLink(true)}>Create invitation</button>
+                <button onClick={onCurrentLinksClicked}>View invitations</button>
             </div>
             {
                 isCreatingInvitationLink && (

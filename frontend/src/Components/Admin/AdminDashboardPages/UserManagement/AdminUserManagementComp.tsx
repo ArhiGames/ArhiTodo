@@ -85,10 +85,14 @@ const AdminUserManagementComp = () => {
         <div className="admin-settings-content admin-usermanagement-page">
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
-            {users.map((user: UserWithClaims) => (
-                <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
-            ))}
-            <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
+            <div className="user-management-users-div">
+                {users.map((user: UserWithClaims) => (
+                    <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
+                ))}
+            </div>
+            <nav className="user-management-nav">
+                <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
+            </nav>
             {
                 (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
                     <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>

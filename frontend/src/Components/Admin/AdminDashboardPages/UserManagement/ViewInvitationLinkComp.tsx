@@ -70,8 +70,8 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                 <p>Uses: {invitationLink.uses}</p>
             </div>
             { invitationLink.isActive && <button onClick={onInvalidateButtonPressed}
-                                                 style={{ width: "fit-content", marginLeft: "auto" }}
-                                                 className="button standard-button">Invalidate</button> }
+                                                 style={{ height: "fit-content", width: "fit-content", marginTop: "auto", marginLeft: "auto" }}
+                                                 className="button standard-button">Remove</button> }
         </div>
     )
 

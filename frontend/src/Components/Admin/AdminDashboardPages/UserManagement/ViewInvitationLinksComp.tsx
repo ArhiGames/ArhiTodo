@@ -37,8 +37,22 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
 
     }, [token]);
 
+    if (invitationLinks.length === 0) {
+        return (
+            <>
+                {
+                    createPortal(
+                        <Modal onClosed={props.onClosed} title="Generated invitation links" modalSize="modal-small"
+                               footer={null}>
+                            <p style={{ color: "var(--text-color)" }}>No invitations links to see :(</p>
+                        </Modal>, document.body)
+                }
+            </>
+        )
+    }
+
     return (
-        <div>
+        <>
             {
                 createPortal(
                     <Modal onClosed={props.onClosed} title="Generated invitation links" modalSize="modal-large"
@@ -50,7 +64,7 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
                         </div>
                     </Modal>, document.body)
             }
-        </div>
+        </>
     )
 
 }

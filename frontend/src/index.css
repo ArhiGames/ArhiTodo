@@ -24,8 +24,8 @@
     --text-color-failure: hsl(0, 100%, 60%);
     --text-color-dark: hsl(0, 0%, 15%);
 
-    --std-button: hsl(0, 0%, 65%);
-    --std-button-highlight: hsl(0, 0%, 73%);
+    --std-button: hsl(0, 0%, 50%);
+    --std-button-highlight: hsl(0, 0%, 65%);
     --success-color: hsl(113, 60%, 60%);
     --success-color-highlight: hsl(113, 80%, 80%);
 
@@ -236,8 +236,7 @@ body {
     background-color: var(--bg);
     border-radius: 0 0 15px 15px;
     display: flex;
-    min-height: calc(100vh - 200px);
-    max-height: calc(100vh - 200px);
+    height: calc(100vh - 175px);
     overflow: hidden;
 }
 
@@ -377,7 +376,7 @@ body {
 
 .detailed-settings-panel {
     margin: 0.6rem 0 0 0;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 150px);
     background-color: var(--bg);
     width: 100vw;
     border-radius: 15px;
@@ -413,16 +412,16 @@ body {
 
 .admin-dashboard-detailed {
     margin: 0.6rem 0 0 0;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 150px);
     background-color: var(--bg);
     width: 100vw;
     border-radius: 15px;
     padding: 10px;
     color: var(--text-color);
-    overflow: auto;
 }
 
 .admin-settings-content {
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -456,6 +455,17 @@ body {
     background-color: var(--bg-xx-light);
     transform: translateY(-2px);
     cursor: pointer;
+}
+
+.user-management-users-div {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.user-management-nav {
+    width: 100%;
+    margin-top: auto;
 }
 
 .edit-user-claims {
@@ -496,21 +506,9 @@ body {
     display: flex;
     justify-content: space-between;
     background-color: var(--bg-light);
-    opacity: 75%;
     border-radius: 15px;
     align-items: center;
     transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
-}
-
-.invite-user:hover {
-    background-color: var(--bg-x-light);
-    transform: translateY(-2px);
-    opacity: 90%;
-    cursor: pointer;
-}
-
-.invite-user p {
-    font-size: xx-large;
 }
 
 .invitation-settings {
@@ -561,7 +559,7 @@ body {
     flex-direction: column;
     margin: 0.6rem 1rem 0 0;
     gap: 0.6rem;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 150px);
     min-width: 20vw;
     background-color: var(--bg);
     border-radius: 15px;

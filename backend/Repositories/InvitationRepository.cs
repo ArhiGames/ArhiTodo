@@ -24,7 +24,11 @@ public class InvitationRepository : IInvitationRepository
         {
             return false;
         }
+        return IsValidInvitationLink(invitationLink);
+    }
 
+    public bool IsValidInvitationLink(InvitationLink invitationLink)
+    {
         bool bIsActive = invitationLink.IsActive;
         bool bExpired = invitationLink.CreatedDate != invitationLink.ExpiresDate && DateTime.UtcNow > invitationLink.ExpiresDate;
         bool bOverused = invitationLink.MaxUses != 0 && invitationLink.Uses >= invitationLink.MaxUses;
@@ -103,6 +107,12 @@ public class InvitationRepository : IInvitationRepository
 
     public async Task<List<InvitationLink>> GetAllInvitationLinksAsync()
     {
-        return await _dataBase.InvitationLinks.ToListAsync();
+        List<InvitationLink> invitationLinks = await _dataBase.InvitationLinks
+            .Where(invitationLink => invitationLink.IsActive && 
+                                     (invitationLink.MaxUses == 0 || invitationLink.Uses < invitationLink.MaxUses))
+            .ToListAsync();
+        
+        return invitationLinks.Where(invitationLink => 
+            invitationLink.CreatedDate == invitationLink.ExpiresDate || DateTimeOffset.UtcNow < invitationLink.ExpiresDate).ToList();
     }
 }
