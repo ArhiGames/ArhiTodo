@@ -55,6 +55,34 @@ const InvitationCreatorModalComp = (props: Props) => {
 
     }
 
+    function getExpireDateStepValue() {
+
+        switch (currentExpireType) {
+            case "Minutes":
+                return 5;
+            case "Hours":
+                return 1;
+            case "Days":
+                return 1;
+        }
+        return 1;
+
+    }
+
+    function getExpireDateMinValue() {
+
+        switch (currentExpireType) {
+            case "Minutes":
+                return 5;
+            case "Hours":
+                return 1;
+            case "Days":
+                return 1;
+        }
+        return 1;
+
+    }
+
     return (
         <>
             <Modal
@@ -79,7 +107,8 @@ const InvitationCreatorModalComp = (props: Props) => {
                         <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <p>Expire in: </p>
                             { currentExpireType === "Never" ? null : <NumberInput onChange={(value: number) => setExpireInNum(value)}
-                                                                                  defaultValue={5} step={5} min={5} max={60}/> }
+                                                                                  defaultValue={5} step={getExpireDateStepValue()}
+                                                                                  min={getExpireDateMinValue()} max={60}/> }
                             <Dropdown onChange={onDropdownSelectionChanged} values={options} defaultValue={options[0]}></Dropdown>
                         </span>
                             { currentExpireType === "Never" ? (
