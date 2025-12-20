@@ -2,6 +2,7 @@ import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../../Contexts/useAuth.ts";
 import { formatRemainingTime } from "../../../../lib/Functions.ts";
+import TagComp from "../../../../lib/Tags/TagComp.tsx";
 
 interface Props {
     invitationLink: InvitationLink;
@@ -11,6 +12,15 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     const { token } = useAuth();
     const [remainingMs, setRemainingMs] = useState<number>(0);
+
+    // eslint-disable-next-line react-hooks/purity
+    const isExpired: boolean = Date.now() > new Date(invitationLink.expiresDate).getTime()
+    const used: boolean = invitationLink.maxUses <= invitationLink.uses;
+    const isUsable: boolean = invitationLink.isActive && !isExpired && !used;
+    const keyStatus: { tag: string, color: "red" | "green" | "orange" | "blue" | "gray" } = {
+        tag: !invitationLink.isActive ? "Invalid" : used ? "Used" : isExpired ? "Expired" : isUsable ? "Active" : "Unusable",
+        color: !invitationLink.isActive ? "red" : used ? "orange" : isExpired ? "orange" : isUsable ? "green" : "gray",
+    }
 
     useEffect(() => {
 
@@ -48,13 +58,17 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     return (
         <div className="view-invitation-link-div">
-            <span>
-                <h3>Invitation key: {invitationLink.invitationKey}</h3>
-                <p>Expires in: {new Date(invitationLink.createdDate).getTime() - new Date(invitationLink.expiresDate).getTime() === 0 ?
+            <div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <TagComp tag={keyStatus.tag} color={keyStatus.color}/>
+                    <h3 style={{ marginLeft: "0.5rem" }}>Key: {invitationLink.invitationKey}</h3>
+                </div>
+                <p style={{ marginTop: "0.35rem" }}>
+                    Expires in: {new Date(invitationLink.createdDate).getTime() - new Date(invitationLink.expiresDate).getTime() === 0 ?
                     "Never" : formatRemainingTime(remainingMs)}</p>
                 <p>Max uses: {invitationLink.maxUses === 0 ? "Infinite" : invitationLink.maxUses}</p>
                 <p>Uses: {invitationLink.uses}</p>
-            </span>
+            </div>
             { invitationLink.isActive && <button onClick={onInvalidateButtonPressed}
                                                  style={{ width: "fit-content", marginLeft: "auto" }}
                                                  className="button standard-button">Invalidate</button> }

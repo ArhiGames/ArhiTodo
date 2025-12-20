@@ -1,0 +1,13 @@
+:root {
+    --tag-red:  hsl(0, 100%, 60%);
+    --tag-green: hsl(113, 100%, 26%);
+    --tag-orange: hsl(43, 100%, 39%);
+    --tag-blue:  hsl(234 100% 60%);
+    --tag-gray:  hsl(0 0% 40%);
+}
+
+.tag {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 15px;
+}
