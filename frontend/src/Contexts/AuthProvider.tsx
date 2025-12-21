@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const now = Date.now() / 1000;
             if (decoded.exp > now) {
                 setToken(savedToken);
-                setAppUser( { id: decoded.sub, unique_name: decoded.unique_name, email: decoded.email} );
+                setAppUser( { id: decoded.nameid, unique_name: decoded.unique_name, email: decoded.email} );
             } else {
                 localStorage.removeItem("token");
             }
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem("user", JSON.stringify(userObj));
 
         setToken(localStorage.getItem("token"));
-        setAppUser( { id: jwt.sub, unique_name: jwt.unique_name, email: jwt.email} );
+        setAppUser( { id: jwt.nameid, unique_name: jwt.unique_name, email: jwt.email} );
 
     }
 

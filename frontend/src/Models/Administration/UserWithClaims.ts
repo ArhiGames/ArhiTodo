@@ -1,4 +1,4 @@
-import type {Claim} from "../Claim.ts";
+import type { Claim } from "../Claim.ts";
 
 export interface UserWithClaims {
     userId: string;

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Accounts;
@@ -143,6 +144,21 @@ public class AccountController : ControllerBase
     [Authorize(Policy = "ManageUsers")]
     public async Task<IActionResult> UpdateUserClaims(string userId, [FromBody] List<ClaimPostDto> updatedClaims)
     {
+        string? requestingUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (requestingUserId == null)
+        {
+            return Unauthorized();
+        }
+
+        foreach (ClaimPostDto claimPostDto in updatedClaims)
+        {
+            bool isKnownClaim = Constants.Claims.Any(claim => claim.Type == claimPostDto.Type);
+            if (!isKnownClaim)
+            {
+                return Conflict("The claim " + claimPostDto.Type + " doesn't exist!");
+            }
+        }
+        
         AppUser? appUser = await _userManager.FindByIdAsync(userId);
         if (appUser == null)
         {
@@ -152,6 +168,11 @@ public class AccountController : ControllerBase
         if (appUser.UserName == "admin")
         {
             return Conflict("The claims of the admin user cannot be changed!");
+        }
+
+        if (appUser.Id == requestingUserId)
+        {
+            return Conflict("Cannot update the claims of yourself!");
         }
         
         try

@@ -6,7 +6,7 @@ import { useState } from "react";
 interface Props {
     claim: Claim | undefined;
     defaultClaim: DefaultClaim;
-    isAdminUser: boolean;
+    canEdit: boolean;
     updatedClaims: Claim[];
     setUpdatedClaims: (value: Claim[]) => void;
 }
@@ -36,7 +36,7 @@ const EditableClaimsComp = (props: Props) => {
                 <p>{props.defaultClaim.claimName}</p>
                 <p style={{ fontStyle: "italic", opacity: "75%"} }>{props.defaultClaim.claimDescription}</p>
             </div>
-            { props.isAdminUser ? null : <FancyToggleComp checked={claimBooleanValue} setChecked={onToggleValueChanged}/> }
+            { props.canEdit ? <FancyToggleComp checked={claimBooleanValue} setChecked={onToggleValueChanged}/> : null }
         </div>
     )
 

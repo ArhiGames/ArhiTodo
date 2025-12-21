@@ -15,12 +15,13 @@ interface Props {
 const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { appUser, token } = useAuth();
     const { userId } = useParams();
     const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
 
     const isViewingAdminUser = currentViewingUser?.userName === "admin";
+    const isSelf: boolean = appUser?.id === userId;
 
     useEffect(() => {
 
@@ -92,10 +93,11 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
                    onClosed={() => navigate("/admin/dashboard/users/")}
                    footer={
                        <>
-                           { !isViewingAdminUser &&
+                           { (!isSelf && !isViewingAdminUser) &&
                                <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button> }
                            <button onClick={() => navigate("/admin/dashboard/users/")} className="button standard-button">Abort</button>
-                           { !isViewingAdminUser && <button onClick={() => setIsTryingToDelete(true)} className="button heavy-action-button">Delete user</button> }
+                           { (!isSelf && !isViewingAdminUser) &&
+                               <button onClick={() => setIsTryingToDelete(true)} className="button heavy-action-button">Delete user</button> }
                        </>
                    }>
                 <div className="edit-user-claims">

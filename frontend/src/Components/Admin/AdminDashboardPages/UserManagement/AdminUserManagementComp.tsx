@@ -11,7 +11,7 @@ import ViewInvitationLinksComp from "./ViewInvitationLinksComp.tsx";
 const AdminUserManagementComp = () => {
 
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { appUser, token } = useAuth();
     const { userId } = useParams();
     const [users, setUsers] = useState<UserWithClaims[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
@@ -87,7 +87,7 @@ const AdminUserManagementComp = () => {
             <p>Manage user permissions, delete & add users</p>
             <div className="user-management-users-div">
                 {users.map((user: UserWithClaims) => (
-                    <EditableUserComp canEdit={user.userName !== "admin"} onEdit={onEditUser} user={user} key={user.userId}/>
+                    <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
                 ))}
             </div>
             <nav className="user-management-nav">
