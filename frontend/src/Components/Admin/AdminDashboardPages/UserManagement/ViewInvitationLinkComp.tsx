@@ -10,8 +10,11 @@ interface Props {
 
 const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
+    const origin = window.location.origin;
+    const finalUrl = `${origin}/register/${invitationLink.invitationKey}`;
     const { token } = useAuth();
     const [remainingMs, setRemainingMs] = useState<number>(0);
+    const [copied, setCopied] = useState<boolean>(false);
 
     // eslint-disable-next-line react-hooks/purity
     const isExpired: boolean = Date.now() > new Date(invitationLink.expiresDate).getTime()
@@ -56,6 +59,15 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     }
 
+    async function onCopyLinkPressed() {
+
+        if (copied) return;
+
+        await navigator.clipboard.writeText(finalUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    }
+
     return (
         <div className="view-invitation-link-div">
             <div>
@@ -69,9 +81,13 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                 <p>Max uses: {invitationLink.maxUses === 0 ? "Infinite" : invitationLink.maxUses}</p>
                 <p>Uses: {invitationLink.uses}</p>
             </div>
-            { invitationLink.isActive && <button onClick={onInvalidateButtonPressed}
-                                                 style={{ height: "fit-content", width: "fit-content", marginTop: "auto", marginLeft: "auto" }}
-                                                 className="button standard-button">Remove</button> }
+            { invitationLink.isActive &&
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem",
+                    height: "fit-content", width: "fit-content", marginTop: "auto", marginLeft: "auto" }}>
+                    <button onClick={onCopyLinkPressed} className="button standard-button">{ copied ? "Copied" : "Copy" }</button>
+                    <button onClick={onInvalidateButtonPressed} className="button standard-button">Remove</button>
+                </div>
+            }
         </div>
     )
 
