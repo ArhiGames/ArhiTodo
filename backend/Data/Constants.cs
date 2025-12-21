@@ -2,7 +2,7 @@
 
 namespace ArhiTodo.Data;
 
-public class Constants
+public static class Constants
 {
     public static readonly Claim[] Claims =
     [

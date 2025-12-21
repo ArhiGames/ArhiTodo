@@ -1,5 +1,5 @@
-import type {CardList} from "../../Models/CardList.ts";
-import type {Card} from "../../Models/Card.ts";
+import type { CardList } from "../../Models/CardList.ts";
+import type { Card } from "../../Models/Card.ts";
 import CardComp from "../Card/CardComp.tsx";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
 

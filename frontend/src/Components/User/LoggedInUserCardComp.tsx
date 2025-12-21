@@ -1,8 +1,8 @@
-import type {AppUser} from "../../Models/AppUser.ts";
+import type { AppUser } from "../../Models/AppUser.ts";
 import Popover from "../../lib/Popover/Popover.tsx";
-import {useRef, useState} from "react";
-import {useAuth} from "../../Contexts/useAuth.ts";
-import {useNavigate} from "react-router-dom";
+import { useRef, useState } from "react";
+import { useAuth } from "../../Contexts/useAuth.ts";
+import { useNavigate } from "react-router-dom";
 
 const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
 
@@ -12,7 +12,7 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
     const navigate = useNavigate();
 
     function handleOnClicked() {
-        setPopoverOpened(!popoverOpened);
+        setPopoverOpened(true);
     }
 
     function closePopover() {
@@ -20,10 +20,12 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
     }
 
     function handleAccountSettingsButtonPressed() {
+        closePopover();
         navigate("/user/settings")
     }
 
     function handleAdministrationButtonPressed() {
+        closePopover();
         navigate("/admin/dashboard")
     }
 

@@ -247,6 +247,11 @@ body {
     font-size: xx-large;
 }
 
+.create-new-board-popup {
+    display: flex;
+    flex-direction: column;
+}
+
 /*-----------------------------------------------*/
 /*-------------------CARDLIST--------------------*/
 /*-----------------------------------------------*/
@@ -258,14 +263,13 @@ body {
     padding: 1rem;
     margin: 1rem 0.5rem;
     width: 320px;
-    max-height: 95%;
     color: var(--text-color);
 }
 
 .add-cardlist-button {
     padding: 15px;
     width: 320px;
-    height: 100%;
+    height: fit-content;
     margin: 1rem 0.5rem;
 
     border: none;
@@ -288,11 +292,11 @@ body {
 
 .creation-cardlist {
     background-color: var(--bg-light);
-    height: 100%;
     padding: 0.8rem;
     border-radius: 10px;
     margin: 1rem 0.5rem;
     width: 320px;
+    height: fit-content;
 }
 
 .creation-cardlist form {

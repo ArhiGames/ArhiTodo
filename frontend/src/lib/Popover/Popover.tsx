@@ -1,10 +1,10 @@
-import {type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
+import { type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 interface PopoverProps {
     element: RefObject<HTMLElement | null>;
     children: ReactNode;
-    close: () => void;
+    close: (e: MouseEvent) => void;
     closeIfClickedOutside?: boolean;
     offsetX?: number;
     offsetY?: number;
@@ -12,7 +12,7 @@ interface PopoverProps {
 
 const Popover = ( { element, children, close, closeIfClickedOutside = true, offsetX = 0, offsetY = 0 }: PopoverProps ) => {
 
-    const [position, setPosition] = useState({top: 0, left: 0});
+    const [position, setPosition] = useState({ top: 0, left: 0 });
     const popoverRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const Popover = ( { element, children, close, closeIfClickedOutside = true, offs
             if (!popoverRef.current) return;
 
             if (!popoverRef.current.contains(e.target as Node)) {
-                close();
+                close(e);
             }
 
         }

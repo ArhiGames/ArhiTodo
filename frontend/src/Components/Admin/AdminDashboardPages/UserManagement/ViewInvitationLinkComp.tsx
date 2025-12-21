@@ -18,7 +18,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     // eslint-disable-next-line react-hooks/purity
     const isExpired: boolean = Date.now() > new Date(invitationLink.expiresDate).getTime()
-    const used: boolean = invitationLink.maxUses <= invitationLink.uses;
+    const used: boolean = invitationLink.maxUses !== 0 && invitationLink.maxUses <= invitationLink.uses;
     const isUsable: boolean = invitationLink.isActive && !isExpired && !used;
     const keyStatus: { tag: string, color: "red" | "green" | "orange" | "blue" | "gray" } = {
         tag: !invitationLink.isActive ? "Invalid" : used ? "Used" : isExpired ? "Expired" : isUsable ? "Active" : "Unusable",
