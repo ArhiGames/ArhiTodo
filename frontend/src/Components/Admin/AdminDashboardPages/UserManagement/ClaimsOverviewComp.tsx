@@ -2,7 +2,7 @@ import { defaultAppClaims, type DefaultClaim } from "./Claims"
 import type { Claim } from "../../../../Models/Claim.ts";
 import EditableClaimsComp from "./EditableClaimsComp.tsx";
 import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
-import {useAuth} from "../../../../Contexts/useAuth.ts";
+import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 
 interface Props {
     currentViewingUser: UserWithClaims;

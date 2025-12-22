@@ -3,7 +3,7 @@ import HomePageComp from "./Components/Core/HomePageComp.tsx";
 import ProjectViewComp from "./Components/Project/ProjectViewComp.tsx";
 import NavbarHeaderComp from "./Components/Core/NavbarHeaderComp.tsx";
 import LoginPage from "./Components/Authentication/LoginPage.tsx";
-import { AuthProvider } from "./Contexts/AuthProvider.tsx";
+import { AuthProvider } from "./Contexts/Authentication/AuthProvider.tsx";
 import ProtectedRoute from "./Components/Authentication/ProtectedRoute.tsx";
 import AccountPreferencesPageComp from "./Components/User/AccountSettingsPage/AccountPreferencesPageComp.tsx";
 import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/AccountSettingsNavbarComp.tsx";
@@ -13,6 +13,7 @@ import AdminAppSettingsComp from "./Components/Admin/AdminDashboardPages/AdminAp
 import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/UserManagement/AdminUserManagementComp.tsx";
 import AdminUserGroupsSettingsComp from "./Components/Admin/AdminDashboardPages/AdminUserGroupsSettingsComp.tsx";
 import RegisterPage from "./Components/Authentication/RegisterPage.tsx";
+import KanbanProvider from "./Contexts/Kanban/KanbanProvider.tsx";
 
 function AppContent() {
 
@@ -55,9 +56,11 @@ function App() {
 
     return (
         <BrowserRouter>
-            <AuthProvider>
-                <AppContent/>
-            </AuthProvider>
+            <KanbanProvider>
+                <AuthProvider>
+                    <AppContent/>
+                </AuthProvider>
+            </KanbanProvider>
         </BrowserRouter>
     )
 

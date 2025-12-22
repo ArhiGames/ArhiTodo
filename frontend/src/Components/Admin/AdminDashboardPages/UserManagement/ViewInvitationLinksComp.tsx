@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
-import { useAuth } from "../../../../Contexts/useAuth.ts";
+import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import ViewInvitationLinkComp from "./ViewInvitationLinkComp.tsx";
 import Modal from "../../../../lib/Modal/Default/Modal.tsx";
 import { createPortal } from "react-dom";

@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useAuth} from "../../Contexts/useAuth.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {type ChangeEvent, type FormEvent, useState} from "react";
 
 const RegisterPage = () => {

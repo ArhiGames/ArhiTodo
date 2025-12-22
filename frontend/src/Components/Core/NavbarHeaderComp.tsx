@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import LoggedInUserCardComp from "../User/LoggedInUserCardComp.tsx";
-import {useAuth} from "../../Contexts/useAuth.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 
 const NavbarHeaderComp = () => {
 

@@ -1,17 +1,19 @@
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type {Board} from "../../Models/Board.ts";
 import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
-import {useAuth} from "../../Contexts/useAuth.ts";
+import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
+import type { Board, State } from "../../Models/States/types.ts";
+import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 
 const ProjectViewComp = () => {
 
     const { token } = useAuth();
     const { projectId, boardId } = useParams();
-    const [boards, setBoards] = useState<Board[]>();
+    const state: State = useKanbanState();
     const navigate = useNavigate();
+    const dispatch = useKanbanDispatch();
 
     const projectIdNum: number = Number(projectId ?? 0);
 
@@ -33,39 +35,41 @@ const ProjectViewComp = () => {
             })
             .then((fetchedBoards: Board[]) => {
 
-                setBoards(fetchedBoards);
+                if (dispatch) {
+                    dispatch({type: "INIT_BOARDS", payload: fetchedBoards});
+                }
 
             })
             .catch(console.error);
 
-    }, [projectId, token]);
+    }, [dispatch, projectId, token]);
 
     useEffect(() => {
 
-        if (!boards || boards.length === 0) return;
+        if (!state.boards || Object.keys(state.boards).length === 0) return;
         if (boardId) return;
 
-        const firstId = boards[0].boardId;
+        const firstKey: number = Number(Object.keys(state.boards)[0]);
+        const firstId = state.boards[firstKey].boardId;
 
         queueMicrotask(() => {
             setActiveBoardId(firstId);
             navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
         })
 
-    }, [boards, boardId, projectId, navigate]);
+    }, [state.boards, boardId, projectId, navigate]);
 
     useEffect(() => {
         if (boardId) {
-            queueMicrotask(() => {
-                setActiveBoardId(Number(boardId));
-            })
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setActiveBoardId(Number(boardId));
         }
     }, [boardId]);
 
     return (
         <div className="project-view">
             <div className="board-selectors">
-                {boards?.map((board: Board) => {
+                {Object.values(state.boards).map((board: Board) => {
                     return (
                         <BoardHeader key={board.boardId} projectId={projectIdNum} board={board}/>
                     )

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Project } from "../../Models/Project.ts";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
-import {useAuth} from "../../Contexts/useAuth.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 
 const HomePageComp = () => {
 

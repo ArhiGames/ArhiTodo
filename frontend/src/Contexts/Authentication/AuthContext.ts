@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type {AppUser} from "../Models/AppUser.ts";
+import type {AppUser} from "../../Models/AppUser.ts";
 
 export type AuthContextType = {
     appUser: AppUser | null;

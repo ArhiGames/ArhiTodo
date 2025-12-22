@@ -1,5 +1,5 @@
 import {type FormEvent, useRef, useState} from "react";
-import {useAuth} from "../../../Contexts/useAuth.ts";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 
 const PasswordManagerPageComp = () => {
 

@@ -1,7 +1,7 @@
 import Modal from "../../../../lib/Modal/Default/Modal.tsx";
 import NumberInput from "../../../../lib/Input/Number/NumberInput.tsx";
 import { useState } from "react";
-import {useAuth} from "../../../../Contexts/useAuth.ts";
+import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import Dropdown from "../../../../lib/Input/Dropdown/Dropdown.tsx";
 import {createPortal} from "react-dom";
 import GeneratedLinkInfoComp from "./GeneratedLinkInfoComp.tsx";

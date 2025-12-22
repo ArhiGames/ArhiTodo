@@ -1,12 +1,19 @@
 import Popover from "../../lib/Popover/Popover.tsx";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
+import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
+import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
+import { useParams } from "react-router-dom";
+import type { State } from "../../Models/States/types.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
     const createBoardHeaderRef = useRef<HTMLDivElement | null>(null);
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
+    const { projectId } = useParams();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
+    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
+    const kanbanState: State = useKanbanState();
 
     function onCreateBoardPressed() {
         setOpen(true);
@@ -19,6 +26,17 @@ const CreateNewBoardHeaderComp = () => {
 
     function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (dispatch) {
+            let maxKeyValue: number = 0;
+            Object.keys(kanbanState.boards).forEach((key: string)=> {
+                if (maxKeyValue < Number(key)) {
+                    maxKeyValue = Number(key);
+                }
+            });
+            dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: maxKeyValue + 1, boardName: boardName }});
+        }
+
+        setOpen(false);
     }
 
     useEffect(() => {

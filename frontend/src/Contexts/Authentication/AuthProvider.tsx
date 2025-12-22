@@ -1,10 +1,10 @@
 import { type ReactNode, useEffect, useState } from "react";
-import type { JwtPayload } from "../Models/JwtPayload.ts";
+import type { JwtPayload } from "../../Models/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "./AuthContext.ts";
-import { loginApi, registerApi } from "../Services/AuthService.tsx";
+import { loginApi, registerApi } from "../../Services/AuthService.tsx";
 import { useNavigate } from "react-router-dom";
-import type { AppUser } from "../Models/AppUser.ts";
+import type { AppUser } from "../../Models/AppUser.ts";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 

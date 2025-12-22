@@ -4,7 +4,7 @@ import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import type {Claim} from "../../../../Models/Claim.ts";
-import { useAuth } from "../../../../Contexts/useAuth.ts";
+import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 

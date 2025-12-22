@@ -1,6 +1,6 @@
 import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../../Contexts/useAuth.ts";
+import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { formatRemainingTime } from "../../../../lib/Functions.ts";
 import TagComp from "../../../../lib/Tags/TagComp.tsx";
 

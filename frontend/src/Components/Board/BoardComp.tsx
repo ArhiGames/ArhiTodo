@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
-import type {Board} from "../../Models/Board.ts";
-import type {CardList} from "../../Models/CardList.ts";
+import { useEffect, useState } from "react";
+import type { Board } from "../../Models/Board.ts";
+import type { CardList } from "../../Models/CardList.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
-import {useAuth} from "../../Contexts/useAuth.ts";
+import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
