@@ -7,7 +7,7 @@ const deleteBoardAction = (state: State, deleteBoardId: number) => {
 
     return {
         boards: newBoards,
-        lists: state.lists,
+        lists: state.cardLists,
         cards: state.cards
     }
 

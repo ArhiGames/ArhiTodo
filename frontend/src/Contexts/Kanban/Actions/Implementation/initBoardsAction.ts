@@ -1,7 +1,7 @@
 import type { Board } from "../../../../Models/States/types.ts";
-import type { InitBoardPayload } from "../Action.ts";
+import type { InitBoardsPayload } from "../Action.ts";
 
-const initBoardsAction = (payload: InitBoardPayload[]) => {
+const initBoardsAction = (payload: InitBoardsPayload[]) => {
 
     const boards: Record<number, Board> = payload.reduce((acc, b) => {
         acc[b.boardId] = {

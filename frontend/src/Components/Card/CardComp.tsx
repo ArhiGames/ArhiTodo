@@ -1,6 +1,6 @@
-import type {Card} from "../../Models/Card.ts";
+import type {CardGetDto} from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
 
-const CardComp = (props: { card: Card }) => {
+const CardComp = (props: { card: CardGetDto }) => {
 
     return (
         <div className="card">

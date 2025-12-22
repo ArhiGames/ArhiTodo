@@ -1,7 +1,7 @@
-import type { CardList } from "../../Models/CardList.ts";
+import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
-const CreateNewCardComp = (props: { boardId: number, cardList: CardList }) => {
+const CreateNewCardComp = (props: { boardId: number, cardList: CardListGetDto }) => {
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [cardName, setCardName] = useState<string>("");

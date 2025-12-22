@@ -1,14 +1,54 @@
-import { useEffect, useState } from "react";
-import type { Board } from "../../Models/Board.ts";
-import type { CardList } from "../../Models/CardList.ts";
+import {type Dispatch, useEffect, useMemo} from "react"
+import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
+import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
+import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
+import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type { Board, CardList, State } from "../../Models/States/types.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
-    const [board, setBoard] = useState<Board>();
     const { token } = useAuth();
+    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
+    const kanbanState: State = useKanbanState();
+    const board: BoardGetDto | null = useMemo(() => {
+
+        if (!props.projectId || !props.boardId) return null;
+
+        let boardName: string = "";
+        for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
+            const board: Board = Object.values(kanbanState.boards)[i];
+            if (board.boardId === props.boardId) {
+                boardName = board.boardName;
+                break;
+            }
+        }
+
+        const cardLists: CardListGetDto[] = [];
+        if (kanbanState.cardLists) {
+            for (let i = 0; i < Object.values(kanbanState.cardLists).length; i++) {
+                const list: CardList = Object.values(kanbanState.cardLists)[i];
+                if (list.boardId === props.boardId) {
+                    cardLists.push({
+                        cardListId: list.cardListId,
+                        cardListName: list.cardListName,
+                        cards: []
+                    })
+                }
+            }
+        }
+
+        const boardGetDto: BoardGetDto = {
+            boardId: props.boardId,
+            boardName: boardName,
+            cardLists: cardLists
+        }
+
+        return boardGetDto;
+
+    }, [kanbanState.boards, kanbanState.cardLists, props.boardId, props.projectId])
 
     useEffect(() => {
 
@@ -26,12 +66,16 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
                 return res.json()
             })
-            .then((res: Board) => {
-                setBoard(res);
+            .then((res: BoardGetDto) => {
+
+                if (dispatch) {
+                    dispatch({type: "INIT_BOARD", payload: {boardId: res.boardId, boardGetDto: res}});
+                }
+
             })
             .catch(console.error);
 
-    }, [props.projectId, props.boardId, token]);
+    }, [props.projectId, props.boardId, token, dispatch]);
 
     if (!props.boardId) {
         return (
@@ -46,12 +90,12 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             {
                 board ? (
                     <>
-                        {board.cardLists &&
-                            board.cardLists.map((cardList: CardList) => {
+                        { (board.cardLists && board.cardLists.length > 0) && (
+                            board.cardLists.map((cardList: CardListGetDto) => {
                                 return (
                                     <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}></CardListComp>
                                 );
-                            })}
+                            }))}
                         <CreateNewCardListComp/>
                     </>
                 ) : (

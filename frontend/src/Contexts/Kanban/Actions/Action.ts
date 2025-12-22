@@ -1,6 +1,13 @@
-export type InitBoardPayload = {
+import type { BoardGetDto } from "../../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+
+export type InitBoardsPayload = {
     boardId: number;
     boardName: string;
+}
+
+export type InitBoardPayload = {
+    boardId: number;
+    boardGetDto: BoardGetDto;
 }
 
 export type CreateBoardPayload = {
@@ -10,6 +17,7 @@ export type CreateBoardPayload = {
 }
 
 export type Action =
-    { type: "INIT_BOARDS", payload: InitBoardPayload[] } |
+    { type: "INIT_BOARDS", payload: InitBoardsPayload[] } |
+    { type: "INIT_BOARD", payload: InitBoardPayload } |
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } }

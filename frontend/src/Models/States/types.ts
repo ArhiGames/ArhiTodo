@@ -17,6 +17,6 @@ export type Card = {
 
 export interface State {
     boards: Record<number, Board>;
-    lists: Record<number, CardList>;
+    cardLists: Record<number, CardList>;
     cards: Record<number, Card>;
 }
