@@ -4,12 +4,14 @@ import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.t
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import { useParams } from "react-router-dom";
 import type { State } from "../../Models/States/types.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
     const createBoardHeaderRef = useRef<HTMLDivElement | null>(null);
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
     const { projectId } = useParams();
+    const { token } = useAuth();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
@@ -34,6 +36,20 @@ const CreateNewBoardHeaderComp = () => {
                 }
             });
             dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: maxKeyValue + 1, boardName: boardName }});
+
+            fetch(`https://localhost:7069/api/project/${projectId}/board`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ boardName: boardName })
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to create board");
+                    }
+                })
+                .catch(err => {
+                    console.error("Failed to create board", err);
+                })
         }
 
         setOpen(false);

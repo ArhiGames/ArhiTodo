@@ -23,7 +23,7 @@ public class BoardController : ControllerBase
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
 
-    [HttpPost("/project/{projectId:int}/board/")]
+    [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardPostDto boardPostDto)
     {
         try
@@ -38,7 +38,7 @@ public class BoardController : ControllerBase
         }
     }
 
-    [HttpPut("/project/{projectId:int}/board/")]
+    [HttpPut("project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardPutDto boardPutDto)
     {
         try
@@ -53,7 +53,7 @@ public class BoardController : ControllerBase
         }
     }
 
-    [HttpDelete("/project/{projectId:int}/board/{boardId:int}")]
+    [HttpDelete("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
         try
