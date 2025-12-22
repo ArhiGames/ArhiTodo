@@ -1,4 +1,4 @@
-import {type Dispatch, useEffect, useMemo} from "react"
+import {type Dispatch, useEffect} from "react"
 import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
@@ -13,9 +13,10 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
     const { token } = useAuth();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
-    const board: BoardGetDto | null = useMemo(() => {
+    const board: BoardGetDto | null = getUnnormalizedKanbanState()
 
-        if (!props.projectId || !props.boardId) return null;
+    function getUnnormalizedKanbanState() {
+        if (props.boardId == null) return null;
 
         let boardName: string = "";
         for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
@@ -47,12 +48,11 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         }
 
         return boardGetDto;
-
-    }, [kanbanState.boards, kanbanState.cardLists, props.boardId, props.projectId])
+    }
 
     useEffect(() => {
 
-        if (!props.boardId) return;
+        if (props.boardId == null) return;
 
         fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`,
             {

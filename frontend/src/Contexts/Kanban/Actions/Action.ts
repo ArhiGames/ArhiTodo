@@ -16,8 +16,15 @@ export type CreateBoardPayload = {
     boardName: string;
 }
 
+export type CreateCardlistPayload = {
+    projectId: number;
+    boardId: number;
+    cardListName: string;
+}
+
 export type Action =
     { type: "INIT_BOARDS", payload: InitBoardsPayload[] } |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
-    { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } }
+    { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
+    { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload }

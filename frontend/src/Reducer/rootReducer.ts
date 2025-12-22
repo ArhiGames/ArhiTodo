@@ -4,6 +4,7 @@ import type { State } from "../Models/States/types.ts";
 import initBoardsAction from "../Contexts/Kanban/Actions/Implementation/initBoardsAction.ts";
 import deleteBoardAction from "../Contexts/Kanban/Actions/Implementation/deleteBoardAction.ts";
 import initBoardAction from "../Contexts/Kanban/Actions/Implementation/initBoardAction.ts";
+import createCardlistAction from "../Contexts/Kanban/Actions/Implementation/createCardlistAction.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -15,6 +16,8 @@ function rootReducer(state: State, action: Action) {
             return createBoardAction(state, action.payload);
         case "CREATE_BOARD_FAILED":
             return deleteBoardAction(state, action.payload.failedBoardId);
+        case "CREATE_CARDLIST_OPTIMISTIC":
+            return createCardlistAction(state, action.payload);
     }
 }
 
