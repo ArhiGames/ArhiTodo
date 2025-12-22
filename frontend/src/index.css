@@ -220,6 +220,11 @@ body {
     transition: background-color 0.3s, transform 0.3s;
 }
 
+.selected-board-header {
+    background-color: var(--bg-light);
+    transform: translateY(-2px);
+}
+
 .board-header:hover {
     cursor: pointer;
     background-color: var(--bg-light);

@@ -71,7 +71,7 @@ const ProjectViewComp = () => {
             <div className="board-selectors">
                 {Object.values(state.boards).map((board: Board) => {
                     return (
-                        <BoardHeader key={board.boardId} projectId={projectIdNum} board={board}/>
+                        <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={projectIdNum} board={board}/>
                     )
                 })}
                 <CreateNewBoardHeaderComp/>
