@@ -1,11 +1,11 @@
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Board } from "../../Models/States/types.ts";
-import {type FormEvent, useEffect, useRef, useState} from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
-import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
-import {createPortal} from "react-dom";
+import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
+import { createPortal } from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
@@ -55,7 +55,10 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                     dispatch({ type: "UPDATE_BOARD", payload: {boardId: editedBoard.boardId, boardName: editedBoard.boardName} });
                 }
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => {
+                setNewName("");
+            })
 
         setIsEditing(false);
     }
@@ -85,7 +88,10 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                     navigate(`/projects/${props.projectId}/board`)
                 }
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => {
+                setNewName("");
+            });
     }
 
     return (

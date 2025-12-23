@@ -200,6 +200,12 @@ body {
     opacity: 60%;
 }
 
+.create-new-board-modal form {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+}
+
 /*-----------------------------------------------*/
 /*---------------------BOARDS--------------------*/
 /*-----------------------------------------------*/

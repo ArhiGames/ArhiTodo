@@ -8,6 +8,7 @@ const createBoardAction = (state: State, payload: CreateBoardPayload) => {
         boards: {
             ...state.boards,
             [payload.boardId]: {
+                ...state.boards[payload.boardId],
                 boardId: payload.boardId,
                 boardName: payload.boardName
             }

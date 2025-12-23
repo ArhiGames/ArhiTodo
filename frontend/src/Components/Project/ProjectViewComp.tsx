@@ -36,28 +36,26 @@ const ProjectViewComp = () => {
             .then((fetchedBoards: Board[]) => {
 
                 if (dispatch) {
-                    dispatch({type: "INIT_BOARDS", payload: fetchedBoards});
+                    dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
+
+                    if (!boardId && Object.keys(state.boards).length > 0) {
+                        let firstId: number = -1;
+                        Object.values(state.boards).forEach((board: Board) => {
+                            if (board.projectId === Number(projectId)) {
+                                firstId = board.boardId;
+                            }
+                        })
+                        if (firstId > 0) {
+                            setActiveBoardId(firstId);
+                            navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
+                        }
+                    }
                 }
 
             })
             .catch(console.error);
 
-    }, [dispatch, projectId, token]);
-
-    useEffect(() => {
-
-        if (!state.boards || Object.keys(state.boards).length === 0) return;
-        if (boardId) return;
-
-        const firstKey: number = Number(Object.keys(state.boards)[0]);
-        const firstId = state.boards[firstKey].boardId;
-
-        queueMicrotask(() => {
-            setActiveBoardId(firstId);
-            navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
-        })
-
-    }, [state.boards, boardId, projectId, navigate]);
+    }, [boardId, dispatch, navigate, projectId, state.boards, token]);
 
     useEffect(() => {
         if (boardId) {
@@ -71,7 +69,8 @@ const ProjectViewComp = () => {
             <div className="board-selectors">
                 {Object.values(state.boards).map((board: Board) => {
                     return (
-                        <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={projectIdNum} board={board}/>
+                        board.projectId === projectIdNum ?
+                            <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={projectIdNum} board={board}/> : null
                     )
                 })}
                 <CreateNewBoardHeaderComp/>

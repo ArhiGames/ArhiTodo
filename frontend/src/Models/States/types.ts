@@ -1,4 +1,5 @@
 export type Board = {
+    projectId: number;
     boardId: number;
     boardName: string;
 }

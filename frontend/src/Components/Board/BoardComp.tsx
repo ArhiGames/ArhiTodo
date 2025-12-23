@@ -69,7 +69,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             .then((res: BoardGetDto) => {
 
                 if (dispatch) {
-                    dispatch({type: "INIT_BOARD", payload: {boardId: res.boardId, boardGetDto: res}});
+                    dispatch({type: "INIT_BOARD", payload: { boardId: res.boardId, boardGetDto: res }});
                 }
 
             })
@@ -77,7 +77,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     }, [props.projectId, props.boardId, token, dispatch]);
 
-    if (!props.boardId) {
+    if (props.boardId === null) {
         return (
             <div className="board-body no-board-selected">
                 <p>No board selected</p>

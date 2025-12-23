@@ -6,9 +6,8 @@ const deleteCardlistAction = (state: State, cardListId: number) => {
     const { [cardListId]: _, ...newCardLists } = state.cardLists;
 
     return {
-        boards: state.boards,
-        cardLists: newCardLists,
-        cards: state.cards
+        ...state,
+        cardLists: newCardLists
     }
 }
 

@@ -49,7 +49,7 @@ export type CreateCardSucceededPayload = {
 }
 
 export type Action =
-    { type: "INIT_BOARDS", payload: InitBoardsPayload[] } |
+    { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
 
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
