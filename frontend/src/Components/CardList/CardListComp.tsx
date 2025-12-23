@@ -3,6 +3,7 @@ import CardComp from "../Card/CardComp.tsx";
 import type { Card, State } from "../../Models/States/types.ts";
 import { useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
 
 const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
 
@@ -36,6 +37,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
                         )
                     })}
                 </div>
+                <CreateNewCardComp cardList={props.cardList}/>
             </div>
         </div>
     )

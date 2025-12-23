@@ -1,0 +1,20 @@
+import type {State} from "../../../../../Models/States/types.ts";
+import type {CreateCardPayload} from "../../Action.ts";
+
+const createCardAction = (state: State, payload: CreateCardPayload) => {
+
+    return {
+        ...state,
+        cards: {
+            ...state.cards,
+            [payload.cardId]: {
+                cardListId: payload.cardListId,
+                cardId: payload.cardId,
+                cardName: payload.cardName
+            }
+        }
+    }
+
+}
+
+export default createCardAction;

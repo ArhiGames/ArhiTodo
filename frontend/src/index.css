@@ -325,6 +325,10 @@ body {
     color: var(--text-color);
 }
 
+.card p {
+    word-wrap: break-word;
+}
+
 .creation-card {
     background-color: var(--bg-light);
     padding: 5px;

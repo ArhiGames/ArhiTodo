@@ -32,6 +32,17 @@ export type CreateCardlistSucceededPayload = {
     actualCardlistId: number;
 }
 
+export type CreateCardPayload = {
+    cardListId: number;
+    cardId: number;
+    cardName: string;
+}
+
+export type CreateCardSucceededPayload = {
+    predictedCardId: number;
+    actualCardId: number;
+}
+
 export type Action =
     { type: "INIT_BOARDS", payload: InitBoardsPayload[] } |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
@@ -40,4 +51,7 @@ export type Action =
     { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
-    { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } }
+    { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } } |
+    { type: "CREATE_CARD_OPTIMISTIC", payload: CreateCardPayload } |
+    { type: "CREATE_CARD_SUCCEEDED", payload: CreateCardSucceededPayload } |
+    { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } }

@@ -1,4 +1,4 @@
-import type {State} from "../../../../Models/States/types.ts";
+import type {State} from "../../../../../Models/States/types.ts";
 
 const deleteBoardAction = (state: State, deleteBoardId: number) => {
 

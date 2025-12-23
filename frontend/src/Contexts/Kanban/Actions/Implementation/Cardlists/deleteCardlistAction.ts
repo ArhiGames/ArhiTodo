@@ -1,4 +1,4 @@
-import type {State} from "../../../../Models/States/types.ts";
+import type {State} from "../../../../../Models/States/types.ts";
 
 const deleteCardlistAction = (state: State, cardListId: number) => {
 

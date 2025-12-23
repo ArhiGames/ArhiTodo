@@ -1,13 +1,16 @@
 import type { Action } from "../Contexts/Kanban/Actions/Action.ts";
-import createBoardAction from "../Contexts/Kanban/Actions/Implementation/createBoardAction.ts";
+import createBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/createBoardAction.ts";
 import type { State } from "../Models/States/types.ts";
 import initBoardsAction from "../Contexts/Kanban/Actions/Implementation/initBoardsAction.ts";
-import deleteBoardAction from "../Contexts/Kanban/Actions/Implementation/deleteBoardAction.ts";
+import deleteBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/deleteBoardAction.ts";
 import initBoardAction from "../Contexts/Kanban/Actions/Implementation/initBoardAction.ts";
-import createCardlistAction from "../Contexts/Kanban/Actions/Implementation/createCardlistAction.ts";
-import createBoardSucceededAction from "../Contexts/Kanban/Actions/Implementation/createBoardSucceededAction.ts";
-import createCardlistSucceededAction from "../Contexts/Kanban/Actions/Implementation/createCardlistSucceededAction.ts";
-import deleteCardlistAction from "../Contexts/Kanban/Actions/Implementation/deleteCardlistAction.ts";
+import createCardlistAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/createCardlistAction.ts";
+import createBoardSucceededAction from "../Contexts/Kanban/Actions/Implementation/Boards/createBoardSucceededAction.ts";
+import createCardlistSucceededAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/createCardlistSucceededAction.ts";
+import deleteCardlistAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/deleteCardlistAction.ts";
+import createCardAction from "../Contexts/Kanban/Actions/Implementation/Card/createCardAction.ts";
+import createCardSucceededAction from "../Contexts/Kanban/Actions/Implementation/Card/createCardSucceededAction.ts";
+import deleteCardAction from "../Contexts/Kanban/Actions/Implementation/Card/deleteCardAction.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -27,6 +30,12 @@ function rootReducer(state: State, action: Action) {
             return createCardlistSucceededAction(state, action.payload);
         case "CREATE_CARDLIST_FAILED":
             return deleteCardlistAction(state, action.payload.failedCardlistId);
+        case "CREATE_CARD_OPTIMISTIC":
+            return createCardAction(state, action.payload);
+        case "CREATE_CARD_SUCCEEDED":
+            return createCardSucceededAction(state, action.payload);
+        case "CREATE_CARD_FAILED":
+            return deleteCardAction(state, action.payload.failedCardId);
     }
 }
 
