@@ -1,4 +1,9 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import {type Dispatch, type FormEvent, useEffect, useRef, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import type {CardListGetDto} from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 
 const CreateNewCardListComp = () => {
 
@@ -6,6 +11,10 @@ const CreateNewCardListComp = () => {
     const [cardListName, setCardListName] = useState<string>("");
     const cardListNameRef = useRef<HTMLInputElement>(null);
     const creationCardListRef = useRef<HTMLDivElement>(null)
+    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
+    const kanbanState = useKanbanState();
+    const { projectId, boardId } = useParams();
+    const { token } = useAuth();
 
     function onStartCreatingNewCardClicked() {
 
@@ -27,8 +36,39 @@ const CreateNewCardListComp = () => {
     function onCardlistSubmit(e: FormEvent<HTMLFormElement>) {
 
         e.preventDefault();
-        closeForm();
+        if (dispatch && boardId !== undefined) {
+            let maxKeyValue = 0;
+            Object.keys(kanbanState.cardLists).forEach((cardListId: string) => {
+                if (maxKeyValue < Number(cardListId)) {
+                    maxKeyValue = Number(cardListId);
+                }
+            })
+            const predictedId = maxKeyValue + 1;
 
+            dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
+
+            fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/cardlist`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ cardListName: cardListName })
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Could not post new cardlist");
+                    }
+
+                    return res.json();
+                })
+                .then((createdCardList: CardListGetDto) => {
+                    dispatch({ type: "CREATE_CARDLIST_SUCCEEDED", payload: { predictedCardlistId: predictedId, actualCardlistId: createdCardList.cardListId} })
+                })
+                .catch(err => {
+                    dispatch({ type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: predictedId } })
+                    console.error(err);
+                });
+        }
+
+        closeForm();
     }
 
     useEffect(() => {
@@ -61,7 +101,7 @@ const CreateNewCardListComp = () => {
                         <input ref={cardListNameRef} placeholder="Name of a card list..."
                                type="text" value={cardListName}
                                onChange={(e) => setCardListName(e.target.value)}
-                               maxLength={25}
+                               maxLength={35}
                                className="classic-input">
                         </input>
                         <button className={`button ${ cardListName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">Add list</button>

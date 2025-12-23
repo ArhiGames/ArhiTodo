@@ -1,7 +1,7 @@
-import type { Board } from "../../../../Models/States/types.ts";
+import type {Board, State} from "../../../../Models/States/types.ts";
 import type { InitBoardsPayload } from "../Action.ts";
 
-const initBoardsAction = (payload: InitBoardsPayload[]) => {
+const initBoardsAction = (state: State, payload: InitBoardsPayload[]) => {
 
     const boards: Record<number, Board> = payload.reduce((acc, b) => {
         acc[b.boardId] = {
@@ -12,9 +12,8 @@ const initBoardsAction = (payload: InitBoardsPayload[]) => {
     }, {} as Record<number, Board>);
 
     return {
-        boards: boards,
-        lists: {},
-        cards: {}
+        ...state,
+        boards: boards
     }
 
 }

@@ -2,10 +2,10 @@ import Popover from "../../lib/Popover/Popover.tsx";
 import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { State } from "../../Models/States/types.ts";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import type {BoardGetDto} from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
+import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
@@ -87,6 +87,7 @@ const CreateNewBoardHeaderComp = () => {
                             <input style={{ width: "100%" }} className="classic-input"
                                    placeholder="Board name..." value={boardName}
                                    onChange={e => setBoardName(e.target.value)}
+                                   maxLength={35}
                                    ref={boardNameInputRef}/>
                             <button className={`button ${boardName.length > 0 ? "valid-submit-button" : "standard-button"}`} type="submit">Create</button>
                         </form>

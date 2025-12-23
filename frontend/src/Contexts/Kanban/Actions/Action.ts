@@ -22,9 +22,14 @@ export type CreateBoardSucceededPayload = {
 }
 
 export type CreateCardlistPayload = {
-    projectId: number;
     boardId: number;
+    cardListId: number;
     cardListName: string;
+}
+
+export type CreateCardlistSucceededPayload = {
+    predictedCardlistId: number;
+    actualCardlistId: number;
 }
 
 export type Action =
@@ -33,4 +38,6 @@ export type Action =
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
     { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
-    { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload }
+    { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
+    { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
+    { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } }
