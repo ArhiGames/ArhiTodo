@@ -61,7 +61,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Could not fetch /api/Cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
+                    throw new Error(`Could not fetch /api/cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
                 }
 
                 return res.json()

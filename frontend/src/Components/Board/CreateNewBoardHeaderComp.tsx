@@ -2,9 +2,10 @@ import Popover from "../../lib/Popover/Popover.tsx";
 import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import type { State } from "../../Models/States/types.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import type {BoardGetDto} from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
@@ -12,6 +13,7 @@ const CreateNewBoardHeaderComp = () => {
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
     const { projectId } = useParams();
     const { token } = useAuth();
+    const navigate = useNavigate();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
@@ -48,6 +50,12 @@ const CreateNewBoardHeaderComp = () => {
                     if (!res.ok) {
                         throw new Error("Failed to create board");
                     }
+
+                    return res.json();
+                })
+                .then((createdBoard: BoardGetDto)=> {
+                    dispatch( { type: "CREATE_BOARD_SUCCEEDED", payload: { predictedBoardId: newId, actualBoardId: createdBoard.boardId } } )
+                    navigate(`/projects/${projectId}/board/${createdBoard.boardId}`)
                 })
                 .catch(err => {
                     dispatch({ type: "CREATE_BOARD_FAILED", payload: { failedBoardId: newId }});
