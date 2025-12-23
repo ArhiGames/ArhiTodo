@@ -21,6 +21,11 @@ export type CreateBoardSucceededPayload = {
     actualBoardId: number;
 }
 
+export type UpdateBoardPayload = {
+    boardId: number;
+    boardName: string;
+}
+
 export type CreateCardlistPayload = {
     boardId: number;
     cardListId: number;
@@ -46,12 +51,18 @@ export type CreateCardSucceededPayload = {
 export type Action =
     { type: "INIT_BOARDS", payload: InitBoardsPayload[] } |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
+
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
     { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
+
+    { type: "UPDATE_BOARD", payload: UpdateBoardPayload } |
+    { type: "DELETE_BOARD", payload: { boardId: number } } |
+
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
     { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } } |
+
     { type: "CREATE_CARD_OPTIMISTIC", payload: CreateCardPayload } |
     { type: "CREATE_CARD_SUCCEEDED", payload: CreateCardSucceededPayload } |
     { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } }

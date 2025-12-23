@@ -45,7 +45,7 @@ public class BoardController : ControllerBase
         {
             Board? board = await _boardRepository.UpdateAsync(projectId, boardPutDto);
             if (board == null) return NotFound();
-            return Ok(new { board.BoardId} );
+            return Ok(board.ToBoardGetDto());
         }
         catch (InvalidOperationException)
         {
