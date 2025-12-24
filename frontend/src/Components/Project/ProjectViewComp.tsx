@@ -19,6 +19,26 @@ const ProjectViewComp = () => {
 
     const [activeBoardId, setActiveBoardId] = useState<number | null>(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    function loadDefaultBoard() {
+
+        if (!boardId && Object.keys(state.boards).length > 0) {
+            let firstId: number = -1;
+            console.log(`2. awdawdawdawd ${firstId}`);
+            Object.values(state.boards).forEach((board: Board) => {
+                if (board.projectId === Number(projectId)) {
+                    firstId = board.boardId;
+                }
+            })
+            console.log(`3. awdawdawdawd ${firstId}`);
+            if (firstId > 0) {
+                setActiveBoardId(firstId);
+                navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
+            }
+        }
+
+    }
+
     useEffect(() => {
 
         fetch(`https://localhost:7069/api/project/${projectId}/board`,
@@ -37,29 +57,19 @@ const ProjectViewComp = () => {
 
                 if (dispatch) {
                     dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
-
-                    if (!boardId && Object.keys(state.boards).length > 0) {
-                        let firstId: number = -1;
-                        Object.values(state.boards).forEach((board: Board) => {
-                            if (board.projectId === Number(projectId)) {
-                                firstId = board.boardId;
-                            }
-                        })
-                        if (firstId > 0) {
-                            setActiveBoardId(firstId);
-                            navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });
-                        }
-                    }
                 }
 
             })
             .catch(console.error);
 
-    }, [boardId, dispatch, navigate, projectId, state.boards, token]);
+    }, [dispatch, projectId, token]);
+
+    useEffect(() => {
+        loadDefaultBoard();
+    }, [loadDefaultBoard, state.boards]);
 
     useEffect(() => {
         if (boardId) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setActiveBoardId(Number(boardId));
         }
     }, [boardId]);
