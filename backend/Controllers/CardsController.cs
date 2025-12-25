@@ -15,11 +15,29 @@ public class CardsController : ControllerBase
 {
     private readonly ICardlistRepository _cardlistRepository;
     private readonly ICardRepository _cardRepository;
-
-    public CardsController(ICardlistRepository cardlistRepository, ICardRepository cardRepository)
+    private readonly ILabelRepository _labelRepository;
+    
+    public CardsController(ICardlistRepository cardlistRepository, ICardRepository cardRepository, ILabelRepository labelRepository)
     {
         _cardlistRepository = cardlistRepository;
         _cardRepository = cardRepository;
+        _labelRepository = labelRepository;
+    }
+
+    [HttpPost("card/{cardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> AddLabelToCard(int cardId, int labelId)
+    {
+        bool result = await _labelRepository.AddLabelToCard(cardId, labelId);
+        if (!result) return NotFound();
+        return Ok();
+    }
+
+    [HttpDelete("card/{cardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> RemoveLabelFromCard(int cardId, int labelId)
+    {
+        bool result = await _labelRepository.RemoveLabelFromCard(cardId, labelId);
+        if (!result) return NotFound();
+        return NoContent();
     }
 
     [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist")]

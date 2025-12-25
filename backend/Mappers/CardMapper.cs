@@ -16,10 +16,11 @@ public static class CardMapper
     
     public static CardGetDto ToCardGetDto(this Card card)
     {
-        return new CardGetDto()
+        return new CardGetDto
         {
             CardId = card.CardId,
-            CardName = card.CardName
+            CardName = card.CardName,
+            Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
         };
     }
 }

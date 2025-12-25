@@ -46,6 +46,7 @@ public class ProjectRepository : IProjectRepository
             .Include(p => p.Boards)
                 .ThenInclude(b => b.CardLists)
                     .ThenInclude(cl => cl.Cards)
+                        .ThenInclude(c => c.CardLabels)
             .Where(p => p.ProjectId == projectId)
             .FirstOrDefaultAsync();
         return project ?? throw new InvalidOperationException("Not found");

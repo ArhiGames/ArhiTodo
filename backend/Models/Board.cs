@@ -15,5 +15,6 @@ namespace ArhiTodo.Models
         public required string BoardName { get; set; }
         
         public List<CardList> CardLists { get; set; } = new();
+        public List<Label> Labels { get; set; } = new();
     }    
 }

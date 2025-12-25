@@ -24,13 +24,11 @@ const ProjectViewComp = () => {
 
         if (!boardId && Object.keys(state.boards).length > 0) {
             let firstId: number = -1;
-            console.log(`2. awdawdawdawd ${firstId}`);
             Object.values(state.boards).forEach((board: Board) => {
                 if (board.projectId === Number(projectId)) {
                     firstId = board.boardId;
                 }
             })
-            console.log(`3. awdawdawdawd ${firstId}`);
             if (firstId > 0) {
                 setActiveBoardId(firstId);
                 navigate(`/projects/${projectId}/board/${firstId}`, { replace: true });

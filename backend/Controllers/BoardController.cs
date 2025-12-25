@@ -15,14 +15,46 @@ namespace ArhiTodo.Controllers;
 public class BoardController : ControllerBase
 {
     private readonly IBoardRepository _boardRepository;
+    private readonly ILabelRepository _labelRepository;
     
-    public BoardController(IBoardRepository boardRepository, ILogger<BoardController> logger)
+    public BoardController(IBoardRepository boardRepository, ILabelRepository labelRepository, ILogger<BoardController> logger)
     {
         _boardRepository = boardRepository;
+        _labelRepository = labelRepository;
         
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
 
+    [HttpPost("project/{projectId:int}/board/{boardId:int}/label")]
+    public async Task<IActionResult> CreateLabel(int projectId, int boardId, [FromBody] LabelPostDto labelPostDto)
+    {
+        try
+        {
+            Label? label = await _labelRepository.CreateLabelAsync(projectId, boardId, labelPostDto);
+            if (label == null) NotFound();
+            return Ok();
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("project/{projectId:int}/board/{boardId:int}/label")]
+    public async Task<IActionResult> GetLabels(int projectId, int boardId)
+    {
+        try
+        {
+            List<Label> labels = await _labelRepository.GetAllAsync(boardId);
+            List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
+            return Ok(labelGetDtos);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    } 
+    
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardPostDto boardPostDto)
     {
@@ -76,7 +108,7 @@ public class BoardController : ControllerBase
             List<Board> boards = await _boardRepository.GetAllAsync(projectId);
             if (boards.Count == 0) return Ok();
 
-            List<BoardGetDto> boardGetDtos = boards.Select(board => new BoardGetDto() { BoardId = board.BoardId, BoardName = board.BoardName }).ToList();
+            List<BoardGetDto> boardGetDtos = boards.Select(board => board.ToBoardGetDto()).ToList();
             return Ok(boardGetDtos);
         }
         catch (InvalidOperationException)

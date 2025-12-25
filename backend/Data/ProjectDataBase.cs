@@ -12,6 +12,7 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
     public DbSet<CardList> CardLists { get; set; }
     public DbSet<Card> Cards { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
+    public DbSet<Label> Labels { get; set; }
 
     public ProjectDataBase(DbContextOptions<ProjectDataBase> options)
         : base(options)
@@ -25,5 +26,14 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
         builder.Entity<InvitationLink>()
             .HasIndex(i => i.InvitationKey)
             .IsUnique();
+
+        builder.Entity<CardLabel>()
+            .HasKey(cl => new { cl.CardId, cl.LabelId });
+        
+        builder.Entity<CardLabel>()
+            .HasOne(cl => cl.Card)
+            .WithMany(c => c.CardLabels)
+            .HasForeignKey(cl => cl.CardId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

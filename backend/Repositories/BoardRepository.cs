@@ -99,6 +99,7 @@ public class BoardRepository : IBoardRepository
             .Where(b => b.BoardId == boardId)
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
+                    .ThenInclude(c => c.CardLabels)
             .Include(b => b.Project)
             .FirstOrDefaultAsync();
 
