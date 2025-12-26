@@ -124,9 +124,12 @@ public class BoardController : ControllerBase
         {
             Board? board = await _boardRepository.GetAsync(projectId, boardId);
             if (board == null) return NotFound();
-
+            
+            List<Label> labels = await _labelRepository.GetAllAsync(boardId);
+            List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
+            
             BoardGetDto boardGetDto = board.ToBoardGetDto();
-            return Ok(boardGetDto);
+            return Ok(new { board = boardGetDto, labels = labelGetDtos });
         }
         catch (InvalidOperationException)
         {

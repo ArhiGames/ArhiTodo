@@ -1,4 +1,4 @@
-import {type Dispatch, useEffect} from "react"
+import {type Dispatch, useEffect, useRef, useState} from "react"
 import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
@@ -7,6 +7,8 @@ import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.t
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
 import type { Board, CardList, State } from "../../Models/States/types.ts";
+import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import LabelSelector from "../../lib/Kanban/Labels/LabelSelector.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
@@ -14,6 +16,8 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
     const board: BoardGetDto | null = getUnnormalizedKanbanState()
+    const seeLabelsButtonRef = useRef<HTMLButtonElement | null>(null);
+    const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
 
     function getUnnormalizedKanbanState() {
         if (props.boardId == null) return null;
@@ -66,10 +70,10 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
                 return res.json()
             })
-            .then((res: BoardGetDto) => {
+            .then((res: { board: BoardGetDto; labels: LabelGetDto[] }) => {
 
                 if (dispatch) {
-                    dispatch({type: "INIT_BOARD", payload: { boardId: res.boardId, boardGetDto: res }});
+                    dispatch({type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
                 }
 
             })
@@ -87,21 +91,31 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     return (
         <div className="board-body">
-            {
-                board ? (
-                    <>
-                        { (board.cardLists && board.cardLists.length > 0) && (
-                            board.cardLists.map((cardList: CardListGetDto) => {
-                                return (
-                                    <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}></CardListComp>
-                                );
-                            }))}
-                        <CreateNewCardListComp/>
-                    </>
-                ) : (
-                    <p>Loading...</p>
-                )
-            }
+            <div className="current-board-header">
+                <p>Labels: </p>
+                <button className="button standard-button" onClick={() => setIsEditingLabels(true)} ref={seeLabelsButtonRef}>All</button>
+                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} boardId={props.boardId}
+                                                    onClose={() => setIsEditingLabels(false)}
+                                                    actionTitle="Filter labels"/>
+                }
+            </div>
+            <div className="board-content">
+                {
+                    board ? (
+                        <>
+                            { (board.cardLists && board.cardLists.length > 0) && (
+                                board.cardLists.map((cardList: CardListGetDto) => {
+                                    return (
+                                        <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}></CardListComp>
+                                    );
+                                }))}
+                            <CreateNewCardListComp/>
+                        </>
+                    ) : (
+                        <p>Loading...</p>
+                    )
+                }
+            </div>
         </div>
     )
 }

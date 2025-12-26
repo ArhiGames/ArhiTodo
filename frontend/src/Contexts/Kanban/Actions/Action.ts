@@ -1,4 +1,5 @@
 import type { BoardGetDto } from "../../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type { LabelGetDto } from "../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 
 export type InitBoardsPayload = {
     boardId: number;
@@ -8,6 +9,7 @@ export type InitBoardsPayload = {
 export type InitBoardPayload = {
     boardId: number;
     boardGetDto: BoardGetDto;
+    labels: LabelGetDto[];
 }
 
 export type CreateBoardPayload = {

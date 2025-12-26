@@ -1,0 +1,10 @@
+.editable-label-div {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+}
+
+.editable-label-div img {
+    filter: invert(100%);
+}

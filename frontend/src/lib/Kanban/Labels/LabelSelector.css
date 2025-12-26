@@ -1,0 +1,20 @@
+.label-selector-popover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 300px;
+    height: 350px;
+}
+
+.label-selector-existing {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: auto;
+}
+
+.create-label-button {
+    margin-top: auto;
+}

@@ -1,12 +1,15 @@
 import type { InitBoardPayload } from "../Action.ts";
-import type {Card, CardList, State} from "../../../../Models/States/types.ts";
+import type {Card, CardList, Label, State} from "../../../../Models/States/types.ts";
 import type { CardListGetDto } from "../../../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type {LabelGetDto} from "../../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 
 const initBoardAction = (state: State, payload: InitBoardPayload) => {
 
     const cardLists: Record<number, CardList> = {};
-    const cards: Record<number, Card> = {};
     const cardListsDtos: CardListGetDto[] = payload.boardGetDto.cardLists;
+    const cards: Record<number, Card> = {};
+    const labels: Record<number, Label> = {};
+    const labelsDtos: LabelGetDto[] = payload.labels;
 
     for (const cardListDto of cardListsDtos) {
         cardLists[cardListDto.cardListId] = {
@@ -23,10 +26,18 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
         }
     }
 
+    for (const labelDto of labelsDtos) {
+        labels[labelDto.labelId] = {
+            ...labelDto,
+            boardId: payload.boardId
+        }
+    }
+
     return {
         ...state,
         cardLists: cardLists,
-        cards: cards
+        cards: cards,
+        labels: labels
     }
 
 }

@@ -13,6 +13,8 @@
     --bg-x-light: hsl(0, 0%, 28%);
     --bg-xx-light: hsl(0, 0%, 45%);
 
+    --bg-popover: hsl(0, 0%, 25%);
+
     --color-border: hsl(0, 0%, 5%);
 
     --button-cancel: hsl(0, 0%, 50%);
@@ -264,8 +266,26 @@ body {
     background-color: var(--bg);
     border-radius: 0 0 15px 15px;
     display: flex;
+    flex-direction: column;
     height: calc(100vh - 175px);
     overflow: hidden;
+}
+
+.current-board-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px;
+    color: var(--text-color);
+    font-size: large;
+}
+
+.current-board-header .button {
+    max-width: 200px;
+}
+
+.board-content {
+    display: flex;
 }
 
 .no-board-selected {
@@ -622,7 +642,7 @@ body {
 /*---------------------Pop overs-----------------*/
 /*-----------------------------------------------*/
 .popover {
-    background-color: var(--bg-light);
+    background-color: var(--bg-popover);
     color: var(--text-color);
     padding: 15px;
     border-radius: 10px;
