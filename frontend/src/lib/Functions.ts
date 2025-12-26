@@ -10,3 +10,20 @@ export function formatRemainingTime(diffMs: number): string {
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
 }
+
+export type Rgb = {
+    red: number;
+    green: number;
+    blue: number;
+}
+
+export function toRgb(color: number): Rgb {
+    const blueNumber: number = color & 255;
+    const greenNumber: number = (color >> 8) & 255;
+    const redNumber: number = (color >> 16) & 255;
+    return {
+        red: redNumber,
+        green: greenNumber,
+        blue: blueNumber,
+    }
+}

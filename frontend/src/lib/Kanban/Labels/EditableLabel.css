@@ -8,3 +8,13 @@
 .editable-label-div img {
     filter: invert(100%);
 }
+
+.label {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    color: var(--text-color);
+    transition: background-color 0.3s;
+    font-size: medium;
+}
