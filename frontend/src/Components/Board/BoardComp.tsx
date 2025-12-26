@@ -94,9 +94,10 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             <div className="current-board-header">
                 <p>Labels: </p>
                 <button className="button standard-button" onClick={() => setIsEditingLabels(true)} ref={seeLabelsButtonRef}>All</button>
-                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} boardId={props.boardId}
+                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef}
                                                     onClose={() => setIsEditingLabels(false)}
-                                                    actionTitle="Filter labels"/>
+                                                    actionTitle="Filter labels"
+                                                    boardId={props.boardId} projectId={props.projectId}/>
                 }
             </div>
             <div className="board-content">

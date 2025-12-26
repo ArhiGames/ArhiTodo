@@ -27,3 +27,10 @@ export function toRgb(color: number): Rgb {
         blue: blueNumber,
     }
 }
+
+export function toInteger(color: Rgb) {
+    let rgbColor: number = color.red;
+    rgbColor = (rgbColor << 8) + color.green;
+    rgbColor = (rgbColor << 8) + color.blue;
+    return rgbColor;
+}
