@@ -12,6 +12,10 @@ import createCardAction from "../Contexts/Kanban/Actions/Implementation/Card/cre
 import createCardSucceededAction from "../Contexts/Kanban/Actions/Implementation/Card/createCardSucceededAction.ts";
 import deleteCardAction from "../Contexts/Kanban/Actions/Implementation/Card/deleteCardAction.ts";
 import updateBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/updateBoardAction.ts";
+import createLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelAction.ts";
+import createLabelSucceededAction
+    from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelSucceededAction.tsx";
+import deleteLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/deleteLabelAction.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -19,6 +23,13 @@ function rootReducer(state: State, action: Action) {
             return initBoardsAction(state, action.payload);
         case "INIT_BOARD":
             return initBoardAction(state, action.payload);
+
+        case "CREATE_LABEL_OPTIMISTIC":
+            return createLabelAction(state, action.payload);
+        case "CREATE_LABEL_SUCCEEDED":
+            return createLabelSucceededAction(state, action.payload);
+        case "CREATE_LABEL_FAILED":
+            return deleteLabelAction(state, action.payload);
 
         case "CREATE_BOARD_OPTIMISTIC":
             return createBoardAction(state, action.payload);

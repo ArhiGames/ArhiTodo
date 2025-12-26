@@ -84,6 +84,19 @@ public class LabelRepository : ILabelRepository
         return label;
     }
 
+    public async Task<bool> DeleteLabelAsync(int labelId)
+    {
+        Label? label = await _database.Labels.FirstOrDefaultAsync(l => l.LabelId == labelId);
+        if (label == null)
+        {
+            return false;
+        }
+
+        _database.Labels.Remove(label);
+        await _database.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<List<Label>> GetAllAsync(int boardId)
     {
         Board? board = await _database.Boards

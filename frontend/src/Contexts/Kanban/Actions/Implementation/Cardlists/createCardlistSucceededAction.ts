@@ -3,12 +3,12 @@ import type {CreateCardlistSucceededPayload} from "../../Action.ts";
 
 const createCardlistSucceededAction = (state: State, payload: CreateCardlistSucceededPayload) => {
 
-    const { [payload.predictedCardlistId]: cardListToUpdate, ...restCardlists } = state.cardLists;
+    const { [payload.predictedCardlistId]: cardListToUpdate, ...restCardLists } = state.cardLists;
 
     return {
         ...state,
         cardLists: {
-            ...restCardlists,
+            ...restCardLists,
             [payload.actualCardlistId]: {
                 ...cardListToUpdate,
                 cardListId: payload.actualCardlistId,

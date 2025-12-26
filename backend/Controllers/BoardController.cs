@@ -31,13 +31,25 @@ public class BoardController : ControllerBase
         try
         {
             Label? label = await _labelRepository.CreateLabelAsync(projectId, boardId, labelPostDto);
-            if (label == null) NotFound();
-            return Ok();
+            if (label == null) return NotFound();
+            return Ok(label.ToLabelGetDto());
         }
         catch (InvalidOperationException)
         {
             return NotFound();
         }
+    }
+
+    [HttpDelete("project/{projectId:int}/board/{boardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> DeleteLabel(int projectId, int boardId, int labelId)
+    {
+        bool result = await _labelRepository.DeleteLabelAsync(labelId);
+        if (result)
+        {
+            return NoContent();
+        }
+
+        return NotFound();
     }
 
     [HttpGet("project/{projectId:int}/board/{boardId:int}/label")]

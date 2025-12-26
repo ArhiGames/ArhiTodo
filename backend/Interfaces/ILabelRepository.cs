@@ -9,5 +9,6 @@ public interface ILabelRepository
     Task<bool> AddLabelToCard(int cardId, int labelId);
     Task<bool> RemoveLabelFromCard(int cardId, int labelId);
     Task<Label?> CreateLabelAsync(int projectId, int boardId, [FromBody] LabelPostDto labelPostDto);
+    Task<bool> DeleteLabelAsync(int labelId);
     Task<List<Label>> GetAllAsync(int boardId);
 }

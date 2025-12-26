@@ -1,11 +1,12 @@
 import Popover from "../../Popover/Popover.tsx";
 import {type RefObject, useEffect, useRef, useState} from "react";
-import { useKanbanState } from "../../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import type { Label } from "../../../Models/States/types.ts";
 import "./LabelSelector.css"
 import EditableLabel from "./EditableLabel.tsx";
 import {type Rgb, toInteger} from "../../Functions.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import type {LabelGetDto} from "../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>,
@@ -17,12 +18,13 @@ interface Props {
 
 const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Props) => {
 
-    const kanbanState = useKanbanState();
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
     const [labelName, setLabelName] = useState<string>("");
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
     const { token } = useAuth();
+    const dispatch = useKanbanDispatch();
+    const kanbanState = useKanbanState();
 
     const selectableColors: Rgb[] = [
         { red: 0, green: 255, blue: 85 },
@@ -74,6 +76,19 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
 
         setIsCreating(false);
 
+        let currentMaxId = 0;
+        Object.keys(kanbanState.labels).forEach((key: string) => {
+            if (currentMaxId < Number(key)) {
+                currentMaxId = Number(key);
+            }
+        });
+        const predictedId = currentMaxId + 1;
+
+        if (dispatch) {
+            dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: boardId, labelId: predictedId,
+                    labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
+        }
+
         fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
@@ -83,8 +98,18 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                 if (!res.ok) {
                     throw new Error(`Could not create label with name ${labelName}`);
                 }
+
+                return res.json();
+            })
+            .then((label: LabelGetDto) => {
+                if (dispatch) {
+                    dispatch({ type: "CREATE_LABEL_SUCCEEDED", payload: { predictedLabelId: predictedId, actualLabelId: label.labelId }});
+                }
             })
             .catch(err => {
+                if (dispatch) {
+                    dispatch({type: "CREATE_LABEL_FAILED", payload: { failedLabelId: predictedId }})
+                }
                 console.error(err);
             })
     }
@@ -96,7 +121,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                 {
                     isCreating ? (
                         <>
-                            <input className="classic-input" placeholder="Label name" ref={labelNameInputRef} maxLength={25}
+                            <input className="classic-input" placeholder="Label name" ref={labelNameInputRef} maxLength={35}
                                 value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                             <p>Color:</p>
                             <div className="color-selector">

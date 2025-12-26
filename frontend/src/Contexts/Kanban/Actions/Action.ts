@@ -12,6 +12,18 @@ export type InitBoardPayload = {
     labels: LabelGetDto[];
 }
 
+export type CreateLabelPayload = {
+    boardId: number;
+    labelId: number;
+    labelText: string;
+    labelColor: number;
+}
+
+export type CreateLabelSucceededPayload = {
+    predictedLabelId: number;
+    actualLabelId: number;
+}
+
 export type CreateBoardPayload = {
     projectId: number;
     boardId: number;
@@ -53,6 +65,10 @@ export type CreateCardSucceededPayload = {
 export type Action =
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
+
+    { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
+    { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
+    { type: "CREATE_LABEL_FAILED", payload: { failedLabelId: number } } |
 
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |

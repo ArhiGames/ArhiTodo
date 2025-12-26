@@ -53,7 +53,7 @@ const CreateNewBoardHeaderComp = () => {
 
                     return res.json();
                 })
-                .then((createdBoard: BoardGetDto)=> {
+                .then((createdBoard: BoardGetDto) => {
                     dispatch( { type: "CREATE_BOARD_SUCCEEDED", payload: { predictedBoardId: newId, actualBoardId: createdBoard.boardId } } )
                     navigate(`/projects/${projectId}/board/${createdBoard.boardId}`)
                 })
