@@ -142,6 +142,27 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
 
     }
 
+    function deleteLabel() {
+        cancelAction();
+        if (!currentlyEditingLabel) return;
+
+        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label/${currentlyEditingLabel.labelId}`,
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Could not delete label with name ${labelName}`);
+                }
+
+                if (dispatch) {
+                    dispatch({type: "DELETE_LABEL", payload: { labelId: currentlyEditingLabel.labelId }})
+                }
+            })
+            .catch(console.error);
+    }
+
     function cancelAction() {
         setIsCreating(false);
         setCurrentlyEditingLabel(null);
@@ -156,8 +177,8 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                        value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                 <p>Color:</p>
                 <div className="color-selector">
-                    { selectableColors.map((color) => {
-                        return <button style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                    { selectableColors.map((color, index) => {
+                        return <button key={index} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
                                        onClick={() => setCurrentSelectedColor(color)}
                                        className={`selectable-color${(currentSelectedColor.red === color.red &&
                                            currentSelectedColor.green === color.green &&
@@ -185,7 +206,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                                 <button onClick={cancelAction}
                                         className="button standard-button">Cancel</button>
                                 { currentlyEditingLabel !== null && (
-                                    <button onClick={cancelAction}
+                                    <button onClick={deleteLabel}
                                             className="button heavy-action-button">Delete</button>
                                 ) }
                             </div>

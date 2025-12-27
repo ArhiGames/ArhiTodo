@@ -69,6 +69,7 @@ export type Action =
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
     { type: "CREATE_LABEL_FAILED", payload: { failedLabelId: number } } |
+    { type: "DELETE_LABEL", payload: { labelId: number } } |
 
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
