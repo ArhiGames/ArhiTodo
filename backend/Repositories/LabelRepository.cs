@@ -2,6 +2,7 @@
 using ArhiTodo.Interfaces;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Post;
+using ArhiTodo.Models.DTOs.Put;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Repositories;
@@ -80,6 +81,36 @@ public class LabelRepository : ILabelRepository
         };
 
         board.Labels.Add(label);
+        await _database.SaveChangesAsync();
+        return label;
+    }
+
+    public async Task<Label?> UpdateLabelAsync(int projectId, int boardId, LabelPutDto labelPutDto)
+    {
+        Board? board = await _database.Boards
+            .Include(b => b.Labels)
+            .FirstOrDefaultAsync(b => b.BoardId == boardId);
+        if (board == null)
+        {
+            return null;
+        }
+
+        Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelPutDto.LabelId);
+        if (label == null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrEmpty(labelPutDto.LabelText))
+        {
+            label.LabelText = labelPutDto.LabelText;
+        }
+
+        if (labelPutDto.LabelColor != -1)
+        {
+            label.LabelColor = labelPutDto.LabelColor;
+        }
+        
         await _database.SaveChangesAsync();
         return label;
     }

@@ -52,7 +52,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
             })
             .then((editedBoard: BoardGetDto) => {
                 if (dispatch) {
-                    dispatch({ type: "UPDATE_BOARD", payload: {boardId: editedBoard.boardId, boardName: editedBoard.boardName} });
+                    dispatch({ type: "UPDATE_BOARD", payload: { boardId: editedBoard.boardId, boardName: editedBoard.boardName } });
                 }
             })
             .catch(console.error)

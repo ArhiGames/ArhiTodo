@@ -18,3 +18,13 @@
     transition: background-color 0.3s;
     font-size: medium;
 }
+
+.edit-label-icon {
+    padding: 2px;
+}
+
+.edit-label-icon:hover {
+    cursor: pointer;
+    background-color: var(--bg-popover);
+    border-radius: 5px;
+}

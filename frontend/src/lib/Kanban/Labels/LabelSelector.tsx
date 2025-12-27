@@ -4,7 +4,7 @@ import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.
 import type { Label } from "../../../Models/States/types.ts";
 import "./LabelSelector.css"
 import EditableLabel from "./EditableLabel.tsx";
-import {type Rgb, toInteger} from "../../Functions.ts";
+import {type Rgb, toInteger, toRgb} from "../../Functions.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import type {LabelGetDto} from "../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 
@@ -21,6 +21,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
     const [labelName, setLabelName] = useState<string>("");
     const [isCreating, setIsCreating] = useState<boolean>(false);
+    const [currentlyEditingLabel, setCurrentlyEditingLabel] = useState<Label | null>(null);
     const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
     const { token } = useAuth();
     const dispatch = useKanbanDispatch();
@@ -65,17 +66,40 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setLabelName("");
         }
-    }, [isCreating]);
+    }, [isCreating, currentlyEditingLabel]);
 
     function onLabelEdit(label: Label) {
-        console.log("onLabelEdit", label);
+        setCurrentlyEditingLabel(label);
+        const labelColor: Rgb = toRgb(label.labelColor);
+        for (let i = 0; i < selectableColors.length; i++) {
+            if ((selectableColors[i].red === labelColor.red &&
+                selectableColors[i].green === labelColor.green &&
+                selectableColors[i].blue === labelColor.blue)) {
+
+                setCurrentSelectedColor(selectableColors[i]);
+                return;
+            }
+        }
+        // return early, if we get here, no valid color was found...
+        setCurrentSelectedColor(selectableColors[0]);
+    }
+
+    function createEditLabel() {
+        if (labelName.length === 0) return;
+
+        if (isCreating) {
+            createLabel();
+        } else if (currentlyEditingLabel !== null) {
+            editLabel();
+        } else {
+            throw new Error("Should not be able to perform this action...");
+        }
+
+        setIsCreating(false);
+        setCurrentlyEditingLabel(null);
     }
 
     function createLabel() {
-        if (labelName.length === 0) return;
-
-        setIsCreating(false);
-
         let currentMaxId = 0;
         Object.keys(kanbanState.labels).forEach((key: string) => {
             if (currentMaxId < Number(key)) {
@@ -114,31 +138,56 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
             })
     }
 
+    function editLabel() {
+
+    }
+
+    function cancelAction() {
+        setIsCreating(false);
+        setCurrentlyEditingLabel(null);
+    }
+
+    function getActionArea() {
+        return (
+            <>
+                <input className="classic-input"
+                       placeholder={ currentlyEditingLabel !== null ? currentlyEditingLabel.labelText : "Label name"}
+                       ref={labelNameInputRef} maxLength={35}
+                       value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
+                <p>Color:</p>
+                <div className="color-selector">
+                    { selectableColors.map((color) => {
+                        return <button style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                                       onClick={() => setCurrentSelectedColor(color)}
+                                       className={`selectable-color${(currentSelectedColor.red === color.red &&
+                                           currentSelectedColor.green === color.green &&
+                                           currentSelectedColor.blue === color.blue)
+                                           ? " selected-selectable-color" : ""}`}/>
+                    })}
+                </div>
+            </>
+        )
+    }
+
     return (
         <Popover close={onClose} element={element}>
             <div className="label-selector-popover">
-                <p>{isCreating ? "Creating label..." : actionTitle }</p>
+                <p>{ isCreating ? "Creating label" : currentlyEditingLabel !== null ? "Editing label" : actionTitle }</p>
                 {
-                    isCreating ? (
+                    (isCreating || currentlyEditingLabel !== null) ? (
                         <>
-                            <input className="classic-input" placeholder="Label name" ref={labelNameInputRef} maxLength={35}
-                                value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
-                            <p>Color:</p>
-                            <div className="color-selector">
-                                { selectableColors.map((color) => {
-                                    return <button style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
-                                                   onClick={() => setCurrentSelectedColor(color)}
-                                                   className={`selectable-color${(currentSelectedColor.red === color.red &&
-                                                                                   currentSelectedColor.green === color.green &&
-                                                                                   currentSelectedColor.blue === color.blue) 
-                                                       ? " selected-selectable-color" : ""}`}/>
-                                })}
-                            </div>
+                            {getActionArea()}
                             <div style={{ display: "flex", width: "100%", gap: "0.2rem" }}>
-                                <button onClick={createLabel}
-                                        className={`button ${labelName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Create</button>
-                                <button onClick={() => setIsCreating(false)}
+                                <button onClick={createEditLabel}
+                                        className={`button ${(labelName.length > 0 || currentlyEditingLabel !== null) ? "valid-submit-button" : "standard-button"}`}>
+                                    { isCreating ? "Create" : currentlyEditingLabel !== null ? "Edit" : "buggy software..." }
+                                </button>
+                                <button onClick={cancelAction}
                                         className="button standard-button">Cancel</button>
+                                { currentlyEditingLabel !== null && (
+                                    <button onClick={cancelAction}
+                                            className="button heavy-action-button">Delete</button>
+                                ) }
                             </div>
                         </>
                     ) : (

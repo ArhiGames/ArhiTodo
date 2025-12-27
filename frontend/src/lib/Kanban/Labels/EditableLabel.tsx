@@ -14,7 +14,7 @@ const EditableLabel = ( { label, onEditPressed }: Props) => {
     return (
         <div className="editable-label-div">
             <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{label.labelText}</button>
-            <img height="24x" onClick={() => onEditPressed(label)} src="../../../../public/edit-icon.svg" alt="Edit"/>
+            <img className="edit-label-icon" height="24x" onClick={() => onEditPressed(label)} src="../../../../public/edit-icon.svg" alt="Edit"/>
         </div>
     )
 

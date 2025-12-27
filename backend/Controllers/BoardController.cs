@@ -39,6 +39,14 @@ public class BoardController : ControllerBase
             return NotFound();
         }
     }
+    
+    [HttpPut("project/{projectId:int}/board/{boardId:int}/label/")]
+    public async Task<IActionResult> UpdateLabel(int projectId, int boardId, [FromBody] LabelPutDto labelPutDto)
+    {
+        Label? result = await _labelRepository.UpdateLabelAsync(projectId, boardId, labelPutDto);
+        if (result == null) return NotFound();
+        return Ok(result.ToLabelGetDto()); 
+    }
 
     [HttpDelete("project/{projectId:int}/board/{boardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> DeleteLabel(int projectId, int boardId, int labelId)
