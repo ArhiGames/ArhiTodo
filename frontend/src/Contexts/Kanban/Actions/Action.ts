@@ -24,6 +24,12 @@ export type CreateLabelSucceededPayload = {
     actualLabelId: number;
 }
 
+export type UpdateLabelPayload = {
+    labelId: number;
+    labelText: string;
+    labelColor: number;
+}
+
 export type CreateBoardPayload = {
     projectId: number;
     boardId: number;
@@ -69,6 +75,7 @@ export type Action =
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
     { type: "CREATE_LABEL_FAILED", payload: { failedLabelId: number } } |
+    { type: "UPDATE_LABEL_OPTIMISTIC", payload: UpdateLabelPayload } |
     { type: "DELETE_LABEL", payload: { labelId: number } } |
 
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |

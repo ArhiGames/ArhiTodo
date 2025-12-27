@@ -85,8 +85,6 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
     }
 
     function createEditLabel() {
-        if (labelName.length === 0) return;
-
         if (isCreating) {
             createLabel();
         } else if (currentlyEditingLabel !== null) {
@@ -100,6 +98,9 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
     }
 
     function createLabel() {
+
+        if (labelName.length === 0) return;
+
         let currentMaxId = 0;
         Object.keys(kanbanState.labels).forEach((key: string) => {
             if (currentMaxId < Number(key)) {
@@ -140,6 +141,33 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
 
     function editLabel() {
 
+        if (!currentlyEditingLabel || !dispatch) return;
+
+        dispatch({ type: "UPDATE_LABEL_OPTIMISTIC", payload: {
+            labelId: currentlyEditingLabel.labelId,
+                labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
+                labelColor: toInteger(currentSelectedColor)
+        } });
+
+        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({
+                labelId: currentlyEditingLabel.labelId,
+                labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
+                labelColor: toInteger(currentSelectedColor)
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Could not edit label with name ${labelName}`);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            })
+
+        cancelAction();
     }
 
     function deleteLabel() {

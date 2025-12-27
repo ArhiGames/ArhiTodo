@@ -16,6 +16,7 @@ import createLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/
 import createLabelSucceededAction
     from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelSucceededAction.tsx";
 import deleteLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/deleteLabelAction.ts";
+import updateLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/updateLabelAction.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -30,6 +31,8 @@ function rootReducer(state: State, action: Action) {
             return createLabelSucceededAction(state, action.payload);
         case "CREATE_LABEL_FAILED":
             return deleteLabelAction(state, action.payload);
+        case "UPDATE_LABEL_OPTIMISTIC":
+            return updateLabelAction(state, action.payload);
         case "DELETE_LABEL":
             return deleteLabelAction(state, { failedLabelId: action.payload.labelId });
 
