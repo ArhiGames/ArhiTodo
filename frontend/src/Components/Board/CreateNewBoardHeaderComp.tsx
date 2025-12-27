@@ -37,9 +37,9 @@ const CreateNewBoardHeaderComp = () => {
                     maxKeyValue = Number(key);
                 }
             });
-            const newId = maxKeyValue + 1;
+            const predictedId: number = maxKeyValue + 1;
 
-            dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: newId, boardName: boardName }});
+            dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
 
             fetch(`https://localhost:7069/api/project/${projectId}/board`, {
                 method: "POST",
@@ -54,11 +54,11 @@ const CreateNewBoardHeaderComp = () => {
                     return res.json();
                 })
                 .then((createdBoard: BoardGetDto) => {
-                    dispatch( { type: "CREATE_BOARD_SUCCEEDED", payload: { predictedBoardId: newId, actualBoardId: createdBoard.boardId } } )
+                    dispatch( { type: "CREATE_BOARD_SUCCEEDED", payload: { predictedBoardId: predictedId, actualBoardId: createdBoard.boardId } } )
                     navigate(`/projects/${projectId}/board/${createdBoard.boardId}`)
                 })
                 .catch(err => {
-                    dispatch({ type: "CREATE_BOARD_FAILED", payload: { failedBoardId: newId }});
+                    dispatch({ type: "CREATE_BOARD_FAILED", payload: { failedBoardId: predictedId }});
                     console.error("Failed to create board", err);
                 })
         }
