@@ -10,6 +10,7 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
     const cards: Record<number, Card> = {};
     const labels: Record<number, Label> = {};
     const labelsDtos: LabelGetDto[] = payload.labels;
+    const cardLabels: Record<number, number[]> = {}; // cardId <-> labelIds
 
     for (const cardListDto of cardListsDtos) {
         cardLists[cardListDto.cardListId] = {
@@ -22,6 +23,13 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
                 cardListId: cardListDto.cardListId,
                 cardId: cardDto.cardId,
                 cardName: cardDto.cardName
+            }
+            if (!cardLabels[cardDto.cardId]) {
+                cardLabels[cardDto.cardId] = [];
+            }
+            for (const { labelId } of cardDto.labels) {
+
+                cardLabels[cardDto.cardId].push(labelId);
             }
         }
     }
@@ -37,7 +45,8 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
         ...state,
         cardLists: cardLists,
         cards: cards,
-        labels: labels
+        labels: labels,
+        cardLabels: cardLabels
     }
 
 }

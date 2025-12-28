@@ -10,6 +10,21 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
     const kanbanState: State = useKanbanState();
     const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
 
+    function getLabelsForCard(toGetCardId: number) {
+        const labels: { labelId: number }[] = [];
+
+        Object.keys(kanbanState.cardLabels).forEach((cardId) => {
+            if (toGetCardId === Number(cardId)) {
+                const labelIds: number[] = kanbanState.cardLabels[toGetCardId];
+                for (const labelId of labelIds) {
+                    labels.push({ labelId: labelId })
+                }
+            }
+        })
+
+        return labels;
+    }
+
     function getUnnormalizedCards() {
 
         const newUnnormalizedCards: CardGetDto[] = [];
@@ -19,6 +34,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
                 newUnnormalizedCards.push({
                     cardId: card.cardId,
                     cardName: card.cardName,
+                    labels: getLabelsForCard(card.cardId)
                 })
             }
         }
@@ -33,7 +49,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
                 <div className="cards">
                     {unnormalizedCards.map((card: CardGetDto)=> {
                         return (
-                            <CardComp card={card} key={card.cardId}></CardComp>
+                            <CardComp card={card} key={card.cardId}/>
                         )
                     })}
                 </div>

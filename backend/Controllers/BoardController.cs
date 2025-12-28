@@ -148,8 +148,7 @@ public class BoardController : ControllerBase
             List<Label> labels = await _labelRepository.GetAllAsync(boardId);
             List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
             
-            BoardGetDto boardGetDto = board.ToBoardGetDto();
-            return Ok(new { board = boardGetDto, labels = labelGetDtos });
+            return Ok(new { board = board.ToBoardGetDto(), labels = labelGetDtos });
         }
         catch (InvalidOperationException)
         {

@@ -28,4 +28,5 @@ export interface State {
     cardLists: Record<number, CardList>;
     cards: Record<number, Card>;
     labels: Record<number, Label>;
+    cardLabels: Record<number, number[]>; // cardId <-> labelIds
 }

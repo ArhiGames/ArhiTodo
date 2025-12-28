@@ -30,7 +30,8 @@ function AppContent() {
                 <Route path="/" element={<ProtectedRoute><HomePageComp/></ProtectedRoute>}/>
                 <Route path="login" element={<LoginPage/>}></Route>
                 <Route path="register/:invitationKey" element={<RegisterPage/>}></Route>
-                <Route path="projects/:projectId/board/:boardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
+                <Route path="projects/:projectId/board/:boardId?/" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
+                <Route path="projects/:projectId/board/:boardId?/card/:cardId?" element={<ProtectedRoute><ProjectViewComp/></ProtectedRoute>}/>
                 <Route path="user">
                     <Route path="settings" element={<ProtectedRoute><AccountSettingsNavbarComp/></ProtectedRoute>}>
                         <Route index element={<ProtectedRoute><AccountPreferencesPageComp/></ProtectedRoute>}></Route>

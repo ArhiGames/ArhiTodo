@@ -16,6 +16,7 @@
     --bg-popover: hsl(0, 0%, 25%);
 
     --color-border: hsl(0, 0%, 5%);
+    --highlight-color-border: hsl(0, 0%, 95%);
 
     --button-cancel: hsl(0, 0%, 50%);
     --button-cancel-focus: hsl(0, 0%, 60%);
@@ -362,10 +363,17 @@ body {
 
 .card {
     background-color: var(--bg-x-light);
+    border: 1px solid transparent;
     border-radius: 5px;
     margin: 0.5rem 0;
-    padding: 1rem;
+    padding: 0.5rem;
     color: var(--text-color);
+    transition: border-color 0.3s;
+}
+
+.card:hover {
+    border-color: var(--highlight-color-border);
+    cursor: pointer;
 }
 
 .card p {
@@ -420,6 +428,25 @@ body {
     cursor: pointer;
     background-color: var(--button-cancel-focus);
     transform: translateY(-2px);
+}
+
+.card-details-labels {
+    color: var(--text-color);
+}
+
+.card-labels-div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.card-label {
+    padding: 5px;
+    border-radius: 3px;
+    width: fit-content;
+    font-size: small;
+    background-color: var(--bg-light);
 }
 
 /*-----------------------------------------------*/

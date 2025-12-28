@@ -8,7 +8,7 @@ import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
 import type { Board, CardList, State } from "../../Models/States/types.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
-import LabelSelector from "../../lib/Kanban/Labels/LabelSelector.tsx";
+import LabelSelector from "../Labels/LabelSelector.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
@@ -107,7 +107,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                             { (board.cardLists && board.cardLists.length > 0) && (
                                 board.cardLists.map((cardList: CardListGetDto) => {
                                     return (
-                                        <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}></CardListComp>
+                                        <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}/>
                                     );
                                 }))}
                             <CreateNewCardListComp/>

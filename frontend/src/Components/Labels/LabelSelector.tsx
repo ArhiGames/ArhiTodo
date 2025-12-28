@@ -1,12 +1,12 @@
-import Popover from "../../Popover/Popover.tsx";
+import Popover from "../../lib/Popover/Popover.tsx";
 import {type RefObject, useEffect, useRef, useState} from "react";
-import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
-import type { Label } from "../../../Models/States/types.ts";
+import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import type { Label } from "../../Models/States/types.ts";
 import "./LabelSelector.css"
 import EditableLabel from "./EditableLabel.tsx";
-import {type Rgb, toInteger, toRgb} from "../../Functions.ts";
-import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import type {LabelGetDto} from "../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>,
@@ -245,7 +245,8 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                                 {
                                     Object.values(kanbanState.labels).map((label: Label) => {
                                         if (label.boardId == boardId) {
-                                            return <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}/>
+                                            return <EditableLabel onSelected={(label: Label) => console.log(label)}
+                                                                  key={label.labelId} label={label} onEditPressed={onLabelEdit}/>
                                         } else {
                                             return null
                                         }
