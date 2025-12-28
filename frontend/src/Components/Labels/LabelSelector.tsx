@@ -34,11 +34,11 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
         { red: 0, green: 102, blue: 51 },
         { red: 0, green: 61, blue: 32 },
 
-        { red: 0, green: 255, blue: 230 },
-        { red: 0, green: 191, blue: 204 },
-        { red: 0, green: 135, blue: 204 },
-        { red: 0, green: 51, blue: 204 },
-        { red: 0, green: 26, blue: 153 },
+        { red: 255, green: 255, blue: 102 },
+        { red: 255, green: 221, blue: 51 },
+        { red: 255, green: 187, blue: 0 },
+        { red: 255, green: 153, blue: 0 },
+        { red: 204, green: 102, blue: 0 },
 
         { red: 255, green: 192, blue: 203 },
         { red: 255, green: 102, blue: 102 },
@@ -46,17 +46,17 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
         { red: 153, green: 0, blue: 0 },
         { red: 102, green: 0, blue: 0 },
 
+        { red: 0, green: 255, blue: 230 },
+        { red: 0, green: 191, blue: 204 },
+        { red: 0, green: 135, blue: 204 },
+        { red: 0, green: 51, blue: 204 },
+        { red: 0, green: 26, blue: 153 },
+
         { red: 204, green: 153, blue: 255 },
         { red: 153, green: 102, blue: 255 },
         { red: 102, green: 51, blue: 204 },
         { red: 51, green: 26, blue: 153 },
         { red: 26, green: 0, blue: 102 },
-
-        { red: 255, green: 255, blue: 102 },
-        { red: 255, green: 221, blue: 51 },
-        { red: 255, green: 187, blue: 0 },
-        { red: 255, green: 153, blue: 0 },
-        { red: 204, green: 102, blue: 0 },
     ];
 
     useEffect(() => {

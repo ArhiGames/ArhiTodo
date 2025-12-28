@@ -32,11 +32,13 @@ const CardComp = (props: { card: CardGetDto }) => {
 
     return (
         <div onClick={openCard} className="card">
-            <div className="card-labels-div">
-                { props.card.labels.map(({ labelId }) => {
+            { props.card.labels.length > 0 && (
+                <div className="card-labels-div">
+                    { props.card.labels.map(({ labelId }) => {
                         return label(labelId);
-                })}
-            </div>
+                    })}
+                </div>
+            ) }
             <p>{props.card.cardName}</p>
         </div>
     )
