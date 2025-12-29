@@ -24,6 +24,11 @@ export type CreateLabelSucceededPayload = {
     actualLabelId: number;
 }
 
+export type ChangeLabelCardRelationPayload = {
+    cardId: number;
+    labelId: number;
+}
+
 export type UpdateLabelPayload = {
     labelId: number;
     labelText: string;
@@ -77,6 +82,10 @@ export type Action =
     { type: "CREATE_LABEL_FAILED", payload: { labelToDelete: number } } |
     { type: "UPDATE_LABEL_OPTIMISTIC", payload: UpdateLabelPayload } |
     { type: "DELETE_LABEL", payload: { labelId: number } } |
+
+    { type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: ChangeLabelCardRelationPayload } |
+    { type: "ADD_LABEL_TO_CARD_FAILED", payload: ChangeLabelCardRelationPayload } |
+    { type: "REMOVE_LABEL_FROM_CARD", payload: ChangeLabelCardRelationPayload } |
 
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |

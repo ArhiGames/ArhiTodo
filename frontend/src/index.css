@@ -430,10 +430,6 @@ body {
     transform: translateY(-2px);
 }
 
-.card-details-labels {
-    color: var(--text-color);
-}
-
 .card-labels-div {
     display: flex;
     flex-wrap: wrap;
@@ -446,7 +442,36 @@ body {
     border-radius: 8px;
     width: fit-content;
     font-size: small;
-    background-color: var(--bg-light);
+}
+
+.detailed-card-label {
+    padding: 10px;
+    border-radius: 10px;
+    width: fit-content;
+    font-size: medium;
+    transition: filter 0.3s;
+}
+
+.detailed-card-label:hover {
+    cursor: pointer;
+    filter: brightness(1.25);
+}
+
+.card-details-modal {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    gap: 0.35rem;
+}
+
+.card-details-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.card-details-labels button {
+    width: fit-content;
 }
 
 /*-----------------------------------------------*/

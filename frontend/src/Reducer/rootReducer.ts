@@ -17,6 +17,8 @@ import createLabelSucceededAction
     from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelSucceededAction.tsx";
 import deleteLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/deleteLabelAction.ts";
 import updateLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/updateLabelAction.ts";
+import addLabelToCard from "../Contexts/Kanban/Actions/Implementation/Labels/addLabelToCard.ts";
+import removeLabelFromCard from "../Contexts/Kanban/Actions/Implementation/Labels/removeLabelFromCard.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -35,6 +37,13 @@ function rootReducer(state: State, action: Action) {
             return updateLabelAction(state, action.payload);
         case "DELETE_LABEL":
             return deleteLabelAction(state, { labelToDelete: action.payload.labelId });
+
+        case "ADD_LABEL_TO_CARD_OPTIMISTIC":
+            return addLabelToCard(state, action.payload);
+        case "ADD_LABEL_TO_CARD_FAILED":
+            return removeLabelFromCard(state, action.payload);
+        case "REMOVE_LABEL_FROM_CARD":
+            return removeLabelFromCard(state, action.payload);
 
         case "CREATE_BOARD_OPTIMISTIC":
             return createBoardAction(state, action.payload);

@@ -11,12 +11,15 @@ import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts"
 interface Props {
     element: RefObject<HTMLElement | null>,
     onClose: () => void;
+    onLabelSelected: (label: Label) => void;
+    onLabelUnselected: (label: Label) => void;
+    selectedLabels: number[];
     actionTitle: string;
     projectId: number;
     boardId: number;
 }
 
-const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Props) => {
+const LabelSelector = ( props: Props ) => {
 
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
     const [labelName, setLabelName] = useState<string>("");
@@ -110,11 +113,11 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
         const predictedId = currentMaxId + 1;
 
         if (dispatch) {
-            dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: boardId, labelId: predictedId,
+            dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,
                     labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
         }
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label`, {
+        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
@@ -149,7 +152,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                 labelColor: toInteger(currentSelectedColor)
         } });
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label`, {
+        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({
@@ -174,7 +177,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
         cancelAction();
         if (!currentlyEditingLabel) return;
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/label/${currentlyEditingLabel.labelId}`,
+        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label/${currentlyEditingLabel.labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
@@ -219,9 +222,9 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
     }
 
     return (
-        <Popover close={onClose} element={element}>
+        <Popover close={props.onClose} element={props.element}>
             <div className="label-selector-popover">
-                <p>{ isCreating ? "Creating label" : currentlyEditingLabel !== null ? "Editing label" : actionTitle }</p>
+                <p>{ isCreating ? "Creating label" : currentlyEditingLabel !== null ? "Editing label" : props.actionTitle }</p>
                 {
                     (isCreating || currentlyEditingLabel !== null) ? (
                         <>
@@ -244,12 +247,12 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
                             <div className="label-selector-existing">
                                 {
                                     Object.values(kanbanState.labels).map((label: Label) => {
-                                        if (label.boardId == boardId) {
-                                            return <EditableLabel onSelected={(label: Label) => console.log(label)}
-                                                                  key={label.labelId} label={label} onEditPressed={onLabelEdit}/>
-                                        } else {
-                                            return null
-                                        }
+                                        return ( label.boardId == props.boardId && (
+                                            <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
+                                                           isSelected={ props.selectedLabels.includes(label.labelId) }
+                                                           onLabelSelected={(label: Label) => props.onLabelSelected(label)}
+                                                           onLabelUnselected={(label: Label) => props.onLabelUnselected(label)}/>
+                                        ) )
                                     })
                                 }
                             </div>

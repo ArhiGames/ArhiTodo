@@ -4,22 +4,35 @@ import { type Rgb, toRgb } from "../../lib/Functions.ts";
 
 interface Props {
     label: Label;
-    onSelected: (label: Label) => void;
+    isSelected: boolean;
+    onLabelSelected: (label: Label) => void;
+    onLabelUnselected: (label: Label) => void;
     onEditPressed: (label: Label) => void;
 }
 
-const EditableLabel = ( { label, onEditPressed }: Props) => {
+const EditableLabel = ( props: Props) => {
 
-    const color: Rgb = toRgb(label.labelColor);
+    const color: Rgb = toRgb(props.label.labelColor);
 
     function onButtonEditPressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
         e.stopPropagation();
-        onEditPressed(label);
+        props.onEditPressed(props.label);
+    }
+
+    function onEditableLabelDivPressed() {
+        if (props.isSelected) {
+            props.onLabelUnselected(props.label);
+        } else {
+            props.onLabelSelected(props.label);
+        }
     }
 
     return (
-        <div className="editable-label-div">
-            <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{label.labelText}</button>
+        <div className="editable-label-div" onClick={onEditableLabelDivPressed}>
+            <div style={{ position: "relative", width: "100%" }}>
+                <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{props.label.labelText}</button>
+                { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✓</span> }
+            </div>
             <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="../../private/edit-icon.svg" alt="Edit"/>
         </div>
     )
