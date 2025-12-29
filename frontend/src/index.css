@@ -13,7 +13,7 @@
     --bg-x-light: hsl(0, 0%, 28%);
     --bg-xx-light: hsl(0, 0%, 45%);
 
-    --bg-popover: hsl(0, 0%, 25%);
+    --bg-popover: hsl(0, 0%, 22%);
 
     --color-border: hsl(0, 0%, 5%);
     --highlight-color-border: hsl(0, 0%, 95%);
@@ -381,8 +381,9 @@ body {
 }
 
 .creation-card {
+    border-radius: 10px;
     background-color: var(--bg-light);
-    padding: 5px;
+    padding: 2px;
 
     transition: background-color 0.3s;
 }
@@ -399,7 +400,6 @@ body {
 }
 
 .creation-card-form {
-    margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
 }
@@ -443,7 +443,7 @@ body {
 
 .card-label {
     padding: 5px;
-    border-radius: 3px;
+    border-radius: 8px;
     width: fit-content;
     font-size: small;
     background-color: var(--bg-light);

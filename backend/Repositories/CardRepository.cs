@@ -2,6 +2,7 @@ using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
+using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Post;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,5 +71,22 @@ public class CardRepository : ICardRepository
         cardList.Cards.Remove(card);
         await _projectDataBase.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<DetailedCardGetDto?> GetDetailedCard(int cardId)
+    {
+        Card? card = await _projectDataBase.Cards
+            .Include(c => c.CardLabels)
+            .Where(c => c.CardId == cardId)
+                .Include(c => c.CardList)
+                    .ThenInclude(cl => cl.Board)
+                        .ThenInclude(b => b.Project)
+            .FirstOrDefaultAsync();
+        if (card == null)
+        {
+            throw new InvalidOperationException("Not found!");
+        }
+
+        return card.ToDetailedCardGetDto();
     }
 }

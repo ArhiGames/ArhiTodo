@@ -111,8 +111,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
                            className="classic-input"
                            maxLength={90}
                            value={cardName}
-                           onChange={(e) => setCardName(e.target.value)}
-                    ></input>
+                           onChange={(e) => setCardName(e.target.value)}/>
                     <span>
                         <button className={`button ${ cardName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">
                             Submit
@@ -121,7 +120,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
                     </span>
                 </form>
             ) : (
-                <div onClick={handleClicked} className="card creation-card">
+                <div onClick={handleClicked} className="creation-card">
                     <p>+</p>
                 </div>
             )}

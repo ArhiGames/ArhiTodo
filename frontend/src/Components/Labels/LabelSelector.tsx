@@ -133,7 +133,7 @@ const LabelSelector = ({ element, onClose, actionTitle, projectId, boardId }: Pr
             })
             .catch(err => {
                 if (dispatch) {
-                    dispatch({type: "CREATE_LABEL_FAILED", payload: { failedLabelId: predictedId }})
+                    dispatch({type: "CREATE_LABEL_FAILED", payload: { labelToDelete: predictedId }})
                 }
                 console.error(err);
             })

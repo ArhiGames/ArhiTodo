@@ -1,8 +1,8 @@
 import type { CardGetDto } from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
-import type {Label, State} from "../../Models/States/types.ts";
-import {type Rgb, toRgb} from "../../lib/Functions.ts";
+import type { Label, State } from "../../Models/States/types.ts";
+import { type Rgb, toRgb } from "../../lib/Functions.ts";
 
 const CardComp = (props: { card: CardGetDto }) => {
 

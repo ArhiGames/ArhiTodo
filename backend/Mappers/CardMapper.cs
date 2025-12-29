@@ -13,6 +13,16 @@ public static class CardMapper
             CardName = cardPostDto.CardName
         };
     }
+
+    public static DetailedCardGetDto ToDetailedCardGetDto(this Card card)
+    {
+        return new DetailedCardGetDto
+        {
+            CardId = card.CardId,
+            CardName = card.CardName,
+            Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
+        };
+    }
     
     public static CardGetDto ToCardGetDto(this Card card)
     {

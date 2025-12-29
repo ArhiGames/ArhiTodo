@@ -1,18 +1,47 @@
 import Modal from "../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import LabelSelector from "../Labels/LabelSelector.tsx";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import type {DetailedCardGetDto} from "../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
 
 const ViewCardDetailsComp = () => {
 
     const navigate = useNavigate();
-    const { projectId, boardId } = useParams();
+    const { token } = useAuth();
+    const { projectId, boardId, cardId } = useParams();
+    const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
 
     function onViewDetailsClosed() {
         navigate(`/projects/${projectId}/board/${boardId}`);
     }
+
+    useEffect(() => {
+        if (cardId == undefined) return;
+
+        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/card/${cardId}`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch detailed card");
+                }
+
+                return res.json();
+            })
+            .then((detailedCard: DetailedCardGetDto) => {
+                setDetailedCard(detailedCard);
+            })
+            .catch(err => {
+                onViewDetailsClosed();
+                console.error(err);
+            })
+
+    }, [cardId]);
 
     return (
         <Modal modalSize="modal-large" title="Edit card details" onClosed={onViewDetailsClosed}

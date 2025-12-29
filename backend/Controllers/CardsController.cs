@@ -104,4 +104,19 @@ public class CardsController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpGet("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
+    public async Task<IActionResult> GetDetailedCard(int projectId, int boardId, int cardId)
+    {
+        try
+        {
+            DetailedCardGetDto? detailedCardGetDto = await _cardRepository.GetDetailedCard(cardId);
+            if (detailedCardGetDto == null) return NotFound();
+            return Ok(detailedCardGetDto);
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
 }
