@@ -6,7 +6,7 @@ import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
-import type { Board, CardList, State } from "../../Models/States/types.ts";
+import type {Board, CardList, Label, State} from "../../Models/States/types.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 import LabelSelector from "../Labels/LabelSelector.tsx";
 
@@ -18,6 +18,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
     const board: BoardGetDto | null = getUnnormalizedKanbanState()
     const seeLabelsButtonRef = useRef<HTMLButtonElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
+    const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
 
     function getUnnormalizedKanbanState() {
         if (props.boardId == null) return null;
@@ -54,9 +55,20 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         return boardGetDto;
     }
 
+    function onFilteringLabelSelected(label: Label) {
+        setCurrentFilteringLabels(labels => [...labels, label.labelId]);
+    }
+
+    function onFilteringLabelUnselected(label: Label) {
+        setCurrentFilteringLabels(currentFilteringLabels.filter(labelId => labelId !== label.labelId));
+    }
+
     useEffect(() => {
 
         if (props.boardId == null) return;
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentFilteringLabels([]);
 
         fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`,
             {
@@ -94,10 +106,11 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             <div className="current-board-header">
                 <p>Labels: </p>
                 <button className="button standard-button" onClick={() => setIsEditingLabels(true)} ref={seeLabelsButtonRef}>All</button>
-                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef}
-                                                    onClose={() => setIsEditingLabels(false)}
+                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} onClose={() => setIsEditingLabels(false)}
                                                     actionTitle="Filter labels"
-                                                    boardId={props.boardId} projectId={props.projectId}/>
+                                                    boardId={props.boardId} projectId={props.projectId}
+                                                    selectedLabels={currentFilteringLabels}
+                                                    onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}/>
                 }
             </div>
             <div className="board-content">
@@ -107,7 +120,8 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                             { (board.cardLists && board.cardLists.length > 0) && (
                                 board.cardLists.map((cardList: CardListGetDto) => {
                                     return (
-                                        <CardListComp boardId={props.boardId!} cardList={cardList} key={cardList.cardListId}/>
+                                        <CardListComp boardId={props.boardId!} cardList={cardList}
+                                                      filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
                                     );
                                 }))}
                             <CreateNewCardListComp/>

@@ -5,7 +5,7 @@ import { useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
 
-const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
+const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filteringLabels: number[] }) => {
 
     const kanbanState: State = useKanbanState();
     const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
@@ -47,7 +47,16 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto }) => {
             <div className="cardlist-background">
                 <h3>{props.cardList.cardListName}</h3>
                 <div className="cards">
-                    {unnormalizedCards.map((card: CardGetDto)=> {
+                    {unnormalizedCards.map((card: CardGetDto) => {
+                        let contains: boolean = props.filteringLabels.length === 0;
+                        for (const filteringLabelId of props.filteringLabels) {
+                            if (card.labels.some( ({ labelId }: { labelId: number }) => labelId === filteringLabelId)) {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains) return null;
+
                         return (
                             <CardComp card={card} key={card.cardId}/>
                         )
