@@ -75,6 +75,7 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
+                dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
                 console.error(err);
             })
     }
@@ -95,6 +96,7 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
+                dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
                 console.error(err);
             })
     }
@@ -110,7 +112,8 @@ const ViewCardDetailsComp = () => {
                 <p>Labels</p>
                 <div className="card-details-labels">
                     {
-                        Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
+                        kanbanState.cardLabels[Number(cardId)] && (
+                            Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
                             const label: Label = kanbanState.labels[labelId];
                             if (!label) return null;
                             const color: Rgb = toRgb(label.labelColor);
@@ -121,7 +124,7 @@ const ViewCardDetailsComp = () => {
                                     {label.labelText}
                                 </div>
                             )
-                        })
+                        }))
                     }
                     <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
                             className="button standard-button">+</button>
