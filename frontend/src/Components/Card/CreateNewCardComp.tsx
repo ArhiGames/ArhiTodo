@@ -29,6 +29,13 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
     function resetForm() {
 
         setCardName("");
+        setIsCreating(false);
+
+    }
+
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+
+        e.preventDefault();
 
         if (dispatch) {
             let currentMaxValue = 0;
@@ -63,13 +70,6 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
                 })
         }
 
-        setIsCreating(false);
-
-    }
-
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
-
-        e.preventDefault();
         resetForm();
 
     }
@@ -107,7 +107,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
             { isCreating ? (
                 <form className="creation-card-form" onSubmit={handleSubmit} onReset={handleReset} ref={formRef}>
                     <input ref={cardRef} type="text"
-                           placeholder="Enter a cardlist name..."
+                           placeholder="Enter a card name..."
                            className="classic-input"
                            maxLength={90}
                            value={cardName}

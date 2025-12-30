@@ -12,6 +12,10 @@ const createCardAction = (state: State, payload: CreateCardPayload) => {
                 cardId: payload.cardId,
                 cardName: payload.cardName
             }
+        },
+        cardLabels: {
+            ...state.cardLabels,
+            [payload.cardId]: []
         }
     }
 
