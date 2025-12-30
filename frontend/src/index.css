@@ -301,6 +301,18 @@ body {
     flex-direction: column;
 }
 
+.board-labels {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.board-label {
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 10px;
+    font-size: medium;
+}
+
 /*-----------------------------------------------*/
 /*-------------------CARDLIST--------------------*/
 /*-----------------------------------------------*/

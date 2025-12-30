@@ -9,6 +9,7 @@ import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.t
 import type {Board, CardList, Label, State} from "../../Models/States/types.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 import LabelSelector from "../Labels/LabelSelector.tsx";
+import {type Rgb, toRgb} from "../../lib/Functions.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
@@ -16,7 +17,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
     const board: BoardGetDto | null = getUnnormalizedKanbanState()
-    const seeLabelsButtonRef = useRef<HTMLButtonElement | null>(null);
+    const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
 
@@ -63,6 +64,23 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         setCurrentFilteringLabels(currentFilteringLabels.filter(labelId => labelId !== label.labelId));
     }
 
+    function startEditingLabels(onTarget: HTMLElement) {
+        seeLabelsButtonRef.current = onTarget;
+        setIsEditingLabels(true);
+    }
+
+    function getLabelJsxFor(labelId: number) {
+        const label: Label = kanbanState.labels[labelId];
+        const rgb: Rgb = toRgb(label.labelColor);
+        return (
+            <div onClick={(e) => startEditingLabels(e.currentTarget)}
+                 className="board-label"
+                 style={{ backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})` }}>
+                <p>{label.labelText}</p>
+            </div>
+        )
+    }
+
     useEffect(() => {
 
         if (props.boardId == null) return;
@@ -105,7 +123,21 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         <div className="board-body">
             <div className="current-board-header">
                 <p>Labels: </p>
-                <button className="button standard-button" onClick={() => setIsEditingLabels(true)} ref={seeLabelsButtonRef}>All</button>
+                {
+                    currentFilteringLabels.length > 0 ? (
+                        <div className="board-labels">
+                            {
+                                currentFilteringLabels.map((labelId: number) => {
+                                    return getLabelJsxFor(labelId);
+                                })
+                            }
+                        </div>
+                    ) : (
+                        <button className="button standard-button"
+                                onClick={(e) => startEditingLabels(e.currentTarget)}>All</button>
+                    )
+                }
+
                 { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} onClose={() => setIsEditingLabels(false)}
                                                     actionTitle="Filter labels"
                                                     boardId={props.boardId} projectId={props.projectId}
