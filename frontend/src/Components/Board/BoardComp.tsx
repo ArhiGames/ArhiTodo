@@ -73,7 +73,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         const label: Label = kanbanState.labels[labelId];
         const rgb: Rgb = toRgb(label.labelColor);
         return (
-            <div onClick={(e) => startEditingLabels(e.currentTarget)}
+            <div key={labelId} onClick={(e) => startEditingLabels(e.currentTarget)}
                  className="board-label"
                  style={{ backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})` }}>
                 <p>{label.labelText}</p>

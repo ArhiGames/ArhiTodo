@@ -137,6 +137,9 @@ const ViewCardDetailsComp = () => {
                                         selectedLabels={getPureLabelIds()}/>
                     }
                 </div>
+                <p>Label description</p>
+                <textarea placeholder={ detailedCard && detailedCard.cardDescription.length > 0 ?
+                    detailedCard.cardDescription : "Card detail description..."}></textarea>
             </div>
         </Modal>
     )

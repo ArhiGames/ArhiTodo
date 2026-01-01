@@ -2,6 +2,7 @@ using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
 using ArhiTodo.Models.DTOs.Get;
+using ArhiTodo.Models.DTOs.Patch;
 using ArhiTodo.Models.DTOs.Post;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -90,6 +91,21 @@ public class CardsController : ControllerBase
         }
     }
 
+    [HttpPatch("card/{cardId:int}")]
+    public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] PatchCardDescriptionDto patchCardDescriptionDto)
+    {
+        try
+        {
+            Card? card = await _cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto);
+            if (card == null) return NotFound();
+            return Ok(card.ToDetailedCardGetDto());
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+    
     [HttpDelete("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}/card/{cardId:int}")]
     public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardListId, int cardId)
     {

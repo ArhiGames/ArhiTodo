@@ -20,6 +20,7 @@ public static class CardMapper
         {
             CardId = card.CardId,
             CardName = card.CardName,
+            CardDescription = card.CardDescription,
             Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
         };
     }

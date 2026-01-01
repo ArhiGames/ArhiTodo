@@ -476,6 +476,10 @@ body {
     gap: 0.35rem;
 }
 
+.card-details-modal p {
+    margin-top: 0.8rem;
+}
+
 .card-details-labels {
     display: flex;
     flex-wrap: wrap;
@@ -484,6 +488,21 @@ body {
 
 .card-details-labels button {
     width: fit-content;
+}
+
+.card-details-modal textarea {
+    background-color: var(--bg-x-light);
+    border-radius: 15px;
+    padding: 12px;
+    border: none;
+    color: var(--text-color);
+    width: 100%;
+    resize: vertical;
+}
+
+.card-details-modal textarea:focus {
+    outline: none;
+    box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
 /*-----------------------------------------------*/
