@@ -14,24 +14,27 @@ public static class CardMapper
         };
     }
 
-    public static DetailedCardGetDto ToDetailedCardGetDto(this Card card)
+    extension(Card card)
     {
-        return new DetailedCardGetDto
+        public DetailedCardGetDto ToDetailedCardGetDto()
         {
-            CardId = card.CardId,
-            CardName = card.CardName,
-            CardDescription = card.CardDescription,
-            Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
-        };
-    }
-    
-    public static CardGetDto ToCardGetDto(this Card card)
-    {
-        return new CardGetDto
+            return new DetailedCardGetDto
+            {
+                CardId = card.CardId,
+                CardName = card.CardName,
+                CardDescription = card.CardDescription,
+                Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
+            };
+        }
+
+        public CardGetDto ToCardGetDto()
         {
-            CardId = card.CardId,
-            CardName = card.CardName,
-            Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
-        };
+            return new CardGetDto
+            {
+                CardId = card.CardId,
+                CardName = card.CardName,
+                Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
+            };
+        }
     }
 }

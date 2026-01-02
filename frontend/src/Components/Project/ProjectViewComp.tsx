@@ -6,13 +6,11 @@ import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { Board, State } from "../../Models/States/types.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
-import ViewCardDetailsComp from "../Card/ViewCardDetailsComp.tsx";
-import {createPortal} from "react-dom";
 
 const ProjectViewComp = () => {
 
     const { token } = useAuth();
-    const { projectId, boardId, cardId } = useParams();
+    const { projectId, boardId } = useParams();
     const state: State = useKanbanState();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
@@ -87,7 +85,6 @@ const ProjectViewComp = () => {
                 <CreateNewBoardHeaderComp/>
             </div>
             <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
-            { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
         </div>
     )
 }

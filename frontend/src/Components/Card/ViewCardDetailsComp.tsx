@@ -1,23 +1,27 @@
 import Modal from "../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import {type FormEvent, useEffect, useRef, useState} from "react";
 import LabelSelector from "../Labels/LabelSelector.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {DetailedCardGetDto} from "../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
 import type {Label, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
+import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 
 const ViewCardDetailsComp = () => {
 
     const navigate = useNavigate();
     const { token } = useAuth();
     const { projectId, boardId, cardId } = useParams();
-    const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
-    const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
-    const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
+    const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
+    const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
+    const [cardDescription, setCardDescription] = useState<string>("");
+    const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)].cardName);
+    const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
 
     function onViewDetailsClosed() {
         navigate(`/projects/${projectId}/board/${boardId}`);
@@ -40,6 +44,7 @@ const ViewCardDetailsComp = () => {
             })
             .then((detailedCard: DetailedCardGetDto) => {
                 setDetailedCard(detailedCard);
+                setCardDescription(detailedCard.cardDescription);
             })
             .catch(err => {
                 onViewDetailsClosed();
@@ -101,45 +106,131 @@ const ViewCardDetailsComp = () => {
             })
     }
 
+    function onCardRenamed() {
+        if (inputtedCardName.length === 0 || !detailedCard || !dispatch) return;
+
+        const newCardName: string = inputtedCardName;
+        dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
+
+        fetch(`https://localhost:7069/api/card/${detailedCard.cardId}/name`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ cardName: newCardName })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to rename card name");
+                }
+            })
+            .catch(err => {
+                dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: kanbanState.cards[detailedCard.cardId].cardName } });
+                console.error(err);
+            })
+    }
+
+    function updateCardDescription(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        if (cardDescription.length === 0 || !detailedCard) return;
+
+        fetch(`https://localhost:7069/api/card/${detailedCard.cardId}/description`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ cardDescription: cardDescription })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to update card description");
+                }
+
+                return res.json();
+            })
+            .then((detailedCard: DetailedCardGetDto) => {
+                setDetailedCard(detailedCard);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+    function onDeleteCardConfirmed() {
+
+        if (dispatch) {
+            dispatch({ type: "DELETE_CARD", payload: { cardId: Number(cardId)} });
+            navigate(`/projects/${projectId}/board/${boardId}`);
+        }
+
+        fetch(`https://localhost:7069/api/card/${cardId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to delete card");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
     return (
         <Modal modalSize="modal-large" title="Edit card details" onClosed={onViewDetailsClosed}
-               footer={
-                    <>
-                        <button className="button standard-button">Save Changes</button>
-                    </>
-               }>
-            <div className="card-details-modal">
-                <p>Labels</p>
-                <div className="card-details-labels">
-                    {
-                        kanbanState.cardLabels[Number(cardId)] && (
-                            Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
-                            const label: Label = kanbanState.labels[labelId];
-                            if (!label) return null;
-                            const color: Rgb = toRgb(label.labelColor);
-                            return (
-                                <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
-                                     key={label.labelId} className="detailed-card-label"
-                                     onClick={() => setIsEditingLabels(!isEditingLabels)}>
-                                    {label.labelText}
-                                </div>
-                            )
-                        }))
-                    }
-                    <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
-                            className="button standard-button">+</button>
-                    {
-                        isEditingLabels && <LabelSelector element={editLabelsButtonRef} projectId={Number(projectId)} boardId={Number(boardId)}
-                                        actionTitle="Edit card labels"
-                                        onClose={() => setIsEditingLabels(false)}
-                                        onLabelSelected={onLabelSelected}
-                                        onLabelUnselected={onLabelUnselected}
-                                        selectedLabels={getPureLabelIds()}/>
-                    }
+               footer={<></>}>
+            <div className="card-details-modal-wrapper">
+                <div style={{ width: "80%" }} className="card-details-modal">
+                    <p>Label name</p>
+                    <input className="card-detail-name" value={inputtedCardName}
+                           onChange={(e) => setInputtedCardName(e.target.value)}
+                           onBlur={onCardRenamed}
+                           minLength={1} maxLength={90}/>
+                    <p>Labels</p>
+                    <div className="card-details-labels">
+                        {
+                            kanbanState.cardLabels[Number(cardId)] && (
+                                Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
+                                    const label: Label = kanbanState.labels[labelId];
+                                    if (!label) return null;
+                                    const color: Rgb = toRgb(label.labelColor);
+                                    return (
+                                        <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                                             key={label.labelId} className="detailed-card-label"
+                                             onClick={() => setIsEditingLabels(!isEditingLabels)}>
+                                            {label.labelText}
+                                        </div>
+                                    )
+                                }))
+                        }
+                        <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
+                                className="button standard-button">+</button>
+                        {
+                            isEditingLabels && <LabelSelector element={editLabelsButtonRef} projectId={Number(projectId)} boardId={Number(boardId)}
+                                                              actionTitle="Edit card labels"
+                                                              onClose={() => setIsEditingLabels(false)}
+                                                              onLabelSelected={onLabelSelected}
+                                                              onLabelUnselected={onLabelUnselected}
+                                                              selectedLabels={getPureLabelIds()}/>
+                        }
+                    </div>
+                    <div className="card-detailed-description">
+                        <p>Label description</p>
+                        <form onSubmit={updateCardDescription}>
+                        <textarea value={cardDescription}
+                                  placeholder="This card currently does not have a description..."
+                                  onChange={(e) => setCardDescription(e.target.value)}
+                                  maxLength={8192}/>
+                            <button className={`button ${ cardDescription === detailedCard?.cardDescription ? "standard-button" : "valid-submit-button" }`}
+                                    type="submit">Save description</button>
+                        </form>
+                    </div>
                 </div>
-                <p>Label description</p>
-                <textarea placeholder={ detailedCard && detailedCard.cardDescription.length > 0 ?
-                    detailedCard.cardDescription : "Card detail description..."}></textarea>
+                <div style={{ width: "20%" }} className="card-details-sidebar">
+                    <p style={{ visibility: "hidden" }}>Hidden element</p>
+                    <p>Actions</p>
+                    <button style={{ width: "100%" }} className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
+                    { isDeletingCard && <ConfirmationModal title="Card deletion"
+                                                           actionDescription="If you confirm this action, this card will be deleted permanently."
+                                                           onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                </div>
             </div>
         </Modal>
     )

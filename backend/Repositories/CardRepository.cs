@@ -50,28 +50,34 @@ public class CardRepository : ICardRepository
         return newCard;
     }
 
-    public async Task<bool> DeleteAsync(int projectId, int boardId, int cardListId, int cardId)
+    public async Task<bool> DeleteAsync(int cardId)
     {
-        Project? project = await _projectDataBase.Projects
-            .Where(p => p.ProjectId == projectId)
-            .Include(p => p.Boards)
-                .ThenInclude(b => b.CardLists)
-                    .ThenInclude(cl => cl.Cards)
+        Card? card = await _projectDataBase.Cards
+            .Include(c => c.CardLabels)
+            .Where(c => c.CardId == cardId)
+                .Include(c => c.CardList)
+                    .ThenInclude(cl => cl.Board)
+                        .ThenInclude(b => b.Project)
             .FirstOrDefaultAsync();
-        if (project == null) throw new InvalidOperationException("Not found");
-        
-        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
-        if (board == null) throw new InvalidOperationException("Not found");
-        
-        CardList? cardList = board.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
-        if (cardList == null) throw new InvalidOperationException("Not found");
-        
-        Card? card = cardList.Cards.FirstOrDefault(c => c.CardId == cardId);
+                
         if (card == null) throw new InvalidOperationException("Not found");
-        
-        cardList.Cards.Remove(card);
+
+        _projectDataBase.Cards.Remove(card);
         await _projectDataBase.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<Card?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
+    {
+        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+        if (card == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        card.CardName = patchCardNameDto.CardName;
+        await _projectDataBase.SaveChangesAsync();
+        return card;
     }
 
     public async Task<Card?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)

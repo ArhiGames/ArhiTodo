@@ -81,9 +81,7 @@ public class CardsController : ControllerBase
             Card? card = await _cardRepository.CreateAsync(projectId, boardId, cardListId, cardPostDto);
             if (card == null) return NotFound();
 
-            CardGetDto cardGetDto = card.ToCardGetDto();
-            
-            return Ok(cardGetDto);
+            return Ok(card.ToCardGetDto());
         }
         catch (InvalidOperationException)
         {
@@ -91,7 +89,22 @@ public class CardsController : ControllerBase
         }
     }
 
-    [HttpPatch("card/{cardId:int}")]
+    [HttpPatch("card/{cardId:int}/name")]
+    public async Task<IActionResult> PatchCardName(int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
+    {
+        try
+        {
+            Card? card = await _cardRepository.PatchCardName(cardId, patchCardNameDto);
+            if (card == null) return NotFound();
+            return Ok(card.ToDetailedCardGetDto());
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPatch("card/{cardId:int}/description")]
     public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] PatchCardDescriptionDto patchCardDescriptionDto)
     {
         try
@@ -106,12 +119,12 @@ public class CardsController : ControllerBase
         }
     }
     
-    [HttpDelete("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}/card/{cardId:int}")]
-    public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardListId, int cardId)
+    [HttpDelete("card/{cardId:int}")]
+    public async Task<IActionResult> DeleteCard(int cardId)
     {
         try
         {
-            bool success = await _cardRepository.DeleteAsync(projectId, boardId, cardListId, cardId);
+            bool success = await _cardRepository.DeleteAsync(cardId);
             if (!success) return NotFound();
             return NoContent();
         }

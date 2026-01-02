@@ -24,6 +24,7 @@
     --box-shadow: hsl(0, 0%, 5%);
 
     --text-color: hsl(0, 0%, 95%);
+    --text-color-shaded: hsl(0, 0%, 78%);
     --text-color-failure: hsl(0, 100%, 60%);
     --text-color-dark: hsl(0, 0%, 15%);
 
@@ -311,6 +312,12 @@ body {
     padding: 0.5rem;
     border-radius: 10px;
     font-size: medium;
+    transition: filter 0.2s;
+}
+
+.board-label:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
 }
 
 /*-----------------------------------------------*/
@@ -469,11 +476,38 @@ body {
     filter: brightness(1.25);
 }
 
+.card-details-modal-wrapper {
+    color: var(--text-color);
+    display: flex;
+    gap: 1rem;
+}
+
 .card-details-modal {
     display: flex;
     flex-direction: column;
-    color: var(--text-color);
     gap: 0.35rem;
+}
+
+.card-details-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-detail-name {
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--bg-x-light);
+    font-size: medium;
+    color: var(--text-color-shaded);
+    transition: color 0.15s;
+}
+
+.card-detail-name:focus {
+    outline: none;
+    color: var(--text-color);
+    box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
 .card-details-modal p {
@@ -495,14 +529,24 @@ body {
     border-radius: 15px;
     padding: 12px;
     border: none;
-    color: var(--text-color);
+    color: var(--text-color-shaded);
     width: 100%;
-    resize: vertical;
+    height: 18rem;
+    resize: none;
+    font-size: larger;
+    transition: color 0.15s;
 }
 
 .card-details-modal textarea:focus {
     outline: none;
     box-shadow: 0 0 2px 0 var(--box-shadow);
+    color: var(--text-color);
+}
+
+.card-detailed-description form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 /*-----------------------------------------------*/

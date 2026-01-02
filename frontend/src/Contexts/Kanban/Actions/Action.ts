@@ -73,6 +73,11 @@ export type CreateCardSucceededPayload = {
     actualCardId: number;
 }
 
+export type UpdateCardNamePayload = {
+    cardId: number;
+    cardName: string;
+}
+
 export type Action =
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
@@ -100,4 +105,6 @@ export type Action =
 
     { type: "CREATE_CARD_OPTIMISTIC", payload: CreateCardPayload } |
     { type: "CREATE_CARD_SUCCEEDED", payload: CreateCardSucceededPayload } |
-    { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } }
+    { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } } |
+    { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
+    { type: "DELETE_CARD", payload: { cardId: number } }

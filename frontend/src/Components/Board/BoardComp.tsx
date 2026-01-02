@@ -10,16 +10,22 @@ import type {Board, CardList, Label, State} from "../../Models/States/types.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
 import LabelSelector from "../Labels/LabelSelector.tsx";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
+import {useNavigate, useParams} from "react-router-dom";
+import {createPortal} from "react-dom";
+import ViewCardDetailsComp from "../Card/ViewCardDetailsComp.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     const { token } = useAuth();
+    const { cardId } = useParams();
+    const navigate = useNavigate();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
     const board: BoardGetDto | null = getUnnormalizedKanbanState()
     const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     function getUnnormalizedKanbanState() {
         if (props.boardId == null) return null;
@@ -105,9 +111,13 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                 if (dispatch) {
                     dispatch({type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
                 }
+                setLoaded(true);
 
             })
-            .catch(console.error);
+            .catch(err => {
+                navigate("/");
+                console.error(err);
+            })
 
     }, [props.projectId, props.boardId, token, dispatch]);
 
@@ -163,6 +173,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                     )
                 }
             </div>
+            { cardId !== undefined && loaded && createPortal(<ViewCardDetailsComp/>, document.body) }
         </div>
     )
 }
