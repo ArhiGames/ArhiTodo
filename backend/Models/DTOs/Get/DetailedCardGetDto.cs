@@ -6,6 +6,8 @@ public class DetailedCardGetDto
 {
     [Key]
     public int CardId { get; set; }
+    
+    public bool IsDone { get; set; } = false;
         
     [Required]
     [MinLength(1)] [MaxLength(90)]
@@ -13,6 +15,7 @@ public class DetailedCardGetDto
 
     [MaxLength(8192)] 
     public string CardDescription { get; set; } = string.Empty;
+    
     
     public List<CardLabelGetDto> Labels { get; set; } = new();
 }

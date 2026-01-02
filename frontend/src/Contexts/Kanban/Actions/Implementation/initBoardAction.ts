@@ -21,6 +21,7 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
         for (const cardDto of cardListDto.cards) {
             cards[cardDto.cardId] = {
                 cardListId: cardListDto.cardListId,
+                isDone: cardDto.isDone,
                 cardId: cardDto.cardId,
                 cardName: cardDto.cardName
             }

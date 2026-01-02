@@ -6,6 +6,8 @@ public class CardGetDto
 {
     [Key]
     public int CardId { get; set; }
+    
+    public bool IsDone { get; set; } = false;
         
     [Required]
     [MinLength(1)] [MaxLength(35)]

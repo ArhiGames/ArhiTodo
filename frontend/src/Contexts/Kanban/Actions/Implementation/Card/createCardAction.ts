@@ -9,6 +9,7 @@ const createCardAction = (state: State, payload: CreateCardPayload) => {
             ...state.cards,
             [payload.cardId]: {
                 cardListId: payload.cardListId,
+                isDone: false,
                 cardId: payload.cardId,
                 cardName: payload.cardName
             }

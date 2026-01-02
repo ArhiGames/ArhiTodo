@@ -20,6 +20,7 @@ import updateLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/
 import addLabelToCard from "../Contexts/Kanban/Actions/Implementation/Labels/addLabelToCard.ts";
 import removeLabelFromCard from "../Contexts/Kanban/Actions/Implementation/Labels/removeLabelFromCard.ts";
 import updateCardNameAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardNameAction.ts";
+import updateCardStateAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardStateAction.ts";
 
 function rootReducer(state: State, action: Action) {
     switch (action.type) {
@@ -73,6 +74,8 @@ function rootReducer(state: State, action: Action) {
             return deleteCardAction(state, action.payload.failedCardId);
         case "UPDATE_CARD_NAME":
             return updateCardNameAction(state, action.payload);
+        case "UPDATE_CARD_STATE":
+            return updateCardStateAction(state, action.payload);
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
     }

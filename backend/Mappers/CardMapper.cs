@@ -21,6 +21,7 @@ public static class CardMapper
             return new DetailedCardGetDto
             {
                 CardId = card.CardId,
+                IsDone = card.IsDone,
                 CardName = card.CardName,
                 CardDescription = card.CardDescription,
                 Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
@@ -32,6 +33,7 @@ public static class CardMapper
             return new CardGetDto
             {
                 CardId = card.CardId,
+                IsDone = card.IsDone,
                 CardName = card.CardName,
                 Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
             };

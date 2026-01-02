@@ -21,7 +21,9 @@ const ViewCardDetailsComp = () => {
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const [cardDescription, setCardDescription] = useState<string>("");
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)].cardName);
+
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
+    const [isSharing, setIsSharing] = useState<boolean>(false);
 
     function onViewDetailsClosed() {
         navigate(`/projects/${projectId}/board/${boardId}`);
@@ -173,6 +175,16 @@ const ViewCardDetailsComp = () => {
             })
     }
 
+    async function shareCardClicked() {
+        setIsSharing(true);
+
+        await navigator.clipboard.writeText(window.location.toString());
+
+        setTimeout(() => {
+            setIsSharing(false);
+        }, 2000)
+    }
+
     return (
         <Modal modalSize="modal-large" title="Edit card details" onClosed={onViewDetailsClosed}
                footer={<></>}>
@@ -218,7 +230,8 @@ const ViewCardDetailsComp = () => {
                                   placeholder="This card currently does not have a description..."
                                   onChange={(e) => setCardDescription(e.target.value)}
                                   maxLength={8192}/>
-                            <button className={`button ${ cardDescription === detailedCard?.cardDescription ? "standard-button" : "valid-submit-button" }`}
+                            <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ? 
+                                "valid-submit-button" : "standard-button" }`}
                                     type="submit">Save description</button>
                         </form>
                     </div>
@@ -226,7 +239,8 @@ const ViewCardDetailsComp = () => {
                 <div style={{ width: "20%" }} className="card-details-sidebar">
                     <p style={{ visibility: "hidden" }}>Hidden element</p>
                     <p>Actions</p>
-                    <button style={{ width: "100%" }} className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
+                    <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
+                    <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
                     { isDeletingCard && <ConfirmationModal title="Card deletion"
                                                            actionDescription="If you confirm this action, this card will be deleted permanently."
                                                            onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }

@@ -67,6 +67,19 @@ public class CardRepository : ICardRepository
         return true;
     }
 
+    public async Task<Card?> PatchCardStatus(int cardId, bool isDone)
+    {
+        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+        if (card == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        card.IsDone = isDone;
+        await _projectDataBase.SaveChangesAsync();
+        return card;
+    }
+
     public async Task<Card?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
     {
         Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);

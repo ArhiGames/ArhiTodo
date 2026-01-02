@@ -399,6 +399,33 @@ body {
     word-wrap: break-word;
 }
 
+.card-checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--bg-xx-light);
+    font-weight: bold;
+    font-size: smaller;
+    transform: translateX(-3rem);
+    width: 0;
+    height: 22px;
+    transition: all 0.3s;
+}
+
+.card-checkmark.visible {
+    width: 22px;
+    opacity: 1;
+    padding: 4px;
+    transform: translateX(0);
+    margin-right: 0.35rem;
+}
+
+.card-checkmark:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+}
+
 .creation-card {
     border-radius: 10px;
     background-color: var(--bg-light);

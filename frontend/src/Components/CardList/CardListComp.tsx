@@ -33,6 +33,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
             if (card.cardListId === props.cardList.cardListId) {
                 newUnnormalizedCards.push({
                     cardId: card.cardId,
+                    isDone: card.isDone,
                     cardName: card.cardName,
                     labels: getLabelsForCard(card.cardId)
                 })

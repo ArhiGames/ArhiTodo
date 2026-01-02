@@ -89,6 +89,21 @@ public class CardsController : ControllerBase
         }
     }
 
+    [HttpPatch("card/{cardId:int}/done/{isDone:bool}")]
+    public async Task<IActionResult> PatchCardStatus(int cardId, bool isDone)
+    {
+        try
+        {
+            Card? card = await _cardRepository.PatchCardStatus(cardId, isDone);
+            if (card == null) return NotFound();
+            return Ok(card.ToDetailedCardGetDto());
+        }
+        catch (InvalidOperationException)
+        {
+            return NotFound();
+        }
+    }
+
     [HttpPatch("card/{cardId:int}/name")]
     public async Task<IActionResult> PatchCardName(int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
     {
