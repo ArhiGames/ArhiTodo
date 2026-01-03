@@ -3,6 +3,7 @@ import type { Project } from "../../Models/Project.ts";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const HomePageComp = () => {
 
@@ -11,7 +12,7 @@ const HomePageComp = () => {
 
     useEffect(() => {
 
-        fetch('https://localhost:7069/api/project',
+        fetch(`${API_BASE_URL}/project`,
             {
                 method: 'GET',
                 headers: { "Authorization": `Bearer ${token}` }

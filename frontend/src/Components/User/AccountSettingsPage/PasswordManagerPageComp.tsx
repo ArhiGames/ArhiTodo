@@ -1,5 +1,6 @@
 import {type FormEvent, useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {API_BASE_URL} from "../../../config/api.ts";
 
 const PasswordManagerPageComp = () => {
 
@@ -11,7 +12,7 @@ const PasswordManagerPageComp = () => {
 
     function changePassword() {
 
-        fetch("https://localhost:7069/api/account/change/password",
+        fetch(`${API_BASE_URL}/account/change/password`,
         {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },

@@ -15,9 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
 
@@ -126,8 +124,7 @@ using (IServiceScope scope = app.Services.CreateScope())
 {
     IServiceProvider services = scope.ServiceProvider;
     UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
-    RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await ProjectDbContextSeed.CreateInitialUsers(userManager, roleManager);
+    await ProjectDbContextSeed.CreateInitialUsers(userManager);
 }
 
 app.UseCors("AllowFrontend");

@@ -6,6 +6,7 @@ import Dropdown from "../../../../lib/Input/Dropdown/Dropdown.tsx";
 import {createPortal} from "react-dom";
 import GeneratedLinkInfoComp from "./GeneratedLinkInfoComp.tsx";
 import type {InvitationLink} from "../../../../Models/InvitationLink.ts";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 interface Props {
     onClose: () => void;
@@ -27,7 +28,7 @@ const InvitationCreatorModalComp = (props: Props) => {
         setSubmitBlocked(true);
 
         const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/invitation/generate`, {
+        fetch(`${API_BASE_URL}/invitation/generate`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify( { expireType: options.indexOf(currentExpireType), expireNum: expireInNum, maxUses: maxUses } ),

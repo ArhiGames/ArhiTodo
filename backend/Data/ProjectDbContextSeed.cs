@@ -5,7 +5,7 @@ namespace ArhiTodo.Data;
 
 public static class ProjectDbContextSeed
 {
-    public static async Task CreateInitialUsers(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+    public static async Task CreateInitialUsers(UserManager<AppUser> userManager)
     {
         AppUser? adminUser = await userManager.FindByNameAsync("admin");
         if (adminUser != null) return;

@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { State } from "../../Models/States/types.ts";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
@@ -41,7 +42,7 @@ const CreateNewBoardHeaderComp = () => {
 
             dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
 
-            fetch(`https://localhost:7069/api/project/${projectId}/board`, {
+            fetch(`${API_BASE_URL}/project/${projectId}/board`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ boardName: boardName })

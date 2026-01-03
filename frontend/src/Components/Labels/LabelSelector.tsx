@@ -7,6 +7,7 @@ import EditableLabel from "./EditableLabel.tsx";
 import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>,
@@ -117,7 +118,7 @@ const LabelSelector = ( props: Props ) => {
                     labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
         }
 
-        fetch(`https://localhost:7069/api/board/${props.boardId}/label`, {
+        fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
@@ -152,7 +153,7 @@ const LabelSelector = ( props: Props ) => {
                 labelColor: toInteger(currentSelectedColor)
         } });
 
-        fetch(`https://localhost:7069/api/label`, {
+        fetch(`${API_BASE_URL}/label`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({
@@ -177,7 +178,7 @@ const LabelSelector = ( props: Props ) => {
         cancelAction();
         if (!currentlyEditingLabel) return;
 
-        fetch(`https://localhost:7069/api/label/${currentlyEditingLabel.labelId}`,
+        fetch(`${API_BASE_URL}/label/${currentlyEditingLabel.labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }

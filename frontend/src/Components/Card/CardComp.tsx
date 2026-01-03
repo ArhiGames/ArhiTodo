@@ -5,6 +5,7 @@ import type { Label, State } from "../../Models/States/types.ts";
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const CardComp = (props: { card: CardGetDto }) => {
 
@@ -42,7 +43,7 @@ const CardComp = (props: { card: CardGetDto }) => {
         const newState: boolean = !kanbanState.cards[props.card.cardId].isDone;
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: newState } });
 
-        fetch(`https://localhost:7069/api/card/${props.card.cardId}/done/${newState}`, {
+        fetch(`${API_BASE_URL}/card/${props.card.cardId}/done/${newState}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })

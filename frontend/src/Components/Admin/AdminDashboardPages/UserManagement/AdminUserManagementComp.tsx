@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
 import InviteUserComp from "./InviteUserComp.tsx";
 import ViewInvitationLinksComp from "./ViewInvitationLinksComp.tsx";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 const AdminUserManagementComp = () => {
 
@@ -26,7 +27,7 @@ const AdminUserManagementComp = () => {
         }
 
         const controller = new AbortController();
-        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${userId}`,
+        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
             {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
@@ -53,7 +54,7 @@ const AdminUserManagementComp = () => {
         if (userId) return;
 
         const controller = new AbortController();
-        fetch('https://localhost:7069/api/account/admin/accountmanagement',
+        fetch(`${API_BASE_URL}/account/admin/accountmanagement`,
             {
                 method: 'GET',
                 headers: { "Authorization": `Bearer ${token}` },

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { formatRemainingTime } from "../../../../lib/Functions.ts";
 import TagComp from "../../../../lib/Tags/TagComp.tsx";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 interface Props {
     invitationLink: InvitationLink;
@@ -40,7 +41,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
     function onInvalidateButtonPressed() {
 
         const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/invitation/invalidate/${invitationLink.invitationLinkId}`,
+        fetch(`${API_BASE_URL}/invitation/invalidate/${invitationLink.invitationLinkId}`,
             {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },

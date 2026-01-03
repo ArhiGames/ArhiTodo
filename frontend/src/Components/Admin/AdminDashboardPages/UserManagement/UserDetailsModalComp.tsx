@@ -7,6 +7,7 @@ import type {Claim} from "../../../../Models/Claim.ts";
 import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 interface Props {
     currentViewingUser: UserWithClaims;
@@ -39,7 +40,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
         if (!currentViewingUser) return;
 
         const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
             {
                 method: "PUT",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
@@ -66,7 +67,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
         if (password.length < 8) return;
 
         const abortController = new AbortController();
-        fetch(`https://localhost:7069/api/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
             {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },

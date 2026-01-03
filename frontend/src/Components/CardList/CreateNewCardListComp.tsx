@@ -4,6 +4,7 @@ import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts"
 import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewCardListComp = () => {
 
@@ -47,7 +48,7 @@ const CreateNewCardListComp = () => {
 
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
 
-            fetch(`https://localhost:7069/api/board/${boardId}/cardlist`, {
+            fetch(`${API_BASE_URL}/board/${boardId}/cardlist`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ cardListName: cardListName })

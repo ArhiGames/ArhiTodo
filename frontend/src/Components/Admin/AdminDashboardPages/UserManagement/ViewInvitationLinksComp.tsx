@@ -4,6 +4,7 @@ import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import ViewInvitationLinkComp from "./ViewInvitationLinkComp.tsx";
 import Modal from "../../../../lib/Modal/Default/Modal.tsx";
 import { createPortal } from "react-dom";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
 
@@ -13,7 +14,7 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
     useEffect(() => {
 
         const abortController = new AbortController();
-        fetch("https://localhost:7069/api/invitation",
+        fetch(`${API_BASE_URL}/invitation`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },

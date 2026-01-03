@@ -7,6 +7,7 @@ import type {BoardGetDto} from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts"
 import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
 
@@ -38,7 +39,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         e.preventDefault();
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board`, {
+        fetch(`${API_BASE_URL}/project/${props.projectId}/board`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ boardId: props.board.boardId, boardName: newName })
@@ -74,7 +75,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         setIsTryingToDelete(false);
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.board.boardId}`, {
+        fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.board.boardId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })

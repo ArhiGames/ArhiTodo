@@ -13,6 +13,7 @@ import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/ViewCardDetailsComp.tsx";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
@@ -94,7 +95,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentFilteringLabels([]);
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}`,
+        fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
             {
                 method: 'GET',
                 headers: { "Authorization": `Bearer ${token}` }

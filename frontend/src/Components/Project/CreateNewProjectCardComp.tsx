@@ -4,6 +4,7 @@ import Modal from "../../lib/Modal/Default/Modal.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { ProjectGetDto } from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
 import { useNavigate } from "react-router-dom";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewProjectCardComp = () => {
 
@@ -25,7 +26,7 @@ const CreateNewProjectCardComp = () => {
 
         e.preventDefault();
 
-        fetch(`https://localhost:7069/api/project`, {
+        fetch(`${API_BASE_URL}/project`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ projectName: projectName })

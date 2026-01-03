@@ -1,6 +1,0 @@
-@ArhiTodo_HostAddress = http://localhost:5123
-
-GET {{ArhiTodo_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

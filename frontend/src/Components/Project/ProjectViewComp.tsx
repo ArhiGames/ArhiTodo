@@ -6,6 +6,7 @@ import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { Board, State } from "../../Models/States/types.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const ProjectViewComp = () => {
 
@@ -40,7 +41,7 @@ const ProjectViewComp = () => {
 
     useEffect(() => {
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board`,
+        fetch(`${API_BASE_URL}/project/${projectId}/board`,
             {
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },

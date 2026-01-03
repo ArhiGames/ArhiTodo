@@ -8,6 +8,7 @@ import type {Label, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../config/api.ts";
 
 const ViewCardDetailsComp = () => {
 
@@ -33,7 +34,7 @@ const ViewCardDetailsComp = () => {
     useEffect(() => {
         if (cardId == undefined) return;
 
-        fetch(`https://localhost:7069/api/card/${cardId}`,
+        fetch(`${API_BASE_URL}/card/${cardId}`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
@@ -72,7 +73,7 @@ const ViewCardDetailsComp = () => {
 
         dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
 
-        fetch(`https://localhost:7069/api/card/${Number(cardId)}/label/${label.labelId}`,
+        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
@@ -93,7 +94,7 @@ const ViewCardDetailsComp = () => {
 
         dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
 
-        fetch(`https://localhost:7069/api/card/${Number(cardId)}/label/${label.labelId}`,
+        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
@@ -115,7 +116,7 @@ const ViewCardDetailsComp = () => {
         const newCardName: string = inputtedCardName;
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
 
-        fetch(`https://localhost:7069/api/card/${detailedCard.cardId}/name`, {
+        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/name`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ cardName: newCardName })
@@ -135,7 +136,7 @@ const ViewCardDetailsComp = () => {
         e.preventDefault();
         if (cardDescription.length === 0 || !detailedCard) return;
 
-        fetch(`https://localhost:7069/api/card/${detailedCard.cardId}/description`, {
+        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/description`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ cardDescription: cardDescription })
@@ -172,7 +173,7 @@ const ViewCardDetailsComp = () => {
             navigate(`/projects/${projectId}/board/${boardId}`);
         }
 
-        fetch(`https://localhost:7069/api/card/${cardId}`, {
+        fetch(`${API_BASE_URL}/card/${cardId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })

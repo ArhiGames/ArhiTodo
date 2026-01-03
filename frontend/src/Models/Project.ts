@@ -1,7 +1,7 @@
-import type { Board } from "./Board.ts";
+import type {BoardGetDto} from "./BackendDtos/GetDtos/BoardGetDto.ts";
 
 export interface Project {
     projectId: number;
     projectName: string;
-    boards: Board[];
+    boards: BoardGetDto[];
 }
