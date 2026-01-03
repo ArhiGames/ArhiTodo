@@ -19,6 +19,7 @@ const ViewCardDetailsComp = () => {
     const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
     const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
+    const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
     const [cardDescription, setCardDescription] = useState<string>("");
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)].cardName);
 
@@ -152,6 +153,16 @@ const ViewCardDetailsComp = () => {
             .catch(err => {
                 console.error(err);
             })
+
+        setIsEditingDescription(false);
+    }
+
+    function resetCardDescription(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        if (!detailedCard) return;
+
+        setCardDescription(detailedCard.cardDescription);
+        setIsEditingDescription(false);
     }
 
     function onDeleteCardConfirmed() {
@@ -223,16 +234,29 @@ const ViewCardDetailsComp = () => {
                                                               selectedLabels={getPureLabelIds()}/>
                         }
                     </div>
-                    <div className="card-detailed-description">
+                    <div className="card-detailed-description-div">
                         <p>Label description</p>
-                        <form onSubmit={updateCardDescription}>
-                        <textarea value={cardDescription}
-                                  placeholder="This card currently does not have a description..."
-                                  onChange={(e) => setCardDescription(e.target.value)}
-                                  maxLength={8192}/>
-                            <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ? 
-                                "valid-submit-button" : "standard-button" }`}
-                                    type="submit">Save description</button>
+                        <form onSubmit={updateCardDescription} onReset={resetCardDescription}>
+                            {
+                                isEditingDescription ? (
+                                    <>
+                                        <textarea value={cardDescription}
+                                            placeholder="This card currently does not have a description..."
+                                            onChange={(e) => setCardDescription(e.target.value)}
+                                            maxLength={8192}/>
+                                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                                            <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ?
+                                                "valid-submit-button" : "standard-button" }`}
+                                                type="submit">Save description</button>
+                                            <button type="reset" className="button standard-button">Cancel</button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p onClick={() => setIsEditingDescription(true)}
+                                       className="card-detailed-description">{ cardDescription.length > 0 ?
+                                            cardDescription : "This card currently does not have a description..." }</p>
+                                )
+                            }
                         </form>
                     </div>
                 </div>
