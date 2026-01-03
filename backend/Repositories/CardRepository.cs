@@ -88,7 +88,11 @@ public class CardRepository : ICardRepository
 
     public async Task<DetailedCardGetDto?> GetDetailedCard(int cardId)
     {
-        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+        Card? card = await _projectDataBase.Cards
+            .Include(c => c.CardLabels)
+            .Include(c => c.Checklists)
+                .ThenInclude(cl => cl.ChecklistItems)
+            .FirstOrDefaultAsync(c => c.CardId == cardId);
         return card?.ToDetailedCardGetDto();
     }
 }

@@ -85,6 +85,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 builder.Services.AddScoped<ILabelRepository, LabelRepository>();
+builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

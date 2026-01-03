@@ -1,6 +1,6 @@
 import Modal from "../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {type FormEvent, useEffect, useRef, useState} from "react";
+import {type FormEvent, Fragment, useEffect, useRef, useState} from "react";
 import LabelSelector from "../Labels/LabelSelector.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {DetailedCardGetDto} from "../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
@@ -255,7 +255,12 @@ const ViewCardDetailsComp = () => {
                                 ) : (
                                     <p onClick={() => setIsEditingDescription(true)}
                                        className="card-detailed-description">{ cardDescription.length > 0 ?
-                                            cardDescription : "This card currently does not have a description..." }</p>
+                                            cardDescription.split('\n').map((line, idx) => (
+                                                <Fragment key={idx}>
+                                                    {line}
+                                                    <br/>
+                                                </Fragment>
+                                            )) : "This card currently does not have a description..." }</p>
                                 )
                             }
                         </form>

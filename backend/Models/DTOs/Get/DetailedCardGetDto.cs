@@ -15,7 +15,7 @@ public class DetailedCardGetDto
 
     [MaxLength(8192)] 
     public string CardDescription { get; set; } = string.Empty;
-    
-    
-    public List<CardLabelGetDto> Labels { get; set; } = new();
+
+    public List<ChecklistGetDto> Checklists { get; set; } = [];
+    public List<CardLabelGetDto> Labels { get; set; } = [];
 }

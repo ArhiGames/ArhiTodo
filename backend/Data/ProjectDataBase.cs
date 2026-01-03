@@ -13,6 +13,7 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
     public DbSet<Card> Cards { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
     public DbSet<Label> Labels { get; set; }
+    public DbSet<Checklist> Checklists { get; set; }
 
     public ProjectDataBase(DbContextOptions<ProjectDataBase> options)
         : base(options)
@@ -26,6 +27,14 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
         builder.Entity<InvitationLink>()
             .HasIndex(i => i.InvitationKey)
             .IsUnique();
+
+        builder.Entity<Card>()
+            .HasMany(c => c.CardLabels);
+        builder.Entity<Card>()
+            .HasMany(c => c.Checklists);
+
+        builder.Entity<Checklist>()
+            .HasMany(cl => cl.ChecklistItems);
 
         builder.Entity<CardLabel>()
             .HasKey(cl => new { cl.CardId, cl.LabelId });

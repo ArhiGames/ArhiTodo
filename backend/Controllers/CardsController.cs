@@ -30,6 +30,7 @@ public class CardsController : ControllerBase
     {
         bool result = await _labelRepository.AddLabelToCard(cardId, labelId);
         if (!result) return NotFound();
+        
         return Ok();
     }
 
@@ -38,6 +39,7 @@ public class CardsController : ControllerBase
     {
         bool result = await _labelRepository.RemoveLabelFromCard(cardId, labelId);
         if (!result) return NotFound();
+        
         return NoContent();
     }
 
@@ -56,6 +58,7 @@ public class CardsController : ControllerBase
     {
         bool success = await _cardlistRepository.DeleteAsync(boardId, cardListId);
         if (!success) return NotFound();
+        
         return NoContent();
     }
 
@@ -73,6 +76,7 @@ public class CardsController : ControllerBase
     {
         Card? card = await _cardRepository.PatchCardStatus(cardId, isDone);
         if (card == null) return NotFound();
+        
         return Ok(card.ToDetailedCardGetDto());
     }
 
@@ -81,6 +85,7 @@ public class CardsController : ControllerBase
     {
         Card? card = await _cardRepository.PatchCardName(cardId, patchCardNameDto);
         if (card == null) return NotFound();
+        
         return Ok(card.ToDetailedCardGetDto());
     }
 
@@ -89,6 +94,7 @@ public class CardsController : ControllerBase
     {
         Card? card = await _cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto);
         if (card == null) return NotFound();
+        
         return Ok(card.ToDetailedCardGetDto());
     }
     
@@ -97,6 +103,7 @@ public class CardsController : ControllerBase
     {
         bool success = await _cardRepository.DeleteAsync(cardId);
         if (!success) return NotFound();
+        
         return NoContent();
     }
 
@@ -105,6 +112,7 @@ public class CardsController : ControllerBase
     {
         DetailedCardGetDto? detailedCardGetDto = await _cardRepository.GetDetailedCard(cardId);
         if (detailedCardGetDto == null) return NotFound();
+        
         return Ok(detailedCardGetDto);
     }
 }
