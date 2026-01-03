@@ -9,6 +9,7 @@ import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts"
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
+import CardDetailChecklistsComp from "./CardDetailChecklistsComp.tsx";
 
 const ViewCardDetailsComp = () => {
 
@@ -197,83 +198,104 @@ const ViewCardDetailsComp = () => {
         }, 2000)
     }
 
+    function cardLabelsJsx() {
+        return (
+            <>
+                {
+                    kanbanState.cardLabels[Number(cardId)] && (
+                        Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
+                            const label: Label = kanbanState.labels[labelId];
+                            if (!label) return null;
+                            const color: Rgb = toRgb(label.labelColor);
+                            return (
+                                <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                                     key={label.labelId} className="detailed-card-label"
+                                     onClick={() => setIsEditingLabels(!isEditingLabels)}>
+                                    {label.labelText}
+                                </div>
+                            )
+                        }))
+                }
+                <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
+                        className="button standard-button">+</button>
+                {
+                    isEditingLabels && <LabelSelector element={editLabelsButtonRef} projectId={Number(projectId)} boardId={Number(boardId)}
+                                                      actionTitle="Edit card labels"
+                                                      onClose={() => setIsEditingLabels(false)}
+                                                      onLabelSelected={onLabelSelected}
+                                                      onLabelUnselected={onLabelUnselected}
+                                                      selectedLabels={getPureLabelIds()}/>
+                }
+            </>
+        )
+    }
+
+    function cardDescriptionJsx() {
+        return (
+            <form onSubmit={updateCardDescription} onReset={resetCardDescription}>
+                {
+                    isEditingDescription ? (
+                        <>
+                            <textarea value={cardDescription}
+                                      placeholder="This card currently does not have a description..."
+                                      onChange={(e) => setCardDescription(e.target.value)}
+                                      maxLength={8192}/>
+                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                                <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ?
+                                    "valid-submit-button" : "standard-button" }`}
+                                        type="submit">Save description</button>
+                                <button type="reset" className="button standard-button">Cancel</button>
+                            </div>
+                        </>
+                    ) : (
+                        <p onClick={() => setIsEditingDescription(true)}
+                           className="card-detailed-description">{ cardDescription.length > 0 ?
+                            cardDescription.split('\n').map((line, idx) => (
+                                <Fragment key={idx}>
+                                    {line}
+                                    <br/>
+                                </Fragment>
+                            )) : "This card currently does not have a description..." }</p>
+                    )
+                }
+            </form>
+        )
+    }
+
     return (
         <Modal modalSize="modal-large" title="Edit card details" onClosed={onViewDetailsClosed}
                footer={<></>}>
             <div className="card-details-modal-wrapper">
-                <div style={{ width: "80%" }} className="card-details-modal">
-                    <p>Label name</p>
+                <div className="card-details-modal">
+                    <p className="category-paragraph">Label name</p>
                     <input className="card-detail-name" value={inputtedCardName}
                            onChange={(e) => setInputtedCardName(e.target.value)}
                            onBlur={onCardRenamed}
                            minLength={1} maxLength={90}/>
-                    <p>Labels</p>
+                    <p className="category-paragraph">Labels</p>
                     <div className="card-details-labels">
-                        {
-                            kanbanState.cardLabels[Number(cardId)] && (
-                                Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
-                                    const label: Label = kanbanState.labels[labelId];
-                                    if (!label) return null;
-                                    const color: Rgb = toRgb(label.labelColor);
-                                    return (
-                                        <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
-                                             key={label.labelId} className="detailed-card-label"
-                                             onClick={() => setIsEditingLabels(!isEditingLabels)}>
-                                            {label.labelText}
-                                        </div>
-                                    )
-                                }))
-                        }
-                        <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
-                                className="button standard-button">+</button>
-                        {
-                            isEditingLabels && <LabelSelector element={editLabelsButtonRef} projectId={Number(projectId)} boardId={Number(boardId)}
-                                                              actionTitle="Edit card labels"
-                                                              onClose={() => setIsEditingLabels(false)}
-                                                              onLabelSelected={onLabelSelected}
-                                                              onLabelUnselected={onLabelUnselected}
-                                                              selectedLabels={getPureLabelIds()}/>
-                        }
+                        { cardLabelsJsx() }
                     </div>
                     <div className="card-detailed-description-div">
-                        <p>Label description</p>
-                        <form onSubmit={updateCardDescription} onReset={resetCardDescription}>
-                            {
-                                isEditingDescription ? (
-                                    <>
-                                        <textarea value={cardDescription}
-                                            placeholder="This card currently does not have a description..."
-                                            onChange={(e) => setCardDescription(e.target.value)}
-                                            maxLength={8192}/>
-                                        <div style={{ display: "flex", gap: "0.5rem" }}>
-                                            <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ?
-                                                "valid-submit-button" : "standard-button" }`}
-                                                type="submit">Save description</button>
-                                            <button type="reset" className="button standard-button">Cancel</button>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <p onClick={() => setIsEditingDescription(true)}
-                                       className="card-detailed-description">{ cardDescription.length > 0 ?
-                                            cardDescription.split('\n').map((line, idx) => (
-                                                <Fragment key={idx}>
-                                                    {line}
-                                                    <br/>
-                                                </Fragment>
-                                            )) : "This card currently does not have a description..." }</p>
-                                )
-                            }
-                        </form>
+                        <p className="category-paragraph">Label description</p>
+                        { cardDescriptionJsx() }
+                    </div>
+                    <div className="card-detail-checklists-div">
+                        <p className="category-paragraph">Tasks</p>
+                        {
+                            detailedCard && <CardDetailChecklistsComp cardDetailComp={detailedCard} setCardDetailComp={setDetailedCard}/>
+                        }
                     </div>
                 </div>
-                <div style={{ width: "20%" }} className="card-details-sidebar">
-                    <p style={{ visibility: "hidden" }}>Hidden element</p>
+                <div className="card-details-footer">
                     <p>Actions</p>
-                    <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
-                    <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
-                    { isDeletingCard && <ConfirmationModal title="Card deletion"
-                                                           actionDescription="If you confirm this action, this card will be deleted permanently."
-                                                           onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                        <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
+                        <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
+                        { isDeletingCard && <ConfirmationModal title="Card deletion"
+                                                               actionDescription="If you confirm this action, this card will be deleted permanently."
+                                                               onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                    </div>
                 </div>
             </div>
         </Modal>

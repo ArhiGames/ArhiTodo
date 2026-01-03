@@ -1,0 +1,25 @@
+.fancy-checkbox-div {
+    width: 25px;
+    height: 25px;
+    background-color: var(--bg-x-light);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 0.3s;
+}
+
+.fancy-checkbox-div:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+}
+
+.fancy-checkbox {
+    opacity: 0;
+    user-select: none;
+    transition: opacity 0.1s;
+}
+
+.fancy-checkbox.visible {
+    opacity: 1;
+}

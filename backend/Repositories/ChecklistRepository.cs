@@ -87,4 +87,18 @@ public class ChecklistRepository : IChecklistRepository
         await _dataBase.SaveChangesAsync();
         return removed;
     }
+
+    public async Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
+    {
+        ChecklistItem? checklistItem = await _dataBase.ChecklistItems
+            .FirstOrDefaultAsync(ci => ci.ChecklistItemId == checklistItemId);
+        if (checklistItem == null)
+        {
+            return null;
+        }
+
+        checklistItem.IsDone = taskDone;
+        await _dataBase.SaveChangesAsync();
+        return checklistItem;
+    }
 }

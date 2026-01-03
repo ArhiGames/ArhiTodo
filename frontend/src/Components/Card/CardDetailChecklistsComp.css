@@ -1,0 +1,56 @@
+.card-detail-checklist-header {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.card-detail-checklist-header div {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.card-detail-checklist-header button {
+    width: fit-content;
+}
+
+.card-detail-progress-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+}
+
+.card-detail-progress-bg {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--bg-x-light);
+}
+
+.card-detail-progress-fg {
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--bg-xx-light);
+    transition: width 0.35s;
+}
+
+.card-detail-checklist {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.card-detail-checklist-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0 0 0.6rem 0.6rem;
+}
+
+.card-detail-checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}

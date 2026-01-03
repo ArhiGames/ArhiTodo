@@ -52,4 +52,16 @@ public class ChecklistController : ControllerBase
         if (succeeded) return NoContent();
         return NotFound();
     }
+
+    [HttpPatch("checklist/item/{checklistItemId:int}/done/{taskDone:bool}")]
+    public async Task<IActionResult> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
+    {
+        ChecklistItem? checklistItem =
+            await _checklistRepository.PatchChecklistItemDoneState(checklistItemId, taskDone);
+        if (checklistItem == null)
+        {
+            return NotFound();
+        }
+        return Ok(checklistItem.ToChecklistItemGetDto());
+    }
 }
