@@ -13,7 +13,7 @@ const CreateNewCardListComp = () => {
     const creationCardListRef = useRef<HTMLDivElement>(null)
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState = useKanbanState();
-    const { projectId, boardId } = useParams();
+    const { boardId } = useParams();
     const { token } = useAuth();
 
     function onStartCreatingNewCardClicked() {
@@ -47,7 +47,7 @@ const CreateNewCardListComp = () => {
 
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
 
-            fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/cardlist`, {
+            fetch(`https://localhost:7069/api/board/${boardId}/cardlist`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ cardListName: cardListName })

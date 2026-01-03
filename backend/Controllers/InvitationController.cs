@@ -58,20 +58,13 @@ public class InvitationController : ControllerBase
             return Unauthorized();
         }
 
-        try
+        bool bChanged = await _invitationRepository.InvalidateInvitationLinkAsync(invitationLinkId);
+        if (bChanged)
         {
-            bool bChanged = await _invitationRepository.InvalidateInvitationLinkAsync(invitationLinkId);
-            if (bChanged)
-            {
-                return Ok();
-            }
+            return Ok();
+        }
 
-            return NotFound();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        return NotFound();
     }
 
     [HttpGet]

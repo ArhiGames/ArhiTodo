@@ -1,3 +1,4 @@
+using System.Data;
 using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
@@ -22,10 +23,9 @@ public class BoardRepository : IBoardRepository
         Project? project = await _projectsDatabase.Projects
             .Include(p => p.Boards)
             .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null 
-            || project.Boards.Any(b => b.BoardName == boardPostDto.BoardName))
+        if (project == null || project.Boards.Any(b => b.BoardName == boardPostDto.BoardName))
         {
-            throw new InvalidOperationException();
+            throw new DuplicateNameException();
         }
 
         Board board = boardPostDto.FromPostDto();
@@ -42,13 +42,13 @@ public class BoardRepository : IBoardRepository
             .FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
         {
-            throw new InvalidOperationException();
+            return null;
         }
         
         Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardPutDto.BoardId);
         if (board == null)
         {
-            throw new InvalidOperationException();
+            return null;
         }
         
         board.BoardName = boardPutDto.BoardName;
@@ -64,13 +64,13 @@ public class BoardRepository : IBoardRepository
             .FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
         {
-            throw new InvalidOperationException();
+            return false;
         }
         
         Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
         if (board == null)
         {
-            throw new InvalidOperationException();
+            return false;
         }
 
         bool removed = project.Boards.Remove(board);
@@ -80,17 +80,11 @@ public class BoardRepository : IBoardRepository
 
     public async Task<List<Board>> GetAllAsync(int projectId)
     {
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        
-        // ReSharper disable once ConvertIfStatementToReturnStatement
-        if (project == null)
-        {
-            throw new InvalidOperationException();
-        }
+        List<Board> boards = await _projectsDatabase.Boards
+            .Where(b => b.ProjectId == projectId)
+            .ToListAsync();
 
-        return project.Boards.ToList();
+        return boards;
     }
 
     public async Task<Board?> GetAsync(int projectId, int boardId)
@@ -100,20 +94,8 @@ public class BoardRepository : IBoardRepository
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
                     .ThenInclude(c => c.CardLabels)
-            .Include(b => b.Project)
             .FirstOrDefaultAsync();
 
-        if (board == null)
-        {
-            return null;
-        }
-
-        Project? project = board.Project;
-        if (project == null || project.ProjectId != projectId)
-        {
-            throw new InvalidOperationException();
-        }
-        
-        return board;
+        return board ?? null;
     }
 }

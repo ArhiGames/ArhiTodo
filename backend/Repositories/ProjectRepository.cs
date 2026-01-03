@@ -49,7 +49,7 @@ public class ProjectRepository : IProjectRepository
                         .ThenInclude(c => c.CardLabels)
             .Where(p => p.ProjectId == projectId)
             .FirstOrDefaultAsync();
-        return project ?? throw new InvalidOperationException("Not found");
+        return project;
     }
 
     public async Task<List<Project>> GetAllAsync()

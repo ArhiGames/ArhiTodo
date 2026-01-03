@@ -175,15 +175,8 @@ public class AccountController : ControllerBase
             return Conflict("Cannot update the claims of yourself!");
         }
         
-        try
-        {
-            int changedClaims = await _userRepository.UpdateUserClaims(appUser, updatedClaims);
-            return Ok(changedClaims);
-        }
-        catch (InvalidOperationException)
-        {
-            return Unauthorized();
-        }
+        int changedClaims = await _userRepository.UpdateUserClaims(appUser, updatedClaims);
+        return Ok(changedClaims);
     }
 
     [HttpGet("admin/accountmanagement/users/{userId}")]
@@ -196,15 +189,8 @@ public class AccountController : ControllerBase
             return NotFound();
         }
         
-        try
-        {
-            UserUserManagementGetDto userManagementGetDto = await _userRepository.GetUserWithClaimsAsync(appUser);
-            return Ok(userManagementGetDto);
-        }
-        catch (InvalidOperationException)
-        {
-            return Unauthorized();
-        }
+        UserUserManagementGetDto userManagementGetDto = await _userRepository.GetUserWithClaimsAsync(appUser);
+        return Ok(userManagementGetDto);
     }
 
     [HttpDelete("admin/accountmanagement/users/{userToDeleteId}")]

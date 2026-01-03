@@ -1,3 +1,4 @@
+using System.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
@@ -25,31 +26,24 @@ public class BoardController : ControllerBase
         logger.Log(LogLevel.Information, "Board controller initialized");
     }
 
-    [HttpPost("project/{projectId:int}/board/{boardId:int}/label")]
-    public async Task<IActionResult> CreateLabel(int projectId, int boardId, [FromBody] LabelPostDto labelPostDto)
+    [HttpPost("board/{boardId:int}/label")]
+    public async Task<IActionResult> CreateLabel(int boardId, [FromBody] LabelPostDto labelPostDto)
     {
-        try
-        {
-            Label? label = await _labelRepository.CreateLabelAsync(projectId, boardId, labelPostDto);
-            if (label == null) return NotFound();
-            return Ok(label.ToLabelGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        Label? label = await _labelRepository.CreateLabelAsync(boardId, labelPostDto);
+        if (label == null) return NotFound();
+        return Ok(label.ToLabelGetDto());
     }
     
-    [HttpPut("project/{projectId:int}/board/{boardId:int}/label/")]
-    public async Task<IActionResult> UpdateLabel(int projectId, int boardId, [FromBody] LabelPutDto labelPutDto)
+    [HttpPut("label/")]
+    public async Task<IActionResult> UpdateLabel([FromBody] LabelPutDto labelPutDto)
     {
-        Label? result = await _labelRepository.UpdateLabelAsync(projectId, boardId, labelPutDto);
+        Label? result = await _labelRepository.UpdateLabelAsync(labelPutDto);
         if (result == null) return NotFound();
         return Ok(result.ToLabelGetDto()); 
     }
 
-    [HttpDelete("project/{projectId:int}/board/{boardId:int}/label/{labelId:int}")]
-    public async Task<IActionResult> DeleteLabel(int projectId, int boardId, int labelId)
+    [HttpDelete("label/{labelId:int}")]
+    public async Task<IActionResult> DeleteLabel(int labelId)
     {
         bool result = await _labelRepository.DeleteLabelAsync(labelId);
         if (result)
@@ -60,8 +54,8 @@ public class BoardController : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("project/{projectId:int}/board/{boardId:int}/label")]
-    public async Task<IActionResult> GetLabels(int projectId, int boardId)
+    [HttpGet("board/{boardId:int}/label")]
+    public async Task<IActionResult> GetLabels(int boardId)
     {
         try
         {
@@ -84,40 +78,26 @@ public class BoardController : ControllerBase
             if (board == null) return NotFound();
             return CreatedAtAction(nameof(GetBoard), new { projectId, boardId = board.BoardId }, board.ToBoardGetDto());
         }
-        catch (InvalidOperationException)
+        catch (DuplicateNameException)
         {
-            return NotFound();
+            return Conflict("Board with the same name already exists!");
         }
     }
 
     [HttpPut("project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardPutDto boardPutDto)
     {
-        try
-        {
-            Board? board = await _boardRepository.UpdateAsync(projectId, boardPutDto);
-            if (board == null) return NotFound();
-            return Ok(board.ToBoardGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        Board? board = await _boardRepository.UpdateAsync(projectId, boardPutDto);
+        if (board == null) return NotFound();
+        return Ok(board.ToBoardGetDto());
     }
 
     [HttpDelete("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
-        try
-        {
-            bool removed = await _boardRepository.DeleteAsync(projectId, boardId);
-            if (!removed) return NotFound();
-            return NoContent();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        bool removed = await _boardRepository.DeleteAsync(projectId, boardId);
+        if (!removed) return NotFound();
+        return NoContent();
     }
 
     [HttpGet("project/{projectId:int}/board/")]

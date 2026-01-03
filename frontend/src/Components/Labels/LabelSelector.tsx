@@ -117,7 +117,7 @@ const LabelSelector = ( props: Props ) => {
                     labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
         }
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label`, {
+        fetch(`https://localhost:7069/api/board/${props.boardId}/label`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
@@ -152,7 +152,7 @@ const LabelSelector = ( props: Props ) => {
                 labelColor: toInteger(currentSelectedColor)
         } });
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label`, {
+        fetch(`https://localhost:7069/api/label`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({
@@ -177,7 +177,7 @@ const LabelSelector = ( props: Props ) => {
         cancelAction();
         if (!currentlyEditingLabel) return;
 
-        fetch(`https://localhost:7069/api/project/${props.projectId}/board/${props.boardId}/label/${currentlyEditingLabel.labelId}`,
+        fetch(`https://localhost:7069/api/label/${currentlyEditingLabel.labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }

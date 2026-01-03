@@ -97,7 +97,7 @@ public class InvitationRepository : IInvitationRepository
         InvitationLink? invitationLink = await _dataBase.InvitationLinks.FirstOrDefaultAsync(link => link.InvitationLinkId == invitationLinkId);
         if (invitationLink == null)
         {
-            throw new InvalidOperationException("Not found");
+            return false;
         }
 
         invitationLink.IsActive = false;

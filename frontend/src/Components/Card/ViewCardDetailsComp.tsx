@@ -33,7 +33,7 @@ const ViewCardDetailsComp = () => {
     useEffect(() => {
         if (cardId == undefined) return;
 
-        fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/card/${cardId}`,
+        fetch(`https://localhost:7069/api/card/${cardId}`,
             {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }

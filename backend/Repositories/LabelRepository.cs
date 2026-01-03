@@ -66,7 +66,7 @@ public class LabelRepository : ILabelRepository
         return true;
     }
     
-    public async Task<Label?> CreateLabelAsync(int projectId, int boardId, LabelPostDto labelPostDto)
+    public async Task<Label?> CreateLabelAsync(int boardId, LabelPostDto labelPostDto)
     {
         Board? board = await _database.Boards.FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null)
@@ -85,17 +85,9 @@ public class LabelRepository : ILabelRepository
         return label;
     }
 
-    public async Task<Label?> UpdateLabelAsync(int projectId, int boardId, LabelPutDto labelPutDto)
+    public async Task<Label?> UpdateLabelAsync(LabelPutDto labelPutDto)
     {
-        Board? board = await _database.Boards
-            .Include(b => b.Labels)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null)
-        {
-            return null;
-        }
-
-        Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelPutDto.LabelId);
+        Label? label = _database.Labels.FirstOrDefault(l => l.LabelId == labelPutDto.LabelId);
         if (label == null)
         {
             return null;

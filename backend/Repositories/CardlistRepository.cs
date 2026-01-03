@@ -16,21 +16,14 @@ public class CardlistRepository : ICardlistRepository
         _projectDataBase = projectDataBase;
     }
     
-    public async Task<CardList?> CreateAsync(int projectId, int boardId, CardListPostDto cardListPostDto)
+    public async Task<CardList?> CreateAsync(int boardId, CardListPostDto cardListPostDto)
     {
         Board? board = await _projectDataBase.Boards
             .Include(b => b.CardLists)
-            .Include(board => board.Project)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null)
         {
-            throw new InvalidOperationException("Not found");
-        }
-
-        Project? project = board.Project;
-        if (project == null || project.ProjectId != projectId)
-        {
-            throw new InvalidOperationException("Not found");
+            return null;
         }
 
         CardList newCardList = cardListPostDto.FromCardListPostDto();
@@ -40,31 +33,24 @@ public class CardlistRepository : ICardlistRepository
         return newCardList;
     }
 
-    public async Task<bool> DeleteAsync(int projectId, int boardId, int cardListId)
+    public async Task<bool> DeleteAsync(int boardId, int cardListId)
     {
         Board? board = await _projectDataBase.Boards
             .Include(b => b.CardLists)
-            .Include(board => board.Project)
             .FirstOrDefaultAsync(b => b.BoardId == boardId);
         if (board == null)
         {
-            throw new InvalidOperationException("Not found");
-        }
-
-        Project? project = board.Project;
-        if (project == null || project.ProjectId != projectId)
-        {
-            throw new InvalidOperationException("Not found");
+            return false;
         }
 
         CardList? cardList = board.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
         if (cardList == null)
         {
-            throw new InvalidOperationException("Not found");
+            return false;
         }
 
-        board.CardLists.Remove(cardList);
+        bool removed = board.CardLists.Remove(cardList);
         await _projectDataBase.SaveChangesAsync();
-        return true;
+        return removed;
     }
 }

@@ -18,29 +18,12 @@ public class CardRepository : ICardRepository
         _projectDataBase = projectDataBase;
     }
 
-    public async Task<Card?> CreateAsync(int projectId, int boardId, int cardListId, CardPostDto cardPostDto)
+    public async Task<Card?> CreateAsync(int cardListId, CardPostDto cardPostDto)
     {
-        Project? project = await _projectDataBase.Projects
-            .Where(p => p.ProjectId == projectId)
-            .Include(p => p.Boards)
-                .ThenInclude(b => b.CardLists)
-                    .ThenInclude(cl => cl.Cards)
-            .FirstOrDefaultAsync();
-        if (project == null)
-        {
-            throw new InvalidOperationException("Not found");
-        }
-        
-        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
-        if (board == null)
-        {
-            throw new InvalidOperationException("Not found");
-        }
-        
-        CardList? cardList = board.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
+        CardList? cardList = _projectDataBase.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
         if (cardList == null)
         {
-            throw new InvalidOperationException("Not found");
+            return null;
         }
 
         Card newCard = cardPostDto.FromCardPostDto();
@@ -52,15 +35,12 @@ public class CardRepository : ICardRepository
 
     public async Task<bool> DeleteAsync(int cardId)
     {
-        Card? card = await _projectDataBase.Cards
-            .Include(c => c.CardLabels)
-            .Where(c => c.CardId == cardId)
-                .Include(c => c.CardList)
-                    .ThenInclude(cl => cl.Board)
-                        .ThenInclude(b => b.Project)
-            .FirstOrDefaultAsync();
-                
-        if (card == null) throw new InvalidOperationException("Not found");
+        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+
+        if (card == null)
+        {
+            return false;
+        }
 
         _projectDataBase.Cards.Remove(card);
         await _projectDataBase.SaveChangesAsync();
@@ -72,7 +52,7 @@ public class CardRepository : ICardRepository
         Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
         if (card == null)
         {
-            throw new InvalidOperationException();
+            return null;
         }
 
         card.IsDone = isDone;
@@ -85,7 +65,7 @@ public class CardRepository : ICardRepository
         Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
         if (card == null)
         {
-            throw new InvalidOperationException();
+            return null;
         }
 
         card.CardName = patchCardNameDto.CardName;
@@ -98,7 +78,7 @@ public class CardRepository : ICardRepository
         Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
         if (card == null)
         {
-            throw new InvalidOperationException();
+            return null;
         }
 
         card.CardDescription = patchCardDescriptionDto.CardDescription;
@@ -108,18 +88,7 @@ public class CardRepository : ICardRepository
 
     public async Task<DetailedCardGetDto?> GetDetailedCard(int cardId)
     {
-        Card? card = await _projectDataBase.Cards
-            .Include(c => c.CardLabels)
-            .Where(c => c.CardId == cardId)
-                .Include(c => c.CardList)
-                    .ThenInclude(cl => cl.Board)
-                        .ThenInclude(b => b.Project)
-            .FirstOrDefaultAsync();
-        if (card == null)
-        {
-            throw new InvalidOperationException("Not found!");
-        }
-
-        return card.ToDetailedCardGetDto();
+        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+        return card?.ToDetailedCardGetDto();
     }
 }

@@ -47,17 +47,10 @@ public class ProjectController : ControllerBase
     [HttpGet("{projectId:int}")]
     public async Task<IActionResult> GetProject(int projectId)
     {
-        try
-        {
-            Project? project = await _projectRepository.GetAsync(projectId);
-            if (project == null) return NotFound();
+        Project? project = await _projectRepository.GetAsync(projectId);
+        if (project == null) return NotFound();
 
-            ProjectGetDto projectGetDto = project.ToGetDto();
-            return Ok(projectGetDto);
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        ProjectGetDto projectGetDto = project.ToGetDto();
+        return Ok(projectGetDto);
     }
 }

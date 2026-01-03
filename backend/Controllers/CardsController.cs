@@ -41,126 +41,70 @@ public class CardsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist")]
-    public async Task<IActionResult> PostCardList(int projectId, int boardId, [FromBody] CardListPostDto cardListPostDto)
+    [HttpPost("board/{boardId:int}/cardlist")]
+    public async Task<IActionResult> PostCardList(int boardId, [FromBody] CardListPostDto cardListPostDto)
     {
-        try
-        {
-            CardList? cardList = await _cardlistRepository.CreateAsync(projectId, boardId, cardListPostDto);
-            if (cardList == null) return NotFound();
+        CardList? cardList = await _cardlistRepository.CreateAsync(boardId, cardListPostDto);
+        if (cardList == null) return NotFound();
 
-            CardListGetDto cardListGetDto = cardList.ToCardlistGetDto();
-            return Ok(cardListGetDto);
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        CardListGetDto cardListGetDto = cardList.ToCardlistGetDto();
+        return Ok(cardListGetDto);
     }
 
-    [HttpDelete("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}")]
-    public async Task<IActionResult> DeleteCardList(int projectId, int boardId, int cardListId)
+    [HttpDelete("board/{boardId:int}/cardlist/{cardListId:int}")]
+    public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
     {
-        try
-        {
-            bool success = await _cardlistRepository.DeleteAsync(projectId, boardId, cardListId);
-            if (!success) return NotFound();
-            return NoContent();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        bool success = await _cardlistRepository.DeleteAsync(boardId, cardListId);
+        if (!success) return NotFound();
+        return NoContent();
     }
 
-    [HttpPost("project/{projectId:int}/board/{boardId:int}/cardlist/{cardListId:int}/card")]
-    public async Task<IActionResult> PostCard(int projectId, int boardId, int cardListId, [FromBody] CardPostDto cardPostDto)
+    [HttpPost("cardlist/{cardListId:int}/card")]
+    public async Task<IActionResult> PostCard(int cardListId, [FromBody] CardPostDto cardPostDto)
     {
-        try
-        {
-            Card? card = await _cardRepository.CreateAsync(projectId, boardId, cardListId, cardPostDto);
-            if (card == null) return NotFound();
+        Card? card = await _cardRepository.CreateAsync(cardListId, cardPostDto);
+        if (card == null) return NotFound();
 
-            return Ok(card.ToCardGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        return Ok(card.ToCardGetDto());
     }
 
     [HttpPatch("card/{cardId:int}/done/{isDone:bool}")]
     public async Task<IActionResult> PatchCardStatus(int cardId, bool isDone)
     {
-        try
-        {
-            Card? card = await _cardRepository.PatchCardStatus(cardId, isDone);
-            if (card == null) return NotFound();
-            return Ok(card.ToDetailedCardGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        Card? card = await _cardRepository.PatchCardStatus(cardId, isDone);
+        if (card == null) return NotFound();
+        return Ok(card.ToDetailedCardGetDto());
     }
 
     [HttpPatch("card/{cardId:int}/name")]
     public async Task<IActionResult> PatchCardName(int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
     {
-        try
-        {
-            Card? card = await _cardRepository.PatchCardName(cardId, patchCardNameDto);
-            if (card == null) return NotFound();
-            return Ok(card.ToDetailedCardGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        Card? card = await _cardRepository.PatchCardName(cardId, patchCardNameDto);
+        if (card == null) return NotFound();
+        return Ok(card.ToDetailedCardGetDto());
     }
 
     [HttpPatch("card/{cardId:int}/description")]
     public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] PatchCardDescriptionDto patchCardDescriptionDto)
     {
-        try
-        {
-            Card? card = await _cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto);
-            if (card == null) return NotFound();
-            return Ok(card.ToDetailedCardGetDto());
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        Card? card = await _cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto);
+        if (card == null) return NotFound();
+        return Ok(card.ToDetailedCardGetDto());
     }
     
     [HttpDelete("card/{cardId:int}")]
     public async Task<IActionResult> DeleteCard(int cardId)
     {
-        try
-        {
-            bool success = await _cardRepository.DeleteAsync(cardId);
-            if (!success) return NotFound();
-            return NoContent();
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        bool success = await _cardRepository.DeleteAsync(cardId);
+        if (!success) return NotFound();
+        return NoContent();
     }
 
-    [HttpGet("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
-    public async Task<IActionResult> GetDetailedCard(int projectId, int boardId, int cardId)
+    [HttpGet("card/{cardId:int}")]
+    public async Task<IActionResult> GetDetailedCard(int cardId)
     {
-        try
-        {
-            DetailedCardGetDto? detailedCardGetDto = await _cardRepository.GetDetailedCard(cardId);
-            if (detailedCardGetDto == null) return NotFound();
-            return Ok(detailedCardGetDto);
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        DetailedCardGetDto? detailedCardGetDto = await _cardRepository.GetDetailedCard(cardId);
+        if (detailedCardGetDto == null) return NotFound();
+        return Ok(detailedCardGetDto);
     }
 }

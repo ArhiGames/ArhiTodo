@@ -2,7 +2,6 @@ import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGe
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {State} from "../../Models/States/types.ts";
-import {useParams} from "react-router-dom";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
 
@@ -14,7 +13,6 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
     const cardRef = useRef<HTMLInputElement>(null);
     const dispatch = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
-    const { projectId, boardId } = useParams();
     const { token } = useAuth();
 
     function handleClicked() {
@@ -48,7 +46,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
 
             dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardList.cardListId, cardId: predictedCardId, cardName: cardName } })
 
-            fetch(`https://localhost:7069/api/project/${projectId}/board/${boardId}/cardlist/${props.cardList.cardListId}/card`,
+            fetch(`https://localhost:7069/api/cardlist/${props.cardList.cardListId}/card`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },

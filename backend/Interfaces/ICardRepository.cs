@@ -7,7 +7,7 @@ namespace ArhiTodo.Interfaces;
 
 public interface ICardRepository
 {
-    Task<Card?> CreateAsync(int projectId, int boardId, int cardListId, CardPostDto cardPostDto);
+    Task<Card?> CreateAsync(int cardListId, CardPostDto cardPostDto);
     Task<bool> DeleteAsync(int cardId);
     Task<Card?> PatchCardStatus(int cardId, bool isDone);
     Task<Card?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto);
