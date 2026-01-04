@@ -1,16 +1,16 @@
 import "./CardDetailChecklistsComp.css"
-import type {ChecklistItemGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
-import type {ChecklistGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
-import { useEffect, useRef, useState } from "react";
-import FancyCheckbox from "../../lib/Input/Checkbox/FancyCheckbox.tsx";
-import type {DetailedCardGetDto} from "../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
-import {API_BASE_URL} from "../../config/api.ts";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
+import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from "react";
+import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
+import type {DetailedCardGetDto} from "../../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
+import {API_BASE_URL} from "../../../../config/api.ts";
+import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 
 interface Props {
     checklist: ChecklistGetDto;
     cardDetailComp: DetailedCardGetDto;
-    setCardDetailComp: (detailedCard: DetailedCardGetDto) => void;
+    setCardDetailComp: Dispatch<SetStateAction<DetailedCardGetDto | undefined>>;
 }
 
 const CardDetailChecklistComp = (props: Props) => {
@@ -69,54 +69,60 @@ const CardDetailChecklistComp = (props: Props) => {
 
         const checklistItemGetDto: ChecklistItemGetDto = { checklistItemId: predictedId, checklistItemName: addingTaskInputValue, isDone: false };
 
-        const detailedCard: DetailedCardGetDto = {
-            ...props.cardDetailComp,
-            checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                return checklist.checklistId === props.checklist.checklistId ? {
-                    ...checklist,
-                    checklistItems: [
-                        ...checklist.checklistItems,
-                        checklistItemGetDto
-                    ]
-                } : checklist
-            })
-        }
+        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
+            if (!prev) return prev;
 
-        props.setCardDetailComp(detailedCard);
+            return {
+                ...prev,
+                checklists: prev.checklists.map((checklist: ChecklistGetDto) => {
+                    return checklist.checklistId === props.checklist.checklistId ? {
+                        ...checklist,
+                        checklistItems: [
+                            ...checklist.checklistItems,
+                            checklistItemGetDto
+                        ]
+                    } : checklist
+                })
+            }
+        });
         return predictedId;
     }
 
     function correctPredictedChecklistItem(predictedId: number, actual: ChecklistItemGetDto) {
 
-        const detailedCard: DetailedCardGetDto = {
-            ...props.cardDetailComp,
-            checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                return props.checklist.checklistId === checklist.checklistId ? {
-                    ...checklist,
-                    checklistItems: checklist.checklistItems.map((checklistItem: ChecklistItemGetDto) => {
-                        return checklistItem.checklistItemId === predictedId ? actual : checklistItem;
-                    })
-                } : checklist
-            })
-        }
+        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
+            if (!prev) return prev;
 
-        props.setCardDetailComp(detailedCard);
-
+            return {
+                ...prev,
+                checklists: prev.checklists.map((checklist: ChecklistGetDto) => {
+                    return props.checklist.checklistId === checklist.checklistId ? {
+                        ...checklist,
+                        checklistItems: checklist.checklistItems.map((checklistItem: ChecklistItemGetDto) => {
+                            return checklistItem.checklistItemId === predictedId ? actual : checklistItem;
+                        })
+                    } : checklist
+                })
+            }
+        } );
     }
 
     function deleteChecklistItemFromChecklistLocally(checklistItemId: number) {
-        const detailedCard: DetailedCardGetDto = {
-            ...props.cardDetailComp,
-            checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                return checklist.checklistId === props.checklist.checklistId ? {
-                    ...checklist,
-                    checklistItems: checklist.checklistItems.filter(
-                        (checklistItem: ChecklistItemGetDto) => checklistItem.checklistItemId !== checklistItemId)
-                } : checklist
-            })
-        }
 
-        props.setCardDetailComp(detailedCard);
+        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
+            if (!prev) return prev;
+
+            return {
+                ...prev,
+                checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
+                    return checklist.checklistId === props.checklist.checklistId ? {
+                        ...checklist,
+                        checklistItems: checklist.checklistItems.filter(
+                            (checklistItem: ChecklistItemGetDto) => checklistItem.checklistItemId !== checklistItemId)
+                    } : checklist
+                })
+            }
+        });
     }
 
     function handleCheckboxClick(checklistItemId: number, checked: boolean) {
@@ -178,7 +184,9 @@ const CardDetailChecklistComp = (props: Props) => {
     }
 
     useEffect(() => {
-        addingTaskInputRef.current?.focus();
+        if (isAddingTask) {
+            addingTaskInputRef.current?.focus();
+        }
     }, [isAddingTask]);
 
     return (
@@ -192,7 +200,7 @@ const CardDetailChecklistComp = (props: Props) => {
                 </div>
             </div>
             <div className="card-detail-progress-container">
-                <p>{Math.floor(getCompletedTasksPercentage() * 100)}%</p>
+                <p>{ props.checklist.checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
                 <div className="card-detail-progress-bg">
                     <div className="card-detail-progress-fg" style={{ width: `${getCompletedTasksPercentage() * 100}%` }}/>
                 </div>

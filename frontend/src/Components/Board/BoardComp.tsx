@@ -12,7 +12,7 @@ import LabelSelector from "../Labels/LabelSelector.tsx";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
-import ViewCardDetailsComp from "../Card/ViewCardDetailsComp.tsx";
+import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {

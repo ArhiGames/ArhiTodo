@@ -87,7 +87,7 @@ const InvitationCreatorModalComp = (props: Props) => {
     return (
         <>
             <Modal
-                title="Creating an invitation link..."
+                header={<h2>Creating an invitation link...</h2>}
                 modalSize="modal-medium"
                 onClosed={props.onClose}
                 footer={

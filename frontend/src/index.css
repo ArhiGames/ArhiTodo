@@ -403,18 +403,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
     border-radius: 50%;
     background-color: var(--bg-xx-light);
     font-weight: bold;
     font-size: smaller;
     transform: translateX(-3rem);
-    width: 0;
+    min-width: 0;
     height: 22px;
     transition: all 0.3s;
 }
 
 .card-checkmark.visible {
-    width: 22px;
+    min-width: 22px;
     opacity: 1;
     padding: 4px;
     transform: translateX(0);
@@ -524,10 +525,12 @@ body {
 }
 
 .card-details-footer {
+    width: 100%;
     display: flex;
     flex-direction: column;
     margin-top: auto;
     gap: 0.25rem;
+    color: var(--text-color);
 }
 
 .card-detail-name {
@@ -538,6 +541,8 @@ body {
     font-size: medium;
     color: var(--text-color-shaded);
     transition: color 0.15s;
+    width: 100%;
+    margin-right: 1rem;
 }
 
 .card-detail-name:focus {
@@ -553,6 +558,19 @@ body {
 }
 
 .card-details-labels button {
+    width: fit-content;
+}
+
+.card-details-checklist-header {
+    margin-top: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-weight: bold;
+    font-size: large;
+}
+
+.card-details-checklist-header button {
     width: fit-content;
 }
 

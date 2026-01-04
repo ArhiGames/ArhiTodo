@@ -43,7 +43,7 @@ const GeneratedLinkInfoComp = (props: Props) => {
     }
 
     return (
-        <Modal onClosed={props.onClosed} title="Generated invitation link" modalSize="modal-small"
+        <Modal onClosed={props.onClosed} header={<h2>Generated invitation link</h2>} modalSize="modal-small"
                footer={
                     <button onClick={props.onClosed} className="button standard-button">Accept</button>
                }>

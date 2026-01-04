@@ -64,7 +64,7 @@ const CreateNewProjectCardComp = () => {
             {
                 isCreating && (
                     createPortal(
-                        <Modal title="Create new project" modalSize="modal-small" onClosed={onClose}
+                        <Modal header={<h2>Create new project</h2>} modalSize="modal-small" onClosed={onClose}
                                footer={<></>}>
                             <div className="create-new-board-modal">
                                 <form onSubmit={onCreateProjectSubmit}>

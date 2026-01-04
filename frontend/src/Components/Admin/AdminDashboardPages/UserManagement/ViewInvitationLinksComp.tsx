@@ -43,7 +43,7 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
             <>
                 {
                     createPortal(
-                        <Modal onClosed={props.onClosed} title="Generated invitation links" modalSize="modal-small"
+                        <Modal onClosed={props.onClosed} header={<h2>Generated invitation links</h2>} modalSize="modal-small"
                                footer={null}>
                             <p style={{ color: "var(--text-color)" }}>No invitations links to see :(</p>
                         </Modal>, document.body)
@@ -56,7 +56,7 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
         <>
             {
                 createPortal(
-                    <Modal onClosed={props.onClosed} title="Generated invitation links" modalSize="modal-large"
+                    <Modal onClosed={props.onClosed} header={<h2>Generated invitation links</h2>} modalSize="modal-large"
                         footer={null}>
                         <div className="view-invitation-links-div">
                             {invitationLinks.map((invitationLink: InvitationLink, index: number) => {

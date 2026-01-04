@@ -1,15 +1,15 @@
-import Modal from "../../lib/Modal/Default/Modal.tsx";
+import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {type FormEvent, Fragment, useEffect, useRef, useState} from "react";
-import LabelSelector from "../Labels/LabelSelector.tsx";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import type {DetailedCardGetDto} from "../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
-import type {Label, State} from "../../Models/States/types.ts";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import {type Rgb, toRgb} from "../../lib/Functions.ts";
-import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
-import {API_BASE_URL} from "../../config/api.ts";
-import CardDetailChecklistsComp from "./CardDetailChecklistsComp.tsx";
+import LabelSelector from "../../Labels/LabelSelector.tsx";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import type {DetailedCardGetDto} from "../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
+import type {Label, State} from "../../../Models/States/types.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import {type Rgb, toRgb} from "../../../lib/Functions.ts";
+import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../../config/api.ts";
+import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
 
 const ViewCardDetailsComp = () => {
 
@@ -107,6 +107,28 @@ const ViewCardDetailsComp = () => {
             })
             .catch(err => {
                 dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+                console.error(err);
+            })
+    }
+
+    function onStateChanged() {
+
+        if (!dispatch || !detailedCard) return;
+
+        const newState: boolean = !kanbanState.cards[detailedCard.cardId].isDone;
+        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: newState } });
+
+        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/done/${newState}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch card state");
+                }
+            })
+            .catch(err => {
+                dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: !newState } });
                 console.error(err);
             })
     }
@@ -263,15 +285,36 @@ const ViewCardDetailsComp = () => {
     }
 
     return (
-        <Modal modalSize="modal-large" title="Edit card details" onClosed={onViewDetailsClosed}
-               footer={<></>}>
+        <Modal modalSize="modal-large" onClosed={onViewDetailsClosed}
+               header={
+                   <>
+                       {
+                           detailedCard && (
+                               <div onClick={onStateChanged}
+                                    className="card-checkmark visible">
+                                   { kanbanState.cards[detailedCard.cardId].isDone ? "✓" : "" }
+                               </div>
+                           )
+                       }
+                       <input className="card-detail-name" value={inputtedCardName}
+                              onChange={(e) => setInputtedCardName(e.target.value)}
+                              onBlur={onCardRenamed}
+                              minLength={1} maxLength={90}/>
+                   </>
+               }
+               footer={
+                   <div className="card-details-footer">
+                       <div style={{ display: "flex", gap: "0.5rem" }}>
+                           <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
+                           <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
+                           { isDeletingCard && <ConfirmationModal title="Card deletion"
+                                                                  actionDescription="If you confirm this action, this card will be deleted permanently."
+                                                                  onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                       </div>
+                   </div>
+            }>
             <div className="card-details-modal-wrapper">
                 <div className="card-details-modal">
-                    <p className="category-paragraph">Card name</p>
-                    <input className="card-detail-name" value={inputtedCardName}
-                           onChange={(e) => setInputtedCardName(e.target.value)}
-                           onBlur={onCardRenamed}
-                           minLength={1} maxLength={90}/>
                     <p className="category-paragraph">Labels</p>
                     <div className="card-details-labels">
                         { cardLabelsJsx() }
@@ -280,22 +323,7 @@ const ViewCardDetailsComp = () => {
                         <p className="category-paragraph">Label description</p>
                         { cardDescriptionJsx() }
                     </div>
-                    <div className="card-detail-checklists-div">
-                        <p className="category-paragraph">Tasks</p>
-                        {
-                            detailedCard && <CardDetailChecklistsComp cardDetailComp={detailedCard} setCardDetailComp={setDetailedCard}/>
-                        }
-                    </div>
-                </div>
-                <div className="card-details-footer">
-                    <p>Actions</p>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
-                        <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
-                        { isDeletingCard && <ConfirmationModal title="Card deletion"
-                                                               actionDescription="If you confirm this action, this card will be deleted permanently."
-                                                               onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
-                    </div>
+                    { detailedCard && <CardDetailChecklistsComp cardDetailComp={detailedCard} setCardDetailComp={setDetailedCard}/> }
                 </div>
             </div>
         </Modal>

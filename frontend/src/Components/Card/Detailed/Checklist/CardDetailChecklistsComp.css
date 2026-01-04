@@ -36,7 +36,7 @@
 }
 
 .card-detail-checklist {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -65,8 +65,8 @@
 }
 
 .card-detail-add-task-button {
-    width: 100%;
-    padding: 0.5rem;
+    width: fit-content;
+    padding: 11px;
     background-color: var(--bg-xx-light);
     opacity: 60%;
     border: none;
