@@ -267,7 +267,7 @@ const ViewCardDetailsComp = () => {
                footer={<></>}>
             <div className="card-details-modal-wrapper">
                 <div className="card-details-modal">
-                    <p className="category-paragraph">Label name</p>
+                    <p className="category-paragraph">Card name</p>
                     <input className="card-detail-name" value={inputtedCardName}
                            onChange={(e) => setInputtedCardName(e.target.value)}
                            onBlur={onCardRenamed}

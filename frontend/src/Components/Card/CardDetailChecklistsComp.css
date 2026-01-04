@@ -54,3 +54,28 @@
     align-items: center;
     gap: 0.5rem;
 }
+
+.card-detail-checklistitem-add {
+    align-self: center;
+    width: 95%;
+}
+
+.card-detail-checklistitem-add input {
+    width: 100%;
+}
+
+.card-detail-add-task-button {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--bg-xx-light);
+    opacity: 60%;
+    border: none;
+    color: var(--text-color);
+    border-radius: 15px;
+    transition: filter 0.3s;
+}
+
+.card-detail-add-task-button:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+}
