@@ -132,7 +132,8 @@ const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props )
             {
                 cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
                     return <CardDetailChecklistComp key={checklist.checklistId}
-                                                    checklist={checklist} cardDetailComp={cardDetailComp} setCardDetailComp={setCardDetailComp}/>
+                                                    checklist={checklist} cardDetailComp={cardDetailComp} setCardDetailComp={setCardDetailComp}
+                                                    createChecklistLocally={createChecklistLocally} deleteChecklistLocally={deleteChecklistLocally}/>
                 })
             }
         </div>

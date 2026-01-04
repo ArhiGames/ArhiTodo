@@ -6,11 +6,15 @@ import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
 import type {DetailedCardGetDto} from "../../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
+import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {createPortal} from "react-dom";
 
 interface Props {
     checklist: ChecklistGetDto;
     cardDetailComp: DetailedCardGetDto;
     setCardDetailComp: Dispatch<SetStateAction<DetailedCardGetDto | undefined>>;
+    createChecklistLocally: () => void;
+    deleteChecklistLocally: (checklistId: number) => void;
 }
 
 const CardDetailChecklistComp = (props: Props) => {
@@ -21,6 +25,8 @@ const CardDetailChecklistComp = (props: Props) => {
     const addingTaskInputRef = useRef<HTMLInputElement>(null);
     const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
     const [addingTaskInputValue, setAddingTaskInputValue] = useState<string>("");
+
+    const [isDeletingChecklist, setIsDeletingChecklist] = useState<boolean>(false);
 
     function getCompletedTasks() {
         let completedTasks: number = 0;
@@ -178,6 +184,26 @@ const CardDetailChecklistComp = (props: Props) => {
         setAddingTaskInputValue("");
     }
 
+    function deleteChecklist() {
+
+        fetch(`${API_BASE_URL}/card/${props.cardDetailComp.cardId}/checklist/${props.checklist.checklistId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Could not delete checklist!");
+                }
+
+                props.deleteChecklistLocally(props.checklist.checklistId);
+            })
+            .catch(err => {
+
+                console.error(err);
+            })
+
+    }
+
     function cancelCardAddition() {
         setIsAddingTask(false);
         setAddingTaskInputValue("");
@@ -195,8 +221,17 @@ const CardDetailChecklistComp = (props: Props) => {
                 <p>{props.checklist.checklistName}</p>
                 <div>
                     <button onClick={() => setShowingCompletedTasks(!showingCompletedTasks)} className="button standard-button">
-                        { showingCompletedTasks ? "Hide completed tasks" : "Show completed tasks" }</button>
-                    <button className="button standard-button">Remove</button>
+                        { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
+                    <button onClick={() => setIsDeletingChecklist(true)} className="button standard-button">Remove</button>
+                    {
+                        isDeletingChecklist && (
+                            createPortal(
+                                <ConfirmationModal title="Confirm your action!"
+                                                   actionDescription="If you confirm this action, the checklist will be irrevocably deleted."
+                                                   onClosed={() => setIsDeletingChecklist(false)}
+                                                   onConfirmed={deleteChecklist}/>, document.body)
+                        )
+                    }
                 </div>
             </div>
             <div className="card-detail-progress-container">
