@@ -75,7 +75,8 @@ public class CardRepository : ICardRepository
 
     public async Task<Card?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
     {
-        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
+        Card? card = await _projectDataBase.Cards
+            .FirstOrDefaultAsync(c => c.CardId == cardId);
         if (card == null)
         {
             return null;

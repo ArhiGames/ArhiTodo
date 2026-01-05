@@ -172,7 +172,14 @@ const ViewCardDetailsComp = () => {
                 return res.json();
             })
             .then((detailedCard: DetailedCardGetDto) => {
-                setDetailedCard(detailedCard);
+                setDetailedCard((prev: DetailedCardGetDto | undefined) => {
+                    if (!prev) return;
+
+                    return {
+                        ...prev,
+                        cardDescription: detailedCard.cardDescription,
+                    }
+                });
             })
             .catch(err => {
                 console.error(err);

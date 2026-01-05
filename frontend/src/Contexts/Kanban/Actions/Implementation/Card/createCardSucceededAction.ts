@@ -13,6 +13,10 @@ const createCardSucceededAction = (state: State, payload: CreateCardSucceededPay
                 ...cardToUpdate,
                 cardId: payload.actualCardId,
             }
+        },
+        cardLabels: {
+            ...state.cardLabels,
+            [payload.predictedCardId]: []
         }
     }
 
