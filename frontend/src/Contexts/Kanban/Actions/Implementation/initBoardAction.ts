@@ -20,10 +20,12 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
         }
         for (const cardDto of cardListDto.cards) {
             cards[cardDto.cardId] = {
-                cardListId: cardListDto.cardListId,
-                isDone: cardDto.isDone,
                 cardId: cardDto.cardId,
-                cardName: cardDto.cardName
+                cardName: cardDto.cardName,
+                isDone: cardDto.isDone,
+                totalTasks: cardDto.totalTasks,
+                totalTasksCompleted: cardDto.totalTasksCompleted,
+                cardListId: cardListDto.cardListId,
             }
             if (!cardLabels[cardDto.cardId]) {
                 cardLabels[cardDto.cardId] = [];

@@ -37,6 +37,9 @@ public class ProjectDataBase : IdentityDbContext<AppUser>
         builder.Entity<Checklist>()
             .HasMany(cl => cl.ChecklistItems);
 
+        builder.Entity<ChecklistItem>()
+            .HasIndex(ci => ci.IsDone);
+
         builder.Entity<CardLabel>()
             .HasKey(cl => new { cl.CardId, cl.LabelId });
         

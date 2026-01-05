@@ -34,8 +34,8 @@ public static class CardMapper
             return new CardGetDto
             {
                 CardId = card.CardId,
-                IsDone = card.IsDone,
                 CardName = card.CardName,
+                IsDone = card.IsDone,
                 Labels = card.CardLabels.Select(cl => cl.ToCardLabelGetDto()).ToList()
             };
         }

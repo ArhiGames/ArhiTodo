@@ -72,6 +72,12 @@ const CardComp = (props: { card: CardGetDto }) => {
                      className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</div>
                 <p>{props.card.cardName}</p>
             </div>
+            { (props.card.totalTasks !== undefined && props.card.totalTasks > 0) && (
+                <div className="card-checklist-hint">
+                    <p>✓ {props.card.totalTasksCompleted} / {props.card.totalTasks}</p>
+                </div>
+            ) }
+
         </div>
     )
 

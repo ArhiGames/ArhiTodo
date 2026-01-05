@@ -83,6 +83,19 @@ export type UpdateCardStatePayload = {
     newState: boolean;
 }
 
+export type AddUndetailedTaskToCardPayload = {
+    taskToCardId: number;
+}
+
+export type RemoveUndetailedTaskFromCardPayload = {
+    taskFromCardId: number;
+}
+
+export type ChangeTaskStatePayload = {
+    cardId: number;
+    newState: boolean;
+}
+
 export type Action =
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
@@ -113,4 +126,8 @@ export type Action =
     { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } } |
     { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
-    { type: "DELETE_CARD", payload: { cardId: number } }
+    { type: "DELETE_CARD", payload: { cardId: number } } |
+
+    { type: "ADD_UNDETAILED_TASK_TO_CARD", payload: AddUndetailedTaskToCardPayload } |
+    { type: "REMOVE_UNDETAILED_TASK_FROM_CARD", payload: RemoveUndetailedTaskFromCardPayload } |
+    { type: "CHANGE_UNDETAILED_TASK_STATE", payload: ChangeTaskStatePayload }

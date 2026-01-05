@@ -103,36 +103,22 @@ public class BoardController : ControllerBase
     [HttpGet("project/{projectId:int}/board/")]
     public async Task<IActionResult> GetBoards(int projectId)
     {
-        try
-        {
-            List<Board> boards = await _boardRepository.GetAllAsync(projectId);
-            if (boards.Count == 0) return Ok();
+        List<Board> boards = await _boardRepository.GetAllAsync(projectId);
+        if (boards.Count == 0) return Ok();
 
-            List<BoardGetDto> boardGetDtos = boards.Select(board => board.ToBoardGetDto()).ToList();
-            return Ok(boardGetDtos);
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        List<BoardGetDto> boardGetDtos = boards.Select(board => board.ToBoardGetDto()).ToList();
+        return Ok(boardGetDtos);
     }
 
     [HttpGet("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> GetBoard(int projectId, int boardId)
     {
-        try
-        {
-            Board? board = await _boardRepository.GetAsync(projectId, boardId);
-            if (board == null) return NotFound();
-            
-            List<Label> labels = await _labelRepository.GetAllAsync(boardId);
-            List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
-            
-            return Ok(new { board = board.ToBoardGetDto(), labels = labelGetDtos });
-        }
-        catch (InvalidOperationException)
-        {
-            return NotFound();
-        }
+        BoardGetDto? boardGetDto = await _boardRepository.GetAsync(projectId, boardId);
+        if (boardGetDto == null) return NotFound();
+        
+        List<Label> labels = await _labelRepository.GetAllAsync(boardId);
+        List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
+        
+        return Ok(new { board = boardGetDto, labels = labelGetDtos });
     }
 }

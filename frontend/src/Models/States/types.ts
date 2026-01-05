@@ -12,8 +12,10 @@ export type CardList = {
 
 export type Card = {
     cardId: number;
-    isDone: boolean;
     cardName: string;
+    isDone: boolean;
+    totalTasks: number;
+    totalTasksCompleted: number;
     cardListId: number;
 }
 

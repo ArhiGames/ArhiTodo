@@ -388,6 +388,9 @@ body {
     padding: 0.5rem;
     color: var(--text-color);
     transition: border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
 }
 
 .card:hover {
@@ -425,6 +428,14 @@ body {
 .card-checkmark:hover {
     filter: brightness(1.25);
     cursor: pointer;
+}
+
+.card-checklist-hint {
+    background-color: var(--bg-xx-light);
+    padding: 5px;
+    border-radius: 10px;
+    width: fit-content;
+    font-size: smaller;
 }
 
 .creation-card {
@@ -481,7 +492,6 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
-    margin-bottom: 0.25rem;
 }
 
 .card-label {

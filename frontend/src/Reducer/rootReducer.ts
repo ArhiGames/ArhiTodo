@@ -21,8 +21,14 @@ import addLabelToCard from "../Contexts/Kanban/Actions/Implementation/Labels/add
 import removeLabelFromCard from "../Contexts/Kanban/Actions/Implementation/Labels/removeLabelFromCard.ts";
 import updateCardNameAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardNameAction.ts";
 import updateCardStateAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardStateAction.ts";
+import addUndetailedTaskToCardAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/addUndetailedTaskToCardAction.ts";
+import removeUndetailedTaskFromCard
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/removeUndetailedTaskFromCard.ts";
+import changeUndetailedTaskStateAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/changeUndetailedTaskStateAction.ts";
 
-function rootReducer(state: State, action: Action) {
+function rootReducer(state: State, action: Action): State {
     switch (action.type) {
         case "INIT_BOARDS":
             return initBoardsAction(state, action.payload);
@@ -78,6 +84,13 @@ function rootReducer(state: State, action: Action) {
             return updateCardStateAction(state, action.payload);
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
+
+        case "ADD_UNDETAILED_TASK_TO_CARD":
+            return addUndetailedTaskToCardAction(state, action.payload);
+        case "REMOVE_UNDETAILED_TASK_FROM_CARD":
+            return removeUndetailedTaskFromCard(state, action.payload);
+        case "CHANGE_UNDETAILED_TASK_STATE":
+            return changeUndetailedTaskStateAction(state, action.payload);
     }
 }
 

@@ -3,6 +3,7 @@ using ArhiTodo.Data;
 using ArhiTodo.Interfaces;
 using ArhiTodo.Mappers;
 using ArhiTodo.Models;
+using ArhiTodo.Models.DTOs.Get;
 using ArhiTodo.Models.DTOs.Post;
 using ArhiTodo.Models.DTOs.Put;
 using Microsoft.EntityFrameworkCore;
@@ -87,15 +88,43 @@ public class BoardRepository : IBoardRepository
         return boards;
     }
 
-    public async Task<Board?> GetAsync(int projectId, int boardId)
+    public async Task<BoardGetDto?> GetAsync(int projectId, int boardId)
     {
-        Board? board = await _projectsDatabase.Boards
+        BoardGetDto? boardGetDto = await _projectsDatabase.Boards
             .Where(b => b.BoardId == boardId)
-            .Include(b => b.CardLists)
-                .ThenInclude(cl => cl.Cards)
-                    .ThenInclude(c => c.CardLabels)
+            .Select(b => new BoardGetDto()
+            {
+                BoardId = b.BoardId,
+                BoardName = b.BoardName,
+                
+                CardLists = b.CardLists.Select(cl => new CardListGetDto()
+                {
+                    CardListId = cl.CardListId,
+                    CardListName = cl.CardListName,
+                    
+                    Cards = cl.Cards.Select(c => new CardGetDto()
+                    {
+                        CardId = c.CardId,
+                        CardName = c.CardName,
+                        
+                        Labels = c.CardLabels.Select(l => new CardLabelGetDto()
+                        {
+                            LabelId = l.LabelId
+                        }).ToList(),
+                        
+                        TotalTasks = c.Checklists
+                            .SelectMany(ch => ch.ChecklistItems)
+                            .Count(),
+                        
+                        TotalTasksCompleted = c.Checklists
+                            .SelectMany(ch => ch.ChecklistItems)
+                            .Count(i => i.IsDone)
+                        
+                    }).ToList()
+                }).ToList()
+            })
             .FirstOrDefaultAsync();
 
-        return board ?? null;
+        return boardGetDto ?? null;
     }
 }

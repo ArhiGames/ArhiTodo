@@ -8,6 +8,7 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {createPortal} from "react-dom";
+import {useKanbanDispatch} from "../../../../Contexts/Kanban/Hooks.ts";
 
 interface Props {
     checklist: ChecklistGetDto;
@@ -20,6 +21,7 @@ interface Props {
 const CardDetailChecklistComp = (props: Props) => {
 
     const { token } = useAuth();
+    const dispatch = useKanbanDispatch();
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
 
     const addingTaskInputRef = useRef<HTMLInputElement>(null);
@@ -147,6 +149,9 @@ const CardDetailChecklistComp = (props: Props) => {
             })
             .then((checklistItemGetDto: ChecklistItemGetDto) => {
                 patchDoneStateLocally(checklistItemId, checklistItemGetDto.isDone);
+                if (dispatch) {
+                    dispatch({type: "CHANGE_UNDETAILED_TASK_STATE", payload: { cardId: props.cardDetailComp.cardId, newState: checklistItemGetDto.isDone }})
+                }
             })
             .catch(err => {
                 patchDoneStateLocally(checklistItemId, !checked);
@@ -174,6 +179,9 @@ const CardDetailChecklistComp = (props: Props) => {
             })
             .then((checklistItemGetDto: ChecklistItemGetDto) => {
                 correctPredictedChecklistItem(predictedId, checklistItemGetDto);
+                if (dispatch) {
+                    dispatch({type: "ADD_UNDETAILED_TASK_TO_CARD", payload: { taskToCardId: props.cardDetailComp.cardId }})
+                }
             })
             .catch(err => {
                 deleteChecklistItemFromChecklistLocally(predictedId);
@@ -186,6 +194,14 @@ const CardDetailChecklistComp = (props: Props) => {
 
     function deleteChecklist() {
 
+        const totalTasks: number = props.checklist.checklistItems.length;
+        let completedTasks: number = 0;
+        for (const checklistItem of props.checklist.checklistItems) {
+            if (checklistItem.isDone) {
+                completedTasks++;
+            }
+        }
+
         fetch(`${API_BASE_URL}/card/${props.cardDetailComp.cardId}/checklist/${props.checklist.checklistId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
@@ -195,6 +211,15 @@ const CardDetailChecklistComp = (props: Props) => {
                     throw new Error("Could not delete checklist!");
                 }
 
+                if (dispatch) {
+                    for (let i = 0; i < totalTasks; i++) {
+                        dispatch({ type: "REMOVE_UNDETAILED_TASK_FROM_CARD", payload: { taskFromCardId: props.cardDetailComp.cardId } })
+                    }
+
+                    for (let i = 0; i < completedTasks; i++) {
+                        dispatch({ type: "CHANGE_UNDETAILED_TASK_STATE", payload: { cardId: props.cardDetailComp.cardId, newState: false } })
+                    }
+                }
                 props.deleteChecklistLocally(props.checklist.checklistId);
             })
             .catch(err => {
