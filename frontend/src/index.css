@@ -587,13 +587,13 @@ body {
 .card-details-modal textarea {
     background-color: var(--bg-x-light);
     border-radius: 15px;
-    padding: 12px;
+    padding: 6px;
     border: none;
     color: var(--text-color-shaded);
     width: 100%;
     height: 18rem;
     resize: none;
-    font-size: large;
+    font-family: Arial, serif;
     transition: color 0.15s;
 }
 
