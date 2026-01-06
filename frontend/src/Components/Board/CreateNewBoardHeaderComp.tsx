@@ -1,9 +1,8 @@
 import Popover from "../../lib/Popover/Popover.tsx";
 import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
-import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
+import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import type { State } from "../../Models/States/types.ts";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
@@ -18,7 +17,6 @@ const CreateNewBoardHeaderComp = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
-    const kanbanState: State = useKanbanState();
 
     function onCreateBoardPressed() {
         setOpen(true);
@@ -32,13 +30,7 @@ const CreateNewBoardHeaderComp = () => {
     function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (dispatch) {
-            let maxKeyValue: number = 0;
-            Object.keys(kanbanState.boards).forEach((key: string)=> {
-                if (maxKeyValue < Number(key)) {
-                    maxKeyValue = Number(key);
-                }
-            });
-            const predictedId: number = maxKeyValue + 1;
+            const predictedId: number = Date.now() * -1;
 
             dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
 

@@ -105,13 +105,7 @@ const LabelSelector = ( props: Props ) => {
 
         if (labelName.length === 0) return;
 
-        let currentMaxId = 0;
-        Object.keys(kanbanState.labels).forEach((key: string) => {
-            if (currentMaxId < Number(key)) {
-                currentMaxId = Number(key);
-            }
-        });
-        const predictedId = currentMaxId + 1;
+        const predictedId = Date.now() * -1;
 
         if (dispatch) {
             dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,

@@ -1,6 +1,6 @@
 import {type Dispatch, type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
@@ -13,7 +13,6 @@ const CreateNewCardListComp = () => {
     const cardListNameRef = useRef<HTMLInputElement>(null);
     const creationCardListRef = useRef<HTMLDivElement>(null)
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
-    const kanbanState = useKanbanState();
     const { boardId } = useParams();
     const { token } = useAuth();
 
@@ -38,13 +37,7 @@ const CreateNewCardListComp = () => {
 
         e.preventDefault();
         if (dispatch && boardId !== undefined) {
-            let maxKeyValue = 0;
-            Object.keys(kanbanState.cardLists).forEach((cardListId: string) => {
-                if (maxKeyValue < Number(cardListId)) {
-                    maxKeyValue = Number(cardListId);
-                }
-            })
-            const predictedId = maxKeyValue + 1;
+            const predictedId = Date.now() * -1;
 
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
 

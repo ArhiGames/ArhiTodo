@@ -1,7 +1,6 @@
 import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {State} from "../../Models/States/types.ts";
+import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
@@ -13,7 +12,6 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const cardRef = useRef<HTMLInputElement>(null);
     const dispatch = useKanbanDispatch();
-    const kanbanState: State = useKanbanState();
     const { token } = useAuth();
 
     function handleClicked() {
@@ -37,13 +35,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
         e.preventDefault();
 
         if (dispatch) {
-            let currentMaxValue = 0;
-            Object.keys(kanbanState.cards).forEach((cardId: string) => {
-                if (currentMaxValue < Number(cardId)) {
-                    currentMaxValue = Number(cardId);
-                }
-            })
-            const predictedCardId = currentMaxValue + 1;
+            const predictedCardId = Date.now() * -1;
 
             dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardList.cardListId, cardId: predictedCardId, cardName: cardName } })
 
