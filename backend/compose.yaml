@@ -1,7 +1,0 @@
-﻿services:
-  arhitodo:
-    image: arhitodo
-    build:
-      context: .
-      dockerfile: Dockerfile
-

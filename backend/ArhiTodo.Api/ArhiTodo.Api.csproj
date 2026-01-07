@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>ArhiTodo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\appsettings.json" />
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\obj\ArhiTodo.Api.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\obj\project.packagespec.json" />
+    <_ContentIncludedByDefault Remove="ArhiTodo.Api\Properties\launchSettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ArhiTodo.Application\ArhiTodo.Application.csproj" />
+    <ProjectReference Include="..\ArhiTodo.Domain\ArhiTodo.Domain.csproj" />
+    <ProjectReference Include="..\ArhiTodo.Infrastructure\ArhiTodo.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

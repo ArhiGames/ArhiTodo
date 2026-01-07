@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo", "ArhiTodo.csproj", "{879B954B-D1C5-4EF7-ABB7-8D53C59A8118}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DDF77E2-1128-431A-BBA1-9AB2011621FA}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo.Domain", "ArhiTodo.Domain\ArhiTodo.Domain.csproj", "{DA726D05-330F-492C-8F5B-83D610AE805E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo.Application", "ArhiTodo.Application\ArhiTodo.Application.csproj", "{8A1E4FB3-3201-44CC-802A-2C3904CA39BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo.Infrastructure", "ArhiTodo.Infrastructure\ArhiTodo.Infrastructure.csproj", "{854AC9A8-96F0-40FA-AD55-31F959618366}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo.Api", "ArhiTodo.Api\ArhiTodo.Api.csproj", "{C420EDA8-525C-4DCB-B60D-D9120424ED63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +19,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{879B954B-D1C5-4EF7-ABB7-8D53C59A8118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{879B954B-D1C5-4EF7-ABB7-8D53C59A8118}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{879B954B-D1C5-4EF7-ABB7-8D53C59A8118}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{879B954B-D1C5-4EF7-ABB7-8D53C59A8118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA726D05-330F-492C-8F5B-83D610AE805E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA726D05-330F-492C-8F5B-83D610AE805E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA726D05-330F-492C-8F5B-83D610AE805E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA726D05-330F-492C-8F5B-83D610AE805E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A1E4FB3-3201-44CC-802A-2C3904CA39BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A1E4FB3-3201-44CC-802A-2C3904CA39BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A1E4FB3-3201-44CC-802A-2C3904CA39BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A1E4FB3-3201-44CC-802A-2C3904CA39BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{854AC9A8-96F0-40FA-AD55-31F959618366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{854AC9A8-96F0-40FA-AD55-31F959618366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{854AC9A8-96F0-40FA-AD55-31F959618366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{854AC9A8-96F0-40FA-AD55-31F959618366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C420EDA8-525C-4DCB-B60D-D9120424ED63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C420EDA8-525C-4DCB-B60D-D9120424ED63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C420EDA8-525C-4DCB-B60D-D9120424ED63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C420EDA8-525C-4DCB-B60D-D9120424ED63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
