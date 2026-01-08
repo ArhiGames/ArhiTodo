@@ -10,8 +10,4 @@
       <ProjectReference Include="..\ArhiTodo.Domain\ArhiTodo.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repositories\" />
-    </ItemGroup>
-
 </Project>

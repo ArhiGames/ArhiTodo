@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using ArhiTodo.Infrastructure.Identity;
 using ArhiTodo.Interfaces;
-using ArhiTodo.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ArhiTodo.Services;

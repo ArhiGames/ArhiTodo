@@ -1,40 +1,28 @@
-using ArhiTodo.Domain.Entities;
-using ArhiTodo.Domain.Repositories;
-using ArhiTodo.Interfaces;
-using ArhiTodo.Mappers;
-using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs.Get;
-using ArhiTodo.Models.DTOs.Post;
+using ArhiTodo.Application.DTOs.Project;
+using ArhiTodo.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProjectGetDto = ArhiTodo.Application.DTOs.Project.ProjectGetDto;
 
 namespace ArhiTodo.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/project")]
-public class ProjectController : ControllerBase
+public class ProjectController(IProjectService projectService) : ControllerBase
 {
-    private readonly IProjectRepository _projectRepository;
-    
-    public ProjectController(IProjectRepository projectRepository)
-    {
-        _projectRepository = projectRepository;
-    }
-
     [HttpPost]
     [Authorize(Policy = "CreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectPostDto projectPostDto)
     {
-        Project project = await _projectRepository.CreateAsync(projectPostDto);
-
-        return CreatedAtAction(nameof(GetProject), new { projectId = project.ProjectId }, project.ToGetDto());
+        ProjectGetDto project = await projectService.CreateProject(projectPostDto);
+        return Ok(project);
     }
 
     [HttpDelete("{projectId:int}")]
     public async Task<IActionResult> DeleteProject(int projectId)
     {
-        bool success = await _projectRepository.DeleteAsync(projectId);
+        bool success = await projectService.DeleteProject(projectId);
         if (!success) return NotFound();
         return NoContent();
     }
@@ -42,17 +30,7 @@ public class ProjectController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {
-        List<Project> projects = await _projectRepository.GetAllAsync();
+        List<ProjectGetDto> projects = await projectService.GetProjects();
         return Ok(projects);
-    }
-
-    [HttpGet("{projectId:int}")]
-    public async Task<IActionResult> GetProject(int projectId)
-    {
-        Project? project = await _projectRepository.GetAsync(projectId);
-        if (project == null) return NotFound();
-
-        ProjectGetDto projectGetDto = project.ToGetDto();
-        return Ok(projectGetDto);
     }
 }
