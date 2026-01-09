@@ -9,9 +9,9 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
 {
     public async Task<Board?> CreateAsync(Board board)
     {
-        projectsDatabase.Boards.Add(board);
+        EntityEntry<Board> boardEntry = projectsDatabase.Boards.Add(board);
         await projectsDatabase.SaveChangesAsync();
-        return board;
+        return boardEntry.Entity;
     }
 
     public async Task<Board?> UpdateAsync(Board board)

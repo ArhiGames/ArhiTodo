@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Application.DTOs.Board;
+﻿using ArhiTodo.Application.DTOs.CardList;
+
+namespace ArhiTodo.Application.DTOs.Board;
 
 public class BoardGetDto
 {
@@ -6,6 +8,5 @@ public class BoardGetDto
         
     public required string BoardName { get; set; }
     
-    // @Todo
-    // public List<CardListGetDto> CardLists { get; set; } = new();
+    public List<CardListGetDto> CardLists { get; set; } = new();
 }

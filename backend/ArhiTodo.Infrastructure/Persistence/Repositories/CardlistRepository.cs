@@ -1,51 +1,24 @@
+using ArhiTodo.Domain.Entities;
 using ArhiTodo.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class CardlistRepository : ICardlistRepository
+public class CardlistRepository(ProjectDataBase projectDataBase) : ICardlistRepository
 {
-    private readonly ProjectDataBase _projectDataBase;
-
-    public CardlistRepository(ProjectDataBase projectDataBase)
+    public async Task<CardList?> CreateAsync(CardList cardList)
     {
-        _projectDataBase = projectDataBase;
-    }
-    
-    public async Task<CardList?> CreateAsync(int boardId, CardListPostDto cardListPostDto)
-    {
-        Board? board = await _projectDataBase.Boards
-            .Include(b => b.CardLists)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null)
-        {
-            return null;
-        }
-
-        CardList newCardList = cardListPostDto.FromCardListPostDto();
-        
-        board.CardLists.Add(newCardList);
-        await _projectDataBase.SaveChangesAsync();
-        return newCardList;
+        EntityEntry<CardList> cardListEntry = projectDataBase.CardLists.Add(cardList);
+        await projectDataBase.SaveChangesAsync();
+        return cardListEntry.Entity;
     }
 
-    public async Task<bool> DeleteAsync(int boardId, int cardListId)
+    public async Task<bool> DeleteAsync(int cardListId)
     {
-        Board? board = await _projectDataBase.Boards
-            .Include(b => b.CardLists)
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
-        if (board == null)
-        {
-            return false;
-        }
-
-        CardList? cardList = board.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
-        if (cardList == null)
-        {
-            return false;
-        }
-
-        bool removed = board.CardLists.Remove(cardList);
-        await _projectDataBase.SaveChangesAsync();
-        return removed;
+        int removedRows = await projectDataBase.CardLists
+            .Where(cl => cl.CardListId == cardListId)
+            .ExecuteDeleteAsync();
+        return removedRows == 1;
     }
 }

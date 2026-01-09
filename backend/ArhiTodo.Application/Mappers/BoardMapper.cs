@@ -28,7 +28,8 @@ public static class BoardMapper
         return new BoardGetDto
         {
             BoardId = board.BoardId,
-            BoardName = board.BoardName
+            BoardName = board.BoardName,
+            CardLists = board.CardLists.Select(cl => cl.ToGetDto()).ToList()
         };
     }
 }

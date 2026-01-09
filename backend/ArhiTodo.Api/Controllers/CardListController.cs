@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ArhiTodo.Application.DTOs.CardList;
+using ArhiTodo.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -6,24 +8,21 @@ namespace ArhiTodo.Controllers;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class CardListController : ControllerBase
+public class CardListController(ICardListService cardListService) : ControllerBase
 {
     [HttpPost("board/{boardId:int}/cardlist")]
-    public async Task<IActionResult> PostCardList(int boardId, [FromBody] CardListPostDto cardListPostDto)
+    public async Task<IActionResult> PostCardList(int boardId, [FromBody] CardListCreateDto cardListCreateDto)
     {
-        CardList? cardList = await _cardlistRepository.CreateAsync(boardId, cardListPostDto);
+        CardListGetDto? cardList = await cardListService.CreateCardList(boardId, cardListCreateDto);
         if (cardList == null) return NotFound();
-
-        CardListGetDto cardListGetDto = cardList.ToCardlistGetDto();
-        return Ok(cardListGetDto);
+        return Ok(cardList);
     }
 
     [HttpDelete("board/{boardId:int}/cardlist/{cardListId:int}")]
     public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
     {
-        bool success = await _cardlistRepository.DeleteAsync(boardId, cardListId);
+        bool success = await cardListService.DeleteCardList(boardId, cardListId);
         if (!success) return NotFound();
-        
         return NoContent();
     }
 }

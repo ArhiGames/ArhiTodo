@@ -18,7 +18,8 @@ public static class ProjectMapper
         return new ProjectGetDto
         {
             ProjectId = project.ProjectId,
-            ProjectName = project.ProjectName
+            ProjectName = project.ProjectName,
+            Boards = project.Boards.Select(b => b.ToGetDto()).ToList()
         };
     }
 }
