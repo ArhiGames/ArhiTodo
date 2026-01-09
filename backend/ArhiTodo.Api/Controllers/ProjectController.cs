@@ -13,9 +13,9 @@ public class ProjectController(IProjectService projectService) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = "CreateProjects")]
-    public async Task<IActionResult> CreateProject([FromBody] ProjectPostDto projectPostDto)
+    public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
-        ProjectGetDto project = await projectService.CreateProject(projectPostDto);
+        ProjectGetDto project = await projectService.CreateProject(projectCreateDto);
         return Ok(project);
     }
 

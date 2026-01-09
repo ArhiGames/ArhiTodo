@@ -1,92 +1,69 @@
+using ArhiTodo.Domain.Entities;
 using ArhiTodo.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class CardRepository : ICardRepository
+public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
 {
-    private readonly ProjectDataBase _projectDataBase;
-
-    public CardRepository(ProjectDataBase projectDataBase)
+    public async Task<Card?> CreateAsync(Card card)
     {
-        _projectDataBase = projectDataBase;
-    }
-
-    public async Task<Card?> CreateAsync(int cardListId, CardPostDto cardPostDto)
-    {
-        CardList? cardList = _projectDataBase.CardLists.FirstOrDefault(c => c.CardListId == cardListId);
-        if (cardList == null)
-        {
-            return null;
-        }
-
-        Card newCard = cardPostDto.FromCardPostDto();
-        
-        cardList.Cards.Add(newCard);
-        await _projectDataBase.SaveChangesAsync();
-        return newCard;
+        EntityEntry<Card> entityEntry = projectDataBase.Cards.Add(card);
+        await projectDataBase.SaveChangesAsync();
+        return entityEntry.Entity;
     }
 
     public async Task<bool> DeleteAsync(int cardId)
     {
-        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
-
-        if (card == null)
-        {
-            return false;
-        }
-
-        _projectDataBase.Cards.Remove(card);
-        await _projectDataBase.SaveChangesAsync();
-        return true;
+        int deletedRows = await projectDataBase.Cards
+            .Where(c => c.CardId == cardId)
+            .ExecuteDeleteAsync();
+        await projectDataBase.SaveChangesAsync();
+        return deletedRows == 1;
     }
 
-    public async Task<Card?> PatchCardStatus(int cardId, bool isDone)
+    public async Task<bool> PatchCardStatus(int cardId, bool isDone)
     {
-        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
-        if (card == null)
-        {
-            return null;
-        }
+        int changedCardStates = await projectDataBase.Cards
+            .Where(c => c.CardId == cardId)
+            .ExecuteUpdateAsync(s => s.SetProperty(c => c.IsDone, isDone));
+        return changedCardStates == 1;
+    }
 
-        card.IsDone = isDone;
-        await _projectDataBase.SaveChangesAsync();
+    public async Task<bool> PatchCardName(int cardId, string updatedCardName)
+    {
+        int changedRows = await projectDataBase.Cards
+            .Where(c => c.CardId == cardId)
+            .ExecuteUpdateAsync(p => p.SetProperty(c => c.CardName, updatedCardName));
+        return changedRows == 1;
+    }
+
+    public async Task<bool> PatchCardDescription(int cardId, string updatedCardDescription)
+    {
+        int changedRows = await projectDataBase.Cards
+            .Where(c => c.CardId == cardId)
+            .ExecuteUpdateAsync(p => p.SetProperty(c => c.CardDescription, updatedCardDescription));
+        return changedRows == 1;
+    }
+
+    public async Task<Card?> GetDetailedCard(int cardId, bool includeChecklist = true)
+    {
+        Card? card;
+        if (includeChecklist)
+        {
+            card = await projectDataBase.Cards
+                .Include(c => c.CardLabels)
+                .Include(c => c.Checklists)
+                    .ThenInclude(cl => cl.ChecklistItems)
+                .FirstOrDefaultAsync(c => c.CardId == cardId);    
+        }
+        else
+        {
+            card = await projectDataBase.Cards
+                .Include(c => c.CardLabels)
+                .FirstOrDefaultAsync(c => c.CardId == cardId);
+        }
         return card;
-    }
-
-    public async Task<Card?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
-    {
-        Card? card = await _projectDataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
-        if (card == null)
-        {
-            return null;
-        }
-
-        card.CardName = patchCardNameDto.CardName;
-        await _projectDataBase.SaveChangesAsync();
-        return card;
-    }
-
-    public async Task<Card?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
-    {
-        Card? card = await _projectDataBase.Cards
-            .FirstOrDefaultAsync(c => c.CardId == cardId);
-        if (card == null)
-        {
-            return null;
-        }
-
-        card.CardDescription = patchCardDescriptionDto.CardDescription;
-        await _projectDataBase.SaveChangesAsync();
-        return card;
-    }
-
-    public async Task<DetailedCardGetDto?> GetDetailedCard(int cardId)
-    {
-        Card? card = await _projectDataBase.Cards
-            .Include(c => c.CardLabels)
-            .Include(c => c.Checklists)
-                .ThenInclude(cl => cl.ChecklistItems)
-            .FirstOrDefaultAsync(c => c.CardId == cardId);
-        return card?.ToDetailedCardGetDto();
     }
 }

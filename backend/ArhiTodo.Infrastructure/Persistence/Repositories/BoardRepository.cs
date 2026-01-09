@@ -1,89 +1,50 @@
-using System.Data;
+using ArhiTodo.Domain.Entities;
 using ArhiTodo.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class BoardRepository : IBoardRepository
+public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepository
 {
-    private readonly ProjectDataBase _projectsDatabase;
-
-    public BoardRepository(ProjectDataBase projectsDatabase)
+    public async Task<Board?> CreateAsync(Board board)
     {
-        _projectsDatabase = projectsDatabase;
-    }
-
-    public async Task<Board?> CreateAsync(int projectId, BoardPostDto boardPostDto)
-    {
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null || project.Boards.Any(b => b.BoardName == boardPostDto.BoardName))
-        {
-            throw new DuplicateNameException();
-        }
-
-        Board board = boardPostDto.FromPostDto();
-
-        project.Boards.Add(board);
-        await _projectsDatabase.SaveChangesAsync();
+        projectsDatabase.Boards.Add(board);
+        await projectsDatabase.SaveChangesAsync();
         return board;
     }
 
-    public async Task<Board?> UpdateAsync(int projectId, BoardPutDto boardPutDto)
+    public async Task<Board?> UpdateAsync(Board board)
     {
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null)
-        {
-            return null;
-        }
+        EntityEntry<Board> boardEntry = projectsDatabase.Boards.Attach(board);
+
+        boardEntry.Property(b => b.BoardName).IsModified = true;
         
-        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardPutDto.BoardId);
-        if (board == null)
-        {
-            return null;
-        }
-        
-        board.BoardName = boardPutDto.BoardName;
-        _projectsDatabase.Boards.Update(board);
-        await _projectsDatabase.SaveChangesAsync();
+        await projectsDatabase.SaveChangesAsync();
         return board;
     }
 
-    public async Task<bool> DeleteAsync(int projectId, int boardId)
+    public async Task<bool> DeleteAsync(int boardId)
     {
-        Project? project = await _projectsDatabase.Projects
-            .Include(p => p.Boards)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null)
-        {
-            return false;
-        }
-        
-        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
-        if (board == null)
-        {
-            return false;
-        }
-
-        bool removed = project.Boards.Remove(board);
-        await _projectsDatabase.SaveChangesAsync();
-        return removed;
+        int deletedRows = await projectsDatabase.Boards
+            .Where(b => b.BoardId == boardId)
+            .ExecuteDeleteAsync();
+        return deletedRows == 1;
     }
 
     public async Task<List<Board>> GetAllAsync(int projectId)
     {
-        List<Board> boards = await _projectsDatabase.Boards
+        List<Board> boards = await projectsDatabase.Boards
             .Where(b => b.ProjectId == projectId)
             .ToListAsync();
 
         return boards;
     }
 
-    public async Task<BoardGetDto?> GetAsync(int projectId, int boardId)
+    // @Todo
+    public Task<Board?> GetAsync(int boardId)
     {
-        BoardGetDto? boardGetDto = await _projectsDatabase.Boards
+        /*BoardGetDto? boardGetDto = await projectsDatabase.Boards
             .Where(b => b.BoardId == boardId)
             .Select(b => new BoardGetDto()
             {
@@ -118,6 +79,7 @@ public class BoardRepository : IBoardRepository
             })
             .FirstOrDefaultAsync();
 
-        return boardGetDto ?? null;
+        return boardGetDto ?? null;*/
+        throw new NotImplementedException();
     }
 }

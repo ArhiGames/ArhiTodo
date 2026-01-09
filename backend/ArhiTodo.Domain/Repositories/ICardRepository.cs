@@ -4,10 +4,10 @@ namespace ArhiTodo.Domain.Repositories;
 
 public interface ICardRepository
 {
-    Task<Card?> CreateAsync(int cardListId, CardPostDto cardPostDto);
+    Task<Card?> CreateAsync(Card card);
     Task<bool> DeleteAsync(int cardId);
-    Task<Card?> PatchCardStatus(int cardId, bool isDone);
-    Task<Card?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto);
-    Task<Card?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto);
-    Task<DetailedCardGetDto?> GetDetailedCard(int cardId);
+    Task<bool> PatchCardStatus(int cardId, bool isDone);
+    Task<bool> PatchCardName(int cardId, string updatedCardName);
+    Task<bool> PatchCardDescription(int cardId, string updatedCardDescription);
+    Task<Card?> GetDetailedCard(int cardId, bool includeChecklist = true);
 }

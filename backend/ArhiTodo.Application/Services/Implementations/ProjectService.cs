@@ -8,9 +8,9 @@ namespace ArhiTodo.Application.Services.Implementations;
 
 public class ProjectService(IProjectRepository projectRepository) : IProjectService
 {
-    public async Task<ProjectGetDto> CreateProject(ProjectPostDto projectPostDto)
+    public async Task<ProjectGetDto> CreateProject(ProjectCreateDto projectCreateDto)
     {
-        Project project = projectPostDto.FromPostDto();
+        Project project = projectCreateDto.FromCreateDto();
         await projectRepository.CreateAsync(project);
         return project.ToGetDto();
     }

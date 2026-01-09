@@ -5,11 +5,11 @@ namespace ArhiTodo.Application.Mappers;
 
 public static class ProjectMapper
 {
-    public static Project FromPostDto(this ProjectPostDto projectPostDto)
+    public static Project FromCreateDto(this ProjectCreateDto projectCreateDto)
     {
         return new Project
         {
-            ProjectName = projectPostDto.ProjectName
+            ProjectName = projectCreateDto.ProjectName
         };
     }
 
