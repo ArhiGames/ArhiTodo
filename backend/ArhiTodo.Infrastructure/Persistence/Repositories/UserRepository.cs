@@ -1,12 +1,7 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Domain.Repositories;
-using ArhiTodo.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-namespace ArhiTodo.Infrastructure.Persistence.Repositories;
-
-public class UserRepository : IUserRepository
+// @Todo
+/*public class UserRepository : IUserRepository
 {
     private readonly UserManager<AppUser> _userManager;
 
@@ -83,4 +78,4 @@ public class UserRepository : IUserRepository
         IdentityResult identityResult = await _userManager.DeleteAsync(appUser);
         return identityResult.Succeeded;
     }
-}
+}*/

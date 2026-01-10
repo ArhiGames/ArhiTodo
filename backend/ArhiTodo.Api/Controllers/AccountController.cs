@@ -13,7 +13,8 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ArhiTodo.Controllers;
 
-[Route("api/account")]
+// @Todo
+/*[Route("api/account")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -230,4 +231,4 @@ public class AccountController : ControllerBase
 
         return Conflict("Could not delete user");
     }
-}
+}*/

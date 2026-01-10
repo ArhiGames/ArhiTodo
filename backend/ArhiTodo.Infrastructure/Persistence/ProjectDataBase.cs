@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Infrastructure.Persistence;
 
-public class ProjectDataBase : IdentityDbContext<AppUser>
+public class ProjectDataBase : DbContext
 {
     public DbSet<Project> Projects { get; set; }
     public DbSet<Board> Boards { get; set; }

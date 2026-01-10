@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-[Authorize]
+// @Todo
+// [Authorize]
 [ApiController]
 [Route("api")]
 public class CardsController(ICardService cardService, ILabelService labelService) : ControllerBase

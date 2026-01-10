@@ -31,4 +31,10 @@ public class BoardService(IBoardRepository boardRepository) : IBoardService
         List<Board> boards = await boardRepository.GetAllAsync(projectId);
         return boards.Select(b => b.ToGetDto()).ToList();
     }
+
+    public async Task<BoardGetDto?> GetBoard(int boardId)
+    {
+        Board? board = await boardRepository.GetAsync(boardId);
+        return board?.ToGetDto();
+    }
 }

@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-[ApiController]
+// @Todo
+/*[ApiController]
 [Route("api/invitation")]
 public class InvitationController : ControllerBase
 {
@@ -88,4 +89,4 @@ public class InvitationController : ControllerBase
         List<InvitationLink> invitationLinks = await _invitationRepository.GetAllInvitationLinksAsync();
         return Ok(invitationLinks);
     }
-}
+}*/

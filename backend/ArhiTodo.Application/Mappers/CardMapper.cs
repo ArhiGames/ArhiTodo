@@ -21,7 +21,9 @@ public static class CardMapper
             CardId = card.CardId,
             IsDone = card.IsDone,
             CardName = card.CardName,
-            CardDescription = card.CardDescription
+            CardDescription = card.CardDescription,
+            LabelIds = card.CardLabels.Select(cl => cl.LabelId).ToList(),
+            Checklists = card.Checklists.Select(cl => cl.ToGetDto()).ToList()
         };
     }
 }

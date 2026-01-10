@@ -1,13 +1,6 @@
-using ArhiTodo.Data;
-using ArhiTodo.Domain.Repositories;
-using ArhiTodo.Infrastructure.Identity;
-using ArhiTodo.Infrastructure.Persistence;
-using ArhiTodo.Infrastructure.Persistence.Repositories;
-using ArhiTodo.Interfaces;
-using ArhiTodo.Services;
+using ArhiTodo.Application;
+using ArhiTodo.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -21,18 +14,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<ProjectDataBase>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
-    options.User.RequireUniqueEmail = true;
-}).AddEntityFrameworkStores<ProjectDataBase>();
+builder.AddInfrastructureLayer();
+builder.AddApplicationLayer();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -79,16 +62,6 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-builder.Services.AddScoped<IBoardRepository, BoardRepository>();
-builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
-builder.Services.AddScoped<ICardRepository, CardRepository>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
-builder.Services.AddScoped<ILabelRepository, LabelRepository>();
-builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -123,12 +96,12 @@ builder.Services.AddSwaggerGen(option =>
 
 WebApplication app = builder.Build();
 
-using (IServiceScope scope = app.Services.CreateScope())
+/*using (IServiceScope scope = app.Services.CreateScope())
 {
     IServiceProvider services = scope.ServiceProvider;
     UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
     await ProjectDbContextSeed.CreateInitialUsers(userManager);
-}
+}*/
 
 app.UseCors("AllowFrontend");
 

@@ -2,7 +2,8 @@
 
 namespace ArhiTodo.Domain.Repositories;
 
-public interface IInvitationRepository
+// @Todo
+/*public interface IInvitationRepository
 {
     Task<bool> TryToUseInvitationLink(string invitationKey);
     bool IsValidInvitationLink(InvitationLink invitationLink);
@@ -10,4 +11,4 @@ public interface IInvitationRepository
     Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto);
     Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId);
     Task<List<InvitationLink>> GetAllInvitationLinksAsync();
-}
+}*/

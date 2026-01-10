@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Application.DTOs.Card;
+﻿using ArhiTodo.Application.DTOs.Checklist;
+
+namespace ArhiTodo.Application.DTOs.Card;
 
 public class CardGetDto
 {
@@ -10,7 +12,6 @@ public class CardGetDto
 
     public string CardDescription { get; set; } = string.Empty;
     
-    // @Todo
-    // public List<CardLabel> CardLabels { get; set; } = [];
-    // public List<Checklist> Checklists { get; set; } = [];
+    public List<int> LabelIds { get; set; } = [];
+    public List<ChecklistGetDto> Checklists { get; set; } = [];
 }

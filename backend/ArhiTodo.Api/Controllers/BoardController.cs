@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-[Authorize]
+// @Todo
+//[Authorize]
 [ApiController]
 [Route("api")]
 public class BoardController(IBoardService boardService, ILabelService labelService) : ControllerBase
@@ -51,8 +52,6 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
             BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
             if (board == null) return NotFound();
             return Ok(board);
-            // @Todo
-            //return CreatedAtAction(nameof(GetBoard), new { projectId, boardId = board.BoardId }, board);
         }
         catch (DuplicateNameException)
         {
@@ -83,16 +82,13 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
         return Ok(boards);
     }
 
-    // @Todo
-    /*[HttpGet("project/{projectId:int}/board/{boardId:int}")]
+    [HttpGet("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> GetBoard(int projectId, int boardId)
     {
-        BoardGetDto? boardGetDto = await _boardRepository.GetAsync(projectId, boardId);
+        BoardGetDto? boardGetDto = await boardService.GetBoard(boardId);
         if (boardGetDto == null) return NotFound();
         
-        List<Label> labels = await _labelRepository.GetAllAsync(boardId);
-        List<LabelGetDto> labelGetDtos = labels.Select(l => l.ToLabelGetDto()).ToList();
-        
-        return Ok(new { board = boardGetDto, labels = labelGetDtos });
-    }*/
+        List<LabelGetDto> labels = await labelService.GetEveryLabel(boardId);
+        return Ok(new { board = boardGetDto, labels });
+    }
 }

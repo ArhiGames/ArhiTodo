@@ -3,7 +3,8 @@ using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class InvitationRepository : IInvitationRepository
+// @Todo
+/* public class InvitationRepository : IInvitationRepository
 {
     private readonly ProjectDataBase _dataBase;
     
@@ -110,4 +111,4 @@ public class InvitationRepository : IInvitationRepository
         return invitationLinks.Where(invitationLink => 
             invitationLink.CreatedDate == invitationLink.ExpiresDate || DateTimeOffset.UtcNow < invitationLink.ExpiresDate).ToList();
     }
-}
+}*/

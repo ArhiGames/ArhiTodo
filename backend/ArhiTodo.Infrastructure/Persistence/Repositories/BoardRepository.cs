@@ -42,8 +42,21 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
     }
 
     // @Todo
-    public Task<Board?> GetAsync(int boardId)
+    public async Task<Board?> GetAsync(int boardId)
     {
+        Board? board = await projectsDatabase.Boards
+            .Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+                    .ThenInclude(c => c.CardLabels)
+            .Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+                    .ThenInclude(c => c.Checklists)
+                        .ThenInclude(c => c.ChecklistItems)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+
+        return board;
+        
         /*BoardGetDto? boardGetDto = await projectsDatabase.Boards
             .Where(b => b.BoardId == boardId)
             .Select(b => new BoardGetDto()
@@ -80,6 +93,5 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
             .FirstOrDefaultAsync();
 
         return boardGetDto ?? null;*/
-        throw new NotImplementedException();
     }
 }
