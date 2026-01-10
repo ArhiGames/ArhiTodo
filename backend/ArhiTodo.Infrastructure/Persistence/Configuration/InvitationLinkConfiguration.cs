@@ -25,8 +25,5 @@ public class InvitationLinkConfiguration : IEntityTypeConfiguration<InvitationLi
         builder.Property(il => il.CreatedByUser)
             .IsRequired()
             .HasMaxLength(256);
-
-        builder.Property(il => il.MaxUses)
-            .HasMaxLength(50);
     }
 }

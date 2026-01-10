@@ -1,99 +1,47 @@
-﻿using ArhiTodo.Domain.Repositories;
+﻿using ArhiTodo.Domain.Entities;
+using ArhiTodo.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class ChecklistRepository : IChecklistRepository
+public class ChecklistRepository(ProjectDataBase database) : IChecklistRepository
 {
-    private readonly ProjectDataBase _dataBase;
-
-    public ChecklistRepository(ProjectDataBase dataBase)
+    public async Task<Checklist?> CreateChecklistOnCard(Checklist checklist)
     {
-        _dataBase = dataBase;
+        EntityEntry<Checklist> checklistEntry = database.Checklists.Add(checklist);
+        await database.SaveChangesAsync();
+        return checklistEntry.Entity;
     }
 
-    public async Task<Checklist?> CreateChecklistOnCard(int cardId, ChecklistPostDto checklistPostDto)
+    public async Task<bool> DeleteChecklistFromCard(int checkListId)
     {
-        Card? card = await _dataBase.Cards.FirstOrDefaultAsync(c => c.CardId == cardId);
-        if (card == null)
-        {
-            return null;
-        }
-
-        Checklist checklist = checklistPostDto.FromChecklistPostDto();
-        card.Checklists.Add(checklist);
-        await _dataBase.SaveChangesAsync();
-        return checklist;
+        int changedRows = await database.Checklists
+            .Where(cl => cl.ChecklistId == checkListId)
+            .ExecuteDeleteAsync();
+        return changedRows == 1;
     }
 
-    public async Task<bool> DeleteChecklistFromCard(int cardId, int checkListId)
+    public async Task<ChecklistItem?> AddChecklistItemToChecklist(ChecklistItem checklistItem)
     {
-        Card? card = await _dataBase.Cards
-            .Include(c => c.Checklists)
-            .FirstOrDefaultAsync(c => c.CardId == cardId);
-        if (card == null)
-        {
-            return false;
-        }
-
-        Checklist? checklist = card.Checklists.FirstOrDefault(cl => cl.ChecklistId == checkListId);
-        if (checklist == null)
-        {
-            return false;
-        }
-
-        bool removed = card.Checklists.Remove(checklist);
-        await _dataBase.SaveChangesAsync();
-        return removed;
+        EntityEntry<ChecklistItem> checklistItemEntry = database.ChecklistItems.Add(checklistItem);
+        await database.SaveChangesAsync();
+        return checklistItemEntry.Entity;
     }
 
-    public async Task<ChecklistItem?> AddChecklistItemToChecklist(int checklistId, ChecklistItemPostDto checklistItemPostDto)
+    public async Task<bool> RemoveChecklistItemFromChecklist(int checklistItemId)
     {
-        Checklist? checklist = await _dataBase.Checklists
-            .Include(cl => cl.ChecklistItems)
-            .FirstOrDefaultAsync(cl => cl.ChecklistId == checklistId);
-        if (checklist == null)
-        {
-            return null;
-        }
-
-        ChecklistItem checklistItem = checklistItemPostDto.FromChecklistItemPostDto();
-        checklist.ChecklistItems.Add(checklistItem);
-        await _dataBase.SaveChangesAsync();
-        return checklistItem;
+        int changedRows = await database.ChecklistItems
+            .Where(ci => ci.ChecklistItemId == checklistItemId)
+            .ExecuteDeleteAsync();
+        return changedRows == 1;
     }
 
-    public async Task<bool> RemoveChecklistItemFromChecklist(int checklistId, int checklistItemId)
+    async Task<bool> IChecklistRepository.PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
     {
-        Checklist? checklist = await _dataBase.Checklists
-            .Include(cl => cl.ChecklistItems)
-            .FirstOrDefaultAsync(cl => cl.ChecklistId == checklistId);
-        if (checklist == null)
-        {
-            return false;
-        }
-
-        ChecklistItem? checklistItem = checklist.ChecklistItems.FirstOrDefault(cl => cl.ChecklistItemId == checklistItemId);
-        if (checklistItem == null)
-        {
-            return false;
-        }
-
-        bool removed = checklist.ChecklistItems.Remove(checklistItem);
-        await _dataBase.SaveChangesAsync();
-        return removed;
-    }
-
-    public async Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
-    {
-        ChecklistItem? checklistItem = await _dataBase.ChecklistItems
-            .FirstOrDefaultAsync(ci => ci.ChecklistItemId == checklistItemId);
-        if (checklistItem == null)
-        {
-            return null;
-        }
-
-        checklistItem.IsDone = taskDone;
-        await _dataBase.SaveChangesAsync();
-        return checklistItem;
+        int changedRows = await database.ChecklistItems
+            .Where(ci => ci.ChecklistItemId == checklistItemId)
+            .ExecuteUpdateAsync(p => p.SetProperty(ci => ci.IsDone, taskDone));
+        return changedRows == 1;
     }
 }

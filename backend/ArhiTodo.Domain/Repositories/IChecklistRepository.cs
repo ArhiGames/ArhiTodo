@@ -4,9 +4,10 @@ namespace ArhiTodo.Domain.Repositories;
 
 public interface IChecklistRepository
 {
-    Task<Checklist?> CreateChecklistOnCard(int cardId, ChecklistPostDto checklistPostDto);
-    Task<bool> DeleteChecklistFromCard(int cardId, int checkListId);
-    Task<ChecklistItem?> AddChecklistItemToChecklist(int checklistId, ChecklistItemPostDto checklistItemPostDto);
-    Task<bool> RemoveChecklistItemFromChecklist(int checklistId, int checklistItemId);
-    Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
+    Task<Checklist?> CreateChecklistOnCard(Checklist checklist);
+    Task<bool> DeleteChecklistFromCard(int checkListId);
+    
+    Task<ChecklistItem?> AddChecklistItemToChecklist(ChecklistItem checklistItem);
+    Task<bool> RemoveChecklistItemFromChecklist(int checklistItemId);
+    Task<bool> PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
 }

@@ -1,0 +1,41 @@
+﻿using ArhiTodo.Application.DTOs.Checklist;
+using ArhiTodo.Application.DTOs.ChecklistItem;
+using ArhiTodo.Application.Mappers;
+using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Domain.Entities;
+using ArhiTodo.Domain.Repositories;
+
+namespace ArhiTodo.Application.Services.Implementations;
+
+public class ChecklistService(IChecklistRepository checklistRepository) : IChecklistService
+{
+    public async Task<ChecklistGetDto?> CreateChecklist(int cardId, ChecklistCreateDto checklistCreateDto)
+    {
+        Checklist? checklist = await checklistRepository.CreateChecklistOnCard(checklistCreateDto.FromCreateDto(cardId));
+        return checklist?.ToGetDto();
+    }
+
+    public async Task<bool> DeleteChecklist(int checklistId)
+    {
+        bool succeeded = await checklistRepository.DeleteChecklistFromCard(checklistId);
+        return succeeded;
+    }
+
+    public async Task<ChecklistItemGetDto?> CreateChecklistItem(int checklistId, ChecklistItemCreateDto checklistItemCreateDto)
+    {
+        ChecklistItem? createdChecklistItem = await checklistRepository.AddChecklistItemToChecklist(checklistItemCreateDto.FromCreateDto(checklistId));
+        return createdChecklistItem?.ToGetDto();
+    }
+
+    public async Task<bool> DeleteChecklistItem(int checklistItemId)
+    {
+        bool succeeded = await checklistRepository.RemoveChecklistItemFromChecklist(checklistItemId);
+        return succeeded;
+    }
+
+    public async Task<bool> PatchChecklistItemState(int checklistItemId, bool newState)
+    {
+        bool succeeded = await checklistRepository.PatchChecklistItemDoneState(checklistItemId, newState);
+        return succeeded;
+    }
+}
