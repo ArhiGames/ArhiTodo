@@ -1,5 +1,4 @@
 ﻿using ArhiTodo.Application.DTOs.Card;
-using ArhiTodo.Domain.Entities;
 
 namespace ArhiTodo.Application.Services.Interfaces;
 

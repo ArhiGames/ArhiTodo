@@ -1,4 +1,4 @@
-﻿using ArhiTodo.Domain.Entities;
+﻿using ArhiTodo.Domain.Entities.Kanban;
 
 namespace ArhiTodo.Domain.Repositories;
 

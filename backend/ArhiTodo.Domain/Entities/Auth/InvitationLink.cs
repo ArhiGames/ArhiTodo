@@ -1,4 +1,4 @@
-﻿namespace ArhiTodo.Domain.Entities;
+﻿namespace ArhiTodo.Domain.Entities.Auth;
 
 public class InvitationLink
 {

@@ -1,11 +1,8 @@
-﻿namespace ArhiTodo.Domain.Repositories;
+﻿using ArhiTodo.Domain.Entities.Auth;
 
-// @Todo
-/*public interface IUserRepository
+namespace ArhiTodo.Domain.Repositories;
+
+public interface IUserRepository
 {
-    Task<bool> ChangePasswordAsync(AppUser appUser, ChangePasswordDto changePasswordDto);
-    Task<List<UserUserManagementGetDto>> GetAllUsersAsync();
-    Task<int> UpdateUserClaims(AppUser appUser, List<ClaimPostDto> updatedClaims);
-    Task<UserUserManagementGetDto> GetUserWithClaimsAsync(AppUser appUser);
-    Task<bool> DeleteAppUser(AppUser appUser);
-}*/
+    Task<User?> CreateUserAsync(User user);
+}

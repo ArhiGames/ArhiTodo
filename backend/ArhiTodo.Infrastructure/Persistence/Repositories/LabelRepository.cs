@@ -1,4 +1,4 @@
-﻿using ArhiTodo.Domain.Entities;
+﻿using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

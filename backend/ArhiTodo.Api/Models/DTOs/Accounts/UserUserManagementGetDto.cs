@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace ArhiTodo.Models.DTOs.Accounts;
 

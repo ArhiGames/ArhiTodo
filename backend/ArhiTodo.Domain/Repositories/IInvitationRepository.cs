@@ -1,6 +1,4 @@
-﻿using ArhiTodo.Domain.Entities;
-
-namespace ArhiTodo.Domain.Repositories;
+﻿namespace ArhiTodo.Domain.Repositories;
 
 // @Todo
 /*public interface IInvitationRepository

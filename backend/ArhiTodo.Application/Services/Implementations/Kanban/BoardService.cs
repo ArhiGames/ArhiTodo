@@ -1,10 +1,10 @@
 ﻿using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces;
-using ArhiTodo.Domain.Entities;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
-namespace ArhiTodo.Application.Services.Implementations;
+namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardRepository boardRepository) : IBoardService
 {

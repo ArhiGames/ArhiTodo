@@ -1,7 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;

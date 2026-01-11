@@ -1,6 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
 using ArhiTodo.Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;

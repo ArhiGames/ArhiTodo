@@ -1,4 +1,4 @@
-﻿using ArhiTodo.Domain.Entities;
+﻿using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,15 +1,4 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Domain.Entities;
-using ArhiTodo.Domain.Repositories;
-using ArhiTodo.Infrastructure.Identity;
-using ArhiTodo.Interfaces;
-using ArhiTodo.Models;
-using ArhiTodo.Models.DTOs.Invitation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-
-namespace ArhiTodo.Controllers;
+﻿namespace ArhiTodo.Controllers;
 
 // @Todo
 /*[ApiController]

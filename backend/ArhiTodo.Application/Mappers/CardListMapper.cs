@@ -1,5 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
-using ArhiTodo.Domain.Entities;
+using ArhiTodo.Domain.Entities.Kanban;
 
 namespace ArhiTodo.Application.Mappers;
 

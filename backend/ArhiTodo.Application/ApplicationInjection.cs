@@ -1,5 +1,9 @@
 ﻿using ArhiTodo.Application.Services.Implementations;
+using ArhiTodo.Application.Services.Implementations.Auth;
+using ArhiTodo.Application.Services.Implementations.Kanban;
 using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -9,6 +13,8 @@ public static class ApplicationInjection
 {
     public static void AddApplicationLayer(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        
         builder.Services.AddScoped<IProjectService, ProjectService>();
         builder.Services.AddScoped<IBoardService, BoardService>();
         builder.Services.AddScoped<ICardListService, CardListService>();

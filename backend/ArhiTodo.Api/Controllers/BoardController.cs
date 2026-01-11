@@ -2,7 +2,7 @@ using System.Data;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -26,7 +26,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     {
         bool succeeded = await labelService.UpdateLabel(labelUpdateDto);
         if (!succeeded) return NotFound();
-        return Ok(); 
+        return Ok();
     }
 
     [HttpDelete("label/{labelId:int}")]
