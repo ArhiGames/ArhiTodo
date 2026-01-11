@@ -8,6 +8,7 @@ namespace ArhiTodo.Infrastructure.Persistence;
 public class ProjectDataBase : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
     
     public DbSet<Project> Projects { get; set; }

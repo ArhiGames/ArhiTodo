@@ -1,6 +1,6 @@
 ﻿namespace ArhiTodo.Domain.Services.Auth;
 
-public interface IPasswordHash
+public interface IPasswordHashService
 {
     string Hash(string password);
     bool Verify(string password, string passwordHash);

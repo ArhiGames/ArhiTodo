@@ -17,14 +17,17 @@ public class AccountController(IAuthService authService) : ControllerBase
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login()
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        return Ok();
+        string? token = await authService.Login(loginDto, Request.Headers.UserAgent.ToString());
+        if (token == null) return Unauthorized("Wrong credentials!");
+        return Ok(token);
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout()
+    public IActionResult Logout()
     {
-        return Ok();
+        string userAgent = Request.Headers.UserAgent.ToString();
+        return Ok(userAgent);
     }
 }

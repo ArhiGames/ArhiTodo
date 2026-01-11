@@ -9,12 +9,12 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace ArhiTodo.Infrastructure.Services;
 
-public class JwtTokenService : IJwtTokenService
+public class JwtTokenGeneratorService : IJwtTokenGeneratorService
 {
     private readonly IConfiguration _configuration;
     private readonly SymmetricSecurityKey _securityKey;
     
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenGeneratorService(IConfiguration configuration)
     {
         _configuration = configuration;
         _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SigningKey"]!));

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ArhiTodo.Infrastructure.Services;
 
-public class PasswordHash : IPasswordHash
+public class PasswordHashService : IPasswordHashService
 {
     public string Hash(string password)
     {

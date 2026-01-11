@@ -3,7 +3,7 @@ using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Domain.Services.Auth;
 
-public interface IJwtTokenService
+public interface IJwtTokenGeneratorService
 {
     string GenerateToken(User user, IList<Claim> claims);
 }
