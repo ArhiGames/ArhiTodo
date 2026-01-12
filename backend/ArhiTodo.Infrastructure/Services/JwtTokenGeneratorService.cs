@@ -32,7 +32,7 @@ public class JwtTokenGeneratorService : IJwtTokenGeneratorService
             Issuer = _configuration["JWT:Issuer"],
             Audience = _configuration["JWT:Audience"],
             SigningCredentials = signingCredentials,
-            Expires = DateTime.UtcNow.AddDays(1)
+            Expires = DateTime.UtcNow.AddMinutes(5)
         };
 
         JwtSecurityTokenHandler tokenHandler = new();

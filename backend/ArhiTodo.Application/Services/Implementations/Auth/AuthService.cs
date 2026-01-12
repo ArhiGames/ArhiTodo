@@ -24,7 +24,7 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return createdUser != null;
     }
 
-    public async Task<string?> Login(LoginDto loginDto, string userAgent)
+    public async Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent)
     {
         User? user = await userRepository.GetUserByUsernameAsync(loginDto.Username);
         if (user == null) return null;
@@ -35,11 +35,7 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         string? refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         if (refreshToken == null) return null;
 
-        List<Claim> claims =
-        [
-            new(ClaimTypes.Authentication, refreshToken)
-        ];
-        string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
-        return jwt;
+        string jwt = jwtTokenGeneratorService.GenerateToken(user, new List<Claim>());
+        return new LoginGetDto(jwt, refreshToken);
     }
 }

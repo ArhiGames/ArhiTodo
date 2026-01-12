@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
 import type { UserLoginResponseDto } from "../Models/DTOs/UserLoginResponseDto.ts";
-import {API_BASE_URL} from "../config/api.ts";
+import { AUTH_BASE_URL } from "../config/api.ts";
 
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");
@@ -12,7 +12,7 @@ export const getJwtPayloadFromToken = () => {
 
 export const registerApi = async (userName: string, email: string, password: string, invitationKey: string) => {
 
-    const response = await fetch(`${API_BASE_URL}/account/register`, {
+    const response = await fetch(`${AUTH_BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -40,7 +40,7 @@ export const registerApi = async (userName: string, email: string, password: str
 
 export const loginApi = async (userName: string, password: string) => {
 
-    const response = await fetch(`${API_BASE_URL}/account/login`, {
+    const response = await fetch(`${AUTH_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

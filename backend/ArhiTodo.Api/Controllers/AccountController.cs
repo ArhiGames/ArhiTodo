@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Auth;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -19,15 +21,32 @@ public class AccountController(IAuthService authService) : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        string? token = await authService.Login(loginDto, Request.Headers.UserAgent.ToString());
-        if (token == null) return Unauthorized("Wrong credentials!");
-        return Ok(token);
+        LoginGetDto? loginGetDto = await authService.Login(loginDto, Request.Headers.UserAgent.ToString());
+        if (loginGetDto == null) return Unauthorized("Wrong credentials!");
+
+        List<Claim> claims = [
+            new(ClaimTypes.Authentication, loginGetDto.RefreshToken)
+        ];
+
+        AuthenticationProperties authenticationProperties = new()
+        {
+            ExpiresUtc = DateTime.UtcNow.AddDays(14),
+            IsPersistent = true
+        };
+        
+        ClaimsIdentity claimsIdentity = new(claims, "RefreshTokenCookie");
+
+        await HttpContext.SignInAsync("AuthRefreshCookie",
+            new ClaimsPrincipal(claimsIdentity),
+            authenticationProperties);
+        
+        return Ok(new { token = loginGetDto.JwtToken });
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        string userAgent = Request.Headers.UserAgent.ToString();
-        return Ok(userAgent);
+        await HttpContext.SignOutAsync("AuthRefreshCookie");
+        return Ok();
     }
 }
