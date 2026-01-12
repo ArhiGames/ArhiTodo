@@ -51,4 +51,12 @@ public class UserRepository(ProjectDataBase database) : IUserRepository
             .ExecuteDeleteAsync();
         return changedRows >= 1;
     }
+
+    public async Task<bool> InvalidateUserSessions(Guid userId)
+    {
+        int changedRows = await database.UserSessions
+            .Where(us => us.UserId == userId)
+            .ExecuteDeleteAsync();
+        return changedRows >= 1;
+    }
 }

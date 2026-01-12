@@ -11,4 +11,5 @@ public interface IUserRepository
     Task<UserSession?> CreateUserSession(UserSession userSession);
     Task<bool> UpdateUserSession(UserSession userSession);
     Task<bool> InvalidateUserSession(Guid userSessionId);
+    Task<bool> InvalidateUserSessions(Guid userId);
 }

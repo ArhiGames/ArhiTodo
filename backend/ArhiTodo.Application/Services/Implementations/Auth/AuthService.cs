@@ -39,12 +39,18 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return new LoginGetDto(jwt, refreshToken);
     }
 
-    public async Task<bool> Logout(Guid userId, string refreshToken, string userAgent)
+    public async Task<bool> Logout(Guid userId, string userAgent)
     {
         UserSession? userSession = await userRepository.GetUserSessionByAgent(userId, userAgent);
         if (userSession == null) return false;
 
         bool succeeded = await userRepository.InvalidateUserSession(userSession.SessionId);
+        return succeeded;
+    }
+
+    public async Task<bool> LogoutEveryDevice(Guid userId)
+    {
+        bool succeeded = await userRepository.InvalidateUserSessions(userId);
         return succeeded;
     }
 }

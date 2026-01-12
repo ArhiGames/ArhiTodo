@@ -2,6 +2,7 @@ using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
@@ -43,21 +44,28 @@ public class AccountController(IAuthService authService) : ControllerBase
         return Ok(new { token = loginGetDto.JwtToken });
     }
 
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        string? refreshToken = Request.Cookies["AuthRefreshCookie"];
-        if (refreshToken == null) return Unauthorized();
-        
         Claim? claim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (claim == null) return Unauthorized();
         
         Guid userId = Guid.Parse(claim.Value);
         
-        bool succeeded = await authService.Logout(userId, refreshToken, Request.Headers.UserAgent.ToString());
+        bool succeeded = await authService.Logout(userId, Request.Headers.UserAgent.ToString());
         if (!succeeded) return Unauthorized();
         
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         return Ok();
     }
+
+    [Authorize]
+    [HttpDelete("logout-all/{userId:guid}")]
+    public async Task<IActionResult> LogoutEverySession(Guid userId)
+    {
+        bool succeeded = await authService.LogoutEveryDevice(userId);
+        if (!succeeded) return Unauthorized();
+        return Ok();
+    } 
 }
