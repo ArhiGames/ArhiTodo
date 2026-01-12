@@ -10,7 +10,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
     {
         string refreshToken = tokenGeneratorService.GenerateSecureHash(32);
         
-        UserSession? existingSession = await userRepository.GetUserSessionByAgent(user, userAgent);
+        UserSession? existingSession = await userRepository.GetUserSessionByAgent(user.UserId, userAgent);
         
         if (existingSession == null)
         {

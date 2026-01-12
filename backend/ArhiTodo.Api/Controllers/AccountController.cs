@@ -46,6 +46,17 @@ public class AccountController(IAuthService authService) : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
+        string? refreshToken = Request.Cookies["AuthRefreshCookie"];
+        if (refreshToken == null) return Unauthorized();
+        
+        Claim? claim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        if (claim == null) return Unauthorized();
+        
+        Guid userId = Guid.Parse(claim.Value);
+        
+        bool succeeded = await authService.Logout(userId, refreshToken, Request.Headers.UserAgent.ToString());
+        if (!succeeded) return Unauthorized();
+        
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         return Ok();
     }

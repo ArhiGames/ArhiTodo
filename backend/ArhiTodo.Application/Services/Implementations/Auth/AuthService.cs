@@ -38,4 +38,13 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         string jwt = jwtTokenGeneratorService.GenerateToken(user, new List<Claim>());
         return new LoginGetDto(jwt, refreshToken);
     }
+
+    public async Task<bool> Logout(Guid userId, string refreshToken, string userAgent)
+    {
+        UserSession? userSession = await userRepository.GetUserSessionByAgent(userId, userAgent);
+        if (userSession == null) return false;
+
+        bool succeeded = await userRepository.InvalidateUserSession(userSession.SessionId);
+        return succeeded;
+    }
 }

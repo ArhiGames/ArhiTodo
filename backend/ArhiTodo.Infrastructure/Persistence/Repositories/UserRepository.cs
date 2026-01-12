@@ -20,10 +20,10 @@ public class UserRepository(ProjectDataBase database) : IUserRepository
         return user;
     }
 
-    public async Task<UserSession?> GetUserSessionByAgent(User user, string userAgent)
+    public async Task<UserSession?> GetUserSessionByAgent(Guid userId, string userAgent)
     {
         UserSession? userSession = await database.UserSessions
-            .FirstOrDefaultAsync(us => us.UserId == user.UserId && us.UserAgent == userAgent);
+            .FirstOrDefaultAsync(us => us.UserId == userId && us.UserAgent == userAgent);
         return userSession;
     }
 
