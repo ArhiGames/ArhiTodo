@@ -19,19 +19,31 @@ public class UserRepository(ProjectDataBase database) : IUserRepository
         User? user = await database.Users.FirstOrDefaultAsync(u => u.UserName == username);
         return user;
     }
-
-    public async Task<UserSession?> GetUserSessionByAgent(Guid userId, string userAgent)
-    {
-        UserSession? userSession = await database.UserSessions
-            .FirstOrDefaultAsync(us => us.UserId == userId && us.UserAgent == userAgent);
-        return userSession;
-    }
-
+    
     public async Task<UserSession?> CreateUserSession(UserSession userSession)
     {
         EntityEntry<UserSession> userSessionEntry = database.UserSessions.Add(userSession);
         await database.SaveChangesAsync();
         return userSessionEntry.Entity;
+    }
+
+    public async Task<UserSession?> GetUserSessionByAgent(Guid userId, string userAgent)
+    {
+        UserSession? userSession = await database.UserSessions
+            .Include(us => us.User)
+            .FirstOrDefaultAsync(us => us.UserId == userId && 
+                                       us.UserAgent == userAgent && 
+                                       us.ExpiresAt > DateTime.UtcNow);
+        return userSession;
+    }
+
+    public async Task<UserSession?> GetUserSessionByToken(string hashedToken)
+    {
+        UserSession? userSession = await database.UserSessions
+            .Include(us => us.User)
+            .FirstOrDefaultAsync(us => us.TokenHash == hashedToken &&
+                                       us.ExpiresAt > DateTime.UtcNow);
+        return userSession;
     }
 
     public async Task<bool> UpdateUserSession(UserSession userSession)

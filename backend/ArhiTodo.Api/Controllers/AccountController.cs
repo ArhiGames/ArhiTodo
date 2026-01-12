@@ -44,11 +44,24 @@ public class AccountController(IAuthService authService) : ControllerBase
         return Ok(new { token = loginGetDto.JwtToken });
     }
 
+    [Authorize(AuthenticationSchemes = "AuthRefreshCookie")]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshJwtToken()
+    { 
+        string? refreshToken = User.FindFirstValue(ClaimTypes.Authentication);
+        if (refreshToken == null) return Unauthorized();
+
+        string? jwt = await authService.RefreshJwtToken(refreshToken);
+        if (jwt == null) return Unauthorized();
+
+        return Ok(new { token = jwt });
+    } 
+
     [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        Claim? claim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        Claim? claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (claim == null) return Unauthorized();
         
         Guid userId = Guid.Parse(claim.Value);

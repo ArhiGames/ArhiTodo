@@ -40,6 +40,16 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return new LoginGetDto(jwt, refreshToken);
     }
 
+    public async Task<string?> RefreshJwtToken(string refreshToken)
+    {
+        UserSession? userSession = await userRepository.GetUserSessionByToken(refreshToken);
+        if (userSession == null) return null;
+        
+        User user = userSession.User;
+        string jwt = jwtTokenGeneratorService.GenerateToken(user, new List<Claim>());
+        return jwt;
+    }
+
     public async Task<bool> Logout(Guid userId, string userAgent)
     {
         UserSession? userSession = await userRepository.GetUserSessionByAgent(userId, userAgent);

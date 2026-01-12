@@ -17,7 +17,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
             UserSession userSession = new()
             {
                 UserId = user.UserId,
-                ExpiresAt = DateTimeOffset.UtcNow.AddDays(7),
+                ExpiresAt = DateTimeOffset.UtcNow.AddDays(14),
                 TokenHash = refreshToken,
                 UserAgent = userAgent
             };
@@ -27,7 +27,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
         }
         else
         {
-            existingSession.ExpiresAt = DateTimeOffset.UtcNow.AddDays(7);
+            existingSession.ExpiresAt = DateTimeOffset.UtcNow.AddDays(14);
             existingSession.TokenHash = refreshToken;
             
             bool succeeded = await userRepository.UpdateUserSession(existingSession);
