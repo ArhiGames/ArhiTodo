@@ -15,7 +15,7 @@ public class TokenGeneratorService : ITokenGeneratorService
     
     public string GenerateSecureHash(int size)
     {
-        byte[] randomNumber = new byte[32];
+        byte[] randomNumber = new byte[size];
         RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
         randomNumberGenerator.GetBytes(randomNumber);
         return Hash(randomNumber, size);

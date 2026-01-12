@@ -17,6 +17,7 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         User user = new()
         {
             UserName = createAccountDto.Username,
+            Email = createAccountDto.Email,
             HashedPassword = hashedPassword
         };
 

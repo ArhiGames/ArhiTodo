@@ -6,17 +6,16 @@ import { AUTH_BASE_URL } from "../config/api.ts";
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
-
     return jwtDecode<JwtPayload>(token);
 }
 
-export const registerApi = async (userName: string, email: string, password: string, invitationKey: string) => {
+export const registerApi = async (username: string, email: string, password: string, invitationKey: string) => {
 
     const response = await fetch(`${AUTH_BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            userName: userName,
+            username: username,
             email: email,
             password: password,
             invitationKey: invitationKey,
@@ -38,13 +37,14 @@ export const registerApi = async (userName: string, email: string, password: str
     return getJwtPayloadFromToken();
 }
 
-export const loginApi = async (userName: string, password: string) => {
+export const loginApi = async (username: string, password: string) => {
 
     const response = await fetch(`${AUTH_BASE_URL}/login`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            userName: userName,
+            username: username,
             password: password
         })
     });
@@ -62,5 +62,22 @@ export const loginApi = async (userName: string, password: string) => {
 
     localStorage.setItem("token", data.token);
     return getJwtPayloadFromToken();
+
+}
+
+export const logoutApi = async () => {
+
+    const response = await fetch(`${AUTH_BASE_URL}/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (!response.ok) {
+        const message: string = await response.text();
+        throw new Error(message || "Unable to logout");
+    }
+
+    localStorage.removeItem("token");
 
 }

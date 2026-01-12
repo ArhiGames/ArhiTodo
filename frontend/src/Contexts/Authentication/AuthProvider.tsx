@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import type { JwtPayload } from "../../Models/JwtPayload.ts";
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "./AuthContext.ts";
-import { loginApi, registerApi } from "../../Services/AuthService.tsx";
+import {loginApi, logoutApi, registerApi} from "../../Services/AuthService.tsx";
 import { useNavigate } from "react-router-dom";
 import type { AppUser } from "../../Models/AppUser.ts";
 
@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const savedToken = localStorage.getItem("token");
             if (!savedToken) return;
 
+            // @Todo
             const decoded: JwtPayload = jwtDecode(savedToken);
             const now = Date.now() / 1000;
             if (decoded.exp > now) {
@@ -52,24 +53,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     function onLoggedIn(jwt: JwtPayload) {
 
-        const userObj = {
-            userName: jwt.unique_name,
-            email: jwt.email,
-        }
-
-        localStorage.setItem("user", JSON.stringify(userObj));
-
         setToken(localStorage.getItem("token"));
         setAppUser( { id: jwt.nameid, unique_name: jwt.unique_name, email: jwt.email} );
 
     }
 
-    const logout = () => {
+    const logout = async () => {
+
+        await logoutApi();
 
         setToken(null);
         setAppUser(null);
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
         navigate("/login");
 
     }
