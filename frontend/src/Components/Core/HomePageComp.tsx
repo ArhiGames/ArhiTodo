@@ -12,30 +12,31 @@ const HomePageComp = () => {
 
     useEffect(() => {
 
-        const check = async () => {
-            return await checkRefresh();
-        };
-        const succeeded = check();
-        if (!succeeded) return;
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded) return;
 
-        fetch(`${API_BASE_URL}/project`,
-            {
-                method: 'GET',
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Failed to fetch projects');
-                }
+            fetch(`${API_BASE_URL}/project`,
+                {
+                    method: 'GET',
+                    headers: { "Authorization": `Bearer ${token}` }
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Failed to fetch projects');
+                    }
 
-                return res.json();
-            })
-            .then((fetchedProjects: Project[]) => {
-                setProjects(fetchedProjects);
-            })
-            .catch(console.error);
+                    return res.json();
+                })
+                .then((fetchedProjects: Project[]) => {
+                    setProjects(fetchedProjects);
+                })
+                .catch(console.error);
+        }
 
-    }, [token]);
+        run();
+
+    }, [checkRefresh, token]);
 
     return (
         <div className="projects-container">
