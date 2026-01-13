@@ -73,11 +73,31 @@ export const logoutApi = async () => {
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
     });
 
+    localStorage.removeItem("token");
+
     if (!response.ok) {
         const message: string = await response.text();
         throw new Error(message || "Unable to logout");
     }
 
-    localStorage.removeItem("token");
+}
+
+export const refreshApi = async () => {
+
+    const response = await fetch(`${AUTH_BASE_URL}/refresh`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    if (!response.ok) {
+        const message: string = await response.text();
+        throw new Error(message || "Unable to refresh");
+    }
+
+    const { token } = await response.json();
+
+    localStorage.setItem("token", token);
+    return getJwtPayloadFromToken();
 
 }

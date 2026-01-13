@@ -57,10 +57,12 @@ public class AccountController(IAuthService authService) : ControllerBase
         return Ok(new { token = jwt });
     } 
 
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "JwtUnvalidatedLifetime")]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
+        await HttpContext.SignOutAsync("AuthRefreshCookie");
+        
         Claim? claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (claim == null) return Unauthorized();
         
@@ -69,7 +71,6 @@ public class AccountController(IAuthService authService) : ControllerBase
         bool succeeded = await authService.Logout(userId, Request.Headers.UserAgent.ToString());
         if (!succeeded) return Unauthorized();
         
-        await HttpContext.SignOutAsync("AuthRefreshCookie");
         return Ok();
     }
 

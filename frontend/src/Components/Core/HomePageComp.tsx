@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { Project } from "../../Models/Project.ts";
+import {useEffect, useState} from "react";
+import type {Project} from "../../Models/Project.ts";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
@@ -7,10 +7,16 @@ import {API_BASE_URL} from "../../config/api.ts";
 
 const HomePageComp = () => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const [projects, setProjects] = useState<Project[]>();
 
     useEffect(() => {
+
+        const check = async () => {
+            return await checkRefresh();
+        };
+        const succeeded = check();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/project`,
             {

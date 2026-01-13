@@ -35,6 +35,7 @@
     font-size: smaller;
     opacity: 75%;
     transition: rotate 0.2s;
+    user-select: none;
 }
 
 .dropdown-flipped {

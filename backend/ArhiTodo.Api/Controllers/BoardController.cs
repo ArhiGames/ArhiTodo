@@ -3,12 +3,12 @@ using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-// @Todo
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api")]
 public class BoardController(IBoardService boardService, ILabelService labelService) : ControllerBase

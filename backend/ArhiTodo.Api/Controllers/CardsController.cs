@@ -1,11 +1,11 @@
 using ArhiTodo.Application.DTOs.Card;
 using ArhiTodo.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ArhiTodo.Controllers;
 
-// @Todo
-// [Authorize]
+[Authorize]
 [ApiController]
 [Route("api")]
 public class CardsController(ICardService cardService, ILabelService labelService) : ControllerBase

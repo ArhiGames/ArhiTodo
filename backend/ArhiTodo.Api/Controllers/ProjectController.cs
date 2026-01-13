@@ -6,13 +6,13 @@ using ProjectGetDto = ArhiTodo.Application.DTOs.Project.ProjectGetDto;
 
 namespace ArhiTodo.Controllers;
 
-// @Todo
 [Authorize]
 [ApiController]
 [Route("api/project")]
 public class ProjectController(IProjectService projectService) : ControllerBase
 {
     [HttpPost]
+    // @Todo
     //[Authorize(Policy = "CreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
