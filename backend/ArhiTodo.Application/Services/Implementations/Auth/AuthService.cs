@@ -8,7 +8,8 @@ using ArhiTodo.Domain.Services.Auth;
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
 public class AuthService(IUserRepository userRepository, ITokenService tokenService, 
-    IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService) : IAuthService
+    IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
+    ITokenGeneratorService tokenGeneratorService) : IAuthService
 {
     public async Task<bool> CreateAccount(CreateAccountDto createAccountDto)
     {
@@ -42,7 +43,10 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
 
     public async Task<string?> RefreshJwtToken(string refreshToken)
     {
-        UserSession? userSession = await userRepository.GetUserSessionByToken(refreshToken);
+        byte[] byteToken = Convert.FromHexString(refreshToken);
+        string hashedToken = tokenGeneratorService.Hash(byteToken, 32);
+        
+        UserSession? userSession = await userRepository.GetUserSessionByToken(hashedToken);
         if (userSession == null) return null;
         
         User user = userSession.User;

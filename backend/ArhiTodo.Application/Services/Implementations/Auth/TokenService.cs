@@ -8,7 +8,8 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
 {
     public async Task<string?> GenerateRefreshTokenAndAddSessionEntry(User user, string userAgent)
     {
-        string refreshToken = tokenGeneratorService.GenerateSecureHash(32);
+        byte[] refreshToken = tokenGeneratorService.GenerateSecureToken(32);
+        string hashedToken = tokenGeneratorService.Hash(refreshToken, 32);
         
         UserSession? existingSession = await userRepository.GetUserSessionByAgent(user.UserId, userAgent);
         
@@ -18,7 +19,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
             {
                 UserId = user.UserId,
                 ExpiresAt = DateTimeOffset.UtcNow.AddDays(14),
-                TokenHash = refreshToken,
+                TokenHash = hashedToken,
                 UserAgent = userAgent
             };
             
@@ -28,12 +29,12 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
         else
         {
             existingSession.ExpiresAt = DateTimeOffset.UtcNow.AddDays(14);
-            existingSession.TokenHash = refreshToken;
+            existingSession.TokenHash = hashedToken;
             
             bool succeeded = await userRepository.UpdateUserSession(existingSession);
             if (!succeeded) return null;
         }
         
-        return refreshToken;
+        return Convert.ToHexString(refreshToken);
     }
 }

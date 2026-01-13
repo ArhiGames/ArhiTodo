@@ -2,7 +2,7 @@
 
 public interface ITokenGeneratorService
 {
-    public string Hash(byte[] bytes, int size);
-    public string GenerateSecureHash(int size);
+    string Hash(byte[] bytes, int size);
+    byte[] GenerateSecureToken(int size);
     bool Verify(string hashed, string unhashed, int size);
 }

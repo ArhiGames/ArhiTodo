@@ -12,13 +12,13 @@ public class TokenGeneratorService : ITokenGeneratorService
         string token = Convert.ToHexString(hashedBytes);
         return token;
     }
-    
-    public string GenerateSecureHash(int size)
+
+    public byte[] GenerateSecureToken(int size)
     {
         byte[] randomNumber = new byte[size];
         RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
         randomNumberGenerator.GetBytes(randomNumber);
-        return Hash(randomNumber, size);
+        return randomNumber;
     }
 
     public bool Verify(string hashed, string unhashed, int size)
