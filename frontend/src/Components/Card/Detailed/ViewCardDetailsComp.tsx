@@ -14,7 +14,7 @@ import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
 const ViewCardDetailsComp = () => {
 
     const navigate = useNavigate();
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const { projectId, boardId, cardId } = useParams();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
@@ -35,28 +35,40 @@ const ViewCardDetailsComp = () => {
     useEffect(() => {
         if (cardId == undefined) return;
 
-        fetch(`${API_BASE_URL}/card/${cardId}`,
-            {
-                method: "GET",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to fetch detailed card");
-                }
+        const abortController = new AbortController();
 
-                return res.json();
-            })
-            .then((detailedCard: DetailedCardGetDto) => {
-                setDetailedCard(detailedCard);
-                setCardDescription(detailedCard.cardDescription);
-            })
-            .catch(err => {
-                onViewDetailsClosed();
-                console.error(err);
-            })
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
 
-    }, [boardId, cardId, projectId, token]);
+            fetch(`${API_BASE_URL}/card/${cardId}`,
+                {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    signal: abortController.signal,
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch detailed card");
+                    }
+
+                    return res.json();
+                })
+                .then((detailedCard: DetailedCardGetDto) => {
+                    setDetailedCard(detailedCard);
+                    setCardDescription(detailedCard.cardDescription);
+                })
+                .catch(err => {
+                    onViewDetailsClosed();
+                    console.error(err);
+                })
+        }
+
+        run();
+
+        return () => abortController.abort();
+
+    }, [boardId, cardId, projectId, token, checkRefresh]);
 
     function getPureLabelIds() {
         const labelIds: number[] = [];
@@ -69,10 +81,16 @@ const ViewCardDetailsComp = () => {
         return labelIds;
     }
 
-    function onLabelSelected(label: Label) {
+    async function onLabelSelected(label: Label) {
         if (!dispatch || !cardId) return;
 
         dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
@@ -90,10 +108,16 @@ const ViewCardDetailsComp = () => {
             })
     }
 
-    function onLabelUnselected(label: Label) {
+    async function onLabelUnselected(label: Label) {
         if (!dispatch || !cardId) return;
 
         dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
@@ -111,12 +135,18 @@ const ViewCardDetailsComp = () => {
             })
     }
 
-    function onStateChanged() {
+    async function onStateChanged() {
 
         if (!dispatch || !detailedCard) return;
 
         const newState: boolean = !kanbanState.cards[detailedCard.cardId].isDone;
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: newState } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: !newState } });
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/done/${newState}`, {
             method: "PATCH",
@@ -133,11 +163,17 @@ const ViewCardDetailsComp = () => {
             })
     }
 
-    function onCardRenamed() {
+    async function onCardRenamed() {
         if (inputtedCardName.length === 0 || !detailedCard || !dispatch) return;
 
         const newCardName: string = inputtedCardName;
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: kanbanState.cards[detailedCard.cardId].cardName } });
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/name`, {
             method: "PATCH",
@@ -155,9 +191,12 @@ const ViewCardDetailsComp = () => {
             })
     }
 
-    function updateCardDescription(e: FormEvent<HTMLFormElement>) {
+    async function updateCardDescription(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (cardDescription.length === 0 || !detailedCard) return;
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/description`, {
             method: "PATCH",
@@ -196,7 +235,10 @@ const ViewCardDetailsComp = () => {
         setIsEditingDescription(false);
     }
 
-    function onDeleteCardConfirmed() {
+    async function onDeleteCardConfirmed() {
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         if (dispatch) {
             dispatch({ type: "DELETE_CARD", payload: { cardId: Number(cardId)} });

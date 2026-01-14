@@ -16,7 +16,7 @@ interface Props {
 const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
     const navigate = useNavigate();
-    const { appUser, token } = useAuth();
+    const { appUser, token, checkRefresh } = useAuth();
     const { userId } = useParams();
     const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
@@ -26,7 +26,6 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
     useEffect(() => {
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUpdatedClaims([]);
         if (!userId) {
             setIsTryingToDelete(false);
@@ -40,39 +39,48 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
         if (!currentViewingUser) return;
 
         const abortController = new AbortController();
-        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
-            {
-                method: "PUT",
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                signal: abortController.signal,
-                body: JSON.stringify(updatedClaims)
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Failed to update user claims`);
-                }
 
-                navigate("/admin/dashboard/users/");
-            })
-            .catch(console.error);
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+                {
+                    method: "PUT",
+                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    signal: abortController.signal,
+                    body: JSON.stringify(updatedClaims)
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Failed to update user claims`);
+                    }
+
+                    navigate("/admin/dashboard/users/");
+                })
+                .catch(console.error);
+        }
+
+        run();
 
         return () => abortController.abort();
 
     }
 
-    function confirmUserDelete(password?: string) {
+    async function confirmUserDelete(password?: string) {
 
         if (!password) return;
         if (!currentViewingUser) return;
         if (password.length < 8) return;
 
-        const abortController = new AbortController();
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
+
         fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
             {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify( { password: password } ),
-                signal: abortController.signal,
+                body: JSON.stringify( { password: password } )
             })
             .then(res => {
                 if (!res.ok) {
@@ -82,8 +90,6 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
                 navigate("/admin/dashboard/users/")
             })
             .catch(console.error);
-
-        return () => abortController.abort();
 
     }
 

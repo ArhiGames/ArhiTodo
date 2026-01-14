@@ -13,7 +13,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     const origin = window.location.origin;
     const finalUrl = `${origin}/register/${invitationLink.invitationKey}`;
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const [remainingMs, setRemainingMs] = useState<number>(0);
     const [copied, setCopied] = useState<boolean>(false);
 
@@ -38,14 +38,15 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     }, [invitationLink.expiresDate]);
 
-    function onInvalidateButtonPressed() {
+    async function onInvalidateButtonPressed() {
 
-        const abortController = new AbortController();
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
+
         fetch(`${API_BASE_URL}/invitation/invalidate/${invitationLink.invitationLinkId}`,
             {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                signal: abortController.signal
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
             })
             .then(res => {
                 if (!res.ok) {
@@ -55,8 +56,6 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                 invitationLink.isActive = false;
             })
             .catch(console.error);
-
-        return () => abortController.abort();
 
     }
 

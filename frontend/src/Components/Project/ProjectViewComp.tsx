@@ -10,7 +10,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 
 const ProjectViewComp = () => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const state: State = useKanbanState();
     const navigate = useNavigate();
@@ -41,28 +41,40 @@ const ProjectViewComp = () => {
 
     useEffect(() => {
 
-        fetch(`${API_BASE_URL}/project/${projectId}/board`,
-            {
-                method: "GET",
-                headers: { "Authorization": `Bearer ${token}` },
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to fetch boards");
-                }
+        const abortController = new AbortController();
 
-                return res.json();
-            })
-            .then((fetchedBoards: Board[]) => {
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
 
-                if (dispatch) {
-                    dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
-                }
+            fetch(`${API_BASE_URL}/project/${projectId}/board`,
+                {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` },
+                    signal: abortController.signal
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch boards");
+                    }
 
-            })
-            .catch(console.error);
+                    return res.json();
+                })
+                .then((fetchedBoards: Board[]) => {
 
-    }, [dispatch, projectId, token]);
+                    if (dispatch) {
+                        dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
+                    }
+
+                })
+                .catch(console.error);
+        }
+
+        run();
+
+        return () => abortController.abort();
+
+    }, [dispatch, projectId, token, checkRefresh]);
 
     useEffect(() => {
         loadDefaultBoard();

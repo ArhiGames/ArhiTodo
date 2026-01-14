@@ -12,7 +12,7 @@ const CardComp = (props: { card: CardGetDto }) => {
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -36,12 +36,18 @@ const CardComp = (props: { card: CardGetDto }) => {
         )
     }
 
-    function onStateChange(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    async function onStateChange(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         e.stopPropagation();
         if (!dispatch) return;
 
         const newState: boolean = !kanbanState.cards[props.card.cardId].isDone;
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: newState } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: !newState } });
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${props.card.cardId}/done/${newState}`, {
             method: "PATCH",

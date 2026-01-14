@@ -8,9 +8,12 @@ const PasswordManagerPageComp = () => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
-    const { logout, token } = useAuth();
+    const { logout, token, checkRefresh } = useAuth();
 
-    function changePassword() {
+    async function changePassword() {
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/account/change/password`,
         {

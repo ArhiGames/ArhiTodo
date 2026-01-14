@@ -27,7 +27,7 @@ const LabelSelector = ( props: Props ) => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [currentlyEditingLabel, setCurrentlyEditingLabel] = useState<Label | null>(null);
     const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
 
@@ -101,15 +101,19 @@ const LabelSelector = ( props: Props ) => {
         setCurrentlyEditingLabel(null);
     }
 
-    function createLabel() {
+    async function createLabel() {
 
-        if (labelName.length === 0) return;
+        if (labelName.length === 0 || !dispatch) return;
 
         const predictedId = Date.now() * -1;
 
-        if (dispatch) {
-            dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,
-                    labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
+        dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,
+                labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            dispatch({type: "CREATE_LABEL_FAILED", payload: { labelToDelete: predictedId }})
+            return;
         }
 
         fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
@@ -125,27 +129,29 @@ const LabelSelector = ( props: Props ) => {
                 return res.json();
             })
             .then((label: LabelGetDto) => {
-                if (dispatch) {
-                    dispatch({ type: "CREATE_LABEL_SUCCEEDED", payload: { predictedLabelId: predictedId, actualLabelId: label.labelId }});
-                }
+                dispatch({ type: "CREATE_LABEL_SUCCEEDED", payload: { predictedLabelId: predictedId, actualLabelId: label.labelId }});
             })
             .catch(err => {
-                if (dispatch) {
-                    dispatch({type: "CREATE_LABEL_FAILED", payload: { labelToDelete: predictedId }})
-                }
+                dispatch({type: "CREATE_LABEL_FAILED", payload: { labelToDelete: predictedId }})
                 console.error(err);
             })
     }
 
-    function editLabel() {
+    async function editLabel() {
 
         if (!currentlyEditingLabel || !dispatch) return;
 
+        // @Todo if failed creating, the label should be handled correctly
         dispatch({ type: "UPDATE_LABEL_OPTIMISTIC", payload: {
             labelId: currentlyEditingLabel.labelId,
                 labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
                 labelColor: toInteger(currentSelectedColor)
         } });
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            return;
+        }
 
         fetch(`${API_BASE_URL}/label`, {
             method: "PUT",
@@ -168,9 +174,12 @@ const LabelSelector = ( props: Props ) => {
         cancelAction();
     }
 
-    function deleteLabel() {
+    async function deleteLabel() {
         cancelAction();
         if (!currentlyEditingLabel) return;
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/label/${currentlyEditingLabel.labelId}`,
             {

@@ -16,7 +16,7 @@ const InvitationCreatorModalComp = (props: Props) => {
 
     const options: string[] = ["Never", "Minutes", "Hours", "Days"];
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const [expireInNum, setExpireInNum] = useState<number>(1);
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
@@ -28,23 +28,31 @@ const InvitationCreatorModalComp = (props: Props) => {
         setSubmitBlocked(true);
 
         const abortController = new AbortController();
-        fetch(`${API_BASE_URL}/invitation/generate`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify( { expireType: options.indexOf(currentExpireType), expireNum: expireInNum, maxUses: maxUses } ),
-            signal: abortController.signal
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Invitation creation failed");
-                }
 
-                return res.json();
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/invitation/generate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify( { expireType: options.indexOf(currentExpireType), expireNum: expireInNum, maxUses: maxUses } ),
+                signal: abortController.signal
             })
-            .then((res: InvitationLink) => {
-                setGeneratedInvitationLink(res);
-            })
-            .catch(console.error);
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Invitation creation failed");
+                    }
+
+                    return res.json();
+                })
+                .then((res: InvitationLink) => {
+                    setGeneratedInvitationLink(res);
+                })
+                .catch(console.error);
+        }
+
+        run();
 
         return () => abortController.abort();
 

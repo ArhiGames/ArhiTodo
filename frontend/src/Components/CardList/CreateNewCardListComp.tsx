@@ -14,7 +14,7 @@ const CreateNewCardListComp = () => {
     const creationCardListRef = useRef<HTMLDivElement>(null)
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const { boardId } = useParams();
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
 
     function onStartCreatingNewCardClicked() {
 
@@ -33,13 +33,19 @@ const CreateNewCardListComp = () => {
 
     }
 
-    function onCardlistSubmit(e: FormEvent<HTMLFormElement>) {
+    async function onCardlistSubmit(e: FormEvent<HTMLFormElement>) {
 
         e.preventDefault();
         if (dispatch && boardId !== undefined) {
             const predictedId = Date.now() * -1;
 
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
+
+            const succeeded = await checkRefresh();
+            if (!succeeded) {
+                dispatch({ type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: predictedId } })
+                return;
+            }
 
             fetch(`${API_BASE_URL}/board/${boardId}/cardlist`, {
                 method: "POST",

@@ -8,35 +8,43 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 
 const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const [invitationLinks, setInvitationLinks] = useState<InvitationLink[]>([]);
 
     useEffect(() => {
 
         const abortController = new AbortController();
-        fetch(`${API_BASE_URL}/invitation`,
-            {
-                method: "GET",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                signal: abortController.signal,
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Could not fetch invitation links");
-                }
 
-                return res.json();
-            })
-            .then((res: InvitationLink[]) => {
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
 
-                setInvitationLinks(res);
+            fetch(`${API_BASE_URL}/invitation`,
+                {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    signal: abortController.signal,
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Could not fetch invitation links");
+                    }
 
-            })
-            .catch(console.error);
+                    return res.json();
+                })
+                .then((res: InvitationLink[]) => {
+
+                    setInvitationLinks(res);
+
+                })
+                .catch(console.error);
+        }
+
+        run();
 
         return () => abortController.abort();
 
-    }, [token]);
+    }, [checkRefresh, token]);
 
     if (invitationLinks.length === 0) {
         return (

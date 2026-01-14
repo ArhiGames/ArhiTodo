@@ -14,7 +14,7 @@ interface Props {
 
 const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props ) => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
@@ -71,9 +71,15 @@ const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props )
         });
     }
 
-    function onCreateChecklistSubmit() {
+    async function onCreateChecklistSubmit() {
 
         const predictedChecklistId = createChecklistLocally();
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            deleteChecklistLocally(predictedChecklistId);
+            return;
+        }
 
         fetch(`${API_BASE_URL}/card/${cardDetailComp.cardId}/checklist`, {
             method: "POST",

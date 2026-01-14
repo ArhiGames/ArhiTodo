@@ -12,7 +12,7 @@ const CreateNewBoardHeaderComp = () => {
     const createBoardHeaderRef = useRef<HTMLDivElement | null>(null);
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
     const { projectId } = useParams();
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const navigate = useNavigate();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
@@ -27,12 +27,18 @@ const CreateNewBoardHeaderComp = () => {
         setOpen(false);
     }
 
-    function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
+    async function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         if (dispatch) {
             const predictedId: number = Date.now() * -1;
 
             dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
+
+            const succeeded = await checkRefresh();
+            if (!succeeded) {
+                dispatch({ type: "CREATE_BOARD_FAILED", payload: { failedBoardId: predictedId }});
+                return;
+            }
 
             fetch(`${API_BASE_URL}/project/${projectId}/board`, {
                 method: "POST",

@@ -20,7 +20,7 @@ interface Props {
 
 const CardDetailChecklistComp = (props: Props) => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
 
@@ -133,8 +133,11 @@ const CardDetailChecklistComp = (props: Props) => {
         });
     }
 
-    function handleCheckboxClick(checklistItemId: number, checked: boolean) {
+    async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
         patchDoneStateLocally(checklistItemId, checked);
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/checklist/item/${checklistItemId}/done/${checked}`, {
             method: "PATCH",
@@ -160,10 +163,13 @@ const CardDetailChecklistComp = (props: Props) => {
 
     }
 
-    function onAddTaskButtonPressed() {
+    async function onAddTaskButtonPressed() {
         if (!isAddingTask || addingTaskInputValue.length === 0) return;
 
         const predictedId: number = addChecklistItemToChecklistLocally();
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/checklist/${props.checklist.checklistId}/item`, {
             method: "POST",
@@ -192,7 +198,7 @@ const CardDetailChecklistComp = (props: Props) => {
         setAddingTaskInputValue("");
     }
 
-    function deleteChecklist() {
+    async function deleteChecklist() {
 
         const totalTasks: number = props.checklist.checklistItems.length;
         let completedTasks: number = 0;
@@ -201,6 +207,9 @@ const CardDetailChecklistComp = (props: Props) => {
                 completedTasks++;
             }
         }
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/card/${props.cardDetailComp.cardId}/checklist/${props.checklist.checklistId}`, {
             method: "DELETE",

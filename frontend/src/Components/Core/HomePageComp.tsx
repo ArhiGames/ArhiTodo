@@ -12,14 +12,17 @@ const HomePageComp = () => {
 
     useEffect(() => {
 
+        const abortController = new AbortController();
+
         const run = async () => {
             const succeeded = await checkRefresh();
-            if (!succeeded) return;
+            if (!succeeded || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/project`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${token}` }
+                    headers: { "Authorization": `Bearer ${token}` },
+                    signal: abortController.signal
                 })
                 .then(res => {
                     if (!res.ok) {
@@ -35,6 +38,8 @@ const HomePageComp = () => {
         }
 
         run();
+
+        return () => abortController.abort();
 
     }, [checkRefresh, token]);
 

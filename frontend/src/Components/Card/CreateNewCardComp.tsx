@@ -12,7 +12,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const cardRef = useRef<HTMLInputElement>(null);
     const dispatch = useKanbanDispatch();
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
 
     function handleClicked() {
 
@@ -30,7 +30,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
 
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 
         e.preventDefault();
 
@@ -38,6 +38,12 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
             const predictedCardId = Date.now() * -1;
 
             dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardList.cardListId, cardId: predictedCardId, cardName: cardName } })
+
+            const succeeded = await checkRefresh();
+            if (!succeeded) {
+                dispatch({ type: "CREATE_CARD_FAILED", payload: { failedCardId: predictedCardId } })
+                return;
+            }
 
             fetch(`${API_BASE_URL}/cardlist/${props.cardList.cardListId}/card`,
                 {

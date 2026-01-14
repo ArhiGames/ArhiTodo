@@ -11,7 +11,7 @@ const CreateNewProjectCardComp = () => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [projectName, setProjectName] = useState<string>("");
     const projectNameInputRef = useRef<HTMLInputElement>(null);
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const navigate = useNavigate();
 
     function onNewProjectClicked() {
@@ -26,22 +26,34 @@ const CreateNewProjectCardComp = () => {
 
         e.preventDefault();
 
-        fetch(`${API_BASE_URL}/project`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ projectName: projectName })
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to create project");
-                }
+        const abortController = new AbortController();
 
-                return res.json();
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/project`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ projectName: projectName }),
+                signal: abortController.signal
             })
-            .then((createdProject: ProjectGetDto) => {
-                navigate(`/projects/${createdProject.projectId}/board`)
-            })
-            .catch(console.error);
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to create project");
+                    }
+
+                    return res.json();
+                })
+                .then((createdProject: ProjectGetDto) => {
+                    navigate(`/projects/${createdProject.projectId}/board`)
+                })
+                .catch(console.error);
+        }
+
+        run();
+
+        return () => abortController.abort();
 
     }
 

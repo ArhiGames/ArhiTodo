@@ -17,7 +17,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const { cardId } = useParams();
     const navigate = useNavigate();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
@@ -95,32 +95,43 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentFilteringLabels([]);
 
-        fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
-            {
-                method: 'GET',
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Could not fetch /api/cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
-                }
+        const abortController = new AbortController();
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || abortController.signal.aborted) return;
 
-                return res.json()
-            })
-            .then((res: { board: BoardGetDto; labels: LabelGetDto[] }) => {
+            fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
+                {
+                    method: 'GET',
+                    headers: { "Authorization": `Bearer ${token}` },
+                    signal: abortController.signal
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Could not fetch /api/cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
+                    }
 
-                if (dispatch) {
-                    dispatch({type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
-                }
-                setLoaded(true);
+                    return res.json()
+                })
+                .then((res: { board: BoardGetDto; labels: LabelGetDto[] }) => {
 
-            })
-            .catch(err => {
-                navigate("/");
-                console.error(err);
-            })
+                    if (dispatch) {
+                        dispatch({type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
+                    }
+                    setLoaded(true);
 
-    }, [props.projectId, props.boardId, token, dispatch]);
+                })
+                .catch(err => {
+                    navigate("/");
+                    console.error(err);
+                })
+        }
+
+        run();
+
+        return () => abortController.abort();
+
+    }, [props.projectId, props.boardId, token, dispatch, checkRefresh]);
 
     if (props.boardId === null) {
         return (

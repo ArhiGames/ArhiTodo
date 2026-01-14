@@ -12,7 +12,7 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 const AdminUserManagementComp = () => {
 
     const navigate = useNavigate();
-    const { appUser, token } = useAuth();
+    const { appUser, token, checkRefresh } = useAuth();
     const { userId } = useParams();
     const [users, setUsers] = useState<UserWithClaims[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
@@ -27,54 +27,70 @@ const AdminUserManagementComp = () => {
         }
 
         const controller = new AbortController();
-        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
-            {
-                method: "GET",
-                headers: { Authorization: `Bearer ${token}` },
-                signal: controller.signal
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(res.statusText);
-                }
 
-                return res.json();
-            })
-            .then((user: UserWithClaims)=> {
-                setCurrentViewingUser(user)
-            })
-            .catch(console.error);
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || controller.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
+                {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${token}` },
+                    signal: controller.signal
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(res.statusText);
+                    }
+
+                    return res.json();
+                })
+                .then((user: UserWithClaims)=> {
+                    setCurrentViewingUser(user)
+                })
+                .catch(console.error);
+        }
+
+        run();
 
         return () => controller.abort();
 
-    }, [token, userId]);
+    }, [checkRefresh, token, userId]);
 
     useEffect(() => {
 
         if (userId) return;
 
         const controller = new AbortController();
-        fetch(`${API_BASE_URL}/account/admin/accountmanagement`,
-            {
-                method: 'GET',
-                headers: { "Authorization": `Bearer ${token}` },
-                signal: controller.signal
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to fetch accounts with claims")
-                }
 
-                return res.json();
-            })
-            .then((res: UserWithClaims[]) => {
-                setUsers(res);
-            })
-            .catch(console.error);
+        const run = async () => {
+            const succeeded = await checkRefresh();
+            if (!succeeded || controller.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/account/admin/accountmanagement`,
+                {
+                    method: 'GET',
+                    headers: { "Authorization": `Bearer ${token}` },
+                    signal: controller.signal
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch accounts with claims")
+                    }
+
+                    return res.json();
+                })
+                .then((res: UserWithClaims[]) => {
+                    setUsers(res);
+                })
+                .catch(console.error);
+        }
+
+        run();
 
         return () => controller.abort();
 
-    }, [userId, token]);
+    }, [userId, token, checkRefresh]);
 
     function onEditUser(user: UserWithClaims) {
 

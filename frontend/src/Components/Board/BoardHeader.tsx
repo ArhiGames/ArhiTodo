@@ -17,7 +17,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const [newName, setNewName] = useState<string>("");
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
-    const { token } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const navigate = useNavigate();
 
@@ -35,9 +35,12 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
     }
 
-    function onEditBoardNameSubmit(e: FormEvent<HTMLFormElement>) {
+    async function onEditBoardNameSubmit(e: FormEvent<HTMLFormElement>) {
 
         e.preventDefault();
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board`, {
             method: "PUT",
@@ -71,9 +74,12 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
     }
 
-    function deleteBoard() {
+    async function deleteBoard() {
 
         setIsTryingToDelete(false);
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) return;
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.board.boardId}`, {
             method: "DELETE",
