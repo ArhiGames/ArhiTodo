@@ -122,6 +122,10 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
                 })
                 .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+
                     navigate("/");
                     console.error(err);
                 })
@@ -131,7 +135,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
         return () => abortController.abort();
 
-    }, [props.projectId, props.boardId, token, dispatch, checkRefresh]);
+    }, [props.projectId, props.boardId, token, dispatch, checkRefresh, navigate]);
 
     if (props.boardId === null) {
         return (

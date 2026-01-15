@@ -26,6 +26,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
     useEffect(() => {
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUpdatedClaims([]);
         if (!userId) {
             setIsTryingToDelete(false);
@@ -58,7 +59,12 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
                     navigate("/admin/dashboard/users/");
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();

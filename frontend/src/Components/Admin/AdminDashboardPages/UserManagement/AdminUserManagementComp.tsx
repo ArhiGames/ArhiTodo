@@ -48,7 +48,12 @@ const AdminUserManagementComp = () => {
                 .then((user: UserWithClaims)=> {
                     setCurrentViewingUser(user)
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();
@@ -83,7 +88,12 @@ const AdminUserManagementComp = () => {
                 .then((res: UserWithClaims[]) => {
                     setUsers(res);
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();

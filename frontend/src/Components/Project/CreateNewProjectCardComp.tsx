@@ -48,7 +48,12 @@ const CreateNewProjectCardComp = () => {
                 .then((createdProject: ProjectGetDto) => {
                     navigate(`/projects/${createdProject.projectId}/board`)
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();

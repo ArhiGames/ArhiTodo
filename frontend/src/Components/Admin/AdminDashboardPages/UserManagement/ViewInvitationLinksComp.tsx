@@ -33,11 +33,14 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
                     return res.json();
                 })
                 .then((res: InvitationLink[]) => {
-
                     setInvitationLinks(res);
-
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();

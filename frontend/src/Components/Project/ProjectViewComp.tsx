@@ -67,7 +67,13 @@ const ProjectViewComp = () => {
                     }
 
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+
+                    console.error(err);
+                });
         }
 
         run();

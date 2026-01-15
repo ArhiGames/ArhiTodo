@@ -1,6 +1,6 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {type FormEvent, Fragment, useEffect, useRef, useState} from "react";
+import {type FormEvent, Fragment, useCallback, useEffect, useRef, useState} from "react";
 import LabelSelector from "../../Labels/LabelSelector.tsx";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import type {DetailedCardGetDto} from "../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
@@ -28,9 +28,9 @@ const ViewCardDetailsComp = () => {
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
     const [isSharing, setIsSharing] = useState<boolean>(false);
 
-    function onViewDetailsClosed() {
+    const onViewDetailsClosed = useCallback(() => {
         navigate(`/projects/${projectId}/board/${boardId}`);
-    }
+    }, [boardId, navigate, projectId]);
 
     useEffect(() => {
         if (cardId == undefined) return;
@@ -59,6 +59,9 @@ const ViewCardDetailsComp = () => {
                     setCardDescription(detailedCard.cardDescription);
                 })
                 .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
                     onViewDetailsClosed();
                     console.error(err);
                 })
@@ -68,7 +71,7 @@ const ViewCardDetailsComp = () => {
 
         return () => abortController.abort();
 
-    }, [boardId, cardId, projectId, token, checkRefresh]);
+    }, [boardId, cardId, projectId, token, checkRefresh, onViewDetailsClosed]);
 
     function getPureLabelIds() {
         const labelIds: number[] = [];

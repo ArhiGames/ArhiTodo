@@ -34,7 +34,12 @@ const HomePageComp = () => {
                 .then((fetchedProjects: Project[]) => {
                     setProjects(fetchedProjects);
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();

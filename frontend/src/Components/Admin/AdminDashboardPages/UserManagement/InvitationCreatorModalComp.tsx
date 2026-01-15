@@ -49,7 +49,12 @@ const InvitationCreatorModalComp = (props: Props) => {
                 .then((res: InvitationLink) => {
                     setGeneratedInvitationLink(res);
                 })
-                .catch(console.error);
+                .catch(err => {
+                    if (err.name === "AbortError") {
+                        return;
+                    }
+                    console.error(err);
+                });
         }
 
         run();
