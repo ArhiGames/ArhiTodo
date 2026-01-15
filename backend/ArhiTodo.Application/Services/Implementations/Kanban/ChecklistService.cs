@@ -5,7 +5,7 @@ using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
-namespace ArhiTodo.Application.Services.Implementations;
+namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ChecklistService(IChecklistRepository checklistRepository) : IChecklistService
 {

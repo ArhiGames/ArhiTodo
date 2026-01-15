@@ -30,7 +30,7 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
             if (!cardLabels[cardDto.cardId]) {
                 cardLabels[cardDto.cardId] = [];
             }
-            for (const { labelId } of cardDto.labels) {
+            for (const labelId of cardDto.labelIds) {
 
                 cardLabels[cardDto.cardId].push(labelId);
             }

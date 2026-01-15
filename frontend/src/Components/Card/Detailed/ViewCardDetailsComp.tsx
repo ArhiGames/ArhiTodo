@@ -181,7 +181,7 @@ const ViewCardDetailsComp = () => {
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/name`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ cardName: newCardName })
+            body: JSON.stringify({ newCardName: newCardName })
         })
             .then(res => {
                 if (!res.ok) {
@@ -204,7 +204,7 @@ const ViewCardDetailsComp = () => {
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/description`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ cardDescription: cardDescription })
+            body: JSON.stringify({ newCardDescription: cardDescription })
         })
             .then(res => {
                 if (!res.ok) {

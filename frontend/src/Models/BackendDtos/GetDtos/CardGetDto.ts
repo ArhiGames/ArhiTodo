@@ -4,5 +4,5 @@ export type CardGetDto = {
     isDone: boolean;
     totalTasks: number;
     totalTasksCompleted: number;
-    labels: { labelId: number }[];
+    labelIds: number[];
 }

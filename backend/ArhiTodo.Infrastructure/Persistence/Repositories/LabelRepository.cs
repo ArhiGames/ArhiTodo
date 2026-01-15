@@ -16,19 +16,20 @@ public class LabelRepository(ProjectDataBase database) : ILabelRepository
 
     public async Task<bool> UpdateLabelAsync(int labelId, string? labelText, int? labelColor)
     {
-        int changedRows = 0;
+        int changedRows;
         if (labelText != null && labelColor != null)
         {
             changedRows = await database.Labels
                 .Where(l => l.LabelId == labelId)
                 .ExecuteUpdateAsync(
-                    p => p.SetProperty(l => labelText, labelText).SetProperty(l => l.LabelColor, labelColor));
+                    p => p.SetProperty(l => l.LabelText, labelText)
+                        .SetProperty(l => l.LabelColor, labelColor));
         }
         else if (labelText != null)
         {
             changedRows = await database.Labels
                 .Where(l => l.LabelId == labelId)
-                .ExecuteUpdateAsync(p => p.SetProperty(l => labelText, labelText));
+                .ExecuteUpdateAsync(p => p.SetProperty(l => l.LabelText, labelText));
         }
         else if (labelColor != null)
         {

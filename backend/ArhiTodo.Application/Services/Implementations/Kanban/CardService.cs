@@ -4,7 +4,7 @@ using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
-namespace ArhiTodo.Application.Services.Implementations;
+namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class CardService(ICardRepository cardRepository) : ICardService
 {
@@ -26,15 +26,15 @@ public class CardService(ICardRepository cardRepository) : ICardService
         return succeeded;
     }
 
-    public async Task<bool> PatchCardName(int cardId, string updatedCardName)
+    public async Task<bool> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
     {
-        bool succeeded = await cardRepository.PatchCardName(cardId, updatedCardName);
+        bool succeeded = await cardRepository.PatchCardName(cardId, patchCardNameDto.NewCardName);
         return succeeded;
     }
 
-    public async Task<bool> PatchCardDescription(int cardId, string updatedCardDescription)
+    public async Task<bool> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
     {
-        bool succeeded = await cardRepository.PatchCardDescription(cardId, updatedCardDescription);
+        bool succeeded = await cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto.NewCardDescription);
         return succeeded;
     }
 

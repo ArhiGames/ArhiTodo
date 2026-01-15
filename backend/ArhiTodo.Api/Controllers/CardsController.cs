@@ -51,7 +51,7 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     }
 
     [HttpPatch("card/{cardId:int}/name")]
-    public async Task<IActionResult> PatchCardName(int cardId, [FromBody] string patchCardNameDto)
+    public async Task<IActionResult> PatchCardName(int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
     {
         bool succeeded = await cardService.PatchCardName(cardId, patchCardNameDto);
         if (succeeded) return NotFound();
@@ -59,7 +59,7 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     }
 
     [HttpPatch("card/{cardId:int}/description")]
-    public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] string patchCardDescriptionDto)
+    public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] PatchCardDescriptionDto patchCardDescriptionDto)
     {
         bool succeeded = await cardService.PatchCardDescription(cardId, patchCardDescriptionDto);
         if (!succeeded) return NotFound();
