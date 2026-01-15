@@ -1,7 +1,7 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
 
-namespace ArhiTodo.Application.Services.Interfaces;
+namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface IChecklistService
 {
@@ -10,5 +10,5 @@ public interface IChecklistService
     
     Task<ChecklistItemGetDto?> CreateChecklistItem(int checklistId, ChecklistItemCreateDto checklistItemCreateDto);
     Task<bool> DeleteChecklistItem(int checklistItemId);
-    Task<bool> PatchChecklistItemState(int checklistItemId, bool newState);
+    Task<ChecklistItemGetDto?> PatchChecklistItemState(int checklistItemId, bool newState);
 }

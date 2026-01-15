@@ -23,28 +23,37 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
         return deletedRows == 1;
     }
 
-    public async Task<bool> PatchCardStatus(int cardId, bool isDone)
+    public async Task<Card?> PatchCardStatus(int cardId, bool isDone)
     {
-        int changedCardStates = await projectDataBase.Cards
-            .Where(c => c.CardId == cardId)
-            .ExecuteUpdateAsync(s => s.SetProperty(c => c.IsDone, isDone));
-        return changedCardStates == 1;
+        Card? card = await projectDataBase.Cards.FindAsync(cardId);
+        if (card == null) return null;
+
+        card.IsDone = isDone;
+        await projectDataBase.SaveChangesAsync();
+
+        return card;
     }
 
-    public async Task<bool> PatchCardName(int cardId, string updatedCardName)
+    public async Task<Card?> PatchCardName(int cardId, string updatedCardName)
     {
-        int changedRows = await projectDataBase.Cards
-            .Where(c => c.CardId == cardId)
-            .ExecuteUpdateAsync(p => p.SetProperty(c => c.CardName, updatedCardName));
-        return changedRows == 1;
+        Card? card = await projectDataBase.Cards.FindAsync(cardId);
+        if (card == null) return null;
+        
+        card.CardName = updatedCardName;
+        await projectDataBase.SaveChangesAsync();
+        
+        return card;
     }
 
-    public async Task<bool> PatchCardDescription(int cardId, string updatedCardDescription)
+    public async Task<Card?> PatchCardDescription(int cardId, string updatedCardDescription)
     {
-        int changedRows = await projectDataBase.Cards
-            .Where(c => c.CardId == cardId)
-            .ExecuteUpdateAsync(p => p.SetProperty(c => c.CardDescription, updatedCardDescription));
-        return changedRows == 1;
+        Card? card = await projectDataBase.Cards.FindAsync(cardId);
+        if (card == null) return null;
+        
+        card.CardDescription = updatedCardDescription;
+        await projectDataBase.SaveChangesAsync();
+        
+        return card;
     }
 
     public async Task<Card?> GetDetailedCard(int cardId, bool includeChecklist = true)

@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
@@ -14,10 +14,10 @@ public class LabelService(ILabelRepository labelRepository) : ILabelService
         return label?.ToGetDto();
     }
 
-    public async Task<bool> UpdateLabel(LabelUpdateDto labelUpdateDto)
+    public async Task<LabelGetDto?> UpdateLabel(LabelUpdateDto labelUpdateDto)
     {
-        bool succeeded = await labelRepository.UpdateLabelAsync(labelUpdateDto.LabelId, labelUpdateDto.LabelText, labelUpdateDto.LabelColor);
-        return succeeded;
+        Label? label = await labelRepository.UpdateLabelAsync(labelUpdateDto.LabelId, labelUpdateDto.LabelText, labelUpdateDto.LabelColor);
+        return label?.ToGetDto();
     }
 
     public async Task<bool> DeleteLabel(int labelId)

@@ -1,7 +1,5 @@
-﻿using ArhiTodo.Application.Services.Implementations;
-using ArhiTodo.Application.Services.Implementations.Auth;
+﻿using ArhiTodo.Application.Services.Implementations.Auth;
 using ArhiTodo.Application.Services.Implementations.Kanban;
-using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,7 +1,6 @@
 using System.Data;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
-using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +23,8 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPut("label/")]
     public async Task<IActionResult> UpdateLabel([FromBody] LabelUpdateDto labelUpdateDto)
     {
-        bool succeeded = await labelService.UpdateLabel(labelUpdateDto);
-        if (!succeeded) return NotFound();
+        LabelGetDto? cardGetDto = await labelService.UpdateLabel(labelUpdateDto);
+        if (cardGetDto == null) return NotFound();
         return Ok();
     }
 

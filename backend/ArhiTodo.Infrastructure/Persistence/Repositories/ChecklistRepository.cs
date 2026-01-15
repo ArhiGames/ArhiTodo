@@ -37,11 +37,14 @@ public class ChecklistRepository(ProjectDataBase database) : IChecklistRepositor
         return changedRows == 1;
     }
 
-    async Task<bool> IChecklistRepository.PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
+    public async Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
     {
-        int changedRows = await database.ChecklistItems
-            .Where(ci => ci.ChecklistItemId == checklistItemId)
-            .ExecuteUpdateAsync(p => p.SetProperty(ci => ci.IsDone, taskDone));
-        return changedRows == 1;
+        ChecklistItem? checklistItem = await database.ChecklistItems.FindAsync(checklistItemId);
+        if (checklistItem == null) return null;
+
+        checklistItem.IsDone = taskDone;
+        await database.SaveChangesAsync();
+        
+        return checklistItem;
     }
 }

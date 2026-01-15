@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
-using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,8 +47,8 @@ public class ChecklistController(IChecklistService checklistService) : Controlle
     [HttpPatch("checklist/item/{checklistItemId:int}/done/{taskDone:bool}")]
     public async Task<IActionResult> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
     {
-        bool succeeded = await checklistService.PatchChecklistItemState(checklistItemId, taskDone);
-        if (!succeeded) return NotFound();
+        ChecklistItemGetDto? checklistItemGetDto = await checklistService.PatchChecklistItemState(checklistItemId, taskDone);
+        if (checklistItemGetDto == null) return NotFound();
         return Ok();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
 
-namespace ArhiTodo.Application.Services.Interfaces;
+namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface ICardListService
 {

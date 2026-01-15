@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Card;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
@@ -20,22 +20,22 @@ public class CardService(ICardRepository cardRepository) : ICardService
         return succeeded;
     }
 
-    public async Task<bool> PatchCardStatus(int cardId, bool isDone)
+    public async Task<CardGetDto?> PatchCardStatus(int cardId, bool isDone)
     {
-        bool succeeded = await cardRepository.PatchCardStatus(cardId, isDone);
-        return succeeded;
+        Card? card = await cardRepository.PatchCardStatus(cardId, isDone);
+        return card?.ToGetDto();
     }
 
-    public async Task<bool> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
+    public async Task<CardGetDto?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
     {
-        bool succeeded = await cardRepository.PatchCardName(cardId, patchCardNameDto.NewCardName);
-        return succeeded;
+        Card? card = await cardRepository.PatchCardName(cardId, patchCardNameDto.NewCardName);
+        return card?.ToGetDto();
     }
 
-    public async Task<bool> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
+    public async Task<CardGetDto?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
     {
-        bool succeeded = await cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto.NewCardDescription);
-        return succeeded;
+        Card? card = await cardRepository.PatchCardDescription(cardId, patchCardDescriptionDto.NewCardDescription);
+        return card?.ToGetDto();
     }
 
     public async Task<CardGetDto?> GetCard(int cardId, bool includeChecklist = true)

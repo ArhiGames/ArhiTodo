@@ -5,7 +5,7 @@ namespace ArhiTodo.Domain.Repositories;
 public interface ILabelRepository
 {
     Task<Label?> CreateLabelAsync(Label label);
-    Task<bool> UpdateLabelAsync(int labelId, string? labelText, int? labelColor);
+    Task<Label?> UpdateLabelAsync(int labelId, string? labelText, int? labelColor);
     Task<bool> DeleteLabelAsync(int labelId);
     Task<List<Label>> GetAllAsync(int boardId);
     

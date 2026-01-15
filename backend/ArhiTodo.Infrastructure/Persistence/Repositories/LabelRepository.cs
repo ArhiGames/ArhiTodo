@@ -14,35 +14,23 @@ public class LabelRepository(ProjectDataBase database) : ILabelRepository
         return labelEntry.Entity;
     }
 
-    public async Task<bool> UpdateLabelAsync(int labelId, string? labelText, int? labelColor)
+    public async Task<Label?> UpdateLabelAsync(int labelId, string? labelText, int? labelColor)
     {
-        int changedRows;
-        if (labelText != null && labelColor != null)
+        Label? label = await database.Labels.FindAsync(labelId);
+        if (label == null) return null;
+
+        if (labelText != null)
         {
-            changedRows = await database.Labels
-                .Where(l => l.LabelId == labelId)
-                .ExecuteUpdateAsync(
-                    p => p.SetProperty(l => l.LabelText, labelText)
-                        .SetProperty(l => l.LabelColor, labelColor));
-        }
-        else if (labelText != null)
-        {
-            changedRows = await database.Labels
-                .Where(l => l.LabelId == labelId)
-                .ExecuteUpdateAsync(p => p.SetProperty(l => l.LabelText, labelText));
-        }
-        else if (labelColor != null)
-        {
-            changedRows = await database.Labels
-                .Where(l => l.LabelId == labelId)
-                .ExecuteUpdateAsync(p => p.SetProperty(l => l.LabelColor, labelColor));
-        }
-        else
-        {
-            throw new ApplicationException("Unhandled label state");
+            label.LabelText = labelText;
         }
 
-        return changedRows == 1;
+        if (labelColor.HasValue)
+        {
+            label.LabelColor = labelColor.Value;
+        }
+
+        await database.SaveChangesAsync();
+        return label;
     }
 
     public async Task<bool> DeleteLabelAsync(int labelId)

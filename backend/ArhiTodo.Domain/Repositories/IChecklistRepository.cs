@@ -9,5 +9,5 @@ public interface IChecklistRepository
     
     Task<ChecklistItem?> AddChecklistItemToChecklist(ChecklistItem checklistItem);
     Task<bool> RemoveChecklistItemFromChecklist(int checklistItemId);
-    Task<bool> PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
+    Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
 }

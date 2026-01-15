@@ -1,7 +1,7 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
@@ -33,9 +33,9 @@ public class ChecklistService(IChecklistRepository checklistRepository) : ICheck
         return succeeded;
     }
 
-    public async Task<bool> PatchChecklistItemState(int checklistItemId, bool newState)
+    public async Task<ChecklistItemGetDto?> PatchChecklistItemState(int checklistItemId, bool newState)
     {
-        bool succeeded = await checklistRepository.PatchChecklistItemDoneState(checklistItemId, newState);
-        return succeeded;
+        ChecklistItem? checklistItem = await checklistRepository.PatchChecklistItemDoneState(checklistItemId, newState);
+        return checklistItem?.ToGetDto();
     }
 }

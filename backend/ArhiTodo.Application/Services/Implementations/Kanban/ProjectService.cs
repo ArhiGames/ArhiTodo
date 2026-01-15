@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces;
+using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
