@@ -6,4 +6,6 @@ export const InitialState: State = {
     cards: {},
     labels: {},
     cardLabels: {},
+    checklists: {},
+    checklistItems: {}
 }

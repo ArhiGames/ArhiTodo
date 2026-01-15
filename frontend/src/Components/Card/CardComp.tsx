@@ -6,6 +6,7 @@ import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import type {ChecklistGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
 
 const CardComp = (props: { card: CardGetDto }) => {
 
@@ -64,11 +65,31 @@ const CardComp = (props: { card: CardGetDto }) => {
             })
     }
 
+    function getTotalTasks(checklists: ChecklistGetDto[]) {
+        let totalTasks = 0;
+        for (const checklist of checklists) {
+            totalTasks += checklist.checklistItems.length;
+        }
+        return totalTasks;
+    }
+
+    function getTotalTasksCompleted(checklists: ChecklistGetDto[]) {
+        let totalCompletedTasks = 0;
+        for (const checklist of checklists) {
+            for (const checklistItem of checklist.checklistItems) {
+                if (checklistItem.isDone) {
+                    totalCompletedTasks++;
+                }
+            }
+        }
+        return totalCompletedTasks;
+    }
+
     return (
         <div onClick={openCard} className="card" onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
-            { props.card.labels.length > 0 && (
+            { props.card.labelIds.length > 0 && (
                 <div className="card-labels-div">
-                    { props.card.labels.map(({ labelId }) => {
+                    { props.card.labelIds.map((labelId: number) => {
                         return label(labelId);
                     })}
                 </div>
@@ -78,9 +99,9 @@ const CardComp = (props: { card: CardGetDto }) => {
                      className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</div>
                 <p>{props.card.cardName}</p>
             </div>
-            { (props.card.totalTasks !== undefined && props.card.totalTasks > 0) && (
+            { (props.card.checklists !== undefined && props.card.checklists.length > 0) && (
                 <div className="card-checklist-hint">
-                    <p>✓ {props.card.totalTasksCompleted} / {props.card.totalTasks}</p>
+                    <p>✓ {getTotalTasksCompleted(props.card.checklists)} / {getTotalTasks(props.card.checklists)}</p>
                 </div>
             ) }
 

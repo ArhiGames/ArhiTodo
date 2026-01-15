@@ -1,4 +1,3 @@
-using System.Data;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
@@ -46,16 +45,9 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardCreateDto boardCreateDto)
     {
-        try
-        {
-            BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
-            if (board == null) return NotFound();
-            return Ok(board);
-        }
-        catch (DuplicateNameException)
-        {
-            return Conflict("Board with the same name already exists!");
-        }
+        BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
+        if (board == null) return NotFound();
+        return Ok(board);
     }
 
     [HttpPut("project/{projectId:int}/board/")]

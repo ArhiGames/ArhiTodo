@@ -8,6 +8,5 @@ public interface IBoardRepository
     Task<Board?> UpdateAsync(Board board);
     Task<bool> DeleteAsync(int boardId);
     Task<List<Board>> GetAllAsync(int projectId);
-    // @Todo
     Task<Board?> GetAsync(int boardId);
 }

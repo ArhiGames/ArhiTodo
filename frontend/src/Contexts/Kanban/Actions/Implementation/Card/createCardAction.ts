@@ -11,8 +11,6 @@ const createCardAction = (state: State, payload: CreateCardPayload): State => {
                 cardId: payload.cardId,
                 cardName: payload.cardName,
                 isDone: false,
-                totalTasks: 0,
-                totalTasksCompleted: 0,
                 cardListId: payload.cardListId,
             }
         },

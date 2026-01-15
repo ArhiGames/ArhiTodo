@@ -14,12 +14,13 @@ public static class ChecklistItemMapper
         };
     }
 
-    public static ChecklistItemGetDto ToGetDto(this ChecklistItem checklist)
+    public static ChecklistItemGetDto ToGetDto(this ChecklistItem checklistItem)
     {
         return new ChecklistItemGetDto
         {
-            ChecklistItemId = checklist.ChecklistId,
-            ChecklistItemName = checklist.ChecklistItemName
+            ChecklistItemId = checklistItem.ChecklistItemId,
+            ChecklistItemName = checklistItem.ChecklistItemName,
+            IsDone = checklistItem.IsDone
         };
     }
 }
