@@ -6,6 +6,8 @@ import {loginApi, logoutApi, refreshApi, registerApi} from "../../Services/AuthS
 import { useNavigate } from "react-router-dom";
 import type { AppUser } from "../../Models/AppUser.ts";
 
+let refreshingPromise: Promise<boolean> | null = null;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const navigate = useNavigate();
@@ -56,6 +58,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const checkRefresh = useCallback(async (): Promise<boolean> => {
 
+        if (refreshingPromise) {
+            return refreshingPromise;
+        }
+
         const savedToken = localStorage.getItem("token");
         if (!savedToken) {
             return false;
@@ -69,23 +75,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return true;
         }
 
-        let jwt: JwtPayload | null;
-        try {
-            jwt = await refreshApi();
-        } catch (e) {
-            console.error(e);
-            await logout();
-            return false;
-        }
+        refreshingPromise = (async () => {
+            try {
+                const jwt = await refreshApi();
+                if (!jwt) {
+                    await logout();
+                    return false;
+                }
+                onLoggedIn(jwt);
+                return true;
+            } catch (e) {
+                console.error(e);
+                await logout();
+                return false;
+            } finally {
+                refreshingPromise = null;
+            }
+        })();
 
-
-        if (!jwt) {
-            await logout();
-            return false;
-        }
-
-        onLoggedIn(jwt);
-        return true;
+        return refreshingPromise;
 
     }, [logout])
 
