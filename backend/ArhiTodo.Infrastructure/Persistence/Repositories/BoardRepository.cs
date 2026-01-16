@@ -52,7 +52,7 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
                     .ThenInclude(c => c.Checklists)
                         .ThenInclude(c => c.ChecklistItems)
             .AsSplitQuery()
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(b => b.BoardId == boardId);
 
         return board;
     }
