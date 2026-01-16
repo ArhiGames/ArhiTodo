@@ -196,7 +196,10 @@ const CardDetailChecklistComp = (props: Props) => {
                 <div>
                     <button onClick={() => setShowingCompletedTasks(!showingCompletedTasks)} className="button standard-button">
                         { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
-                    <button onClick={() => setIsDeletingChecklist(true)} className="button standard-button">Remove</button>
+                    <div className="card-detail-checklist-img-container">
+                        <img src="../../../../../public/trashcan-icon.svg" alt="Remove" height="40px"
+                             onClick={() => setIsDeletingChecklist(true)}/>
+                    </div>
                     {
                         isDeletingChecklist && (
                             createPortal(
