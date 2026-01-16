@@ -1,87 +1,47 @@
-import type {DetailedCardGetDto} from "../../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
 import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
 import "./CardDetailChecklistsComp.css"
 import CardDetailChecklistComp from "./CardDetailChecklistComp.tsx";
 import Popover from "../../../../lib/Popover/Popover.tsx";
-import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from "react";
+import {type FormEvent, useEffect, useRef, useState} from "react";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
+import type {Checklist} from "../../../../Models/States/types.ts";
 
 interface Props {
-    cardDetailComp: DetailedCardGetDto;
-    setCardDetailComp: Dispatch<SetStateAction<DetailedCardGetDto | undefined>>;
+    cardId: number;
 }
 
-const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props ) => {
+const CardDetailChecklistsComp = ( props: Props ) => {
 
     const { token, checkRefresh } = useAuth();
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
     const [inputtedChecklistName, setInputtedChecklistName] = useState<string>("");
+    const kanbanState = useKanbanState();
+    const dispatch = useKanbanDispatch();
 
-    function createChecklistLocally() {
+    async function onCreateChecklistSubmit(e: FormEvent<HTMLFormElement>) {
 
-        let predictedChecklistId = 0;
-        for (const checklist of cardDetailComp.checklists) {
-            if (predictedChecklistId < checklist.checklistId) {
-                predictedChecklistId = checklist.checklistId;
-            }
-        }
-        predictedChecklistId++;
-
-        const checklist: ChecklistGetDto = { checklistId: predictedChecklistId, checklistName: inputtedChecklistName, checklistItems: [] }
-
-        setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: [
-                    ...prev.checklists,
-                    checklist
-                ]
-            }
-        });
-        return predictedChecklistId;
-
-    }
-
-    function correctPredictedChecklistLocally(predictedChecklistId: number, actual: ChecklistGetDto) {
-        setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: prev.checklists.map((checklist: ChecklistGetDto) => {
-                    return checklist.checklistId === predictedChecklistId ? actual : checklist;
-                })
-            }
-        });
-    }
-
-    function deleteChecklistLocally(checklistId: number) {
-        setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: prev.checklists.filter((checklist: ChecklistGetDto) => checklist.checklistId !== checklistId)
-            }
-        });
-    }
-
-    async function onCreateChecklistSubmit() {
-
-        const predictedChecklistId = createChecklistLocally();
+        e.preventDefault();
 
         const succeeded = await checkRefresh();
-        if (!succeeded) {
-            deleteChecklistLocally(predictedChecklistId);
-            return;
+        if (!succeeded) return;
+
+        const predictedChecklistId: number = Date.now() * -1;
+
+        if (dispatch) {
+            dispatch({
+                type: "CREATE_CHECKLIST_OPTIMISTIC", payload: {
+                    checklistId: predictedChecklistId,
+                    checklistName: inputtedChecklistName,
+                    cardId: props.cardId,
+                }
+            })
         }
 
-        fetch(`${API_BASE_URL}/card/${cardDetailComp.cardId}/checklist`, {
+        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ checklistName: inputtedChecklistName })
@@ -94,11 +54,17 @@ const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props )
                 return res.json();
             })
             .then((checklist: ChecklistGetDto) => {
-                console.log(checklist);
-                correctPredictedChecklistLocally(predictedChecklistId, checklist);
+                if (dispatch) {
+                    dispatch({
+                        type: "CREATE_CHECKLIST_SUCCEEDED",
+                        payload: {predictedChecklistId: predictedChecklistId, actualChecklistId: checklist.checklistId}
+                    })
+                }
             })
             .catch(err => {
-                deleteChecklistLocally(predictedChecklistId);
+                if (dispatch) {
+                    dispatch({ type: "DELETE_CHECKLIST", payload: { checklistId: predictedChecklistId } });
+                }
                 console.error(err);
             })
 
@@ -136,10 +102,9 @@ const CardDetailChecklistsComp = ({ cardDetailComp, setCardDetailComp }: Props )
                 }
             </div>
             {
-                cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                    return <CardDetailChecklistComp key={checklist.checklistId}
-                                                    checklist={checklist} cardDetailComp={cardDetailComp} setCardDetailComp={setCardDetailComp}
-                                                    createChecklistLocally={createChecklistLocally} deleteChecklistLocally={deleteChecklistLocally}/>
+                Object.values(kanbanState.checklists).map((checklist: Checklist) => {
+                    if (checklist.cardId !== props.cardId) return null;
+                    return <CardDetailChecklistComp key={checklist.checklistId} cardId={props.cardId} checklistId={checklist.checklistId}/>
                 })
             }
         </div>

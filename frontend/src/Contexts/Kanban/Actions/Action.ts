@@ -83,16 +83,30 @@ export type UpdateCardStatePayload = {
     newState: boolean;
 }
 
-export type AddUndetailedTaskToCardPayload = {
-    taskToCardId: number;
-}
-
-export type RemoveUndetailedTaskFromCardPayload = {
-    taskFromCardId: number;
-}
-
-export type ChangeTaskStatePayload = {
+export type CreateChecklistPayload = {
+    checklistId: number;
+    checklistName: string;
     cardId: number;
+}
+
+export type CreateChecklistSucceededPayload = {
+    predictedChecklistId: number;
+    actualChecklistId: number;
+}
+
+export type CreateChecklistItemPayload = {
+    checklistItemId: number;
+    checklistItemName: string;
+    checklistId: number;
+}
+
+export type CreateChecklistItemSucceededPayload = {
+    predictedChecklistItemId: number;
+    actualChecklistItemId: number;
+}
+
+export type UpdateChecklistItemStateAction = {
+    checklistItemId: number;
     newState: boolean;
 }
 
@@ -128,6 +142,11 @@ export type Action =
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
     { type: "DELETE_CARD", payload: { cardId: number } } |
 
-    { type: "ADD_UNDETAILED_TASK_TO_CARD", payload: AddUndetailedTaskToCardPayload } |
-    { type: "REMOVE_UNDETAILED_TASK_FROM_CARD", payload: RemoveUndetailedTaskFromCardPayload } |
-    { type: "CHANGE_UNDETAILED_TASK_STATE", payload: ChangeTaskStatePayload }
+    { type: "CREATE_CHECKLIST_OPTIMISTIC", payload: CreateChecklistPayload } |
+    { type: "CREATE_CHECKLIST_SUCCEEDED", payload: CreateChecklistSucceededPayload } |
+    { type: "DELETE_CHECKLIST", payload: { checklistId: number } } |
+
+    { type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: CreateChecklistItemPayload } |
+    { type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: CreateChecklistItemSucceededPayload } |
+    { type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: number } } |
+    { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction }

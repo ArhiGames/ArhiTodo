@@ -21,12 +21,18 @@ import addLabelToCard from "../Contexts/Kanban/Actions/Implementation/Labels/add
 import removeLabelFromCard from "../Contexts/Kanban/Actions/Implementation/Labels/removeLabelFromCard.ts";
 import updateCardNameAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardNameAction.ts";
 import updateCardStateAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardStateAction.ts";
-import addUndetailedTaskToCardAction
-    from "../Contexts/Kanban/Actions/Implementation/Checklist/addUndetailedTaskToCardAction.ts";
-import removeUndetailedTaskFromCard
-    from "../Contexts/Kanban/Actions/Implementation/Checklist/removeUndetailedTaskFromCard.ts";
-import changeUndetailedTaskStateAction
-    from "../Contexts/Kanban/Actions/Implementation/Checklist/changeUndetailedTaskStateAction.ts";
+import createChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/createChecklistAction.ts";
+import deleteChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/deleteChecklistAction.ts";
+import createChecklistSucceededAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/createChecklistSucceededAction.ts";
+import changeChecklistItemStateAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/changeChecklistItemStateAction.ts";
+import createChecklistItemAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/createChecklistItemAction.ts";
+import deleteChecklistItemAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/deleteChecklistItemAction.ts";
+import createChecklistItemSucceededAction
+    from "../Contexts/Kanban/Actions/Implementation/Checklist/createChecklistItemSucceededAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -85,12 +91,21 @@ function rootReducer(state: State, action: Action): State {
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
 
-        case "ADD_UNDETAILED_TASK_TO_CARD":
-            return addUndetailedTaskToCardAction(state, action.payload);
-        case "REMOVE_UNDETAILED_TASK_FROM_CARD":
-            return removeUndetailedTaskFromCard(state, action.payload);
-        case "CHANGE_UNDETAILED_TASK_STATE":
-            return changeUndetailedTaskStateAction(state, action.payload);
+        case "CREATE_CHECKLIST_OPTIMISTIC":
+            return createChecklistAction(state, action.payload);
+        case "CREATE_CHECKLIST_SUCCEEDED":
+            return createChecklistSucceededAction(state, action.payload);
+        case "DELETE_CHECKLIST":
+            return deleteChecklistAction(state, action.payload);
+
+        case "CREATE_CHECKLIST_ITEM_OPTIMISTIC":
+            return createChecklistItemAction(state, action.payload);
+        case "CREATE_CHECKLIST_ITEM_SUCCEEDED":
+            return createChecklistItemSucceededAction(state, action.payload);
+        case "DELETE_CHECKLIST_ITEM":
+            return deleteChecklistItemAction(state, action.payload);
+        case "CHANGE_CHECKLIST_ITEM_STATE":
+            return changeChecklistItemStateAction(state, action.payload);
     }
 }
 

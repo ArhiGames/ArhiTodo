@@ -1,38 +1,46 @@
 import "./CardDetailChecklistsComp.css"
 import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
-import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
-import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from "react";
+import {type FormEvent, useEffect, useRef, useState} from "react";
 import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
-import type {DetailedCardGetDto} from "../../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
-import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {createPortal} from "react-dom";
-import {useKanbanDispatch} from "../../../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
+import type { ChecklistItem } from "../../../../Models/States/types.ts";
+import {API_BASE_URL} from "../../../../config/api.ts";
 
 interface Props {
-    checklist: ChecklistGetDto;
-    cardDetailComp: DetailedCardGetDto;
-    setCardDetailComp: Dispatch<SetStateAction<DetailedCardGetDto | undefined>>;
-    createChecklistLocally: () => void;
-    deleteChecklistLocally: (checklistId: number) => void;
+    cardId: number;
+    checklistId: number;
 }
 
 const CardDetailChecklistComp = (props: Props) => {
 
     const { token, checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
+
+    const kanbanState = useKanbanState();
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
+    const checklist = kanbanState.checklists[props.checklistId];
+    const checklistItems: ChecklistItem[] = [];
+    Object.values(kanbanState.checklistItems).forEach((checklistItem: ChecklistItem)=> {
+        if (checklistItem.checklistId === props.checklistId) {
+            checklistItems.push(checklistItem);
+        }
+    })
 
     const addingTaskInputRef = useRef<HTMLInputElement>(null);
     const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
     const [addingTaskInputValue, setAddingTaskInputValue] = useState<string>("");
-
     const [isDeletingChecklist, setIsDeletingChecklist] = useState<boolean>(false);
 
+    function getTotalTasks() {
+        return checklistItems.length;
+    }
+
     function getCompletedTasks() {
-        let completedTasks: number = 0;
-        for (const checklistItem of props.checklist.checklistItems) {
+        let completedTasks = 0;
+        for (const checklistItem of checklistItems) {
             if (checklistItem.isDone) {
                 completedTasks++;
             }
@@ -41,204 +49,136 @@ const CardDetailChecklistComp = (props: Props) => {
     }
 
     function getCompletedTasksPercentage() {
+        const totalTasks = getTotalTasks();
         const completedTasks = getCompletedTasks();
-        return completedTasks / props.checklist.checklistItems.length;
-    }
-
-    function patchDoneStateLocally(checklistItemId: number, checked: boolean) {
-
-        const detailedCard: DetailedCardGetDto = {
-            ...props.cardDetailComp,
-            checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                return props.checklist.checklistId === checklist.checklistId ? {
-                    ...checklist,
-                    checklistItems: checklist.checklistItems.map((checklistItem: ChecklistItemGetDto) => {
-                        return checklistItem.checklistItemId === checklistItemId ? {
-                            ...checklistItem,
-                            isDone: checked,
-                        } : checklistItem;
-                    })
-                } : checklist
-            })
-        }
-
-        props.setCardDetailComp(detailedCard);
-    }
-
-    function addChecklistItemToChecklistLocally() {
-
-        let predictedId: number = 0;
-        for (const checklistItem of props.checklist.checklistItems) {
-            if (predictedId < checklistItem.checklistItemId) {
-                predictedId = checklistItem.checklistItemId;
-            }
-        }
-        predictedId++;
-
-        const checklistItemGetDto: ChecklistItemGetDto = { checklistItemId: predictedId, checklistItemName: addingTaskInputValue, isDone: false };
-
-        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: prev.checklists.map((checklist: ChecklistGetDto) => {
-                    return checklist.checklistId === props.checklist.checklistId ? {
-                        ...checklist,
-                        checklistItems: [
-                            ...checklist.checklistItems,
-                            checklistItemGetDto
-                        ]
-                    } : checklist
-                })
-            }
-        });
-        return predictedId;
-    }
-
-    function correctPredictedChecklistItem(predictedId: number, actual: ChecklistItemGetDto) {
-
-        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: prev.checklists.map((checklist: ChecklistGetDto) => {
-                    return props.checklist.checklistId === checklist.checklistId ? {
-                        ...checklist,
-                        checklistItems: checklist.checklistItems.map((checklistItem: ChecklistItemGetDto) => {
-                            return checklistItem.checklistItemId === predictedId ? actual : checklistItem;
-                        })
-                    } : checklist
-                })
-            }
-        } );
-    }
-
-    function deleteChecklistItemFromChecklistLocally(checklistItemId: number) {
-
-        props.setCardDetailComp((prev: DetailedCardGetDto | undefined) => {
-            if (!prev) return prev;
-
-            return {
-                ...prev,
-                checklists: props.cardDetailComp.checklists.map((checklist: ChecklistGetDto) => {
-                    return checklist.checklistId === props.checklist.checklistId ? {
-                        ...checklist,
-                        checklistItems: checklist.checklistItems.filter(
-                            (checklistItem: ChecklistItemGetDto) => checklistItem.checklistItemId !== checklistItemId)
-                    } : checklist
-                })
-            }
-        });
-    }
-
-    async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
-        patchDoneStateLocally(checklistItemId, checked);
-
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
-
-        fetch(`${API_BASE_URL}/checklist/item/${checklistItemId}/done/${checked}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Could not patch checklist checked state")
-                }
-
-                return res.json();
-            })
-            .then((checklistItemGetDto: ChecklistItemGetDto) => {
-                patchDoneStateLocally(checklistItemId, checklistItemGetDto.isDone);
-                if (dispatch) {
-                    dispatch({type: "CHANGE_UNDETAILED_TASK_STATE", payload: { cardId: props.cardDetailComp.cardId, newState: checklistItemGetDto.isDone }})
-                }
-            })
-            .catch(err => {
-                patchDoneStateLocally(checklistItemId, !checked);
-                console.error(err);
-            })
-
-    }
-
-    async function onAddTaskButtonPressed() {
-        if (!isAddingTask || addingTaskInputValue.length === 0) return;
-
-        const predictedId: number = addChecklistItemToChecklistLocally();
-
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
-
-        fetch(`${API_BASE_URL}/checklist/${props.checklist.checklistId}/item`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ "checklistItemName": addingTaskInputValue })
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Could not create checklist-item!");
-                }
-
-                return res.json();
-            })
-            .then((checklistItemGetDto: ChecklistItemGetDto) => {
-                correctPredictedChecklistItem(predictedId, checklistItemGetDto);
-                if (dispatch) {
-                    dispatch({type: "ADD_UNDETAILED_TASK_TO_CARD", payload: { taskToCardId: props.cardDetailComp.cardId }})
-                }
-            })
-            .catch(err => {
-                deleteChecklistItemFromChecklistLocally(predictedId);
-                console.error(err);
-            })
-
-        setIsAddingTask(false);
-        setAddingTaskInputValue("");
+        return completedTasks / totalTasks;
     }
 
     async function deleteChecklist() {
 
-        const totalTasks: number = props.checklist.checklistItems.length;
-        let completedTasks: number = 0;
-        for (const checklistItem of props.checklist.checklistItems) {
-            if (checklistItem.isDone) {
-                completedTasks++;
-            }
-        }
-
         const succeeded = await checkRefresh();
         if (!succeeded) return;
 
-        fetch(`${API_BASE_URL}/card/${props.cardDetailComp.cardId}/checklist/${props.checklist.checklistId}`, {
+        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist/${props.checklistId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error("Could not delete checklist!");
+                    throw new Error(`Could not delete checklist with id ${props.checklistId}`);
                 }
 
                 if (dispatch) {
-                    for (let i = 0; i < totalTasks; i++) {
-                        dispatch({ type: "REMOVE_UNDETAILED_TASK_FROM_CARD", payload: { taskFromCardId: props.cardDetailComp.cardId } })
-                    }
-
-                    for (let i = 0; i < completedTasks; i++) {
-                        dispatch({ type: "CHANGE_UNDETAILED_TASK_STATE", payload: { cardId: props.cardDetailComp.cardId, newState: false } })
-                    }
+                    dispatch({ type: "DELETE_CHECKLIST", payload: { checklistId: props.checklistId } })
                 }
-                props.deleteChecklistLocally(props.checklist.checklistId);
             })
             .catch(err => {
-
                 console.error(err);
             })
 
     }
 
-    function cancelCardAddition() {
+    async function onAddTaskButtonPressed(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        const predictedChecklistItemId = Date.now() * -1;
+
+        if (dispatch) {
+            dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
+                    checklistItemId: predictedChecklistItemId,
+                    checklistItemName: addingTaskInputValue,
+                    checklistId: props.checklistId
+                }})
+        }
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            if (dispatch) {
+                dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: predictedChecklistItemId } })
+            }
+            return;
+        }
+
+        fetch(`${API_BASE_URL}/checklist/${props.checklistId}/item`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ checklistItemName: addingTaskInputValue })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Could not create checklist item id on ${props.checklistId}`);
+                }
+
+                return res.json();
+            })
+            .then((checklistItem: ChecklistItemGetDto)=> {
+                if (dispatch) {
+                    dispatch({ type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: {
+                        predictedChecklistItemId: predictedChecklistItemId,
+                        actualChecklistItemId: checklistItem.checklistItemId
+                    }})
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if (dispatch) {
+                    dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: predictedChecklistItemId } })
+                }
+            })
+
+        setAddingTaskInputValue("");
+        setIsAddingTask(false);
+    }
+
+    async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
+
+        if (dispatch) {
+            dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
+                checklistItemId: checklistItemId,
+                newState: checked
+            }});
+        }
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            if (dispatch) {
+                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
+                        checklistItemId: checklistItemId,
+                        newState: !checked
+                }});
+            }
+            return;
+        }
+
+        fetch(`${API_BASE_URL}/checklist/item/${checklistItemId}/done/${checked}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Could update checklist item state with id ${props.checklistId}`);
+                }
+
+                return res.json();
+            })
+            .then((checklistItemGetDto: ChecklistItemGetDto) => {
+                if (dispatch) {
+                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItemGetDto.isDone } });
+                }
+            })
+            .catch(err => {
+                if (dispatch) {
+                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
+                            checklistItemId: checklistItemId,
+                            newState: !checked
+                    }});
+                }
+                console.error(err);
+            })
+
+    }
+
+    function cancelTaskAddition() {
         setIsAddingTask(false);
         setAddingTaskInputValue("");
     }
@@ -250,9 +190,9 @@ const CardDetailChecklistComp = (props: Props) => {
     }, [isAddingTask]);
 
     return (
-        <div className="card-detail-checklist" key={props.checklist.checklistId}>
+        <div className="card-detail-checklist">
             <div className="card-detail-checklist-header">
-                <p>{props.checklist.checklistName}</p>
+                <p>{checklist.checklistName}</p>
                 <div>
                     <button onClick={() => setShowingCompletedTasks(!showingCompletedTasks)} className="button standard-button">
                         { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
@@ -269,13 +209,13 @@ const CardDetailChecklistComp = (props: Props) => {
                 </div>
             </div>
             <div className="card-detail-progress-container">
-                <p>{ props.checklist.checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
+                <p>{ checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
                 <div className="card-detail-progress-bg">
                     <div className="card-detail-progress-fg" style={{ width: `${getCompletedTasksPercentage() * 100}%` }}/>
                 </div>
             </div>
             <div className="card-detail-checklist-items">
-                {props.checklist.checklistItems.map((checklistItem: ChecklistItemGetDto) => {
+                {checklistItems.map((checklistItem: ChecklistItemGetDto) => {
                     if (!showingCompletedTasks && checklistItem.isDone) return null;
                     return (
                         <div key={checklistItem.checklistItemId} className="card-detail-checklist-item">
@@ -289,9 +229,10 @@ const CardDetailChecklistComp = (props: Props) => {
             <div className="card-detail-checklistitem-add">
                 {
                     isAddingTask ? (
-                        <form onSubmit={onAddTaskButtonPressed} onReset={cancelCardAddition}>
-                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input" maxLength={256}
-                                   value={addingTaskInputValue} onChange={(e) => setAddingTaskInputValue(e.target.value)}/>
+                        <form onSubmit={onAddTaskButtonPressed} onReset={cancelTaskAddition}>
+                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input" minLength={1} maxLength={256}
+                                   required value={addingTaskInputValue}
+                                   onChange={(e) => setAddingTaskInputValue(e.target.value)}/>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
                                 <button className={`button ${addingTaskInputValue.length > 0 ? "valid-submit-button" : "standard-button"}`}
                                         type="submit">Add task</button>

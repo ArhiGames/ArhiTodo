@@ -49,6 +49,6 @@ public class ChecklistController(IChecklistService checklistService) : Controlle
     {
         ChecklistItemGetDto? checklistItemGetDto = await checklistService.PatchChecklistItemState(checklistItemId, taskDone);
         if (checklistItemGetDto == null) return NotFound();
-        return Ok();
+        return Ok(checklistItemGetDto);
     }
 }

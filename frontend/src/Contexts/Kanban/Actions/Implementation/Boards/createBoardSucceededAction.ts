@@ -1,5 +1,5 @@
 import type { State } from "../../../../../Models/States/types.ts";
-import type { CreateBoardSucceededPayload } from "../../Action.ts";
+import type {CreateBoardSucceededPayload} from "../../Action.ts";
 
 const createBoardSucceededAction = (state: State, payload: CreateBoardSucceededPayload) => {
 
