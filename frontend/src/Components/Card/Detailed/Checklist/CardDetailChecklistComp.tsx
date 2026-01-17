@@ -1,13 +1,13 @@
 import "./CardDetailChecklistsComp.css"
 import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
 import {type FormEvent, useEffect, useRef, useState} from "react";
-import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {createPortal} from "react-dom";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import type { ChecklistItem } from "../../../../Models/States/types.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
+import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 
 interface Props {
     cardId: number;
@@ -130,98 +130,7 @@ const CardDetailChecklistComp = (props: Props) => {
         setIsAddingTask(false);
     }
 
-    async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
 
-        if (dispatch) {
-            dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
-                checklistItemId: checklistItemId,
-                newState: checked
-            }});
-        }
-
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
-            if (dispatch) {
-                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
-                        checklistItemId: checklistItemId,
-                        newState: !checked
-                }});
-            }
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/checklist/item/${checklistItemId}/done/${checked}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Could update checklist item state with id ${props.checklistId}`);
-                }
-
-                return res.json();
-            })
-            .then((checklistItemGetDto: ChecklistItemGetDto) => {
-                if (dispatch) {
-                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItemGetDto.isDone } });
-                }
-            })
-            .catch(err => {
-                if (dispatch) {
-                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
-                            checklistItemId: checklistItemId,
-                            newState: !checked
-                    }});
-                }
-                console.error(err);
-            })
-
-    }
-
-    async function handleChecklistItemRemovePressed(checklistItemId: number) {
-
-        if (checklistItemId < 0) return;
-
-        const checklistItem = kanbanState.checklistItems[checklistItemId];
-
-        if (dispatch) {
-            dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: checklistItemId } });
-        }
-
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
-            if (dispatch) {
-                dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
-                        checklistItemId: checklistItemId,
-                        checklistItemName: checklistItem.checklistItemName,
-                        checklistId: checklistItem.checklistId,
-                    }})
-                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
-            }
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/checklist/${checklistItem.checklistId}/item/${checklistItemId}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Could not delete checklist item with id ${checklistItemId}`);
-                }
-            })
-            .catch(err => {
-                if (dispatch) {
-                    dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
-                            checklistItemId: checklistItemId,
-                            checklistItemName: checklistItem.checklistItemName,
-                            checklistId: checklistItem.checklistId,
-                        }})
-                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
-                }
-                console.error(err);
-            })
-    }
 
     function cancelTaskAddition() {
         setIsAddingTask(false);
@@ -265,19 +174,7 @@ const CardDetailChecklistComp = (props: Props) => {
             <div className="card-detail-checklist-items">
                 {checklistItems.map((checklistItem: ChecklistItemGetDto) => {
                     if (!showingCompletedTasks && checklistItem.isDone) return null;
-                    return (
-                        <div key={checklistItem.checklistItemId} className="card-detail-checklist-item">
-                            <div className="card-detail-checklist-item-info">
-                                <FancyCheckbox value={checklistItem.isDone} onChange={(checked: boolean) =>
-                                    handleCheckboxClick(checklistItem.checklistItemId, checked)}/>
-                                <p>{checklistItem.checklistItemName}</p>
-                            </div>
-                            <div className="card-detail-checklist-item-action">
-                                <img height="32px" src="/public/trashcan-icon.svg" alt="Remove"
-                                     onClick={() => handleChecklistItemRemovePressed(checklistItem.checklistItemId)}></img>
-                            </div>
-                        </div>
-                    )
+                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} checklistItem={checklistItem}/>
                 })}
             </div>
             <div className="card-detail-checklistitem-add">
