@@ -5,6 +5,7 @@ namespace ArhiTodo.Domain.Repositories;
 public interface IChecklistRepository
 {
     Task<Checklist?> CreateChecklistOnCard(Checklist checklist);
+    Task<Checklist?> UpdateChecklist(Checklist checklist);
     Task<bool> DeleteChecklistFromCard(int checkListId);
     
     Task<ChecklistItem?> AddChecklistItemToChecklist(ChecklistItem checklistItem);

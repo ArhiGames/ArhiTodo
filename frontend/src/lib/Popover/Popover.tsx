@@ -20,14 +20,12 @@ const Popover = ( { element, children, close, closeIfClickedOutside = true, offs
         if (!closeIfClickedOutside) return;
 
         function handleClicked(e: MouseEvent) {
-
             e.stopPropagation();
             if (!popoverRef.current) return;
 
             if (!popoverRef.current.contains(e.target as Node)) {
                 close(e);
             }
-
         }
 
         document.addEventListener("mousedown", handleClicked);

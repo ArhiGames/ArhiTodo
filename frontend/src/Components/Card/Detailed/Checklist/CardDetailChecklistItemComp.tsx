@@ -180,6 +180,11 @@ const CardDetailChecklistItemComp = (props: Props) => {
             })
     }
 
+    function resetChecklistItemUpdate() {
+        setIsEditing(false);
+        setChecklistItemInput(props.checklistItem.checklistItemName);
+    }
+
     useEffect(() => {
 
         if (isEditing) {
@@ -208,7 +213,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
             {
                 isEditing ? (
                     <form ref={checklistItemForm} className="card-detail-checklist-item-info-wrapper"
-                          onSubmit={handleChangeChecklistSubmit} onReset={() => setIsEditing(false)}>
+                          onSubmit={handleChangeChecklistSubmit} onReset={resetChecklistItemUpdate}>
                         <div className="card-detail-checklist-item-info">
                             <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
                                 handleCheckboxClick(props.checklistItem.checklistItemId, checked)}/>

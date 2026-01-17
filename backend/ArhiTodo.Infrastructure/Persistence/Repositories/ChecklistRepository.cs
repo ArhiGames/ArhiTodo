@@ -14,6 +14,17 @@ public class ChecklistRepository(ProjectDataBase database) : IChecklistRepositor
         return checklistEntry.Entity;
     }
 
+    public async Task<Checklist?> UpdateChecklist(Checklist checklist)
+    {
+        Checklist? foundChecklist = await database.Checklists.FindAsync(checklist.ChecklistId);
+        if (foundChecklist == null) return null;
+
+        foundChecklist.ChecklistName = checklist.ChecklistName;
+
+        await database.SaveChangesAsync();
+        return foundChecklist;
+    }
+
     public async Task<bool> DeleteChecklistFromCard(int checkListId)
     {
         int changedRows = await database.Checklists

@@ -14,6 +14,16 @@ public static class ChecklistMapper
         };
     }
 
+    public static Checklist FromUpdateDto(this ChecklistUpdateDto checklistUpdateDto, int cardId)
+    {
+        return new Checklist
+        {
+            ChecklistId = checklistUpdateDto.ChecklistId,
+            ChecklistName = checklistUpdateDto.ChecklistName,
+            CardId = cardId
+        };
+    }
+
     public static ChecklistGetDto ToGetDto(this Checklist checklist)
     {
         return new ChecklistGetDto

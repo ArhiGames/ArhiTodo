@@ -94,6 +94,11 @@ export type CreateChecklistSucceededPayload = {
     actualChecklistId: number;
 }
 
+export type UpdateChecklistPayload = {
+    checklistId: number;
+    checklistName: string;
+}
+
 export type CreateChecklistItemPayload = {
     checklistItemId: number;
     checklistItemName: string;
@@ -150,6 +155,7 @@ export type Action =
 
     { type: "CREATE_CHECKLIST_OPTIMISTIC", payload: CreateChecklistPayload } |
     { type: "CREATE_CHECKLIST_SUCCEEDED", payload: CreateChecklistSucceededPayload } |
+    { type: "UPDATE_CHECKLIST", payload: UpdateChecklistPayload } |
     { type: "DELETE_CHECKLIST", payload: { checklistId: number } } |
 
     { type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: CreateChecklistItemPayload } |

@@ -19,6 +19,14 @@ public class ChecklistController(IChecklistService checklistService) : Controlle
         return Ok(checklist);
     }
 
+    [HttpPut("card/{cardId:int}/checklist")]
+    public async Task<IActionResult> UpdateChecklist(int cardId, [FromBody] ChecklistUpdateDto checklistUpdateDto)
+    {
+        ChecklistGetDto? checklist = await checklistService.UpdateChecklist(cardId, checklistUpdateDto);
+        if (checklist == null) return NotFound();
+        return Ok(checklist);
+    }
+
     [HttpDelete("card/{cardId:int}/checklist/{checklistId:int}")]
     public async Task<IActionResult> DeleteChecklistFromCard(int cardId, int checklistId)
     {

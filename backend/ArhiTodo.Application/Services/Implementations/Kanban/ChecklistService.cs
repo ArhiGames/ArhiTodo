@@ -15,6 +15,12 @@ public class ChecklistService(IChecklistRepository checklistRepository) : ICheck
         return checklist?.ToGetDto();
     }
 
+    public async Task<ChecklistGetDto?> UpdateChecklist(int cardId, ChecklistUpdateDto checklistUpdateDto)
+    {
+        Checklist? checklist = await checklistRepository.UpdateChecklist(checklistUpdateDto.FromUpdateDto(cardId));
+        return checklist?.ToGetDto();
+    }
+
     public async Task<bool> DeleteChecklist(int checklistId)
     {
         bool succeeded = await checklistRepository.DeleteChecklistFromCard(checklistId);

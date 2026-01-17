@@ -35,6 +35,7 @@ import createChecklistItemSucceededAction
     from "../Contexts/Kanban/Actions/Implementation/Checklist/createChecklistItemSucceededAction.ts";
 import updateChecklistItemAction
     from "../Contexts/Kanban/Actions/Implementation/Checklist/updateChecklistItemAction.ts";
+import updateChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/updateChecklistAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -97,6 +98,8 @@ function rootReducer(state: State, action: Action): State {
             return createChecklistAction(state, action.payload);
         case "CREATE_CHECKLIST_SUCCEEDED":
             return createChecklistSucceededAction(state, action.payload);
+        case "UPDATE_CHECKLIST":
+            return updateChecklistAction(state, action.payload);
         case "DELETE_CHECKLIST":
             return deleteChecklistAction(state, action.payload);
 

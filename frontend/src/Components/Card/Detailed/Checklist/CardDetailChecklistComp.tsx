@@ -8,6 +8,7 @@ import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hoo
 import type { ChecklistItem } from "../../../../Models/States/types.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
+import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
 
 interface Props {
     cardId: number;
@@ -34,6 +35,10 @@ const CardDetailChecklistComp = (props: Props) => {
     const [addingTaskInputValue, setAddingTaskInputValue] = useState<string>("");
     const [isDeletingChecklist, setIsDeletingChecklist] = useState<boolean>(false);
 
+    const editingChecklistRef = useRef<HTMLInputElement | null>(null);
+    const [isEditingChecklist, setIsEditingChecklist] = useState<boolean>(false);
+    const [inputtedChecklistName, setInputtedChecklistName] = useState<string>(checklist.checklistName);
+
     function getTotalTasks() {
         return checklistItems.length;
     }
@@ -52,6 +57,53 @@ const CardDetailChecklistComp = (props: Props) => {
         const totalTasks = getTotalTasks();
         const completedTasks = getCompletedTasks();
         return completedTasks / totalTasks;
+    }
+
+    async function onChecklistUpdateSubmit(e: FormEvent<HTMLFormElement>) {
+
+        e.preventDefault();
+
+        if (inputtedChecklistName.length <= 0 || inputtedChecklistName === checklist.checklistName) return;
+
+        const oldChecklistName: string = checklist.checklistName;
+        setIsEditingChecklist(false);
+
+        if (dispatch) {
+            dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: inputtedChecklistName } })
+        }
+
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
+            if (dispatch) {
+                dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: oldChecklistName } })
+            }
+            return;
+        }
+
+        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            body: JSON.stringify({ checklistId: props.checklistId, checklistName: inputtedChecklistName })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to update checklist with id ${props.checklistId}`);
+                }
+
+                return res.json();
+            })
+            .then((checklist: ChecklistGetDto) => {
+                if (dispatch) {
+                    dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: checklist.checklistName } })
+                }
+            })
+            .catch(err => {
+                if (dispatch) {
+                    dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: oldChecklistName } })
+                }
+                console.error(err);
+            })
+
     }
 
     async function deleteChecklist() {
@@ -135,6 +187,19 @@ const CardDetailChecklistComp = (props: Props) => {
         setAddingTaskInputValue("");
     }
 
+    function resetChecklistUpdate() {
+        setIsEditingChecklist(false);
+        setInputtedChecklistName(checklist.checklistName);
+    }
+
+    useEffect(() => {
+
+        if (isEditingChecklist) {
+            editingChecklistRef.current?.focus();
+        }
+
+    }, [isEditingChecklist]);
+
     useEffect(() => {
         if (isAddingTask) {
             addingTaskInputRef.current?.focus();
@@ -143,25 +208,50 @@ const CardDetailChecklistComp = (props: Props) => {
 
     return (
         <div className="card-detail-checklist">
-            <div className="card-detail-checklist-header">
-                <p>{checklist.checklistName}</p>
-                <div>
-                    <button onClick={() => setShowingCompletedTasks(!showingCompletedTasks)} className="button standard-button">
-                        { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
-                    <div className="card-detail-checklist-img-container">
-                        <img src="/public/trashcan-icon.svg" alt="Remove" height="40px"
-                             onClick={() => setIsDeletingChecklist(true)}/>
-                    </div>
-                    {
-                        isDeletingChecklist && (
-                            createPortal(
-                                <ConfirmationModal title="Confirm your action!"
-                                                   actionDescription="If you confirm this action, the checklist will be irrevocably deleted."
-                                                   onClosed={() => setIsDeletingChecklist(false)}
-                                                   onConfirmed={deleteChecklist}/>, document.body)
-                        )
-                    }
-                </div>
+            <div onClick={() => setIsEditingChecklist(true)} className="card-detail-checklist-header">
+                {
+                    isEditingChecklist ? (
+                        <div className="card-detail-checklist-editing">
+                            <form onSubmit={onChecklistUpdateSubmit} onReset={resetChecklistUpdate}>
+                                <input ref={editingChecklistRef} className="classic-input small"
+                                       value={inputtedChecklistName} onChange={(e) => setInputtedChecklistName(e.target.value)}/>
+                                <button type="submit"
+                                        className={`button ${inputtedChecklistName.length > 0 && inputtedChecklistName !== checklist.checklistName 
+                                            ? "valid-submit-button" : "standard-button"}`}>Submit</button>
+                                <button type="reset" className="button standard-button">Cancel</button>
+                            </form>
+                        </div>
+
+                    ) : (
+                        <>
+                            <p>{checklist.checklistName}</p>
+                            <div className="card-detail-checklist-header-actions">
+                                <button onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowingCompletedTasks(!showingCompletedTasks)
+                                }} className="button standard-button">
+                                    { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
+                                <div className="card-detail-checklist-img-container">
+                                    <img src="/public/trashcan-icon.svg" alt="Remove" height="32px"
+                                         onClick={(e) => {
+                                             e.stopPropagation();
+                                             setIsDeletingChecklist(true)}
+                                         }/>
+                                </div>
+                                {
+                                    isDeletingChecklist && (
+                                        createPortal(
+                                            <ConfirmationModal title="Confirm your action!"
+                                                               actionDescription="If you confirm this action, the checklist will be irrevocably deleted."
+                                                               onClosed={() => setIsDeletingChecklist(false)}
+                                                               onConfirmed={deleteChecklist}/>, document.body)
+                                    )
+                                }
+                            </div>
+                        </>
+
+                    )
+                }
             </div>
             <div className="card-detail-progress-container">
                 <p>{ checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
