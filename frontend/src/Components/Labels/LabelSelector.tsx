@@ -27,7 +27,7 @@ const LabelSelector = ( props: Props ) => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [currentlyEditingLabel, setCurrentlyEditingLabel] = useState<Label | null>(null);
     const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
 
@@ -110,15 +110,15 @@ const LabelSelector = ( props: Props ) => {
         dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,
                 labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({type: "CREATE_LABEL_FAILED", payload: { labelToDelete: predictedId }})
             return;
         }
 
         fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
         })
             .then(res => {
@@ -148,14 +148,14 @@ const LabelSelector = ( props: Props ) => {
                 labelColor: toInteger(currentSelectedColor)
         } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             return;
         }
 
         fetch(`${API_BASE_URL}/label`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({
                 labelId: currentlyEditingLabel.labelId,
                 labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
@@ -178,13 +178,13 @@ const LabelSelector = ( props: Props ) => {
         cancelAction();
         if (!currentlyEditingLabel) return;
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/label/${currentlyEditingLabel.labelId}`,
             {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
             })
             .then(res => {
                 if (!res.ok) {

@@ -16,7 +16,7 @@ const InvitationCreatorModalComp = (props: Props) => {
 
     const options: string[] = ["Never", "Minutes", "Hours", "Days"];
 
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const [expireInNum, setExpireInNum] = useState<number>(1);
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
@@ -30,12 +30,12 @@ const InvitationCreatorModalComp = (props: Props) => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/invitation/generate`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                 body: JSON.stringify( { expireType: options.indexOf(currentExpireType), expireNum: expireInNum, maxUses: maxUses } ),
                 signal: abortController.signal
             })

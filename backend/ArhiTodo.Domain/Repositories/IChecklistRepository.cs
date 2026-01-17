@@ -8,6 +8,7 @@ public interface IChecklistRepository
     Task<bool> DeleteChecklistFromCard(int checkListId);
     
     Task<ChecklistItem?> AddChecklistItemToChecklist(ChecklistItem checklistItem);
+    Task<ChecklistItem?> UpdateChecklistItem(ChecklistItem checklistItem);
     Task<bool> RemoveChecklistItemFromChecklist(int checklistItemId);
     Task<ChecklistItem?> PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
 }

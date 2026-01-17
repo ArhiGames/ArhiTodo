@@ -14,7 +14,7 @@ const CreateNewCardListComp = () => {
     const creationCardListRef = useRef<HTMLDivElement>(null)
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const { boardId } = useParams();
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
 
     function onStartCreatingNewCardClicked() {
 
@@ -41,15 +41,15 @@ const CreateNewCardListComp = () => {
 
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId: Number(boardId), cardListId: predictedId, cardListName: cardListName } })
 
-            const succeeded = await checkRefresh();
-            if (!succeeded) {
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken) {
                 dispatch({ type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: predictedId } })
                 return;
             }
 
             fetch(`${API_BASE_URL}/board/${boardId}/cardlist`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                 body: JSON.stringify({ cardListName: cardListName })
             })
                 .then(res => {

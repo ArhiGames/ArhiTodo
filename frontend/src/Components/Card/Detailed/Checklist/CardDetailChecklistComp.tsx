@@ -16,7 +16,7 @@ interface Props {
 
 const CardDetailChecklistComp = (props: Props) => {
 
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
 
     const kanbanState = useKanbanState();
@@ -56,12 +56,12 @@ const CardDetailChecklistComp = (props: Props) => {
 
     async function deleteChecklist() {
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/card/${props.cardId}/checklist/${props.checklistId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {
@@ -91,8 +91,8 @@ const CardDetailChecklistComp = (props: Props) => {
                 }})
         }
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             if (dispatch) {
                 dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: predictedChecklistItemId } })
             }
@@ -101,7 +101,7 @@ const CardDetailChecklistComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/checklist/${props.checklistId}/item`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistItemName: addingTaskInputValue })
         })
             .then(res => {
@@ -129,8 +129,6 @@ const CardDetailChecklistComp = (props: Props) => {
         setAddingTaskInputValue("");
         setIsAddingTask(false);
     }
-
-
 
     function cancelTaskAddition() {
         setIsAddingTask(false);
@@ -174,7 +172,7 @@ const CardDetailChecklistComp = (props: Props) => {
             <div className="card-detail-checklist-items">
                 {checklistItems.map((checklistItem: ChecklistItemGetDto) => {
                     if (!showingCompletedTasks && checklistItem.isDone) return null;
-                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} checklistItem={checklistItem}/>
+                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} checklistId={props.checklistId} checklistItem={checklistItem}/>
                 })}
             </div>
             <div className="card-detail-checklistitem-add">

@@ -16,13 +16,13 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/invitation`,
                 {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal,
                 })
                 .then(res => {

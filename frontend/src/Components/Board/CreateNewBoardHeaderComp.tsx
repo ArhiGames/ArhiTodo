@@ -12,7 +12,7 @@ const CreateNewBoardHeaderComp = () => {
     const createBoardHeaderRef = useRef<HTMLDivElement | null>(null);
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
     const { projectId } = useParams();
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const navigate = useNavigate();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
@@ -34,15 +34,15 @@ const CreateNewBoardHeaderComp = () => {
 
             dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
 
-            const succeeded = await checkRefresh();
-            if (!succeeded) {
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken) {
                 dispatch({ type: "CREATE_BOARD_FAILED", payload: { failedBoardId: predictedId }});
                 return;
             }
 
             fetch(`${API_BASE_URL}/project/${projectId}/board`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                 body: JSON.stringify({ boardName: boardName })
             })
                 .then(res => {

@@ -13,7 +13,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     const origin = window.location.origin;
     const finalUrl = `${origin}/register/${invitationLink.invitationKey}`;
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const [remainingMs, setRemainingMs] = useState<number>(0);
     const [copied, setCopied] = useState<boolean>(false);
 
@@ -40,13 +40,13 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     async function onInvalidateButtonPressed() {
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/invitation/invalidate/${invitationLink.invitationLinkId}`,
             {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
             })
             .then(res => {
                 if (!res.ok) {

@@ -7,7 +7,8 @@ interface Props {
 
 const FancyCheckbox = ({ value, onChange }: Props) => {
 
-    function handleCheckboxClick() {
+    function handleCheckboxClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.stopPropagation();
         const newValue = !value;
         onChange(newValue);
     }

@@ -81,11 +81,28 @@
     cursor: pointer;
 }
 
+.card-detail-checklist-item-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5px;
+}
+
+.card-detail-checklist-item-edit-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem
+}
+
 .card-detail-checklist-item-info {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     margin-left: 0.25rem;
+}
+
+.card-detail-checklist-item-info input {
+    width: 100%;
 }
 
 .card-detail-checklist-item-action img {

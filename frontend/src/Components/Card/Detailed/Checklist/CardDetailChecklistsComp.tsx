@@ -14,7 +14,7 @@ interface Props {
 
 const CardDetailChecklistsComp = ( props: Props ) => {
 
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
@@ -26,8 +26,8 @@ const CardDetailChecklistsComp = ( props: Props ) => {
 
         e.preventDefault();
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         const predictedChecklistId: number = Date.now() * -1;
 
@@ -43,7 +43,7 @@ const CardDetailChecklistsComp = ( props: Props ) => {
 
         fetch(`${API_BASE_URL}/card/${props.cardId}/checklist`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistName: inputtedChecklistName })
         })
             .then(res => {

@@ -11,7 +11,7 @@ const CreateNewProjectCardComp = () => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [projectName, setProjectName] = useState<string>("");
     const projectNameInputRef = useRef<HTMLInputElement>(null);
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const navigate = useNavigate();
 
     function onNewProjectClicked() {
@@ -29,12 +29,12 @@ const CreateNewProjectCardComp = () => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/project`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                 body: JSON.stringify({ projectName: projectName }),
                 signal: abortController.signal
             })

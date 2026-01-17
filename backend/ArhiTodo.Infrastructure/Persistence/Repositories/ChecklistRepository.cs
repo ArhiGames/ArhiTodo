@@ -29,6 +29,18 @@ public class ChecklistRepository(ProjectDataBase database) : IChecklistRepositor
         return checklistItemEntry.Entity;
     }
 
+    public async Task<ChecklistItem?> UpdateChecklistItem(ChecklistItem checklistItem)
+    {
+        ChecklistItem? foundChecklistItem = await database.ChecklistItems.FindAsync(checklistItem.ChecklistItemId);
+        if (foundChecklistItem == null) return null;
+
+        foundChecklistItem.ChecklistItemName = checklistItem.ChecklistItemName;
+        foundChecklistItem.IsDone = checklistItem.IsDone;
+
+        await database.SaveChangesAsync();
+        return foundChecklistItem;
+    }
+
     public async Task<bool> RemoveChecklistItemFromChecklist(int checklistItemId)
     {
         int changedRows = await database.ChecklistItems

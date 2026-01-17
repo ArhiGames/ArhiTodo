@@ -27,6 +27,13 @@ public class ChecklistService(IChecklistRepository checklistRepository) : ICheck
         return createdChecklistItem?.ToGetDto();
     }
 
+    public async Task<ChecklistItemGetDto?> UpdateChecklistItem(int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto)
+    {
+        ChecklistItem? updatedChecklistItem =
+            await checklistRepository.UpdateChecklistItem(checklistItemUpdateDto.FromUpdateDto(checklistId));
+        return updatedChecklistItem?.ToGetDto();
+    }
+
     public async Task<bool> DeleteChecklistItem(int checklistItemId)
     {
         bool succeeded = await checklistRepository.RemoveChecklistItemFromChecklist(checklistItemId);

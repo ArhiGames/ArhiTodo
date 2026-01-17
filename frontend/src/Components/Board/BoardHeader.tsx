@@ -17,7 +17,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const [newName, setNewName] = useState<string>("");
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const navigate = useNavigate();
 
@@ -39,12 +39,12 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         e.preventDefault();
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ boardId: props.board.boardId, boardName: newName })
         })
             .then(res => {
@@ -78,12 +78,12 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         setIsTryingToDelete(false);
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.board.boardId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {

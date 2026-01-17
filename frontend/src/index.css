@@ -11,7 +11,8 @@
     --bg: hsl(0, 0%, 15%);
     --bg-light: hsl(0, 0%, 20%);
     --bg-x-light: hsl(0, 0%, 28%);
-    --bg-xx-light: hsl(0, 0%, 45%);
+    --bg-xx-light: hsl(0, 0%, 35%);
+    --bg-xxx-light: hsl(0, 0%, 45%);
 
     --bg-popover: hsl(0, 0%, 22%);
 
@@ -911,15 +912,18 @@ body {
 }
 
 .classic-input {
-    margin: 0 0 0.5rem 0;
     padding: 15px;
     border: none;
     border-radius: 15px;
     color: var(--text-color);
-    background-color: var(--bg-x-light);
+    background-color: var(--bg-xx-light);
     font-size: medium;
 
     transition: box-shadow 0.3s;
+}
+
+.classic-input.small {
+    padding: 8px;
 }
 
 .classic-input:focus {

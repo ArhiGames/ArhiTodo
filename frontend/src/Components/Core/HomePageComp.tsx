@@ -15,13 +15,13 @@ const HomePageComp = () => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/project`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${token}` },
+                    headers: { "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal
                 })
                 .then(res => {

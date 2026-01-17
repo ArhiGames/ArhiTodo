@@ -8,17 +8,17 @@ const PasswordManagerPageComp = () => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
-    const { logout, token, checkRefresh } = useAuth();
+    const { logout, checkRefresh } = useAuth();
 
     async function changePassword() {
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/account/change/password`,
         {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ oldPassword: currentPassword, newPassword: password }),
         }).then((res) => {
             if (!res.ok) {

@@ -12,7 +12,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const cardRef = useRef<HTMLInputElement>(null);
     const dispatch = useKanbanDispatch();
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
 
     function handleClicked() {
 
@@ -39,8 +39,8 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
 
             dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardList.cardListId, cardId: predictedCardId, cardName: cardName } })
 
-            const succeeded = await checkRefresh();
-            if (!succeeded) {
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken) {
                 dispatch({ type: "CREATE_CARD_FAILED", payload: { failedCardId: predictedCardId } })
                 return;
             }
@@ -48,7 +48,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
             fetch(`${API_BASE_URL}/cardlist/${props.cardList.cardListId}/card`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     body: JSON.stringify({ cardName: cardName })
                 })
                 .then(res => {

@@ -97,13 +97,13 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
         const abortController = new AbortController();
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${token}` },
+                    headers: { "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal
                 })
                 .then(res => {

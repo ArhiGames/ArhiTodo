@@ -29,13 +29,13 @@ const AdminUserManagementComp = () => {
         const controller = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || controller.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || controller.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
                 {
                     method: "GET",
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: { Authorization: `Bearer ${refreshedToken}` },
                     signal: controller.signal
                 })
                 .then(res => {
@@ -69,13 +69,13 @@ const AdminUserManagementComp = () => {
         const controller = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || controller.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || controller.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/account/admin/accountmanagement`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${token}` },
+                    headers: { "Authorization": `Bearer ${refreshedToken}` },
                     signal: controller.signal
                 })
                 .then(res => {

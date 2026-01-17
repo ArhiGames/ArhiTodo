@@ -13,7 +13,7 @@ const CardComp = (props: { card: CardGetDto }) => {
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -44,15 +44,15 @@ const CardComp = (props: { card: CardGetDto }) => {
         const newState: boolean = !kanbanState.cards[props.card.cardId].isDone;
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: newState } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: !newState } });
             return;
         }
 
         fetch(`${API_BASE_URL}/card/${props.card.cardId}/done/${newState}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {

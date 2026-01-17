@@ -6,7 +6,7 @@ import {loginApi, logoutApi, refreshApi, registerApi} from "../../Services/AuthS
 import { useNavigate } from "react-router-dom";
 import type { AppUser } from "../../Models/AppUser.ts";
 
-let refreshingPromise: Promise<boolean> | null = null;
+let refreshingPromise: Promise<string | null> | null = null;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return !!token;
     }
 
-    const checkRefresh = useCallback(async (): Promise<boolean> => {
+    const checkRefresh = useCallback(async (): Promise<string | null> => {
 
         if (refreshingPromise) {
             return refreshingPromise;
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const savedToken = localStorage.getItem("token");
         if (!savedToken) {
-            return false;
+            return null;
         }
 
         const decoded: JwtPayload = jwtDecode(savedToken);
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (decoded.exp > now) {
             setToken(savedToken);
             setAppUser({ id: decoded.nameid, unique_name: decoded.unique_name, email: decoded.email });
-            return true;
+            return localStorage.getItem("token");
         }
 
         refreshingPromise = (async () => {
@@ -80,14 +80,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const jwt = await refreshApi();
                 if (!jwt) {
                     await logout();
-                    return false;
+                    return null;
                 }
                 onLoggedIn(jwt);
-                return true;
+                return localStorage.getItem("token");
             } catch (e) {
                 console.error(e);
                 await logout();
-                return false;
+                return null;
             } finally {
                 refreshingPromise = null;
             }

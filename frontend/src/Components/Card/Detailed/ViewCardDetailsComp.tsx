@@ -38,13 +38,13 @@ const ViewCardDetailsComp = () => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/card/${cardId}`,
                 {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal,
                 })
                 .then(res => {
@@ -89,8 +89,8 @@ const ViewCardDetailsComp = () => {
 
         dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
             return;
         }
@@ -98,7 +98,7 @@ const ViewCardDetailsComp = () => {
         fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
             })
             .then(res => {
                 if (!res.ok) {
@@ -116,8 +116,8 @@ const ViewCardDetailsComp = () => {
 
         dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
             return;
         }
@@ -125,7 +125,7 @@ const ViewCardDetailsComp = () => {
         fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
             {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
             })
             .then(res => {
                 if (!res.ok) {
@@ -145,15 +145,15 @@ const ViewCardDetailsComp = () => {
         const newState: boolean = !kanbanState.cards[detailedCard.cardId].isDone;
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: newState } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: !newState } });
             return;
         }
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/done/${newState}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {
@@ -172,15 +172,15 @@ const ViewCardDetailsComp = () => {
         const newCardName: string = inputtedCardName;
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) {
             dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: kanbanState.cards[detailedCard.cardId].cardName } });
             return;
         }
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/name`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ newCardName: newCardName })
         })
             .then(res => {
@@ -198,12 +198,12 @@ const ViewCardDetailsComp = () => {
         e.preventDefault();
         if (cardDescription.length === 0 || !detailedCard) return;
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/description`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ newCardDescription: cardDescription })
         })
             .then(res => {
@@ -240,8 +240,8 @@ const ViewCardDetailsComp = () => {
 
     async function onDeleteCardConfirmed() {
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         if (dispatch) {
             dispatch({ type: "DELETE_CARD", payload: { cardId: Number(cardId)} });
@@ -250,7 +250,7 @@ const ViewCardDetailsComp = () => {
 
         fetch(`${API_BASE_URL}/card/${cardId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {

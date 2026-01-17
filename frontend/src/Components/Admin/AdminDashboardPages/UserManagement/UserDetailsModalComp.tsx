@@ -16,7 +16,7 @@ interface Props {
 const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
     const navigate = useNavigate();
-    const { appUser, token, checkRefresh } = useAuth();
+    const { appUser, checkRefresh } = useAuth();
     const { userId } = useParams();
     const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
@@ -42,13 +42,13 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
         const abortController = new AbortController();
 
         const run = async () => {
-            const succeeded = await checkRefresh();
-            if (!succeeded || abortController.signal.aborted) return;
+            const refreshedToken: string | null = await checkRefresh();
+            if (!refreshedToken || abortController.signal.aborted) return;
 
             fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
                 {
                     method: "PUT",
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    headers: { "Authorization": `Bearer ${refreshedToken}`, "Content-Type": "application/json" },
                     signal: abortController.signal,
                     body: JSON.stringify(updatedClaims)
                 })
@@ -79,13 +79,13 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
         if (!currentViewingUser) return;
         if (password.length < 8) return;
 
-        const succeeded = await checkRefresh();
-        if (!succeeded) return;
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
 
         fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
             {
                 method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                headers: { "Authorization": `Bearer ${refreshedToken}`, "Content-Type": "application/json" },
                 body: JSON.stringify( { password: password } )
             })
             .then(res => {
