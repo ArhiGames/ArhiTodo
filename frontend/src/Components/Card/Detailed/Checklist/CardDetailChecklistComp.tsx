@@ -178,6 +178,51 @@ const CardDetailChecklistComp = (props: Props) => {
 
     }
 
+    async function handleChecklistItemRemovePressed(checklistItemId: number) {
+
+        if (checklistItemId < 0) return;
+
+        const checklistItem = kanbanState.checklistItems[checklistItemId];
+
+        if (dispatch) {
+            dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: checklistItemId } });
+        }
+
+        const succeeded = await checkRefresh();
+        if (!succeeded) {
+            if (dispatch) {
+                dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
+                        checklistItemId: checklistItemId,
+                        checklistItemName: checklistItem.checklistItemName,
+                        checklistId: checklistItem.checklistId,
+                    }})
+                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
+            }
+            return;
+        }
+
+        fetch(`${API_BASE_URL}/checklist/${checklistItem.checklistId}/item/${checklistItemId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Could not delete checklist item with id ${checklistItemId}`);
+                }
+            })
+            .catch(err => {
+                if (dispatch) {
+                    dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
+                            checklistItemId: checklistItemId,
+                            checklistItemName: checklistItem.checklistItemName,
+                            checklistId: checklistItem.checklistId,
+                        }})
+                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
+                }
+                console.error(err);
+            })
+    }
+
     function cancelTaskAddition() {
         setIsAddingTask(false);
         setAddingTaskInputValue("");
@@ -197,7 +242,7 @@ const CardDetailChecklistComp = (props: Props) => {
                     <button onClick={() => setShowingCompletedTasks(!showingCompletedTasks)} className="button standard-button">
                         { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
                     <div className="card-detail-checklist-img-container">
-                        <img src="../../../../../public/trashcan-icon.svg" alt="Remove" height="40px"
+                        <img src="/public/trashcan-icon.svg" alt="Remove" height="40px"
                              onClick={() => setIsDeletingChecklist(true)}/>
                     </div>
                     {
@@ -222,9 +267,15 @@ const CardDetailChecklistComp = (props: Props) => {
                     if (!showingCompletedTasks && checklistItem.isDone) return null;
                     return (
                         <div key={checklistItem.checklistItemId} className="card-detail-checklist-item">
-                            <FancyCheckbox value={checklistItem.isDone} onChange={(checked: boolean) =>
-                                handleCheckboxClick(checklistItem.checklistItemId, checked)}/>
-                            <p>{checklistItem.checklistItemName}</p>
+                            <div className="card-detail-checklist-item-info">
+                                <FancyCheckbox value={checklistItem.isDone} onChange={(checked: boolean) =>
+                                    handleCheckboxClick(checklistItem.checklistItemId, checked)}/>
+                                <p>{checklistItem.checklistItemName}</p>
+                            </div>
+                            <div className="card-detail-checklist-item-action">
+                                <img height="32px" src="/public/trashcan-icon.svg" alt="Remove"
+                                     onClick={() => handleChecklistItemRemovePressed(checklistItem.checklistItemId)}></img>
+                            </div>
                         </div>
                     )
                 })}

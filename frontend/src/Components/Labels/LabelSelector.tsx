@@ -141,7 +141,7 @@ const LabelSelector = ( props: Props ) => {
 
         if (!currentlyEditingLabel || !dispatch) return;
 
-        // @Todo if failed creating, the label should be handled correctly
+        // @Todo if failed editing, the label should be handled correctly
         dispatch({ type: "UPDATE_LABEL_OPTIMISTIC", payload: {
             labelId: currentlyEditingLabel.labelId,
                 labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,

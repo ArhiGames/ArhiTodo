@@ -62,14 +62,47 @@
 .card-detail-checklist-items {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.15rem;
     margin: 0 0 0.6rem 0.6rem;
 }
 
 .card-detail-checklist-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.1rem;
+    border-radius: 10px;
+    transition: background-color 0.2s;
+}
+
+.card-detail-checklist-item:hover {
+    background-color: var(--bg-x-light);
+    cursor: pointer;
+}
+
+.card-detail-checklist-item-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 0.25rem;
+}
+
+.card-detail-checklist-item-action img {
+    display: block;
+    opacity: 0;
+    filter: invert(1);
+    padding: 0.25rem;
+    border-radius: 10px;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.card-detail-checklist-item:hover .card-detail-checklist-item-action img {
+    opacity: 100%;
+}
+
+.card-detail-checklist-item-action:hover img:hover {
+    background-color: var(--bg-xx-light);
 }
 
 .card-detail-checklistitem-add {
