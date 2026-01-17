@@ -50,7 +50,7 @@ function rootReducer(state: State, action: Action): State {
             return createLabelSucceededAction(state, action.payload);
         case "CREATE_LABEL_FAILED":
             return deleteLabelAction(state, action.payload);
-        case "UPDATE_LABEL_OPTIMISTIC":
+        case "UPDATE_LABEL":
             return updateLabelAction(state, action.payload);
         case "DELETE_LABEL":
             return deleteLabelAction(state, { labelToDelete: action.payload.labelId });

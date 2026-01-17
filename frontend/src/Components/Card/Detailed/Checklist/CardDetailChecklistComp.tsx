@@ -77,6 +77,7 @@ const CardDetailChecklistComp = (props: Props) => {
             if (dispatch) {
                 dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: oldChecklistName } })
             }
+            setInputtedChecklistName(oldChecklistName);
             return;
         }
 
@@ -101,6 +102,7 @@ const CardDetailChecklistComp = (props: Props) => {
                 if (dispatch) {
                     dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: props.checklistId, checklistName: oldChecklistName } })
                 }
+                setInputtedChecklistName(oldChecklistName);
                 console.error(err);
             })
 

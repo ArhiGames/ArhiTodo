@@ -22,9 +22,9 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPut("label/")]
     public async Task<IActionResult> UpdateLabel([FromBody] LabelUpdateDto labelUpdateDto)
     {
-        LabelGetDto? cardGetDto = await labelService.UpdateLabel(labelUpdateDto);
-        if (cardGetDto == null) return NotFound();
-        return Ok();
+        LabelGetDto? labelGetDto = await labelService.UpdateLabel(labelUpdateDto);
+        if (labelGetDto == null) return NotFound();
+        return Ok(labelGetDto);
     }
 
     [HttpDelete("label/{labelId:int}")]

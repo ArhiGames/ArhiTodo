@@ -128,7 +128,7 @@ export type Action =
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
     { type: "CREATE_LABEL_FAILED", payload: { labelToDelete: number } } |
-    { type: "UPDATE_LABEL_OPTIMISTIC", payload: UpdateLabelPayload } |
+    { type: "UPDATE_LABEL", payload: UpdateLabelPayload } |
     { type: "DELETE_LABEL", payload: { labelId: number } } |
 
     { type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: ChangeLabelCardRelationPayload } |

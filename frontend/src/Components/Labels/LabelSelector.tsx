@@ -88,11 +88,11 @@ const LabelSelector = ( props: Props ) => {
         setCurrentSelectedColor(selectableColors[0]);
     }
 
-    function createEditLabel() {
+    async function createEditLabel() {
         if (isCreating) {
-            createLabel();
+            await createLabel();
         } else if (currentlyEditingLabel !== null) {
-            editLabel();
+            await editLabel();
         } else {
             throw new Error("Should not be able to perform this action...");
         }
@@ -141,15 +141,22 @@ const LabelSelector = ( props: Props ) => {
 
         if (!currentlyEditingLabel || !dispatch) return;
 
-        // @Todo if failed editing, the label should be handled correctly
-        dispatch({ type: "UPDATE_LABEL_OPTIMISTIC", payload: {
+        const oldLabelText: string = currentlyEditingLabel.labelText;
+        const oldLabelColor: number = currentlyEditingLabel.labelColor;
+
+        dispatch({ type: "UPDATE_LABEL", payload: {
             labelId: currentlyEditingLabel.labelId,
-                labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
-                labelColor: toInteger(currentSelectedColor)
+            labelText: labelName.length > 0 ? labelName : currentlyEditingLabel.labelText,
+            labelColor: toInteger(currentSelectedColor)
         } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
+            dispatch({ type: "UPDATE_LABEL", payload: {
+                labelId: currentlyEditingLabel.labelId,
+                labelText: oldLabelText,
+                labelColor: oldLabelColor
+            } });
             return;
         }
 
@@ -166,8 +173,22 @@ const LabelSelector = ( props: Props ) => {
                 if (!res.ok) {
                     throw new Error(`Could not edit label with name ${labelName}`);
                 }
+
+                return res.json();
+            })
+            .then((label: LabelGetDto) => {
+                dispatch({ type: "UPDATE_LABEL", payload: {
+                    labelId: currentlyEditingLabel.labelId,
+                    labelText: label.labelText,
+                    labelColor: label.labelColor
+                } });
             })
             .catch(err => {
+                dispatch({ type: "UPDATE_LABEL", payload: {
+                    labelId: currentlyEditingLabel.labelId,
+                    labelText: oldLabelText,
+                    labelColor: oldLabelColor
+                } });
                 console.error(err);
             })
 
