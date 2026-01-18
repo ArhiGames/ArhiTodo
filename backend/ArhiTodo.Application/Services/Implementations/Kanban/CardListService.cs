@@ -14,6 +14,12 @@ public class CardListService(ICardlistRepository cardlistRepository) : ICardList
         return createdCardList?.ToGetDto();
     }
 
+    public async Task<CardListGetDto?> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
+    {
+        CardList? updatedCardList = await cardlistRepository.UpdateAsync(cardListUpdateDto.FromUpdateDto(boardId));
+        return updatedCardList?.ToGetDto();
+    }
+
     public async Task<bool> DeleteCardList(int boardId, int cardListId)
     {
         bool succeeded = await cardlistRepository.DeleteAsync(cardListId);

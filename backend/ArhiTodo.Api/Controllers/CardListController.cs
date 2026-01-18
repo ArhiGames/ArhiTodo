@@ -1,5 +1,4 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
-using ArhiTodo.Application.Services.Interfaces;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,14 @@ public class CardListController(ICardListService cardListService) : ControllerBa
     public async Task<IActionResult> PostCardList(int boardId, [FromBody] CardListCreateDto cardListCreateDto)
     {
         CardListGetDto? cardList = await cardListService.CreateCardList(boardId, cardListCreateDto);
+        if (cardList == null) return NotFound();
+        return Ok(cardList);
+    }
+
+    [HttpPut("board/{boardId:int}/cardlist")]
+    public async Task<IActionResult> UpdateCardList(int boardId, [FromBody] CardListUpdateDto cardListUpdateDto)
+    {
+        CardListGetDto? cardList = await cardListService.UpdateCardList(boardId, cardListUpdateDto);
         if (cardList == null) return NotFound();
         return Ok(cardList);
     }

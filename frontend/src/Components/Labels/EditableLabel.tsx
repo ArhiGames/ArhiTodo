@@ -33,7 +33,7 @@ const EditableLabel = ( props: Props) => {
                 <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{props.label.labelText}</button>
                 { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✓</span> }
             </div>
-            <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/public/edit-icon.svg" alt="Edit"/>
+            <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/>
         </div>
     )
 

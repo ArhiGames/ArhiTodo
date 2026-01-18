@@ -234,7 +234,7 @@ const CardDetailChecklistComp = (props: Props) => {
                                 }} className="button standard-button">
                                     { showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
                                 <div className="card-detail-checklist-img-container">
-                                    <img src="/public/trashcan-icon.svg" alt="Remove" height="32px"
+                                    <img src="/trashcan-icon.svg" alt="Remove" height="32px"
                                          onClick={(e) => {
                                              e.stopPropagation();
                                              setIsDeletingChecklist(true)}

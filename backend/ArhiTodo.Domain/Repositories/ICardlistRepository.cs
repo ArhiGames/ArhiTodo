@@ -5,5 +5,6 @@ namespace ArhiTodo.Domain.Repositories;
 public interface ICardlistRepository
 {
     Task<CardList?> CreateAsync(CardList cardList);
+    Task<CardList?> UpdateAsync(CardList cardList);
     Task<bool> DeleteAsync(int cardListId);
 }

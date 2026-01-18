@@ -62,6 +62,11 @@ export type CreateCardlistSucceededPayload = {
     actualCardlistId: number;
 }
 
+export type UpdateCardlistPayload = {
+    cardListId: number;
+    cardListName: string;
+}
+
 export type CreateCardPayload = {
     cardListId: number;
     cardId: number;
@@ -145,6 +150,7 @@ export type Action =
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
     { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } } |
+    { type: "UPDATE_CARDLIST", payload: UpdateCardlistPayload } |
 
     { type: "CREATE_CARD_OPTIMISTIC", payload: CreateCardPayload } |
     { type: "CREATE_CARD_SUCCEEDED", payload: CreateCardSucceededPayload } |

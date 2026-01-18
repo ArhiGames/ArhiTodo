@@ -236,7 +236,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
                             <p>{props.checklistItem.checklistItemName}</p>
                         </div>
                         <div className="card-detail-checklist-item-action">
-                            <img height="32px" src="/public/trashcan-icon.svg" alt="Remove"
+                            <img height="32px" src="/trashcan-icon.svg" alt="Remove"
                                  onClick={() => handleChecklistItemRemovePressed(props.checklistItem.checklistItemId)}></img>
                         </div>
                     </>

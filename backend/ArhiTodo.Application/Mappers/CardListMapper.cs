@@ -14,6 +14,16 @@ public static class CardListMapper
         };
     }
 
+    public static CardList FromUpdateDto(this CardListUpdateDto cardListUpdateDto, int boardId)
+    {
+        return new CardList
+        {
+            CardListId = cardListUpdateDto.CardListId,
+            CardListName = cardListUpdateDto.CardListName,
+            BoardId = boardId
+        };
+    }
+
     public static CardListGetDto ToGetDto(this CardList cardList)
     {
         return new CardListGetDto
