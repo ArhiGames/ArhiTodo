@@ -413,6 +413,7 @@ body {
 .creation-cardlist form {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
 }
 
 /*-----------------------------------------------*/
@@ -502,6 +503,7 @@ body {
 
 .creation-card-form {
     display: flex;
+    gap: 0.5rem;
     flex-direction: column;
 }
 

@@ -21,8 +21,11 @@ const ViewCardDetailsComp = () => {
     const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
     const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
+
+    const descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
     const [cardDescription, setCardDescription] = useState<string>("");
+
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)].cardName);
 
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
@@ -272,6 +275,17 @@ const ViewCardDetailsComp = () => {
         }, 2000)
     }
 
+    useEffect(() => {
+
+        if (isEditingDescription) {
+            if (!descriptionInputRef.current) return;
+
+            descriptionInputRef.current.focus();
+            descriptionInputRef.current.setSelectionRange(cardDescription.length, cardDescription.length);
+        }
+
+    }, [isEditingDescription]);
+
     function cardLabelsJsx() {
         return (
             <>
@@ -310,7 +324,7 @@ const ViewCardDetailsComp = () => {
                 {
                     isEditingDescription ? (
                         <>
-                            <textarea value={cardDescription}
+                            <textarea value={cardDescription} ref={descriptionInputRef}
                                       placeholder="This card currently does not have a description..."
                                       onChange={(e) => setCardDescription(e.target.value)}
                                       maxLength={8192}/>

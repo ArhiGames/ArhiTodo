@@ -233,7 +233,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
                         <div className="card-detail-checklist-item-info">
                             <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
                                 handleCheckboxClick(props.checklistItem.checklistItemId, checked)}/>
-                            <p>{props.checklistItem.checklistItemName}</p>
+                            <p className={props.checklistItem.isDone ? "checklist-item-name-done" : "checklist-item-name"}>{props.checklistItem.checklistItemName}</p>
                         </div>
                         <div className="card-detail-checklist-item-action">
                             <img height="32px" src="/trashcan-icon.svg" alt="Remove"

@@ -113,6 +113,16 @@
     gap: 0.5rem
 }
 
+.checklist-item-name {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.checklist-item-name-done {
+    text-decoration: line-through;
+    opacity: 0.75;
+}
+
 .card-detail-checklist-item-info {
     display: flex;
     align-items: center;

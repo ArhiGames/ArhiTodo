@@ -271,7 +271,7 @@ const CardDetailChecklistComp = (props: Props) => {
                 {
                     isAddingTask ? (
                         <form onSubmit={onAddTaskButtonPressed} onReset={cancelTaskAddition}>
-                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input" minLength={1} maxLength={256}
+                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input small" minLength={1} maxLength={256}
                                    required value={addingTaskInputValue}
                                    onChange={(e) => setAddingTaskInputValue(e.target.value)}/>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
