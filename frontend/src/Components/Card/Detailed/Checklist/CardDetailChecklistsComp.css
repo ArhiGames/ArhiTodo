@@ -148,6 +148,7 @@
 
 .card-detail-checklistitem-add input {
     width: 100%;
+    margin-bottom: 0.5rem;
 }
 
 .card-detail-add-task-button {

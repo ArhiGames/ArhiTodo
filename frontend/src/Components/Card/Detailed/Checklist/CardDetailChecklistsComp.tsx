@@ -87,7 +87,7 @@ const CardDetailChecklistsComp = ( props: Props ) => {
                 {
                     isAddingChecklist && (
                         <Popover close={() => setIsAddingChecklist(false)} element={addChecklistButtonRef} closeIfClickedOutside>
-                            <form onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
+                            <form className="card-detail-add-checklist-form" onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
                                 <input ref={addChecklistNameInputRef} placeholder="Checklist name..." className="classic-input"
                                        value={inputtedChecklistName}
                                        onChange={(e) => setInputtedChecklistName(e.target.value)}/>
