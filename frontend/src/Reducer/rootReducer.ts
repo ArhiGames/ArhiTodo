@@ -37,6 +37,8 @@ import updateChecklistItemAction
     from "../Contexts/Kanban/Actions/Implementation/Checklist/updateChecklistItemAction.ts";
 import updateChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/updateChecklistAction.ts";
 import updateCardlistAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/updateCardlistAction.ts";
+import removeCardsFromCardlistAction
+    from "../Contexts/Kanban/Actions/Implementation/Cardlists/removeCardsFromCardlistAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -81,6 +83,10 @@ function rootReducer(state: State, action: Action): State {
             return createCardlistSucceededAction(state, action.payload);
         case "CREATE_CARDLIST_FAILED":
             return deleteCardlistAction(state, action.payload.failedCardlistId);
+        case "DELETE_CARDLIST":
+            return deleteCardlistAction(state, action.payload.cardListId);
+        case "DELETE_CARDS_FROM_CARDLIST":
+            return removeCardsFromCardlistAction(state, action.payload.fromCardListId);
         case "UPDATE_CARDLIST":
             return updateCardlistAction(state, action.payload);
 

@@ -26,6 +26,14 @@ public class CardListController(ICardListService cardListService) : ControllerBa
         return Ok(cardList);
     }
 
+    [HttpDelete("board/{boardId:int}/cardlist/{cardListId:int}/cards")]
+    public async Task<IActionResult> DeleteCards(int boardId, int cardListId)
+    {
+        bool succeeded = await cardListService.DeleteCards(boardId, cardListId);
+        if (!succeeded) return NotFound();
+        return NoContent();
+    }
+
     [HttpDelete("board/{boardId:int}/cardlist/{cardListId:int}")]
     public async Task<IActionResult> DeleteCardList(int boardId, int cardListId)
     {

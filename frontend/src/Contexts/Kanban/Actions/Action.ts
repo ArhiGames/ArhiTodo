@@ -150,6 +150,8 @@ export type Action =
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
     { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } } |
+    { type: "DELETE_CARDLIST", payload: { cardListId: number } } |
+    { type: "DELETE_CARDS_FROM_CARDLIST", payload: { fromCardListId: number } } |
     { type: "UPDATE_CARDLIST", payload: UpdateCardlistPayload } |
 
     { type: "CREATE_CARD_OPTIMISTIC", payload: CreateCardPayload } |

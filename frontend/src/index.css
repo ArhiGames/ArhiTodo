@@ -335,6 +335,42 @@ body {
     color: var(--text-color);
 }
 
+.cardlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardlist-header h3 {
+    width: 88%;
+    overflow: clip;
+}
+
+.cardlist-header input {
+    width: 100%;
+}
+
+.cardlist-actions img {
+    filter: invert(1);
+    border-radius: 5px;
+    padding: 2px;
+    transition: filter 0.2s;
+}
+
+.cardlist-actions img:hover {
+    cursor: pointer;
+}
+
+.cardlist-popover-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cardlist-popover-actions img {
+    filter: invert(1);
+}
+
 .add-cardlist-button {
     padding: 15px;
     width: 320px;

@@ -25,6 +25,14 @@ public class CardlistRepository(ProjectDataBase projectDataBase) : ICardlistRepo
         return foundCardList;
     }
 
+    public async Task<bool> DeleteCardsAsync(int cardListId)
+    {
+        int removedRows = await projectDataBase.Cards
+            .Where(c => c.CardListId == cardListId)
+            .ExecuteDeleteAsync();
+        return removedRows >= 1;
+    }
+
     public async Task<bool> DeleteAsync(int cardListId)
     {
         int removedRows = await projectDataBase.CardLists

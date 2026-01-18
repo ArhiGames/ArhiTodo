@@ -8,6 +8,7 @@ import type {ChecklistGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistGe
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import CardListEditPopover from "./CardListEditPopover.tsx";
 
 const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filteringLabels: number[] }) => {
 
@@ -21,6 +22,9 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
     const editingNameInputRef = useRef<HTMLInputElement | null>(null);
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
     const [inputtedName, setInputtedName] = useState<string>(props.cardList.cardListName);
+    const editIconRef = useRef<HTMLImageElement | null>(null);
+
+    const [isEditing, setIsEditing] = useState<boolean>(false);
 
     function getLabelsForCard(toGetCardId: number) {
         const labels: number[] = [];
@@ -128,6 +132,8 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
 
         if (isEditingName) {
             editingNameInputRef.current?.focus();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsEditing(false);
         }
 
         const onClickedOutside = (e: MouseEvent) => {
@@ -155,7 +161,16 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                             <input ref={editingNameInputRef} className="classic-input small" onBlur={onChecklistNameChangeCommited} maxLength={25}
                                    value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
                         ) : (
-                            <h3 onClick={() => setIsEditingName(true)}>{props.cardList.cardListName}</h3>
+                            <>
+                                <h3 onClick={() => setIsEditingName(true)}>{props.cardList.cardListName}</h3>
+                                <div className="cardlist-actions">
+                                    <img ref={editIconRef} src="/public/edit-icon.svg" alt="Edit" height="24px"
+                                         onClick={() => setIsEditing(true)}/>
+                                    { isEditing && <CardListEditPopover boardId={props.boardId} cardListId={props.cardList.cardListId}
+                                                                        editIconRef={editIconRef} onClose={() => setIsEditing(false)}/> }
+                                </div>
+                            </>
+
                         )
                     }
                 </div>
