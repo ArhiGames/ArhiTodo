@@ -1,17 +1,22 @@
 ﻿using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class BoardService(IBoardRepository boardRepository) : IBoardService
+public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository) : IBoardService
 {
     public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
         Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(projectId));
-        return board?.ToGetDto();
+        if (board == null) return null;
+        
+        BoardGetDto boardGetDto = board.ToGetDto();
+        boardNotificationService.CreateBoard(Guid.NewGuid(), projectId, boardGetDto);
+        return boardGetDto;
     }
 
     public async Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
@@ -23,6 +28,12 @@ public class BoardService(IBoardRepository boardRepository) : IBoardService
     public async Task<bool> DeleteBoard(int boardId)
     {
         bool succeeded = await boardRepository.DeleteAsync(boardId);
+
+        if (succeeded)
+        {
+            boardNotificationService.DeleteBoard(Guid.NewGuid(), boardId);
+        }
+        
         return succeeded;
     }
 

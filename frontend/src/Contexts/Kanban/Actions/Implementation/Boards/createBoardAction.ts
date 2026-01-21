@@ -3,8 +3,6 @@ import type { CreateBoardPayload } from "../../Action.ts";
 
 const createBoardAction = (state: State, payload: CreateBoardPayload) => {
 
-    console.log(payload);
-
     return {
         ...state,
         boards: {

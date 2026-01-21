@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+builder.Services.AddSignalR();
 
 builder.AddInfrastructureLayer();
 builder.AddApplicationLayer();
@@ -131,5 +132,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.RegisterInfrastructureApp();
 
 app.Run();

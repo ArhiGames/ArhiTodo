@@ -13,7 +13,8 @@ import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
-import {API_BASE_URL} from "../../config/api.ts";
+import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
+import * as signalR from "@microsoft/signalr";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
@@ -136,6 +137,36 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
         return () => abortController.abort();
 
     }, [props.projectId, props.boardId, token, dispatch, checkRefresh, navigate]);
+
+    useEffect(() => {
+
+        const run = async () => {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(`${HUB_BASE_URL}/board`)
+                .withAutomaticReconnect()
+                .build();
+
+            await connection.start().catch(console.error);
+
+            connection.on("CreateBoard", (projectId: number, board: BoardGetDto) => {
+                if (dispatch) {
+                    dispatch({
+                        type: "CREATE_BOARD_OPTIMISTIC",
+                        payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName }
+                    });
+                }
+            });
+
+            connection.on("DeleteBoard", (boardId: number)=> {
+                if (dispatch) {
+                    dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
+                }
+            })
+        }
+
+        run();
+
+    }, [dispatch]);
 
     if (props.boardId === null) {
         return (

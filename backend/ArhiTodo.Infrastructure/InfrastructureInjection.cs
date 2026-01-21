@@ -1,8 +1,12 @@
-﻿using ArhiTodo.Domain.Repositories;
+﻿using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Repositories;
 using ArhiTodo.Domain.Services.Auth;
 using ArhiTodo.Infrastructure.Persistence;
 using ArhiTodo.Infrastructure.Persistence.Repositories;
+using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
+using ArhiTodo.Infrastructure.Realtime.Services;
 using ArhiTodo.Infrastructure.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,5 +33,12 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
+
+        builder.Services.AddScoped<IBoardNotificationService, BoardNotificationService>();
     }
+
+    public static void RegisterInfrastructureApp(this WebApplication webApplication)
+    {
+        webApplication.MapHub<BoardHub>("/hub/board");
+    } 
 }
