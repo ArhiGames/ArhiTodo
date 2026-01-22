@@ -12,6 +12,7 @@ import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import {buildBoardConnection} from "../../Contexts/Realtime/ConnectionBuilders/BoardConnectionBuilder.ts";
 import {buildCardListConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardListConnectionBuilder.ts";
+import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardConnectionBuilder.ts";
 
 const ProjectViewComp = () => {
 
@@ -99,6 +100,7 @@ const ProjectViewComp = () => {
 
         buildBoardConnection(connection, dispatch);
         buildCardListConnection(connection, dispatch);
+        buildCardConnection(connection, dispatch);
 
         const startConnection = async () => {
 

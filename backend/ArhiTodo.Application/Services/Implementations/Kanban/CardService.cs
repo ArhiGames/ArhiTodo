@@ -1,22 +1,31 @@
 ﻿using ArhiTodo.Application.DTOs.Card;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class CardService(ICardRepository cardRepository) : ICardService
+public class CardService(ICardNotificationService cardNotificationService, ICardRepository cardRepository) : ICardService
 {
-    public async Task<CardGetDto?> CreateCard(int cardListId, CardCreateDto cardCreateDto)
+    public async Task<CardGetDto?> CreateCard(int boardId, int cardListId, CardCreateDto cardCreateDto)
     {
         Card? card = await cardRepository.CreateAsync(cardCreateDto.FromCreateDto(cardListId));
-        return card?.ToGetDto();
+        if (card == null) return null;
+
+        CardGetDto cardGetDto = card.ToGetDto();
+        cardNotificationService.CreateCard(boardId, cardListId, cardGetDto);
+        return cardGetDto;
     }
 
-    public async Task<bool> DeleteCard(int cardId)
+    public async Task<bool> DeleteCard(int boardId, int cardId)
     {
         bool succeeded = await cardRepository.DeleteAsync(cardId);
+        if (succeeded)
+        {
+            cardNotificationService.DeleteCard(boardId, cardId);
+        }
         return succeeded;
     }
 

@@ -8,20 +8,23 @@ export function buildCardListConnection(hubConnection: HubConnection, dispatch: 
         if (dispatch) {
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId, cardListId: cardList.cardListId, cardListName: cardList.cardListName } });
         }
-    })
+    });
+
     hubConnection.on("UpdateCardList", (_boardId: number, cardList: CardListGetDto) => {
         if (dispatch) {
             dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: cardList.cardListId, cardListName: cardList.cardListName } });
         }
-    })
+    });
+
     hubConnection.on("DeleteCardsFromCardList", (cardListId: number) => {
         if (dispatch) {
             dispatch({ type: "DELETE_CARDS_FROM_CARDLIST", payload: { fromCardListId: cardListId } });
         }
-    })
+    });
+
     hubConnection.on("DeleteCardList", (cardListId: number) => {
         if (dispatch) {
             dispatch({ type: "DELETE_CARDLIST", payload: { cardListId: cardListId } });
         }
-    })
+    });
 }

@@ -36,6 +36,7 @@ public static class InfrastructureInjection
 
         builder.Services.AddScoped<IBoardNotificationService, BoardNotificationService>();
         builder.Services.AddScoped<ICardListNotificationService, CardListNotificationService>();
+        builder.Services.AddScoped<ICardNotificationService, CardNotificationService>();
     }
 
     public static void RegisterInfrastructureApp(this WebApplication webApplication)

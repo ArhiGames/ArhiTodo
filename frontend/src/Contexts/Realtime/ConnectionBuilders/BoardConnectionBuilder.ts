@@ -10,10 +10,12 @@ export function buildBoardConnection(hubConnection: HubConnection, dispatch: Dis
             payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName }
         });
     });
+
     hubConnection.on("UpdateBoard", (_projectId: number, board: BoardGetDto) => {
         dispatch({ type: "UPDATE_BOARD", payload: { boardId: board.boardId, boardName: board.boardName } });
-    })
+    });
+
     hubConnection.on("DeleteBoard", (boardId: number) => {
         dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
-    })
+    });
 }

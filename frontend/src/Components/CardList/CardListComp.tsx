@@ -194,7 +194,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                         return <CardComp card={card} key={card.cardId}/>
                     })}
                 </div>
-                <CreateNewCardComp cardList={props.cardList}/>
+                <CreateNewCardComp cardList={props.cardList} boardId={props.boardId}/>
             </div>
         </div>
     )

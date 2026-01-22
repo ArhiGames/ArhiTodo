@@ -26,18 +26,18 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         return NoContent();
     }
 
-    [HttpPost("cardlist/{cardListId:int}/card")]
-    public async Task<IActionResult> PostCard(int cardListId, [FromBody] CardCreateDto cardCreateDto)
+    [HttpPost("board/{boardId:int}/cardlist/{cardListId:int}/card")]
+    public async Task<IActionResult> PostCard(int boardId, int cardListId, [FromBody] CardCreateDto cardCreateDto)
     {
-        CardGetDto? card = await cardService.CreateCard(cardListId, cardCreateDto);
+        CardGetDto? card = await cardService.CreateCard(boardId, cardListId, cardCreateDto);
         if (card == null) return NotFound();
         return Ok(card);
     }
     
-    [HttpDelete("card/{cardId:int}")]
-    public async Task<IActionResult> DeleteCard(int cardId)
+    [HttpDelete("board/{boardId:int}/card/{cardId:int}")]
+    public async Task<IActionResult> DeleteCard(int boardId, int cardId)
     {
-        bool success = await cardService.DeleteCard(cardId);
+        bool success = await cardService.DeleteCard(boardId, cardId);
         if (!success) return NotFound();
         return NoContent();
     }

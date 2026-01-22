@@ -5,7 +5,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 
-const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
+const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number }) => {
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [cardName, setCardName] = useState<string>("");
@@ -45,7 +45,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
                 return;
             }
 
-            fetch(`${API_BASE_URL}/cardlist/${props.cardList.cardListId}/card`,
+            fetch(`${API_BASE_URL}/board/${props.boardId}/cardlist/${props.cardList.cardListId}/card`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },

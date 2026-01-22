@@ -251,7 +251,7 @@ const ViewCardDetailsComp = () => {
             navigate(`/projects/${projectId}/board/${boardId}`);
         }
 
-        fetch(`${API_BASE_URL}/card/${cardId}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
