@@ -22,7 +22,11 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     public async Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
     {
         Board? board = await boardRepository.UpdateAsync(boardUpdateDto.FromUpdateDto());
-        return board?.ToGetDto();
+        if (board == null) return null;
+
+        BoardGetDto boardGetDto = board.ToGetDto();
+        boardNotificationService.UpdateBoard(Guid.NewGuid(), projectId, boardGetDto);
+        return boardGetDto;
     }
 
     public async Task<bool> DeleteBoard(int projectId, int boardId)

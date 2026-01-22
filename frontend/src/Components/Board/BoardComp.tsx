@@ -159,6 +159,12 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
             }
         });
 
+        hubState.hubConnection.on("UpdateBoard", (_projectId: number, board: BoardGetDto) => {
+            if (dispatch) {
+                dispatch({ type: "UPDATE_BOARD", payload: { boardId: board.boardId, boardName: board.boardName } });
+            }
+        })
+
         hubState.hubConnection.on("DeleteBoard", (boardId: number)=> {
             if (dispatch) {
                 dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
