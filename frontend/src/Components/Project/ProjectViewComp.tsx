@@ -10,6 +10,8 @@ import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
 import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
+import {buildBoardConnection} from "../../Contexts/Realtime/ConnectionBuilders/BoardConnectionBuilder.ts";
+import {buildCardListConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardListConnectionBuilder.ts";
 
 const ProjectViewComp = () => {
 
@@ -88,10 +90,15 @@ const ProjectViewComp = () => {
 
     useEffect(() => {
 
+        if (!dispatch) return;
+
         const connection = new signalR.HubConnectionBuilder()
             .withUrl(`${HUB_BASE_URL}/board`, { accessTokenFactory: (): string | Promise<string> => token!})
             .withAutomaticReconnect()
             .build();
+
+        buildBoardConnection(connection, dispatch);
+        buildCardListConnection(connection, dispatch);
 
         const startConnection = async () => {
 
