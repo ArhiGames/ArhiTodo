@@ -164,7 +164,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                             <>
                                 <h3 onClick={() => setIsEditingName(true)}>{props.cardList.cardListName}</h3>
                                 <div className="cardlist-actions">
-                                    <img ref={editIconRef} src="/public/edit-icon.svg" alt="Edit" height="24px"
+                                    <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
                                          onClick={() => setIsEditing(true)}/>
                                     { isEditing && <CardListEditPopover boardId={props.boardId} cardListId={props.cardList.cardListId}
                                                                         editIconRef={editIconRef} onClose={() => setIsEditing(false)}/> }

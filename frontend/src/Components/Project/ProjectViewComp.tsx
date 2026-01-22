@@ -6,12 +6,16 @@ import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { Board, State } from "../../Models/States/types.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
-import {API_BASE_URL} from "../../config/api.ts";
+import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
+import * as signalR from "@microsoft/signalr";
+import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const ProjectViewComp = () => {
 
     const { token, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
+    const hubState: HubContextState = useRealtimeHub();
     const state: State = useKanbanState();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
@@ -80,7 +84,37 @@ const ProjectViewComp = () => {
 
         return () => abortController.abort();
 
-    }, [dispatch, projectId, token, checkRefresh]);
+    }, [dispatch, projectId, checkRefresh]);
+
+    useEffect(() => {
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(`${HUB_BASE_URL}/board`, { accessTokenFactory: (): string | Promise<string> => token!})
+            .withAutomaticReconnect()
+            .build();
+
+        const startConnection = async () => {
+
+            connection.start()
+                .then(() => {
+                    console.log("Connected successfully to /hub/board/")
+                    hubState.setHubConnection(connection);
+                    connection.invoke("JoinProjectGroup", Number(projectId));
+                })
+                .catch(console.error);
+        }
+
+        startConnection();
+
+        return () => {
+            connection.stop()
+                .then(() => {
+                    console.log("Closed connection to /hub/board/ successfully")
+                })
+                .catch(console.error);
+        }
+
+    }, [dispatch, token, projectId]);
 
     useEffect(() => {
         loadDefaultBoard();

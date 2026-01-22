@@ -14,6 +14,7 @@ import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/User
 import AdminUserGroupsSettingsComp from "./Components/Admin/AdminDashboardPages/AdminUserGroupsSettingsComp.tsx";
 import RegisterPage from "./Components/Authentication/RegisterPage.tsx";
 import KanbanProvider from "./Contexts/Kanban/KanbanProvider.tsx";
+import HubProvider from "./Contexts/Realtime/HubProvider.tsx";
 
 function AppContent() {
 
@@ -59,7 +60,9 @@ function App() {
         <BrowserRouter>
             <KanbanProvider>
                 <AuthProvider>
-                    <AppContent/>
+                    <HubProvider>
+                        <AppContent/>
+                    </HubProvider>
                 </AuthProvider>
             </KanbanProvider>
         </BrowserRouter>

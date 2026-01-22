@@ -25,13 +25,13 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return board?.ToGetDto();
     }
 
-    public async Task<bool> DeleteBoard(int boardId)
+    public async Task<bool> DeleteBoard(int projectId, int boardId)
     {
         bool succeeded = await boardRepository.DeleteAsync(boardId);
 
         if (succeeded)
         {
-            boardNotificationService.DeleteBoard(Guid.NewGuid(), boardId);
+            boardNotificationService.DeleteBoard(Guid.NewGuid(), projectId, boardId);
         }
         
         return succeeded;

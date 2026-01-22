@@ -61,7 +61,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpDelete("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
-        bool removed = await boardService.DeleteBoard(boardId);
+        bool removed = await boardService.DeleteBoard(projectId, boardId);
         if (!removed) return NotFound();
         return NoContent();
     }

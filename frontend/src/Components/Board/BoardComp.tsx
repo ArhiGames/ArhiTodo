@@ -13,14 +13,16 @@ import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
-import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
-import * as signalR from "@microsoft/signalr";
+import {API_BASE_URL} from "../../config/api.ts";
+import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     const { token, checkRefresh } = useAuth();
     const { cardId } = useParams();
     const navigate = useNavigate();
+    const hubState: HubContextState = useRealtimeHub();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
     const board: BoardGetDto | null = getUnnormalizedKanbanState()
@@ -140,33 +142,30 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     useEffect(() => {
 
-        const run = async () => {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl(`${HUB_BASE_URL}/board`)
-                .withAutomaticReconnect()
-                .build();
+        if (!hubState.hubConnection) return;
 
-            await connection.start().catch(console.error);
+        if (hubState.hubConnection.state !== "Connected") return;
 
-            connection.on("CreateBoard", (projectId: number, board: BoardGetDto) => {
-                if (dispatch) {
-                    dispatch({
-                        type: "CREATE_BOARD_OPTIMISTIC",
-                        payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName }
-                    });
-                }
-            });
+        hubState.hubConnection.invoke("JoinBoardGroup", props.boardId)
+            .then(() => console.log(`Joined board group with id: ${props.boardId}`))
+            .catch(console.error);
 
-            connection.on("DeleteBoard", (boardId: number)=> {
-                if (dispatch) {
-                    dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
-                }
-            })
-        }
+        hubState.hubConnection.on("CreateBoard", (projectId: number, board: BoardGetDto) => {
+            if (dispatch) {
+                dispatch({
+                    type: "CREATE_BOARD_OPTIMISTIC",
+                    payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName }
+                });
+            }
+        });
 
-        run();
+        hubState.hubConnection.on("DeleteBoard", (boardId: number)=> {
+            if (dispatch) {
+                dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
+            }
+        })
 
-    }, [dispatch]);
+    }, [dispatch, hubState.hubConnection, props.boardId]);
 
     if (props.boardId === null) {
         return (
