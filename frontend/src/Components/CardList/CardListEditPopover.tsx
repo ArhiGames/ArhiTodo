@@ -109,12 +109,12 @@ const CardListEditPopover = (props: Props) => {
             <div className="cardlist-popover-actions">
                 <button className="button standard-button" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                         onClick={() => setIsTryingToDeleteAllCards(true)}>
-                    <img src="/public/trashcan-icon.svg" alt="" height="20px"/>
+                    <img src="/trashcan-icon.svg" alt="" height="20px"/>
                     <p>Delete all cards from list</p>
                 </button>
                 <button className="button standard-button" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                         onClick={() => setIsTryingToDeleteCardList(true)}>
-                    <img src="/public/trashcan-icon.svg" alt="" height="20px"/>
+                    <img src="/trashcan-icon.svg" alt="" height="20px"/>
                     <p>Delete</p>
                 </button>
             </div>

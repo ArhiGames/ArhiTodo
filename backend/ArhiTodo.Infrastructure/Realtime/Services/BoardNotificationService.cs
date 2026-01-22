@@ -10,16 +10,16 @@ public class BoardNotificationService(IHubContext<BoardHub, IBoardClient> hubCon
 {
     public void CreateBoard(Guid invokedBy, int projectId, BoardGetDto boardGetDto)
     {
-        hubContext.Clients.Groups($"grp-project-{projectId}").CreateBoard(projectId, boardGetDto);
+        hubContext.Clients.Group($"grp-project-{projectId}").CreateBoard(projectId, boardGetDto);
     }
 
     public void UpdateBoard(Guid invokedBy, int projectId, BoardGetDto boardGetDto)
     {
-        hubContext.Clients.Groups($"grp-project-{projectId}").UpdateBoard(projectId, boardGetDto);
+        hubContext.Clients.Group($"grp-project-{projectId}").UpdateBoard(projectId, boardGetDto);
     }
 
     public void DeleteBoard(Guid invokedBy, int projectId, int boardId)
     {
-        hubContext.Clients.Groups($"grp-project-{projectId}").DeleteBoard(boardId);
+        hubContext.Clients.Group($"grp-project-{projectId}").DeleteBoard(boardId);
     }
 }

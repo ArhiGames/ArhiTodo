@@ -35,6 +35,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 
         builder.Services.AddScoped<IBoardNotificationService, BoardNotificationService>();
+        builder.Services.AddScoped<ICardListNotificationService, CardListNotificationService>();
     }
 
     public static void RegisterInfrastructureApp(this WebApplication webApplication)

@@ -128,6 +128,11 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
             })
     }, [checkRefresh, dispatch, inputtedName, props.boardId, props.cardList.cardListId, props.cardList.cardListName])
 
+    function onTryEditCardListNameClicked() {
+        setIsEditingName(true);
+        setInputtedName(props.cardList.cardListName);
+    }
+
     useEffect(() => {
 
         if (isEditingName) {
@@ -138,6 +143,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
 
         const onClickedOutside = (e: MouseEvent) => {
             e.stopPropagation();
+            if (!isEditingName) return;
             if (!cardListHeaderRef.current) return;
 
             if (!cardListHeaderRef.current.contains(e.target as Node)) {
@@ -162,7 +168,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                                    value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
                         ) : (
                             <>
-                                <h3 onClick={() => setIsEditingName(true)}>{props.cardList.cardListName}</h3>
+                                <h3 onClick={onTryEditCardListNameClicked}>{props.cardList.cardListName}</h3>
                                 <div className="cardlist-actions">
                                     <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
                                          onClick={() => setIsEditing(true)}/>

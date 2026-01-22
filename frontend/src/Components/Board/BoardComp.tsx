@@ -158,16 +158,35 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                 });
             }
         });
-
         hubState.hubConnection.on("UpdateBoard", (_projectId: number, board: BoardGetDto) => {
             if (dispatch) {
                 dispatch({ type: "UPDATE_BOARD", payload: { boardId: board.boardId, boardName: board.boardName } });
             }
         })
-
-        hubState.hubConnection.on("DeleteBoard", (boardId: number)=> {
+        hubState.hubConnection.on("DeleteBoard", (boardId: number) => {
             if (dispatch) {
                 dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
+            }
+        })
+
+        hubState.hubConnection.on("CreateCardList", (boardId: number, cardList: CardListGetDto) => {
+            if (dispatch) {
+                dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId, cardListId: cardList.cardListId, cardListName: cardList.cardListName } });
+            }
+        })
+        hubState.hubConnection.on("UpdateCardList", (_boardId: number, cardList: CardListGetDto) => {
+            if (dispatch) {
+                dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: cardList.cardListId, cardListName: cardList.cardListName } });
+            }
+        })
+        hubState.hubConnection.on("DeleteCardsFromCardList", (cardListId: number) => {
+            if (dispatch) {
+                dispatch({ type: "DELETE_CARDS_FROM_CARDLIST", payload: { fromCardListId: cardListId } });
+            }
+        })
+        hubState.hubConnection.on("DeleteCardList", (cardListId: number) => {
+            if (dispatch) {
+                dispatch({ type: "DELETE_CARDLIST", payload: { cardListId: cardListId } });
             }
         })
 
