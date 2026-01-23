@@ -42,18 +42,18 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         return NoContent();
     }
 
-    [HttpPatch("card/{cardId:int}/done/{isDone:bool}")]
-    public async Task<IActionResult> PatchCardStatus(int cardId, bool isDone)
+    [HttpPatch("board/{boardId:int}/card/{cardId:int}/done/{isDone:bool}")]
+    public async Task<IActionResult> PatchCardStatus(int boardId, int cardId, bool isDone)
     {
-        CardGetDto? cardGetDto = await cardService.PatchCardStatus(cardId, isDone);
+        CardGetDto? cardGetDto = await cardService.PatchCardStatus(boardId, cardId, isDone);
         if (cardGetDto == null) return NotFound();
         return Ok();
     }
 
-    [HttpPatch("card/{cardId:int}/name")]
-    public async Task<IActionResult> PatchCardName(int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
+    [HttpPatch("board/{boardId:int}/card/{cardId:int}/name")]
+    public async Task<IActionResult> PatchCardName(int boardId, int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
     {
-        CardGetDto? cardGetDto = await cardService.PatchCardName(cardId, patchCardNameDto);
+        CardGetDto? cardGetDto = await cardService.PatchCardName(boardId, cardId, patchCardNameDto);
         if (cardGetDto == null) return NotFound();
         return Ok();
     }

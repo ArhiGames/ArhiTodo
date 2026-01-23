@@ -50,7 +50,7 @@ const CardComp = (props: { card: CardGetDto }) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${props.card.cardId}/done/${newState}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.card.cardId}/done/${newState}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })

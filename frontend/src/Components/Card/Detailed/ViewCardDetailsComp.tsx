@@ -176,7 +176,7 @@ const ViewCardDetailsComp = () => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/done/${newState}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${detailedCard.cardId}/done/${newState}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -203,7 +203,7 @@ const ViewCardDetailsComp = () => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/name`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${detailedCard.cardId}/name`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ newCardName: newCardName })

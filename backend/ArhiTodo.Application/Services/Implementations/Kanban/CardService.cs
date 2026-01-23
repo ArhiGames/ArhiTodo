@@ -29,16 +29,24 @@ public class CardService(ICardNotificationService cardNotificationService, ICard
         return succeeded;
     }
 
-    public async Task<CardGetDto?> PatchCardStatus(int cardId, bool isDone)
+    public async Task<CardGetDto?> PatchCardStatus(int boardId, int cardId, bool isDone)
     {
         Card? card = await cardRepository.PatchCardStatus(cardId, isDone);
-        return card?.ToGetDto();
+        if (card == null) return null;
+
+        CardGetDto cardGetDto = card.ToGetDto();
+        cardNotificationService.PathCardStatus(boardId, cardId, cardGetDto.IsDone);
+        return cardGetDto;
     }
 
-    public async Task<CardGetDto?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto)
+    public async Task<CardGetDto?> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto)
     {
         Card? card = await cardRepository.PatchCardName(cardId, patchCardNameDto.NewCardName);
-        return card?.ToGetDto();
+        if (card == null) return null;
+
+        CardGetDto cardGetDto = card.ToGetDto();
+        cardNotificationService.PatchCardName(boardId, cardId, cardGetDto);
+        return cardGetDto;
     }
 
     public async Task<CardGetDto?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)

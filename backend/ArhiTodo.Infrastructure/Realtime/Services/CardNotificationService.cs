@@ -17,4 +17,14 @@ public class CardNotificationService(IHubContext<BoardHub, IBoardClient> hubCont
     {
         hubContext.Clients.Group($"grp-board-{boardId}").DeleteCard(cardId);
     }
+
+    public void PatchCardName(int boardId, int cardId, CardGetDto card)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").PatchCardName(cardId, card);
+    }
+
+    public void PathCardStatus(int boardId, int cardId, bool isDone)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").PathCardStatus(cardId, isDone);
+    }
 }

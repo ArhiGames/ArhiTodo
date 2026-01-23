@@ -11,4 +11,12 @@ export function buildCardConnection(hubConnection: HubConnection, dispatch: Disp
     hubConnection.on("DeleteCard", (cardId: number) => {
         dispatch({ type: "DELETE_CARD", payload: { cardId: cardId } })
     });
+
+    hubConnection.on("PatchCardName", (cardId: number, cardGetDto: CardGetDto) => {
+        dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: cardId, cardName: cardGetDto.cardName } });
+    });
+
+    hubConnection.on("PathCardStatus", (cardId: number, isDone: boolean) => {
+        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: cardId, newState: isDone } });
+    });
 }
