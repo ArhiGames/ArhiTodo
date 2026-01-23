@@ -17,7 +17,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
-const BoardComp = (props: { projectId: number, boardId: number | null }) => {
+const BoardComp = (props: { projectId: number, boardId: number }) => {
 
     const { token, checkRefresh } = useAuth();
     const { cardId } = useParams();
@@ -25,14 +25,16 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
     const hubState: HubContextState = useRealtimeHub();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
-    const board: BoardGetDto | null = getUnnormalizedKanbanState()
+
+    const board: BoardGetDto = getUnnormalizedKanbanState()
+
     const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
-    const [loaded, setLoaded] = useState<boolean>(false);
+
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     function getUnnormalizedKanbanState() {
-        if (props.boardId == null) return null;
 
         let boardName: string = "";
         for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
@@ -65,6 +67,14 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
         return boardGetDto;
     }
+
+    useEffect(() => {
+
+        if (!kanbanState.boards[props.boardId]) {
+            navigate(`/projects/${props.projectId}/board/`);
+        }
+
+    }, [props.boardId, kanbanState.boards, props.projectId, navigate]);
 
     function onFilteringLabelSelected(label: Label) {
         setCurrentFilteringLabels(labels => [...labels, label.labelId]);
@@ -119,9 +129,9 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                 .then((res: { board: BoardGetDto; labels: LabelGetDto[] }) => {
 
                     if (dispatch) {
-                        dispatch({type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
+                        dispatch({ type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
                     }
-                    setLoaded(true);
+                    setIsLoaded(true);
 
                 })
                 .catch(err => {
@@ -152,14 +162,6 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
 
     }, [dispatch, hubState.hubConnection, props.boardId]);
 
-    if (props.boardId === null) {
-        return (
-            <div className="board-body no-board-selected">
-                <p>No board selected</p>
-            </div>
-        )
-    }
-
     return (
         <div className="board-body">
             <div className="current-board-header">
@@ -186,25 +188,32 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                                                     onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}/>
                 }
             </div>
-            <div className="board-content">
-                {
-                    board ? (
-                        <>
-                            { (board.cardLists && board.cardLists.length > 0) && (
-                                board.cardLists.map((cardList: CardListGetDto) => {
-                                    return (
-                                        <CardListComp boardId={props.boardId!} cardList={cardList}
-                                                      filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
-                                    );
-                                }))}
-                            <CreateNewCardListComp/>
-                        </>
-                    ) : (
-                        <p>Loading...</p>
-                    )
-                }
-            </div>
-            { cardId !== undefined && loaded && createPortal(<ViewCardDetailsComp/>, document.body) }
+            {
+                isLoaded && (
+                    <>
+                        <div className="board-content">
+                            {
+                                board ? (
+                                    <>
+                                        { (board.cardLists && board.cardLists.length > 0) && (
+                                            board.cardLists.map((cardList: CardListGetDto) => {
+                                                return (
+                                                    <CardListComp boardId={props.boardId!} cardList={cardList}
+                                                                  filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
+                                                );
+                                            }))}
+                                        <CreateNewCardListComp/>
+                                    </>
+                                ) : (
+                                    <p>Loading...</p>
+                                )
+                            }
+                        </div>
+                        { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
+                    </>
+                )
+            }
+
         </div>
     )
 }

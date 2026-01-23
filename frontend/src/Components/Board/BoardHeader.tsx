@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { Board } from "../../Models/States/types.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
@@ -19,7 +19,6 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
-    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -92,7 +91,6 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
                 if (dispatch) {
                     dispatch({type: "DELETE_BOARD", payload: { boardId: props.board.boardId }});
-                    navigate(`/projects/${props.projectId}/board`)
                 }
             })
             .catch(console.error)

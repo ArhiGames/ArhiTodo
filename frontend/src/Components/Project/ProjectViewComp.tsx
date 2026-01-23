@@ -13,6 +13,7 @@ import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import {buildBoardConnection} from "../../Contexts/Realtime/ConnectionBuilders/BoardConnectionBuilder.ts";
 import {buildCardListConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardListConnectionBuilder.ts";
 import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardConnectionBuilder.ts";
+import NoBoardComp from "../Board/NoBoardComp.tsx";
 
 const ProjectViewComp = () => {
 
@@ -146,7 +147,8 @@ const ProjectViewComp = () => {
                 })}
                 <CreateNewBoardHeaderComp/>
             </div>
-            <BoardComp projectId={projectIdNum} boardId={activeBoardId}/>
+            { activeBoardId ? <BoardComp projectId={projectIdNum} boardId={activeBoardId}/> : <NoBoardComp/> }
+
         </div>
     )
 }
