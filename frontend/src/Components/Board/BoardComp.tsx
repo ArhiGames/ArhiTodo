@@ -129,7 +129,7 @@ const BoardComp = (props: { projectId: number, boardId: number | null }) => {
                         return;
                     }
 
-                    navigate("/");
+                    navigate(`/projects/${props.projectId}/board/`);
                     console.error(err);
                 })
         }

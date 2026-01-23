@@ -7,12 +7,12 @@
 }
 
 :root {
-    --bg-dark: hsl(0, 0%, 10%);
-    --bg: hsl(0, 0%, 15%);
-    --bg-light: hsl(0, 0%, 20%);
-    --bg-x-light: hsl(0, 0%, 28%);
-    --bg-xx-light: hsl(0, 0%, 35%);
-    --bg-xxx-light: hsl(0, 0%, 45%);
+    --bg-dark: hsl(0, 0%, 7%);
+    --bg: hsl(0, 0%, 12%);
+    --bg-light: hsl(0, 0%, 18%);
+    --bg-x-light: hsl(0, 0%, 25%);
+    --bg-xx-light: hsl(0, 0%, 32%);
+    --bg-xxx-light: hsl(0, 0%, 40%);
 
     --bg-popover: hsl(0, 0%, 22%);
 
@@ -27,7 +27,6 @@
     --text-color: hsl(0, 0%, 95%);
     --text-color-shaded: hsl(0, 0%, 78%);
     --text-color-failure: hsl(0, 100%, 60%);
-    --text-color-dark: hsl(0, 0%, 15%);
 
     --std-button: hsl(0, 0%, 50%);
     --std-button-highlight: hsl(0, 0%, 65%);
@@ -273,7 +272,6 @@ body {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 175px);
-    overflow: hidden;
 }
 
 .current-board-header {
@@ -291,6 +289,7 @@ body {
 
 .board-content {
     display: flex;
+    overflow-x: auto;
 }
 
 .no-board-selected {
@@ -338,6 +337,7 @@ body {
     padding: 1rem;
     margin: 1rem 0.5rem;
     width: 320px;
+    max-height: 95%;
     color: var(--text-color);
 }
 
@@ -379,7 +379,8 @@ body {
 
 .add-cardlist-button {
     padding: 15px;
-    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
     height: fit-content;
     margin: 1rem 0.5rem;
 
@@ -422,13 +423,16 @@ body {
 .cards {
     overflow-y: auto;
     flex-grow: 1;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
 }
 
 .card {
     background-color: var(--bg-x-light);
     border: 1px solid transparent;
     border-radius: 5px;
-    margin: 0.5rem 0;
     padding: 0.5rem;
     color: var(--text-color);
     transition: border-color 0.3s;
