@@ -11,26 +11,26 @@ namespace ArhiTodo.Controllers;
 [Route("api")]
 public class ChecklistController(IChecklistService checklistService) : ControllerBase
 {
-    [HttpPost("card/{cardId:int}/checklist")]
-    public async Task<IActionResult> CreateChecklistOnCard(int cardId, [FromBody] ChecklistCreateDto checklistCreateDto)
+    [HttpPost("board/{boardId:int}/card/{cardId:int}/checklist")]
+    public async Task<IActionResult> CreateChecklistOnCard(int boardId, int cardId, [FromBody] ChecklistCreateDto checklistCreateDto)
     {
-        ChecklistGetDto? checklist = await checklistService.CreateChecklist(cardId, checklistCreateDto);
+        ChecklistGetDto? checklist = await checklistService.CreateChecklist(boardId, cardId, checklistCreateDto);
         if (checklist == null) return NotFound();
         return Ok(checklist);
     }
 
-    [HttpPut("card/{cardId:int}/checklist")]
-    public async Task<IActionResult> UpdateChecklist(int cardId, [FromBody] ChecklistUpdateDto checklistUpdateDto)
+    [HttpPut("board/{boardId:int}/card/{cardId:int}/checklist")]
+    public async Task<IActionResult> UpdateChecklist(int boardId, int cardId, [FromBody] ChecklistUpdateDto checklistUpdateDto)
     {
-        ChecklistGetDto? checklist = await checklistService.UpdateChecklist(cardId, checklistUpdateDto);
+        ChecklistGetDto? checklist = await checklistService.UpdateChecklist(boardId, cardId, checklistUpdateDto);
         if (checklist == null) return NotFound();
         return Ok(checklist);
     }
 
-    [HttpDelete("card/{cardId:int}/checklist/{checklistId:int}")]
-    public async Task<IActionResult> DeleteChecklistFromCard(int cardId, int checklistId)
+    [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}")]
+    public async Task<IActionResult> DeleteChecklistFromCard(int boardId, int cardId, int checklistId)
     {
-        bool succeeded = await checklistService.DeleteChecklist(checklistId);
+        bool succeeded = await checklistService.DeleteChecklist(boardId, checklistId);
         if (!succeeded) return NotFound();
         return NoContent();
     }

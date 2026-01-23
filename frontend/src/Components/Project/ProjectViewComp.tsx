@@ -14,6 +14,7 @@ import {buildBoardConnection} from "../../Contexts/Realtime/ConnectionBuilders/B
 import {buildCardListConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardListConnectionBuilder.ts";
 import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardConnectionBuilder.ts";
 import NoBoardComp from "../Board/NoBoardComp.tsx";
+import {buildChecklistConnection} from "../../Contexts/Realtime/ConnectionBuilders/ChecklistConnectionBuilder.ts";
 
 const ProjectViewComp = () => {
 
@@ -102,6 +103,7 @@ const ProjectViewComp = () => {
         buildBoardConnection(connection, dispatch);
         buildCardListConnection(connection, dispatch);
         buildCardConnection(connection, dispatch);
+        buildChecklistConnection(connection, dispatch);
 
         const startConnection = async () => {
 

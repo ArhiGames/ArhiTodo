@@ -7,6 +7,7 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import type {Checklist} from "../../../../Models/States/types.ts";
+import {useParams} from "react-router-dom";
 
 interface Props {
     cardId: number;
@@ -15,12 +16,14 @@ interface Props {
 const CardDetailChecklistsComp = ( props: Props ) => {
 
     const { checkRefresh } = useAuth();
+    const kanbanState = useKanbanState();
+    const dispatch = useKanbanDispatch();
+    const { boardId } = useParams();
+
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
     const [inputtedChecklistName, setInputtedChecklistName] = useState<string>("");
-    const kanbanState = useKanbanState();
-    const dispatch = useKanbanDispatch();
 
     async function onCreateChecklistSubmit(e: FormEvent<HTMLFormElement>) {
 
@@ -41,7 +44,7 @@ const CardDetailChecklistsComp = ( props: Props ) => {
             })
         }
 
-        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.cardId}/checklist`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistName: inputtedChecklistName })

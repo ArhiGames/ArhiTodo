@@ -9,6 +9,7 @@ import type { ChecklistItem } from "../../../../Models/States/types.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import {useParams} from "react-router-dom";
 
 interface Props {
     cardId: number;
@@ -19,8 +20,9 @@ const CardDetailChecklistComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
-
     const kanbanState = useKanbanState();
+    const { boardId } = useParams();
+
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
     const checklist = kanbanState.checklists[props.checklistId];
     const checklistItems: ChecklistItem[] = [];
@@ -81,7 +83,7 @@ const CardDetailChecklistComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistId: props.checklistId, checklistName: inputtedChecklistName })
@@ -113,7 +115,7 @@ const CardDetailChecklistComp = (props: Props) => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/card/${props.cardId}/checklist/${props.checklistId}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist/${props.checklistId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })

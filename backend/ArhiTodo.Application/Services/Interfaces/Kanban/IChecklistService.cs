@@ -5,9 +5,9 @@ namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface IChecklistService
 {
-    Task<ChecklistGetDto?> CreateChecklist(int cardId, ChecklistCreateDto checklistCreateDto);
-    Task<ChecklistGetDto?> UpdateChecklist(int cardId, ChecklistUpdateDto checklistUpdateDto);
-    Task<bool> DeleteChecklist(int checklistId);
+    Task<ChecklistGetDto?> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto);
+    Task<ChecklistGetDto?> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto);
+    Task<bool> DeleteChecklist(int boardId, int checklistId);
     
     Task<ChecklistItemGetDto?> CreateChecklistItem(int checklistId, ChecklistItemCreateDto checklistItemCreateDto);
     Task<ChecklistItemGetDto?> UpdateChecklistItem(int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto);
