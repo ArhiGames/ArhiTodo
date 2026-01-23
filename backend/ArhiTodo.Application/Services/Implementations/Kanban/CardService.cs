@@ -19,7 +19,7 @@ public class CardService(ICardNotificationService cardNotificationService, ICard
         return cardGetDto;
     }
 
-    public async Task<bool> DeleteCard(int boardId, int cardId)
+    public async Task<bool> DeleteCard(int projectId, int boardId, int cardId)
     {
         bool succeeded = await cardRepository.DeleteAsync(cardId);
         if (succeeded)

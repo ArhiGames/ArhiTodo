@@ -34,10 +34,10 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         return Ok(card);
     }
     
-    [HttpDelete("board/{boardId:int}/card/{cardId:int}")]
-    public async Task<IActionResult> DeleteCard(int boardId, int cardId)
+    [HttpDelete("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
+    public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardId)
     {
-        bool success = await cardService.DeleteCard(boardId, cardId);
+        bool success = await cardService.DeleteCard(projectId, boardId, cardId);
         if (!success) return NotFound();
         return NoContent();
     }

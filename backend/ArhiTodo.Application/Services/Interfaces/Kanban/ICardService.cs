@@ -5,7 +5,7 @@ namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 public interface ICardService
 {
     Task<CardGetDto?> CreateCard(int boardId, int cardListId, CardCreateDto cardCreateDto);
-    Task<bool> DeleteCard(int boardId, int cardId);
+    Task<bool> DeleteCard(int projectId, int boardId, int cardId);
     Task<CardGetDto?> PatchCardStatus(int cardId, bool isDone);
     Task<CardGetDto?> PatchCardName(int cardId, PatchCardNameDto patchCardNameDto);
     Task<CardGetDto?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto);

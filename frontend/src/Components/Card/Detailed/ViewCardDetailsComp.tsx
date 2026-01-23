@@ -18,15 +18,17 @@ const ViewCardDetailsComp = () => {
     const { projectId, boardId, cardId } = useParams();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
+
     const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
     const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
+
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
+    const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
 
     const descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
-    const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
-    const [cardDescription, setCardDescription] = useState<string>("");
 
-    const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)].cardName);
+    const [cardDescription, setCardDescription] = useState<string>("");
+    const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)]?.cardName);
 
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
     const [isSharing, setIsSharing] = useState<boolean>(false);
@@ -34,6 +36,15 @@ const ViewCardDetailsComp = () => {
     const onViewDetailsClosed = useCallback(() => {
         navigate(`/projects/${projectId}/board/${boardId}`);
     }, [boardId, navigate, projectId]);
+
+    useEffect(() => {
+
+        if (!kanbanState.cards[Number(cardId)]) {
+            navigate(`/projects/${projectId}/board/${boardId}`);
+            return;
+        }
+
+    }, [navigate, kanbanState.cards, cardId, projectId, boardId]);
 
     useEffect(() => {
         if (cardId == undefined) return;
@@ -75,6 +86,17 @@ const ViewCardDetailsComp = () => {
         return () => abortController.abort();
 
     }, [boardId, cardId, projectId, token, checkRefresh, onViewDetailsClosed]);
+
+    useEffect(() => {
+
+        if (isEditingDescription) {
+            if (!descriptionInputRef.current) return;
+
+            descriptionInputRef.current.focus();
+            descriptionInputRef.current.setSelectionRange(cardDescription.length, cardDescription.length);
+        }
+
+    }, [isEditingDescription]);
 
     function getPureLabelIds() {
         const labelIds: number[] = [];
@@ -246,18 +268,17 @@ const ViewCardDetailsComp = () => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        if (dispatch) {
-            dispatch({ type: "DELETE_CARD", payload: { cardId: Number(cardId)} });
-            navigate(`/projects/${projectId}/board/${boardId}`);
-        }
-
-        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}`, {
+        fetch(`${API_BASE_URL}/project/${Number(projectId)}/board/${Number(boardId)}/card/${cardId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to delete card");
+                }
+
+                if (dispatch) {
+                    dispatch({ type: "DELETE_CARD", payload: { cardId: Number(cardId)} });
                 }
             })
             .catch(err => {
@@ -275,16 +296,9 @@ const ViewCardDetailsComp = () => {
         }, 2000)
     }
 
-    useEffect(() => {
-
-        if (isEditingDescription) {
-            if (!descriptionInputRef.current) return;
-
-            descriptionInputRef.current.focus();
-            descriptionInputRef.current.setSelectionRange(cardDescription.length, cardDescription.length);
-        }
-
-    }, [isEditingDescription]);
+    if (!kanbanState.cards[Number(cardId)]) {
+        return null;
+    }
 
     function cardLabelsJsx() {
         return (
