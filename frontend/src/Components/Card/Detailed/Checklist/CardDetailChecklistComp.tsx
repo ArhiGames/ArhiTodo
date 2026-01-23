@@ -155,7 +155,7 @@ const CardDetailChecklistComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/checklist/${props.checklistId}/item`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/checklist/${props.checklistId}/item`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistItemName: addingTaskInputValue })

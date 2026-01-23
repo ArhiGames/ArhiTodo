@@ -35,36 +35,36 @@ public class ChecklistController(IChecklistService checklistService) : Controlle
         return NoContent();
     }
 
-    [HttpPost("checklist/{checklistId:int}/item")]
-    public async Task<IActionResult> CreateChecklistItemOnChecklist(int checklistId, [FromBody] ChecklistItemCreateDto checklistItemCreateDto)
+    [HttpPost("board/{boardId:int}/checklist/{checklistId:int}/item")]
+    public async Task<IActionResult> CreateChecklistItemOnChecklist(int boardId, int checklistId, [FromBody] ChecklistItemCreateDto checklistItemCreateDto)
     {
         ChecklistItemGetDto? checklistItemGetDto =
-            await checklistService.CreateChecklistItem(checklistId, checklistItemCreateDto);
+            await checklistService.CreateChecklistItem(boardId, checklistId, checklistItemCreateDto);
         if (checklistItemGetDto == null) return NotFound();
         return Ok(checklistItemGetDto);
     }
 
-    [HttpPut("checklist/{checklistId:int}/item")]
-    public async Task<IActionResult> UpdateChecklistItem(int checklistId, [FromBody] ChecklistItemUpdateDto checklistItemUpdateDto)
+    [HttpPut("board/{boardId:int}/checklist/{checklistId:int}/item")]
+    public async Task<IActionResult> UpdateChecklistItem(int boardId, int checklistId, [FromBody] ChecklistItemUpdateDto checklistItemUpdateDto)
     {
         ChecklistItemGetDto? checklistItemGetDto =
-            await checklistService.UpdateChecklistItem(checklistId, checklistItemUpdateDto);
+            await checklistService.UpdateChecklistItem(boardId, checklistId, checklistItemUpdateDto);
         if (checklistItemGetDto == null) return NotFound();
         return Ok(checklistItemGetDto);
     }
 
-    [HttpDelete("checklist/{checklistId:int}/item/{checklistItemId:int}")]
-    public async Task<IActionResult> DeleteChecklistItemFromChecklist(int checklistId, int checklistItemId)
+    [HttpDelete("board/{boardId:int}/checklist/{checklistId:int}/item/{checklistItemId:int}")]
+    public async Task<IActionResult> DeleteChecklistItemFromChecklist(int boardId, int checklistId, int checklistItemId)
     {
-        bool succeeded = await checklistService.DeleteChecklistItem(checklistItemId);
+        bool succeeded = await checklistService.DeleteChecklistItem(boardId, checklistId, checklistItemId);
         if (!succeeded) return NotFound();
         return NoContent();
     }
 
-    [HttpPatch("checklist/item/{checklistItemId:int}/done/{taskDone:bool}")]
-    public async Task<IActionResult> PatchChecklistItemDoneState(int checklistItemId, bool taskDone)
+    [HttpPatch("board/{boardId:int}/checklist/item/{checklistItemId:int}/done/{taskDone:bool}")]
+    public async Task<IActionResult> PatchChecklistItemDoneState(int boardId, int checklistItemId, bool taskDone)
     {
-        ChecklistItemGetDto? checklistItemGetDto = await checklistService.PatchChecklistItemState(checklistItemId, taskDone);
+        ChecklistItemGetDto? checklistItemGetDto = await checklistService.PatchChecklistItemState(boardId, checklistItemId, taskDone);
         if (checklistItemGetDto == null) return NotFound();
         return Ok(checklistItemGetDto);
     }

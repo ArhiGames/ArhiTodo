@@ -2,6 +2,7 @@
 using ArhiTodo.Application.DTOs.Card;
 using ArhiTodo.Application.DTOs.CardList;
 using ArhiTodo.Application.DTOs.Checklist;
+using ArhiTodo.Application.DTOs.ChecklistItem;
 
 namespace ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 
@@ -24,4 +25,8 @@ public interface IBoardClient
     Task CreateChecklist(int cardId, ChecklistGetDto checklistGetDto);
     Task UpdateChecklist(int cardId, ChecklistGetDto checklistGetDto);
     Task DeleteChecklist(int checklistId);
+    Task CreateChecklistItemOnChecklist(int checklistId, ChecklistItemGetDto checklistItemGetDto);
+    Task UpdateChecklistItem(int checklistId, ChecklistItemGetDto checklistItemGetDto);
+    Task PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
+    Task DeleteChecklistItemFromChecklist(int checklistItemId);
 }

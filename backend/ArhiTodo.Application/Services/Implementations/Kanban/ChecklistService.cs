@@ -40,28 +40,44 @@ public class ChecklistService(IChecklistNotificationService checklistNotificatio
         return succeeded;
     }
 
-    public async Task<ChecklistItemGetDto?> CreateChecklistItem(int checklistId, ChecklistItemCreateDto checklistItemCreateDto)
+    public async Task<ChecklistItemGetDto?> CreateChecklistItem(int boardId, int checklistId, ChecklistItemCreateDto checklistItemCreateDto)
     {
         ChecklistItem? createdChecklistItem = await checklistRepository.AddChecklistItemToChecklist(checklistItemCreateDto.FromCreateDto(checklistId));
-        return createdChecklistItem?.ToGetDto();
+        if (createdChecklistItem == null) return null;
+
+        ChecklistItemGetDto checklistItemGetDto = createdChecklistItem.ToGetDto();
+        checklistNotificationService.CreateChecklistItemOnChecklist(boardId, checklistId, checklistItemGetDto);
+        return checklistItemGetDto;
     }
 
-    public async Task<ChecklistItemGetDto?> UpdateChecklistItem(int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto)
+    public async Task<ChecklistItemGetDto?> UpdateChecklistItem(int boardId, int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto)
     {
         ChecklistItem? updatedChecklistItem =
             await checklistRepository.UpdateChecklistItem(checklistItemUpdateDto.FromUpdateDto(checklistId));
-        return updatedChecklistItem?.ToGetDto();
+        if (updatedChecklistItem == null) return null;
+
+        ChecklistItemGetDto checklistItemGetDto = updatedChecklistItem.ToGetDto();
+        checklistNotificationService.UpdateChecklistItem(boardId, checklistId, checklistItemGetDto);
+        return checklistItemGetDto;
     }
 
-    public async Task<bool> DeleteChecklistItem(int checklistItemId)
+    public async Task<bool> DeleteChecklistItem(int boardId, int checklistId, int checklistItemId)
     {
         bool succeeded = await checklistRepository.RemoveChecklistItemFromChecklist(checklistItemId);
+        if (succeeded)
+        {
+            checklistNotificationService.DeleteChecklistItemFromChecklist(boardId, checklistId, checklistItemId);
+        }
         return succeeded;
     }
 
-    public async Task<ChecklistItemGetDto?> PatchChecklistItemState(int checklistItemId, bool newState)
+    public async Task<ChecklistItemGetDto?> PatchChecklistItemState(int boardId, int checklistItemId, bool newState)
     {
         ChecklistItem? checklistItem = await checklistRepository.PatchChecklistItemDoneState(checklistItemId, newState);
-        return checklistItem?.ToGetDto();
+        if (checklistItem == null) return null;
+
+        ChecklistItemGetDto checklistItemGetDto = checklistItem.ToGetDto();
+        checklistNotificationService.PatchChecklistItemDoneState(boardId, checklistItemId, newState);
+        return checklistItemGetDto;
     }
 }
