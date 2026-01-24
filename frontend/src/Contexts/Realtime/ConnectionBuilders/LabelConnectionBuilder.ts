@@ -22,4 +22,12 @@ export function buildLabelConnection(hubConnection: HubConnection, dispatch: Dis
     hubConnection.on("DeleteLabel", (labelId: number) => {
         dispatch({ type: "DELETE_LABEL", payload: { labelId: labelId } });
     });
+
+    hubConnection.on("AddLabelToCard", (cardId: number, labelId: number) => {
+        dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: cardId, labelId: labelId } });
+    });
+
+    hubConnection.on("RemoveLabelFromCard", (cardId: number, labelId: number) => {
+        dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: cardId, labelId: labelId } });
+    });
 }

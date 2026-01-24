@@ -22,4 +22,14 @@ public class LabelNotificationService(IHubContext<BoardHub, IBoardClient> hubCon
     {
         hubContext.Clients.Group($"grp-board-{boardId}").DeleteLabel(labelId);
     }
+
+    public void AddLabelToCard(int boardId, int cardId, int labelId)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").AddLabelToCard(cardId, labelId);
+    }
+
+    public void RemoveLabelFromCard(int boardId, int cardId, int labelId)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").RemoveLabelFromCard(cardId, labelId);
+    }
 }

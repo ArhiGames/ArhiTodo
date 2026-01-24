@@ -9,6 +9,6 @@ public interface ILabelService
     Task<bool> DeleteLabel(int boardId, int labelId);
     Task<List<LabelGetDto>> GetEveryLabel(int boardId);
     
-    Task<bool> AddLabelToCard(int cardId, int labelId);
-    Task<bool> RemoveLabelFromCard(int cardId, int labelId);
+    Task<bool> AddLabelToCard(int boardId, int cardId, int labelId);
+    Task<bool> RemoveLabelFromCard(int boardId, int cardId, int labelId);
 }

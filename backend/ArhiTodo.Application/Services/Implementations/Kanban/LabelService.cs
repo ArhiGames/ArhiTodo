@@ -45,15 +45,25 @@ public class LabelService(ILabelNotificationService labelNotificationService, IL
         return labels.Select(l => l.ToGetDto()).ToList();
     }
 
-    public async Task<bool> AddLabelToCard(int cardId, int labelId)
+    public async Task<bool> AddLabelToCard(int boardId, int cardId, int labelId)
     {
         CardLabel? cardLabel = await labelRepository.AddLabelToCard(cardId, labelId);
-        return cardLabel != null;
+        if (cardLabel == null) return false;
+        
+        labelNotificationService.AddLabelToCard(boardId, cardId, labelId);
+        
+        return true;
     }
 
-    public async Task<bool> RemoveLabelFromCard(int cardId, int labelId)
+    public async Task<bool> RemoveLabelFromCard(int boardId, int cardId, int labelId)
     {
         bool succeeded = await labelRepository.RemoveLabelFromCard(cardId, labelId);
+
+        if (succeeded)
+        {
+            labelNotificationService.RemoveLabelFromCard(boardId, cardId, labelId);
+        }
+        
         return succeeded;
     }
 }

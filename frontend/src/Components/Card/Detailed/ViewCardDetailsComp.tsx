@@ -120,7 +120,7 @@ const ViewCardDetailsComp = () => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${labelId}`,
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
@@ -147,7 +147,7 @@ const ViewCardDetailsComp = () => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${labelId}`,
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }

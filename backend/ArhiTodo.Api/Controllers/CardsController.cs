@@ -10,18 +10,18 @@ namespace ArhiTodo.Controllers;
 [Route("api")]
 public class CardsController(ICardService cardService, ILabelService labelService) : ControllerBase
 {
-    [HttpPost("card/{cardId:int}/label/{labelId:int}")]
-    public async Task<IActionResult> AddLabelToCard(int cardId, int labelId)
+    [HttpPost("board/{boardId:int}/card/{cardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> AddLabelToCard(int boardId, int cardId, int labelId)
     {
-        bool result = await labelService.AddLabelToCard(cardId, labelId);
+        bool result = await labelService.AddLabelToCard(boardId, cardId, labelId);
         if (!result) return NotFound();
         return Ok();
     }
 
-    [HttpDelete("card/{cardId:int}/label/{labelId:int}")]
-    public async Task<IActionResult> RemoveLabelFromCard(int cardId, int labelId)
+    [HttpDelete("board/{boardId:int}/card/{cardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> RemoveLabelFromCard(int boardId, int cardId, int labelId)
     {
-        bool result = await labelService.RemoveLabelFromCard(cardId, labelId);
+        bool result = await labelService.RemoveLabelFromCard(boardId, cardId, labelId);
         if (!result) return NotFound();
         return NoContent();
     }
