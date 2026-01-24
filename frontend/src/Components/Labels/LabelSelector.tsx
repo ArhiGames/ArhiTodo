@@ -12,8 +12,8 @@ import {API_BASE_URL} from "../../config/api.ts";
 interface Props {
     element: RefObject<HTMLElement | null>,
     onClose: () => void;
-    onLabelSelected: (label: Label) => void;
-    onLabelUnselected: (label: Label) => void;
+    onLabelSelected: (labelId: number) => void;
+    onLabelUnselected: (labelId: number) => void;
     selectedLabels: number[];
     actionTitle: string;
     projectId: number;
@@ -22,14 +22,15 @@ interface Props {
 
 const LabelSelector = ( props: Props ) => {
 
-    const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
-    const [labelName, setLabelName] = useState<string>("");
-    const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [currentlyEditingLabel, setCurrentlyEditingLabel] = useState<Label | null>(null);
-    const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
+
+    const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
+    const [labelName, setLabelName] = useState<string>("");
+    const [isCreating, setIsCreating] = useState<boolean>(false);
+    const [currentlyEditingLabelId, setCurrentlyEditingLabelId] = useState<number | null>(null);
+    const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
 
     const selectableColors: Rgb[] = [
         { red: 0, green: 255, blue: 85 },
@@ -63,6 +64,11 @@ const LabelSelector = ( props: Props ) => {
         { red: 26, green: 0, blue: 102 },
     ];
 
+    function cancelAction() {
+        setIsCreating(false);
+        setCurrentlyEditingLabelId(null);
+    }
+
     useEffect(() => {
         if (isCreating) {
             labelNameInputRef.current?.focus();
@@ -70,10 +76,22 @@ const LabelSelector = ( props: Props ) => {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setLabelName("");
         }
-    }, [isCreating, currentlyEditingLabel]);
+    }, [isCreating, currentlyEditingLabelId]);
 
-    function onLabelEdit(label: Label) {
-        setCurrentlyEditingLabel(label);
+    useEffect(() => {
+
+        if (!currentlyEditingLabelId) return;
+        if (!kanbanState.labels[currentlyEditingLabelId]) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            cancelAction();
+        }
+
+    }, [currentlyEditingLabelId, kanbanState.labels]);
+
+    function onLabelEdit(labelId: number) {
+        setCurrentlyEditingLabelId(labelId);
+
+        const label = kanbanState.labels[labelId];
         const labelColor: Rgb = toRgb(label.labelColor);
         for (let i = 0; i < selectableColors.length; i++) {
             if ((selectableColors[i].red === labelColor.red &&
@@ -91,14 +109,14 @@ const LabelSelector = ( props: Props ) => {
     async function createEditLabel() {
         if (isCreating) {
             await createLabel();
-        } else if (currentlyEditingLabel !== null) {
+        } else if (currentlyEditingLabelId !== null) {
             await editLabel();
         } else {
             throw new Error("Should not be able to perform this action...");
         }
 
         setIsCreating(false);
-        setCurrentlyEditingLabel(null);
+        setCurrentlyEditingLabelId(null);
     }
 
     async function createLabel() {
@@ -139,8 +157,9 @@ const LabelSelector = ( props: Props ) => {
 
     async function editLabel() {
 
-        if (!currentlyEditingLabel || !dispatch) return;
+        if (!currentlyEditingLabelId || !dispatch) return;
 
+        const currentlyEditingLabel = kanbanState.labels[currentlyEditingLabelId];
         const oldLabelText: string = currentlyEditingLabel.labelText;
         const oldLabelColor: number = currentlyEditingLabel.labelColor;
 
@@ -160,7 +179,7 @@ const LabelSelector = ( props: Props ) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/label`, {
+        fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({
@@ -197,12 +216,12 @@ const LabelSelector = ( props: Props ) => {
 
     async function deleteLabel() {
         cancelAction();
-        if (!currentlyEditingLabel) return;
+        if (!currentlyEditingLabelId) return;
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/label/${currentlyEditingLabel.labelId}`,
+        fetch(`${API_BASE_URL}/board/${props.boardId}/label/${currentlyEditingLabelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
@@ -213,22 +232,17 @@ const LabelSelector = ( props: Props ) => {
                 }
 
                 if (dispatch) {
-                    dispatch({type: "DELETE_LABEL", payload: { labelId: currentlyEditingLabel.labelId }})
+                    dispatch({type: "DELETE_LABEL", payload: { labelId: currentlyEditingLabelId }})
                 }
             })
             .catch(console.error);
-    }
-
-    function cancelAction() {
-        setIsCreating(false);
-        setCurrentlyEditingLabel(null);
     }
 
     function getActionArea() {
         return (
             <>
                 <input className="classic-input"
-                       placeholder={ currentlyEditingLabel !== null ? currentlyEditingLabel.labelText : "Label name"}
+                       placeholder={ currentlyEditingLabelId !== null ? kanbanState.labels[currentlyEditingLabelId]?.labelText : "Label name..."}
                        ref={labelNameInputRef} maxLength={35}
                        value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                 <p>Color:</p>
@@ -249,19 +263,19 @@ const LabelSelector = ( props: Props ) => {
     return (
         <Popover close={props.onClose} element={props.element}>
             <div className="label-selector-popover">
-                <p>{ isCreating ? "Creating label" : currentlyEditingLabel !== null ? "Editing label" : props.actionTitle }</p>
+                <p>{ isCreating ? "Creating label" : currentlyEditingLabelId !== null ? "Editing label" : props.actionTitle }</p>
                 {
-                    (isCreating || currentlyEditingLabel !== null) ? (
+                    (isCreating || currentlyEditingLabelId !== null) ? (
                         <>
                             {getActionArea()}
                             <div style={{ display: "flex", width: "100%", gap: "0.2rem" }}>
                                 <button onClick={createEditLabel}
-                                        className={`button ${(labelName.length > 0 || currentlyEditingLabel !== null) ? "valid-submit-button" : "standard-button"}`}>
-                                    { isCreating ? "Create" : currentlyEditingLabel !== null ? "Edit" : "buggy software..." }
+                                        className={`button ${(labelName.length > 0 || currentlyEditingLabelId !== null) ? "valid-submit-button" : "standard-button"}`}>
+                                    { isCreating ? "Create" : currentlyEditingLabelId !== null ? "Edit" : "buggy software..." }
                                 </button>
                                 <button onClick={cancelAction}
                                         className="button standard-button">Cancel</button>
-                                { currentlyEditingLabel !== null && (
+                                { currentlyEditingLabelId !== null && (
                                     <button onClick={deleteLabel}
                                             className="button heavy-action-button">Delete</button>
                                 ) }
@@ -275,8 +289,8 @@ const LabelSelector = ( props: Props ) => {
                                         return ( label.boardId == props.boardId && (
                                             <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
                                                            isSelected={ props.selectedLabels.includes(label.labelId) }
-                                                           onLabelSelected={(label: Label) => props.onLabelSelected(label)}
-                                                           onLabelUnselected={(label: Label) => props.onLabelUnselected(label)}/>
+                                                           onLabelSelected={(labelId: number) => props.onLabelSelected(labelId)}
+                                                           onLabelUnselected={(labelId: number) => props.onLabelUnselected(labelId)}/>
                                         ) )
                                     })
                                 }

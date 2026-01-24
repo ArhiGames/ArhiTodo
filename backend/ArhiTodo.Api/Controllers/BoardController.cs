@@ -19,18 +19,18 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
         return Ok(label);
     }
     
-    [HttpPut("label/")]
-    public async Task<IActionResult> UpdateLabel([FromBody] LabelUpdateDto labelUpdateDto)
+    [HttpPut("board/{boardId:int}/label/")]
+    public async Task<IActionResult> UpdateLabel(int boardId, [FromBody] LabelUpdateDto labelUpdateDto)
     {
-        LabelGetDto? labelGetDto = await labelService.UpdateLabel(labelUpdateDto);
+        LabelGetDto? labelGetDto = await labelService.UpdateLabel(boardId, labelUpdateDto);
         if (labelGetDto == null) return NotFound();
         return Ok(labelGetDto);
     }
 
-    [HttpDelete("label/{labelId:int}")]
-    public async Task<IActionResult> DeleteLabel(int labelId)
+    [HttpDelete("board/{boardId:int}/label/{labelId:int}")]
+    public async Task<IActionResult> DeleteLabel(int boardId, int labelId)
     {
-        bool succeeded = await labelService.DeleteLabel(labelId);
+        bool succeeded = await labelService.DeleteLabel(boardId, labelId);
         if (!succeeded) return NotFound();
         return NoContent();
     }

@@ -76,12 +76,12 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
     }, [props.boardId, kanbanState.boards, props.projectId, navigate]);
 
-    function onFilteringLabelSelected(label: Label) {
-        setCurrentFilteringLabels(labels => [...labels, label.labelId]);
+    function onFilteringLabelSelected(labelId: number) {
+        setCurrentFilteringLabels(labels => [...labels, labelId]);
     }
 
-    function onFilteringLabelUnselected(label: Label) {
-        setCurrentFilteringLabels(currentFilteringLabels.filter(labelId => labelId !== label.labelId));
+    function onFilteringLabelUnselected(labelId: number) {
+        setCurrentFilteringLabels(currentFilteringLabels.filter(filteringLabelId => filteringLabelId !== labelId));
     }
 
     function startEditingLabels(onTarget: HTMLElement) {

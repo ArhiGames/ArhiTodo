@@ -5,9 +5,9 @@ import { type Rgb, toRgb } from "../../lib/Functions.ts";
 interface Props {
     label: Label;
     isSelected: boolean;
-    onLabelSelected: (label: Label) => void;
-    onLabelUnselected: (label: Label) => void;
-    onEditPressed: (label: Label) => void;
+    onLabelSelected: (labelId: number) => void;
+    onLabelUnselected: (labelId: number) => void;
+    onEditPressed: (labelId: number) => void;
 }
 
 const EditableLabel = ( props: Props) => {
@@ -16,14 +16,14 @@ const EditableLabel = ( props: Props) => {
 
     function onButtonEditPressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
         e.stopPropagation();
-        props.onEditPressed(props.label);
+        props.onEditPressed(props.label.labelId);
     }
 
     function onEditableLabelDivPressed() {
         if (props.isSelected) {
-            props.onLabelUnselected(props.label);
+            props.onLabelUnselected(props.label.labelId);
         } else {
-            props.onLabelSelected(props.label);
+            props.onLabelSelected(props.label.labelId);
         }
     }
 

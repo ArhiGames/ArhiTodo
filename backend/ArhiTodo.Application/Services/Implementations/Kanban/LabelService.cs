@@ -1,28 +1,41 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class LabelService(ILabelRepository labelRepository) : ILabelService
+public class LabelService(ILabelNotificationService labelNotificationService, ILabelRepository labelRepository) : ILabelService
 {
     public async Task<LabelGetDto?> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
     {
         Label? label = await labelRepository.CreateLabelAsync(labelCreateDto.FromCreateDto(boardId));
-        return label?.ToGetDto();
+        if (label == null) return null;
+
+        LabelGetDto labelGetDto = label.ToGetDto();
+        labelNotificationService.CreateLabel(boardId, labelGetDto);
+        return labelGetDto;
     }
 
-    public async Task<LabelGetDto?> UpdateLabel(LabelUpdateDto labelUpdateDto)
+    public async Task<LabelGetDto?> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
     {
         Label? label = await labelRepository.UpdateLabelAsync(labelUpdateDto.LabelId, labelUpdateDto.LabelText, labelUpdateDto.LabelColor);
-        return label?.ToGetDto();
+        if (label == null) return null;
+
+        LabelGetDto labelGetDto = label.ToGetDto();
+        labelNotificationService.UpdateLabel(boardId, labelGetDto);
+        return labelGetDto;
     }
 
-    public async Task<bool> DeleteLabel(int labelId)
+    public async Task<bool> DeleteLabel(int boardId, int labelId)
     {
         bool succeeded = await labelRepository.DeleteLabelAsync(labelId);
+        if (succeeded)
+        {
+            labelNotificationService.DeleteLabel(boardId, labelId);
+        }
         return succeeded;
     }
 

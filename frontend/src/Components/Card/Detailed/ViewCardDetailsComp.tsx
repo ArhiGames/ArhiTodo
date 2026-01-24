@@ -109,18 +109,18 @@ const ViewCardDetailsComp = () => {
         return labelIds;
     }
 
-    async function onLabelSelected(label: Label) {
+    async function onLabelSelected(labelId: number) {
         if (!dispatch || !cardId) return;
 
-        dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+        dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
+            dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
+        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
@@ -131,23 +131,23 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
+                dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
                 console.error(err);
             })
     }
 
-    async function onLabelUnselected(label: Label) {
+    async function onLabelUnselected(labelId: number) {
         if (!dispatch || !cardId) return;
 
-        dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: label.labelId } });
+        dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+            dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
             return;
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${label.labelId}`,
+        fetch(`${API_BASE_URL}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
@@ -158,7 +158,7 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: label.labelId } });
+                dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
                 console.error(err);
             })
     }
