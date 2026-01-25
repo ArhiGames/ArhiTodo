@@ -1,12 +1,10 @@
-﻿namespace ArhiTodo.Domain.Repositories;
+﻿using ArhiTodo.Domain.Entities.Auth;
 
-// @Todo
-/*public interface IInvitationRepository
+namespace ArhiTodo.Domain.Repositories;
+
+public interface IInvitationRepository
 {
-    Task<bool> TryToUseInvitationLink(string invitationKey);
-    bool IsValidInvitationLink(InvitationLink invitationLink);
-    Task UsedInvitationLink(AppUser usedByUser, string invitationKey);
-    Task<InvitationLink> GenerateInvitationLinkAsync(AppUser createdByUser, GenerateInvitationDto generateInvitationDto);
+    Task<InvitationLink?> AddInvitationLinkAsync(InvitationLink invitationLink);
     Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId);
-    Task<List<InvitationLink>> GetAllInvitationLinksAsync();
-}*/
+    Task<List<InvitationLink>> GetInvitationLinksAsync();
+}

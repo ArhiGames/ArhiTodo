@@ -21,6 +21,11 @@
     height: 550px;
 }
 
+.modal-s-medium {
+    width: 580px;
+    height: 450px;
+}
+
 .modal-small {
     width: 475px;
 }

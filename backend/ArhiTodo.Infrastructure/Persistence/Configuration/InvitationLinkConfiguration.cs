@@ -13,8 +13,7 @@ public class InvitationLinkConfiguration : IEntityTypeConfiguration<InvitationLi
         builder.HasIndex(il => il.InvitationKey)
             .IsUnique();
         builder.Property(il => il.InvitationKey)
-            .IsRequired()
-            .HasMaxLength(32);
+            .IsRequired();
 
         builder.Property(il => il.CreatedDate)
             .IsRequired();

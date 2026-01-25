@@ -14,6 +14,7 @@ public static class ApplicationInjection
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
+        builder.Services.AddScoped<IInvitationService, InvitationService>();
         
         builder.Services.AddScoped<IProjectService, ProjectService>();
         builder.Services.AddScoped<IBoardService, BoardService>();

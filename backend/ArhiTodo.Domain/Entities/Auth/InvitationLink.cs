@@ -10,7 +10,7 @@ public class InvitationLink
     
     public required DateTimeOffset ExpiresDate { get; set; }
     
-    public required string CreatedByUser { get; set; }
+    public required Guid CreatedByUser { get; set; }
     
     // 0 => infinite
     public required int MaxUses { get; set; }

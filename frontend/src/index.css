@@ -36,9 +36,6 @@
     --red-warning: hsl(0, 100%, 22%);
     --red-warning-highlight: hsl(0, 100%, 35%);
 
-    --notice-warning: hsla(0, 55%, 43%, 0.6);
-    --notice-warning-border: hsl(0, 100%, 15%);
-
     --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
     0 1px 2px hsl(0, 0%, 30%),
     0 2px 4px hsl(0, 0%, 15%)
@@ -814,19 +811,14 @@ body {
 }
 
 .invitation-settings {
-    margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem
+    gap: 0.8rem
 }
 
 .generated-invitation-link-body {
     color: var(--text-color);
     margin-top: 5px;
-}
-
-.generated-invitation-link-div {
-    display: flex;
 }
 
 .generated-link-text {
@@ -983,10 +975,4 @@ body {
 .classic-input:focus {
     outline: none;
     box-shadow: 0 0 2px 0 var(--box-shadow);
-}
-
-.warning-notice {
-    padding: 15px;
-    background-color: var(--notice-warning);
-    border-left: var(--notice-warning-border) solid 5px;
 }

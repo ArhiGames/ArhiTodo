@@ -14,11 +14,12 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
     const origin = window.location.origin;
     const finalUrl = `${origin}/register/${invitationLink.invitationKey}`;
     const { checkRefresh } = useAuth();
-    const [remainingMs, setRemainingMs] = useState<number>(0);
+    // eslint-disable-next-line react-hooks/purity
+    const [remainingMs, setRemainingMs] = useState<number>(new Date(invitationLink.expiresDate).getTime() - Date.now());
     const [copied, setCopied] = useState<boolean>(false);
 
     // eslint-disable-next-line react-hooks/purity
-    const isExpired: boolean = Date.now() > new Date(invitationLink.expiresDate).getTime()
+    const isExpired: boolean = new Date(invitationLink.expiresDate).getTime() !== 0 && Date.now() > new Date(invitationLink.expiresDate).getTime();
     const used: boolean = invitationLink.maxUses !== 0 && invitationLink.maxUses <= invitationLink.uses;
     const isUsable: boolean = invitationLink.isActive && !isExpired && !used;
     const keyStatus: { tag: string, color: "red" | "green" | "orange" | "blue" | "gray" } = {
@@ -76,8 +77,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                     <h3 style={{ marginLeft: "0.5rem" }}>Key: {invitationLink.invitationKey}</h3>
                 </div>
                 <p style={{ marginTop: "0.35rem" }}>
-                    Expires in: {new Date(invitationLink.createdDate).getTime() - new Date(invitationLink.expiresDate).getTime() === 0 ?
-                    "Never" : formatRemainingTime(remainingMs)}</p>
+                    Expires in: { new Date(invitationLink.expiresDate).getTime() === 0 ? "Never" : formatRemainingTime(remainingMs)}</p>
                 <p>Max uses: {invitationLink.maxUses === 0 ? "Infinite" : invitationLink.maxUses}</p>
                 <p>Uses: {invitationLink.uses}</p>
             </div>

@@ -14,21 +14,43 @@ interface Props {
 
 const InvitationCreatorModalComp = (props: Props) => {
 
-    const options: string[] = ["Never", "Minutes", "Hours", "Days"];
+    /*public enum ExpireType
+    {
+        Never = 0,
+        Minutes = 1,
+        Hours = 2,
+        Days = 3
+    }*/
+    type Option = {
+        shownOption: string;
+        time: number;
+        expireType: number;
+    }
+
+    const options: Option[] = [
+        { shownOption: "30 minutes", time: 30, expireType: 1 },
+        { shownOption: "1 hour", time: 1, expireType: 2 },
+        { shownOption: "3 hours", time: 3, expireType: 2 },
+        { shownOption: "6 hours", time: 6, expireType: 2 },
+        { shownOption: "12 hours", time: 12, expireType: 2 },
+        { shownOption: "1 day", time: 1, expireType: 3 },
+        { shownOption: "1 week", time: 7, expireType: 3 },
+        { shownOption: "1 month", time: 30, expireType: 3 },
+        { shownOption: "Never", time: 0, expireType: 0 }
+    ];
 
     const { checkRefresh } = useAuth();
-    const [expireInNum, setExpireInNum] = useState<number>(1);
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
-    const [currentExpireType, setCurrentExpireType] = useState<string>(options[0]);
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
+    const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>();
 
     function requestInvitationLink() {
 
+        if (!currentSelectedOption) return;
         setSubmitBlocked(true);
 
         const abortController = new AbortController();
-
         const run = async () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
@@ -36,7 +58,7 @@ const InvitationCreatorModalComp = (props: Props) => {
             fetch(`${API_BASE_URL}/invitation/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-                body: JSON.stringify( { expireType: options.indexOf(currentExpireType), expireNum: expireInNum, maxUses: maxUses } ),
+                body: JSON.stringify( { expireType: currentSelectedOption.expireType, expireNum: currentSelectedOption.time, maxUses: maxUses } ),
                 signal: abortController.signal
             })
                 .then(res => {
@@ -63,45 +85,11 @@ const InvitationCreatorModalComp = (props: Props) => {
 
     }
 
-    function onDropdownSelectionChanged(val: string) {
-
-        setCurrentExpireType(val);
-
-    }
-
-    function getExpireDateStepValue() {
-
-        switch (currentExpireType) {
-            case "Minutes":
-                return 5;
-            case "Hours":
-                return 1;
-            case "Days":
-                return 1;
-        }
-        return 1;
-
-    }
-
-    function getExpireDateMinValue() {
-
-        switch (currentExpireType) {
-            case "Minutes":
-                return 5;
-            case "Hours":
-                return 1;
-            case "Days":
-                return 1;
-        }
-        return 1;
-
-    }
-
     return (
         <>
             <Modal
                 header={<h2>Creating an invitation link...</h2>}
-                modalSize="modal-medium"
+                modalSize="modal-s-medium"
                 onClosed={props.onClose}
                 footer={
                     <>
@@ -110,33 +98,21 @@ const InvitationCreatorModalComp = (props: Props) => {
                     </>
                 }>
                 <div className="invitation-creator">
-                    <p className="warning-notice">
-                        By creating an invitation link, anyone with this link can create an account for this application.
-                        Please ensure your settings are configured correctly and that <strong>only people you trust</strong> receive this link.
-                    </p>
                     <div className="invitation-settings">
-                        <h2>Expire</h2>
+                        <h3>Expire</h3>
                         <p>Controls how long the invitation link remains valid and how often it can be used</p>
-                        <div>
-                        <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <p>Expire in: </p>
-                            <NumberInput onChange={(value: number) => setExpireInNum(value)}
-                                                                                  defaultValue={5} step={getExpireDateStepValue()}
-                                                                                  min={getExpireDateMinValue()} max={60}
-                                                                                  disabled={currentExpireType === "Never"}/>
-                            <Dropdown onChange={onDropdownSelectionChanged} values={options} defaultValue={options[0]}></Dropdown>
-                        </span>
-                            { currentExpireType === "Never" ? (
-                                <p style={{ opacity: "75%" }}>The link will never expire unless manually revoked</p>
-                            ) : (
-                                <p style={{ opacity: "75%" }}>The link will automatically stop working after this time</p>
-                            )}
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <p>Expire in</p>
+                            <Dropdown onChange={(val: string) => setCurrentSelectedOption(options.find(option => option.shownOption === val))}
+                                      values={options.map((option: Option) => option.shownOption)}
+                                      defaultValue={options[0].shownOption}/>
+                            <p style={{ opacity: "75%" }}>How long does the invitation link remain valid</p>
                         </div>
                         <div>
-                        <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <p>Max uses: </p>
-                            <NumberInput onChange={(value: number) => setMaxUses(value)} defaultValue={1} step={1} min={0} max={50} numberForInfinite={0}/>
-                        </span>
+                            <div>
+                                <p>Max uses</p>
+                                <NumberInput onChange={(value: number) => setMaxUses(value)} defaultValue={1} step={1} min={0} max={50} numberForInfinite={0}/>
+                            </div>
                             <p style={{ opacity: "75%" }}>Number of accounts that can be created using this link</p>
                         </div>
                     </div>

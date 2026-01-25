@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ArhiTodo.Models.DTOs.Invitation;
+﻿namespace ArhiTodo.Application.DTOs.Auth;
 
 public enum ExpireType
 {
@@ -12,12 +10,9 @@ public enum ExpireType
 
 public class GenerateInvitationDto
 {
-    [Required]
     public required ExpireType ExpireType { get; set; }
     
-    [Range(1, 60)]
     public int ExpireNum { get; set; }
 
-    [Range(0, 50)] 
     public int MaxUses { get; set; } = 0;
 }

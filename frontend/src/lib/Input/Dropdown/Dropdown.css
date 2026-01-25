@@ -10,13 +10,18 @@
     cursor: pointer;
 }
 
+.dropdown-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
 .dropdown-childs {
     position: absolute;
-    margin-top: 2rem;
     padding: 15px;
     background-color: var(--bg-xx-light);
     border-radius: 15px;
-    transform: translateX(-1rem);
 }
 
 .dropdown-child {
@@ -30,12 +35,15 @@
     background-color: var(--std-button-highlight);
 }
 
+.dropdown-child p {
+    color: var(--text-color);
+}
+
 .dropdown-icon {
     margin-left: 0.5rem;
-    font-size: smaller;
-    opacity: 75%;
     transition: rotate 0.2s;
     user-select: none;
+    filter: invert(1);
 }
 
 .dropdown-flipped {

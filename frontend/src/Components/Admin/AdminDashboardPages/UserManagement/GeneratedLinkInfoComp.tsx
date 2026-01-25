@@ -13,13 +13,12 @@ const GeneratedLinkInfoComp = (props: Props) => {
     const origin = window.location.origin;
     const finalUrl = `${origin}/register/${props.invitationLink.invitationKey}`;
     const [copied, setCopied] = useState<boolean>(true);
-    const [remainingMs, setRemainingMs] = useState<number>(0);
+    const expires: boolean = new Date(props.invitationLink.expiresDate).getTime() !== 0;
+    // eslint-disable-next-line react-hooks/purity
+    const [remainingMs, setRemainingMs] = useState<number>(new Date(props.invitationLink.expiresDate).getTime() - Date.now());
 
     useEffect(() => {
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCopied(false);
-
     }, [props]);
 
     useEffect(() => {
@@ -45,16 +44,15 @@ const GeneratedLinkInfoComp = (props: Props) => {
     return (
         <Modal onClosed={props.onClosed} header={<h2>Generated invitation link</h2>} modalSize="modal-small"
                footer={
-                    <button onClick={props.onClosed} className="button standard-button">Accept</button>
+                    <>
+                        <button onClick={onCopyButtonPressed} className={`button ${copied ? "standard-button" : "valid-submit-button"}`}>{copied ? "Copied" : "Copy"}</button>
+                        <button onClick={props.onClosed} className="button standard-button">Accept</button>
+                    </>
                }>
             <div className="generated-invitation-link-body">
-                <div className="generated-invitation-link-div">
-                    <p className="generated-link-text">{finalUrl}</p>
-                    <button onClick={onCopyButtonPressed} className={`button ${copied ? "standard-button" : "valid-submit-button"}`}>{copied ? "Copied" : "Copy"}</button>
-                </div>
+                <p className="generated-link-text">{finalUrl}</p>
                 <p style={{ marginTop: "0.5rem" }} className="generated-link-active-for-text">
-                    { new Date(props.invitationLink.expiresDate).getTime() - new Date(props.invitationLink.createdDate).getTime() === 0 ?
-                         "Never expires..." : `Active for: ${formatRemainingTime(remainingMs)}`}</p>
+                    { !expires ? "Never expires..." : `Active for: ${formatRemainingTime(remainingMs)}`}</p>
             </div>
         </Modal>
     )

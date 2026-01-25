@@ -8,6 +8,7 @@ interface Props {
     defaultValue?: number;
     numberForInfinite?: number;
     disabled?: boolean;
+    allowDirectInput?: boolean;
     onChange: (value: number) => void;
 }
 
@@ -47,9 +48,31 @@ const NumberInput = (props: Props) => {
 
     }
 
+    function onInputChanged(e: React.ChangeEvent<HTMLInputElement>) {
+        let number = Number(e.target.value);
+        if (!isNaN(number)) {
+            if (props.min !== undefined && props.max !== undefined) {
+                number = number < props.min ? props.min : number > props.max ? props.max : number;
+            }
+            else if (props.max !== undefined) {
+                number = number > props.max ? props.max : number;
+            }
+            else if (props.min !== undefined) {
+                number = number < props.min ? props.min : number;
+            }
+            setValue(number);
+        }
+    }
+
     return (
         <div className={ `${(props.disabled !== undefined && props.disabled) ? "nin-disabled" : null} nin-number-input` }>
-            <p>{props.numberForInfinite !== undefined ? (props.numberForInfinite == value ? "Infinite" : value) : value}</p>
+            { props.allowDirectInput === undefined || props.allowDirectInput ? (
+                <input value={ props.numberForInfinite !== undefined ? (value === props.numberForInfinite ? "" : value) : value }
+                       placeholder="Infinity"
+                       onChange={onInputChanged}/>
+            ) : (
+                <p>{props.numberForInfinite !== undefined ? (props.numberForInfinite === value ? "Infinite" : value) : value}</p>
+            ) }
             <div>
                 <button disabled={props.disabled} onClick={increase} className="nin-increase" type="button">+</button>
                 <button disabled={props.disabled} onClick={decrease} className="nin-decrease" type="button">-</button>

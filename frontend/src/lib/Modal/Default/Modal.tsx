@@ -1,7 +1,7 @@
 import "./Modal.css"
 import type { ReactNode } from "react";
 
-export type modalSize = "modal-large" | "modal-medium" | "modal-small";
+export type modalSize = "modal-large" | "modal-medium" | "modal-s-medium" | "modal-small";
 
 const Modal = (props: { header: ReactNode, children: ReactNode, footer: ReactNode, modalSize: modalSize, onClosed: () => void }) => {
 
