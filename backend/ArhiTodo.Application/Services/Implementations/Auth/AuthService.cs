@@ -9,20 +9,24 @@ namespace ArhiTodo.Application.Services.Implementations.Auth;
 
 public class AuthService(IUserRepository userRepository, ITokenService tokenService, 
     IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
-    ITokenGeneratorService tokenGeneratorService) : IAuthService
+    ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService) : IAuthService
 {
     public async Task<bool> CreateAccount(CreateAccountDto createAccountDto)
     {
+        InvitationLink? invitationLink = await invitationService.GetUsableInvitationLink(createAccountDto.InvitationKey);
+        if (invitationLink == null) return false;
+        
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
         User user = new()
         {
             UserName = createAccountDto.Username,
             Email = createAccountDto.Email,
-            HashedPassword = hashedPassword
+            HashedPassword = hashedPassword,
+            JoinedViaInvitationKey = createAccountDto.InvitationKey
         };
 
-        User? createdUser = await userRepository.CreateUserAsync(user);
+        User? createdUser = await userRepository.CreateUserAsync(invitationLink, user);
         return createdUser != null;
     }
 

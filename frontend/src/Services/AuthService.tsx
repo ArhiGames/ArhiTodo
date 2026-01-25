@@ -27,14 +27,7 @@ export const registerApi = async (username: string, email: string, password: str
         throw new Error(message || "Unable to register account");
     }
 
-    const data: UserLoginResponseDto = await response.json();
-
-    if (!data.token) {
-        throw new Error("Unable to parse token from Server response!");
-    }
-
-    localStorage.setItem("token", data.token);
-    return getJwtPayloadFromToken();
+    return true;
 }
 
 export const loginApi = async (username: string, password: string) => {

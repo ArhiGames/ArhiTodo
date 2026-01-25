@@ -2,16 +2,36 @@
 using ArhiTodo.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(ProjectDataBase database) : IUserRepository
+public class UserRepository(IInvitationRepository invitationRepository, ProjectDataBase database) : IUserRepository
 {
-    public async Task<User?> CreateUserAsync(User user)
+    public async Task<User?> CreateUserAsync(InvitationLink invitationLink, User user)
     {
-        EntityEntry<User> userEntry = database.Users.Add(user);
-        await database.SaveChangesAsync();
-        return userEntry.Entity;
+        await using IDbContextTransaction transaction = await database.Database.BeginTransactionAsync();
+
+        try
+        {
+            EntityEntry<User> userEntry = database.Users.Add(user);
+            await database.SaveChangesAsync();
+
+            bool succeeded = await invitationRepository.UseInvitationLink(invitationLink.InvitationLinkId);
+            if (!succeeded)
+            {
+                await transaction.RollbackAsync();
+                return null;
+            }
+
+            await transaction.CommitAsync();
+
+            return userEntry.Entity;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

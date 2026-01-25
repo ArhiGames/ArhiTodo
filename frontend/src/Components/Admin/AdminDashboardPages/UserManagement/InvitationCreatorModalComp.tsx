@@ -43,7 +43,7 @@ const InvitationCreatorModalComp = (props: Props) => {
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
-    const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>();
+    const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>(options[0]);
     const [invitationName, setInvitationName] = useState<string>("");
 
     function requestInvitationLink() {

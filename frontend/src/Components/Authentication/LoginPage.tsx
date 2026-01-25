@@ -53,7 +53,7 @@ const LoginPage = () => {
                     <label>Password</label>
                     <input value={password} onChange={onPasswordChanged}
                         required minLength={8} type="password" placeholder="Enter your password..."></input>
-                    <button type="submit">Login</button>
+                    <button className={`button ${password.length >= 8 ? "valid-submit-button" : "standard-button"}`} type="submit">Login</button>
                 </form>
             </div>
         </div>

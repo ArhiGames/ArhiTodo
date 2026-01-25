@@ -39,6 +39,12 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
         return generatedInvitationLink;
     }
 
+    public async Task<InvitationLink?> GetUsableInvitationLink(string invitationLinkKey)
+    {
+        InvitationLink? invitationLink = await invitationRepository.GetUsableInvitationLink(invitationLinkKey);
+        return invitationLink;
+    }
+
     public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
     {
         bool succeeded = await invitationRepository.InvalidateInvitationLinkAsync(invitationLinkId);

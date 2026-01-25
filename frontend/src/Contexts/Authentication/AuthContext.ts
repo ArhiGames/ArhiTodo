@@ -6,7 +6,7 @@ export type AuthContextType = {
     token: string | null;
     isLoaded: boolean;
     checkRefresh: () => Promise<string | null>;
-    register: (userName: string, email: string, password: string, invitationKey: string) => Promise<void>;
+    register: (userName: string, email: string, password: string, invitationKey: string) => Promise<boolean>;
     login: (userName: string, password: string) => Promise<void>;
     logout: () => void;
     isAuthenticated: () => boolean;
@@ -17,7 +17,7 @@ export const AuthContext = createContext<AuthContextType>({
     token: null,
     isLoaded: false,
     checkRefresh: async () => null,
-    register: async () => {},
+    register: async () => false,
     login: async () => {},
     logout: () => {},
     isAuthenticated: () => false

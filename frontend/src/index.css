@@ -139,23 +139,6 @@ body {
     font-size: larger;
 }
 
-.login form button {
-    background-color: var(--success-color);
-    border: none;
-    border-radius: 10px;
-    margin: 1rem 0;
-    padding: 10px;
-    color: var(--text-color);
-    font-size: large;
-    transition: background-color 0.4s, transform 0.4s;
-}
-
-.login form button:hover {
-    background-color: var(--success-color-highlight);
-    transform: translateY(-2px);
-    cursor: pointer;
-}
-
 /*-----------------------------------------------*/
 /*-------------------PROJECTS--------------------*/
 /*-----------------------------------------------*/

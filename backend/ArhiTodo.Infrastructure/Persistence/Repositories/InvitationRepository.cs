@@ -14,6 +14,27 @@ public class InvitationRepository(ProjectDataBase database) : IInvitationReposit
         return entityEntry.Entity;
     }
 
+    public async Task<InvitationLink?> GetUsableInvitationLink(string invitationLinkKey)
+    {
+        InvitationLink? invitationLink = await database.InvitationLinks
+            .FirstOrDefaultAsync(invitationLink => invitationLink.InvitationKey == invitationLinkKey && 
+               (invitationLink.IsActive) &&
+               (invitationLink.MaxUses == 0 || invitationLink.Uses < invitationLink.MaxUses) &&
+               (invitationLink.ExpiresDate == DateTimeOffset.UnixEpoch || DateTimeOffset.UtcNow < invitationLink.ExpiresDate));
+        return invitationLink;
+    }
+
+    public async Task<bool> UseInvitationLink(int invitationLinkId)
+    {
+        InvitationLink? invitationLink = await database.InvitationLinks
+            .FirstOrDefaultAsync(il => il.InvitationLinkId == invitationLinkId);
+        if (invitationLink == null) return false;
+        
+        invitationLink.Uses++;
+        await database.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> InvalidateInvitationLinkAsync(int invitationLinkId)
     {
         int changedRows = await database.InvitationLinks

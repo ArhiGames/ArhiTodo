@@ -1,10 +1,10 @@
 import {type ReactNode, useCallback, useEffect, useState} from "react";
-import type { JwtPayload } from "../../Models/JwtPayload.ts";
-import { jwtDecode } from "jwt-decode";
-import { AuthContext } from "./AuthContext.ts";
+import type {JwtPayload} from "../../Models/JwtPayload.ts";
+import {jwtDecode} from "jwt-decode";
+import {AuthContext} from "./AuthContext.ts";
 import {loginApi, logoutApi, refreshApi, registerApi} from "../../Services/AuthService.tsx";
-import { useNavigate } from "react-router-dom";
-import type { AppUser } from "../../Models/AppUser.ts";
+import {useNavigate} from "react-router-dom";
+import type {AppUser} from "../../Models/AppUser.ts";
 
 let refreshingPromise: Promise<string | null> | null = null;
 
@@ -17,10 +17,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const register = async (userName: string, email: string, password: string, invitationKey: string) => {
 
-        const jwt: JwtPayload | null = await registerApi(userName, email, password, invitationKey);
-
-        if (!jwt) return;
-        onLoggedIn(jwt);
+        return await registerApi(userName, email, password, invitationKey);
     }
 
     const login = async (userName: string, password: string) => {
