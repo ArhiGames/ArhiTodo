@@ -8,7 +8,7 @@ export type AuthContextType = {
     checkRefresh: () => Promise<string | null>;
     register: (userName: string, email: string, password: string, invitationKey: string) => Promise<boolean>;
     login: (userName: string, password: string) => Promise<void>;
-    logout: () => void;
+    logout: (sendLogoutRequest: boolean) => void;
     isAuthenticated: () => boolean;
 }
 

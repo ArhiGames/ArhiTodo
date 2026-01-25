@@ -1,6 +1,6 @@
 import {type FormEvent, useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import {API_BASE_URL} from "../../../config/api.ts";
+import {AUTH_BASE_URL} from "../../../config/api.ts";
 
 const PasswordManagerPageComp = () => {
 
@@ -15,17 +15,13 @@ const PasswordManagerPageComp = () => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/account/change/password`,
+        fetch(`${AUTH_BASE_URL}/account/change/password`,
         {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ oldPassword: currentPassword, newPassword: password }),
-        }).then((res) => {
-            if (!res.ok) {
-                return;
-            }
-
-            logout();
+        }).then(() => {
+            logout(false);
         })
 
     }
@@ -63,8 +59,8 @@ const PasswordManagerPageComp = () => {
                        placeholder="Confirm your new password..."
                        ref={confirmPasswordInputRef}>
                 </input>
-                <button type="submit" className={`button ${ password == confirmPassword && password.length > 0 && confirmPassword.length > 0
-                    ? "valid-submit-button" : "standard-button" }`}>
+                <button type="submit" className={`button ${ currentPassword.length >= 8 && password.length >= 8 && password == confirmPassword ? 
+                    "valid-submit-button" : "standard-button" }`}>
                     Change password
                 </button>
             </form>

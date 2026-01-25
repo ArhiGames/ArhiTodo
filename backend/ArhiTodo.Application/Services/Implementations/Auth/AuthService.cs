@@ -45,6 +45,27 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return new LoginGetDto(jwt, refreshToken);
     }
 
+    public async Task<bool> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto)
+    {
+        Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userId == null) return false;
+
+        Guid guid = Guid.Parse(userId.Value);
+
+        User? foundUser = await userRepository.GetUserByGuidAsync(guid);
+        if (foundUser == null) return false;
+
+        bool isCorrectPassword = passwordHashService.Verify(updatePasswordDto.OldPassword, foundUser.HashedPassword);
+        if (!isCorrectPassword) return false;
+
+        string hashedPassword = passwordHashService.Hash(updatePasswordDto.NewPassword);
+        bool succeeded = await userRepository.ChangePassword(guid, hashedPassword);
+
+        await LogoutEveryDevice(guid);
+        
+        return succeeded;
+    }
+
     public async Task<string?> RefreshJwtToken(string refreshToken)
     {
         byte[] byteToken = Convert.FromHexString(refreshToken);
@@ -58,9 +79,14 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return jwt;
     }
 
-    public async Task<bool> Logout(Guid userId, string userAgent)
+    public async Task<bool> Logout(ClaimsPrincipal user, string userAgent)
     {
-        UserSession? userSession = await userRepository.GetUserSessionByAgent(userId, userAgent);
+        Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userId == null) return false;
+
+        Guid guid = Guid.Parse(userId.Value); 
+        
+        UserSession? userSession = await userRepository.GetUserSessionByAgent(guid, userAgent);
         if (userSession == null) return false;
 
         bool succeeded = await userRepository.InvalidateUserSession(userSession.SessionId);

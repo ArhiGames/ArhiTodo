@@ -5,6 +5,8 @@ namespace ArhiTodo.Domain.Repositories;
 public interface IUserRepository
 {
     Task<User?> CreateUserAsync(InvitationLink invitationLink, User user);
+    Task<bool> ChangePassword(Guid guid, string hashedPassword);
+    Task<User?> GetUserByGuidAsync(Guid guid);
     Task<User?> GetUserByUsernameAsync(string username);
 
     Task<UserSession?> CreateUserSession(UserSession userSession);

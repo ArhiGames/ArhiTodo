@@ -34,6 +34,20 @@ public class UserRepository(IInvitationRepository invitationRepository, ProjectD
         }
     }
 
+    public async Task<bool> ChangePassword(Guid guid, string hashedPassword)
+    {
+        int changedRows = await database.Users
+            .Where(u => u.UserId == guid)
+            .ExecuteUpdateAsync(p => p.SetProperty(u => u.HashedPassword, hashedPassword));
+        return changedRows >= 1;
+    }
+
+    public async Task<User?> GetUserByGuidAsync(Guid guid)
+    {
+        User? user = await database.Users.FirstOrDefaultAsync(u => u.UserId == guid);
+        return user;
+    }
+
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
         User? user = await database.Users.FirstOrDefaultAsync(u => u.UserName == username);

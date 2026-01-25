@@ -29,18 +29,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     function onLoggedIn(jwt: JwtPayload) {
-
         setToken(localStorage.getItem("token"));
         setAppUser( { id: jwt.nameid, unique_name: jwt.unique_name, email: jwt.email} );
-
     }
 
-    const logout = useCallback(async () => {
+    const logout = useCallback(async (sendLogoutRequest: boolean) => {
 
-        try {
-            await logoutApi();
-        } catch (e) {
-            console.error(e);
+        if (sendLogoutRequest) {
+            try {
+                await logoutApi();
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         setToken(null);
@@ -76,14 +76,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
                 const jwt = await refreshApi();
                 if (!jwt) {
-                    await logout();
+                    await logout(true);
                     return null;
                 }
                 onLoggedIn(jwt);
                 return localStorage.getItem("token");
             } catch (e) {
                 console.error(e);
-                await logout();
+                await logout(true);
                 return null;
             } finally {
                 refreshingPromise = null;

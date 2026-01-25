@@ -44,6 +44,16 @@ public class AccountController(IAuthService authService) : ControllerBase
         return Ok(new { token = loginGetDto.JwtToken });
     }
 
+    [Authorize]
+    [HttpPut("account/change/password")]
+    public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+    {
+        bool succeeded = await authService.ChangePassword(User, updatePasswordDto);
+        await HttpContext.SignOutAsync("AuthRefreshCookie");
+        if (!succeeded) return Unauthorized();
+        return Ok();
+    }
+
     [Authorize(AuthenticationSchemes = "AuthRefreshCookie")]
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshJwtToken()
@@ -63,12 +73,7 @@ public class AccountController(IAuthService authService) : ControllerBase
     {
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         
-        Claim? claim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (claim == null) return Unauthorized();
-        
-        Guid userId = Guid.Parse(claim.Value);
-        
-        bool succeeded = await authService.Logout(userId, Request.Headers.UserAgent.ToString());
+        bool succeeded = await authService.Logout(User, Request.Headers.UserAgent.ToString());
         if (!succeeded) return Unauthorized();
         
         return Ok();
