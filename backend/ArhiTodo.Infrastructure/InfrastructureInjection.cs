@@ -18,11 +18,6 @@ public static class InfrastructureInjection
 {
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<ProjectDataBase>(options =>
-        {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-        });
-        
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IBoardRepository, BoardRepository>();
         builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
@@ -40,6 +35,11 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<ICardNotificationService, CardNotificationService>();
         builder.Services.AddScoped<IChecklistNotificationService, ChecklistNotificationService>();
         builder.Services.AddScoped<ILabelNotificationService, LabelNotificationService>();
+        
+        builder.Services.AddDbContext<ProjectDataBase>(options =>
+        {
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+        });
     }
 
     public static void RegisterInfrastructureApp(this WebApplication webApplication)

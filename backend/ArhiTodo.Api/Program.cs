@@ -128,13 +128,6 @@ builder.Services.AddSwaggerGen(options =>
 
 WebApplication app = builder.Build();
 
-/*using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider services = scope.ServiceProvider;
-    UserManager<AppUser> userManager = services.GetRequiredService<UserManager<AppUser>>();
-    await ProjectDbContextSeed.CreateInitialUsers(userManager);
-}*/
-
 app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())

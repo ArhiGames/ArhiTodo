@@ -1,11 +1,13 @@
 using System.Reflection;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Infrastructure.Persistence;
 
-public class ProjectDataBase : DbContext
+public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswordHashService passwordHashService)
+    : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
@@ -21,9 +23,25 @@ public class ProjectDataBase : DbContext
     public DbSet<Checklist> Checklists { get; set; }
     public DbSet<ChecklistItem> ChecklistItems { get; set; }
 
-    public ProjectDataBase(DbContextOptions<ProjectDataBase> options)
-        : base(options)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder.UseSeeding((context, _) =>
+        {
+            User? adminUser = context.Set<User>().FirstOrDefault(u => u.UserName == "admin");
+            if (adminUser != null) return;
+            
+            string hashedPassword = passwordHashService.Hash("admin");
+            User user = new()
+            {
+                UserName = "admin",
+                Email = "admin@admin.admin",
+                HashedPassword = hashedPassword
+            };
+            context.Set<User>().Add(user);
+            context.SaveChanges();
+        });
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

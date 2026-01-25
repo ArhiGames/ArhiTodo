@@ -12,6 +12,8 @@ const LoginPage = () => {
 
     const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
+        if (userName.length <= 0 || password.length <= 0) return;
+
         e.preventDefault();
         try {
             await login(userName, password);
@@ -52,7 +54,7 @@ const LoginPage = () => {
                            required type="text" placeholder="Enter your username..."></input>
                     <label>Password</label>
                     <input value={password} onChange={onPasswordChanged}
-                        required minLength={8} type="password" placeholder="Enter your password..."></input>
+                        required minLength={1} type="password" placeholder="Enter your password..."></input>
                     <button className={`button ${password.length >= 8 ? "valid-submit-button" : "standard-button"}`} type="submit">Login</button>
                 </form>
             </div>
