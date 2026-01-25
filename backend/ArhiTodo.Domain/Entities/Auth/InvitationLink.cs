@@ -5,6 +5,8 @@ public class InvitationLink
     public int InvitationLinkId { get; set; }
     
     public required string InvitationKey { get; set; }
+
+    public required string InvitationLinkName { get; set; }
     
     public required DateTimeOffset CreatedDate { get; set; }
     

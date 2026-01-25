@@ -10,6 +10,8 @@ public enum ExpireType
 
 public class GenerateInvitationDto
 {
+    public required string InvitationLinkName { get; set; }
+    
     public required ExpireType ExpireType { get; set; }
     
     public int ExpireNum { get; set; }

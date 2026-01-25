@@ -10,6 +10,10 @@ public class InvitationLinkConfiguration : IEntityTypeConfiguration<InvitationLi
     {
         builder.HasKey(il => il.InvitationLinkId);
 
+        builder.Property(il => il.InvitationLinkName)
+            .IsRequired()
+            .HasMaxLength(32);
+
         builder.HasIndex(il => il.InvitationKey)
             .IsUnique();
         builder.Property(il => il.InvitationKey)

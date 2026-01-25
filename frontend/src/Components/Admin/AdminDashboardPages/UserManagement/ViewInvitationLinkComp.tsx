@@ -74,7 +74,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
             <div>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <TagComp tag={keyStatus.tag} color={keyStatus.color}/>
-                    <h3 style={{ marginLeft: "0.5rem" }}>Key: {invitationLink.invitationKey}</h3>
+                    <h3 style={{ marginLeft: "0.5rem" }}>Description: {invitationLink.invitationLinkName}</h3>
                 </div>
                 <p style={{ marginTop: "0.35rem" }}>
                     Expires in: { new Date(invitationLink.expiresDate).getTime() === 0 ? "Never" : formatRemainingTime(remainingMs)}</p>

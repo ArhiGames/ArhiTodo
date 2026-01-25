@@ -44,10 +44,12 @@ const InvitationCreatorModalComp = (props: Props) => {
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
     const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>();
+    const [invitationName, setInvitationName] = useState<string>("");
 
     function requestInvitationLink() {
 
         if (!currentSelectedOption) return;
+        if (invitationName.length <= 0 || invitationName.length > 32) return;
         setSubmitBlocked(true);
 
         const abortController = new AbortController();
@@ -58,7 +60,10 @@ const InvitationCreatorModalComp = (props: Props) => {
             fetch(`${API_BASE_URL}/invitation/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-                body: JSON.stringify( { expireType: currentSelectedOption.expireType, expireNum: currentSelectedOption.time, maxUses: maxUses } ),
+                body: JSON.stringify( { invitationLinkName: invitationName,
+                    expireType: currentSelectedOption.expireType,
+                    expireNum: currentSelectedOption.time,
+                    maxUses: maxUses } ),
                 signal: abortController.signal
             })
                 .then(res => {
@@ -89,7 +94,7 @@ const InvitationCreatorModalComp = (props: Props) => {
         <>
             <Modal
                 header={<h2>Creating an invitation link...</h2>}
-                modalSize="modal-s-medium"
+                modalSize="modal-medium"
                 onClosed={props.onClose}
                 footer={
                     <>
@@ -99,6 +104,9 @@ const InvitationCreatorModalComp = (props: Props) => {
                 }>
                 <div className="invitation-creator">
                     <div className="invitation-settings">
+                        <h3>Link settings</h3>
+                        <input className="classic-input" placeholder="Description..." required maxLength={32}
+                               value={invitationName} onChange={(e) => setInvitationName(e.target.value)}/>
                         <h3>Expire</h3>
                         <p>Controls how long the invitation link remains valid and how often it can be used</p>
                         <div style={{ display: "flex", flexDirection: "column" }}>

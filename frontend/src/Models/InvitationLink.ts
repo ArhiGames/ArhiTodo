@@ -1,5 +1,6 @@
 export interface InvitationLink {
     invitationLinkId: number;
+    invitationLinkName: string;
     invitationKey: string;
     createdDate: string;
     expiresDate: string;

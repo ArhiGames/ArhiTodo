@@ -27,6 +27,7 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
 
         InvitationLink invitationLink = new()
         {
+            InvitationLinkName = generateInvitationDto.InvitationLinkName,
             InvitationKey = Convert.ToHexString(secureInvitationLinkToken),
             CreatedDate = createdDate,
             ExpiresDate = expireDate,
