@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
 import type { UserLoginResponseDto } from "../Models/DTOs/UserLoginResponseDto.ts";
 import { AUTH_BASE_URL } from "../config/api.ts";
+import type {PasswordAuthorizerResult} from "../Models/BackendDtos/PasswordAuthorizerResult.ts";
 
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");
@@ -9,7 +10,8 @@ export const getJwtPayloadFromToken = () => {
     return jwtDecode<JwtPayload>(token);
 }
 
-export const registerApi = async (username: string, email: string, password: string, invitationKey: string) => {
+export const registerApi = async (username: string, email: string,
+                                  password: string, invitationKey: string): Promise<PasswordAuthorizerResult> => {
 
     const response = await fetch(`${AUTH_BASE_URL}/register`, {
         method: "POST",
@@ -22,12 +24,8 @@ export const registerApi = async (username: string, email: string, password: str
         }),
     });
 
-    if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || "Unable to register account");
-    }
+    return await response.json();
 
-    return true;
 }
 
 export const loginApi = async (username: string, password: string) => {

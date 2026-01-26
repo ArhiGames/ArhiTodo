@@ -5,6 +5,7 @@ import {AuthContext} from "./AuthContext.ts";
 import {loginApi, logoutApi, refreshApi, registerApi} from "../../Services/AuthService.tsx";
 import {useNavigate} from "react-router-dom";
 import type {AppUser} from "../../Models/AppUser.ts";
+import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/PasswordAuthorizerResult.ts";
 
 let refreshingPromise: Promise<string | null> | null = null;
 
@@ -15,7 +16,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-    const register = async (userName: string, email: string, password: string, invitationKey: string) => {
+    const register = async (userName: string, email: string,
+                            password: string, invitationKey: string): Promise<PasswordAuthorizerResult> => {
 
         return await registerApi(userName, email, password, invitationKey);
     }

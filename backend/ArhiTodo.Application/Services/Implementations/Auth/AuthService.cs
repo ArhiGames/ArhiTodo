@@ -9,12 +9,19 @@ namespace ArhiTodo.Application.Services.Implementations.Auth;
 
 public class AuthService(IUserRepository userRepository, ITokenService tokenService, 
     IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
-    ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService) : IAuthService
+    ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer) : IAuthService
 {
-    public async Task<bool> CreateAccount(CreateAccountDto createAccountDto)
+    public async Task<PasswordAuthorizerResult> CreateAccount(CreateAccountDto createAccountDto)
     {
+        PasswordAuthorizerResult passwordAuthorizerResult =
+            passwordAuthorizer.VerifyPasswordSecurity(createAccountDto.Password);
+        if (!passwordAuthorizerResult.Succeeded)
+        {
+            return passwordAuthorizerResult;
+        }
+        
         InvitationLink? invitationLink = await invitationService.GetUsableInvitationLink(createAccountDto.InvitationKey);
-        if (invitationLink == null) return false;
+        if (invitationLink == null) return new PasswordAuthorizerResult(false, []);
         
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
@@ -27,7 +34,7 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         };
 
         User? createdUser = await userRepository.CreateUserAsync(invitationLink, user);
-        return createdUser != null;
+        return new PasswordAuthorizerResult(createdUser != null, []);
     }
 
     public async Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent)
@@ -45,25 +52,32 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         return new LoginGetDto(jwt, refreshToken);
     }
 
-    public async Task<bool> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto)
+    public async Task<PasswordAuthorizerResult> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto)
     {
+        PasswordAuthorizerResult passwordAuthorizerResult =
+            passwordAuthorizer.VerifyPasswordSecurity(updatePasswordDto.NewPassword);
+        if (!passwordAuthorizerResult.Succeeded)
+        {
+            return passwordAuthorizerResult;
+        }
+            
         Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userId == null) return false;
+        if (userId == null) return new PasswordAuthorizerResult(false, []);
 
         Guid guid = Guid.Parse(userId.Value);
 
         User? foundUser = await userRepository.GetUserByGuidAsync(guid);
-        if (foundUser == null) return false;
+        if (foundUser == null) return new PasswordAuthorizerResult(false, []);
 
         bool isCorrectPassword = passwordHashService.Verify(updatePasswordDto.OldPassword, foundUser.HashedPassword);
-        if (!isCorrectPassword) return false;
+        if (!isCorrectPassword) return new PasswordAuthorizerResult(false, []);
 
         string hashedPassword = passwordHashService.Hash(updatePasswordDto.NewPassword);
         bool succeeded = await userRepository.ChangePassword(guid, hashedPassword);
 
         await LogoutEveryDevice(guid);
         
-        return succeeded;
+        return new PasswordAuthorizerResult(succeeded, []);
     }
 
     public async Task<string?> RefreshJwtToken(string refreshToken)

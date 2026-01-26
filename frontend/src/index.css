@@ -26,7 +26,7 @@
 
     --text-color: hsl(0, 0%, 95%);
     --text-color-shaded: hsl(0, 0%, 78%);
-    --text-color-failure: hsl(0, 100%, 60%);
+    --text-color-failure: hsl(0, 100%, 63%);
 
     --std-button: hsl(0, 0%, 50%);
     --std-button-highlight: hsl(0, 0%, 65%);
@@ -101,12 +101,6 @@ body {
     padding: 15px;
     min-width: 420px;
     color: var(--text-color);
-}
-
-.login p {
-    color: var(--text-color-failure);
-    font-size: larger;
-    text-align: center;
 }
 
 .login h2 {
@@ -958,4 +952,9 @@ body {
 .classic-input:focus {
     outline: none;
     box-shadow: 0 0 2px 0 var(--box-shadow);
+}
+
+.error-text {
+    color: var(--text-color-failure);
+    font-size: larger;
 }

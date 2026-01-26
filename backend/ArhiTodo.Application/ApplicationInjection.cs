@@ -11,6 +11,7 @@ public static class ApplicationInjection
 {
     public static void AddApplicationLayer(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IPasswordAuthorizer, PasswordAuthorizer>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
