@@ -98,7 +98,9 @@ const InvitationCreatorModalComp = (props: Props) => {
                 onClosed={props.onClose}
                 footer={
                     <>
-                        <button disabled={submitBlocked} onClick={requestInvitationLink} className={`button ${!submitBlocked ? "valid-submit-button" : "standard-button"}`}>Generate</button>
+                        <button disabled={submitBlocked} onClick={requestInvitationLink}
+                                className={`button ${!submitBlocked && invitationName.length > 0 && invitationName.length <= 32 ? 
+                                    "valid-submit-button" : "standard-button"}`}>Generate</button>
                         <button onClick={props.onClose} className="button standard-button">Cancel</button>
                     </>
                 }>
