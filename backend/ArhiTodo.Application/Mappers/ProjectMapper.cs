@@ -13,6 +13,15 @@ public static class ProjectMapper
         };
     }
 
+    public static Project FromUpdateDto(this ProjectUpdateDto projectUpdateDto)
+    {
+        return new Project
+        {
+            ProjectId = projectUpdateDto.ProjectId,
+            ProjectName = projectUpdateDto.ProjectName
+        };
+    }
+
     public static ProjectGetDto ToGetDto(this Project project)
     {
         return new ProjectGetDto

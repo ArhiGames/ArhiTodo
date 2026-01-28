@@ -3,6 +3,8 @@ import LoggedInUserCardComp from "../User/LoggedInUserCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Project} from "../../Models/States/types.ts";
+import {useState} from "react";
+import EditProjectModalComp from "../Project/EditProjectModalComp.tsx";
 
 const NavbarHeaderComp = () => {
 
@@ -10,20 +12,14 @@ const NavbarHeaderComp = () => {
     const kanbanState = useKanbanState();
     const location = useLocation();
     const match = matchPath({ path: "/projects/:projectId/board/:boardId" }, location.pathname);
+    const [isEditingProject, setIsEditingProject] = useState<boolean>(false);
+
+    const projectId = match?.params.projectId;
+    const project: Project | null = kanbanState.projects[Number(projectId)];
 
     function getNavigationJsx() {
 
-        if (!match) {
-            return <Link to="/">ArhiTodo</Link>;
-        }
-
-        const projectId = match.params.projectId;
-        if (!projectId) {
-            return <Link to="/">ArhiTodo</Link>;
-        }
-
-        const project: Project | null = kanbanState.projects[Number(projectId)];
-        if (!project) {
+        if (!match || !projectId || !project) {
             return <Link to="/">ArhiTodo</Link>;
         }
 
@@ -33,7 +29,7 @@ const NavbarHeaderComp = () => {
                     <img style={{ height: "32px", marginRight: "1rem" }} src="/public/back-arrow.svg" alt="Back"/>
                 </Link>
                 <p>{project.projectName}</p>
-                <img style={{ height: "20px" }} src="/public/edit-icon.svg" alt="Edit"/>
+                <img onClick={() => setIsEditingProject(true)} style={{ height: "20px" }} src="/public/edit-icon.svg" alt="Edit"/>
             </div>
         )
 
@@ -41,8 +37,9 @@ const NavbarHeaderComp = () => {
 
     return (
         <nav className="navbar-header">
-            {getNavigationJsx()}
-            { appUser ? <LoggedInUserCardComp appUser={appUser}/> : null }
+            { getNavigationJsx() }
+            { appUser && <LoggedInUserCardComp appUser={appUser}/> }
+            { isEditingProject && project && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
         </nav>
     )
 }

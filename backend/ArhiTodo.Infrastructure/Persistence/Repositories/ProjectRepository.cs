@@ -14,6 +14,18 @@ public class ProjectRepository(ProjectDataBase projectDatabase) : IProjectReposi
         return createdProject.Entity;
     }
 
+    public async Task<Project?> UpdateProject(Project project)
+    {
+        Project? foundProject = await projectDatabase.Projects
+            .FirstOrDefaultAsync(p => p.ProjectId == project.ProjectId);
+        if (foundProject == null) return null;
+
+        foundProject.ProjectName = project.ProjectName;
+        await projectDatabase.SaveChangesAsync();
+
+        return foundProject;
+    }
+
     public async Task<bool> DeleteAsync(int projectId)
     {
         Project? project = await projectDatabase.Projects

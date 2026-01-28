@@ -20,6 +20,14 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return Ok(project);
     }
 
+    [HttpPut]
+    public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
+    {
+        ProjectGetDto? project = await projectService.UpdateProject(projectUpdateDto);
+        if (project == null) return NotFound();
+        return Ok(project);
+    }
+
     [HttpDelete("{projectId:int}")]
     public async Task<IActionResult> DeleteProject(int projectId)
     {

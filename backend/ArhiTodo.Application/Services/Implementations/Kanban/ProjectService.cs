@@ -15,6 +15,12 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         return project.ToGetDto();
     }
 
+    public async Task<ProjectGetDto?> UpdateProject(ProjectUpdateDto projectUpdateDto)
+    {
+        Project? project = await projectRepository.UpdateProject(projectUpdateDto.FromUpdateDto());
+        return project?.ToGetDto();
+    }
+
     public async Task<bool> DeleteProject(int projectId)
     {
         bool succeeded = await projectRepository.DeleteAsync(projectId);

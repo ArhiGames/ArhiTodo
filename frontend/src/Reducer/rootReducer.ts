@@ -41,6 +41,7 @@ import removeCardsFromCardlistAction
     from "../Contexts/Kanban/Actions/Implementation/Cardlists/removeCardsFromCardlistAction.ts";
 import initProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/initProjectAction.ts";
 import initProjectsAction from "../Contexts/Kanban/Actions/Implementation/Projects/initProjectsAction.ts";
+import updateProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/updateProjectAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -48,6 +49,8 @@ function rootReducer(state: State, action: Action): State {
             return initProjectsAction(state, action.payload);
         case "INIT_PROJECT":
             return initProjectAction(state, action.payload);
+        case "UPDATE_PROJECT":
+            return updateProjectAction(state, action.payload);
 
         case "INIT_BOARDS":
             return initBoardsAction(state, action.payload);
