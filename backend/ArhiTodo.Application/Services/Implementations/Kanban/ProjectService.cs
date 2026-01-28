@@ -1,12 +1,13 @@
 ﻿using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class ProjectService(IProjectRepository projectRepository) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, IProjectNotificationService projectNotificationService) : IProjectService
 {
     public async Task<ProjectGetDto> CreateProject(ProjectCreateDto projectCreateDto)
     {
@@ -18,7 +19,11 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
     public async Task<ProjectGetDto?> UpdateProject(ProjectUpdateDto projectUpdateDto)
     {
         Project? project = await projectRepository.UpdateProject(projectUpdateDto.FromUpdateDto());
-        return project?.ToGetDto();
+        if (project == null) return null;
+
+        ProjectGetDto projectGetDto = project.ToGetDto();
+        projectNotificationService.UpdateProject(projectGetDto);
+        return projectGetDto;
     }
 
     public async Task<bool> DeleteProject(int projectId)

@@ -30,6 +30,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 
+        builder.Services.AddScoped<IProjectNotificationService, ProjectNotificationService>();
         builder.Services.AddScoped<IBoardNotificationService, BoardNotificationService>();
         builder.Services.AddScoped<ICardListNotificationService, CardListNotificationService>();
         builder.Services.AddScoped<ICardNotificationService, CardNotificationService>();

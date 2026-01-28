@@ -17,6 +17,7 @@ import {buildChecklistConnection} from "../../Contexts/Realtime/ConnectionBuilde
 import {buildLabelConnection} from "../../Contexts/Realtime/ConnectionBuilders/LabelConnectionBuilder.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
+import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders/ProjectConnectionBuilder.ts";
 
 const ProjectViewComp = () => {
 
@@ -120,6 +121,7 @@ const ProjectViewComp = () => {
             .withAutomaticReconnect()
             .build();
 
+        buildProjectConnection(connection, dispatch);
         buildBoardConnection(connection, dispatch);
         buildCardListConnection(connection, dispatch);
         buildCardConnection(connection, dispatch);

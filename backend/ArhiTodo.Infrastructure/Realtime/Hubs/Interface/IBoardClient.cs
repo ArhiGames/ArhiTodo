@@ -4,11 +4,14 @@ using ArhiTodo.Application.DTOs.CardList;
 using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.DTOs.Label;
+using ArhiTodo.Application.DTOs.Project;
 
 namespace ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 
 public interface IBoardClient
 {
+    Task UpdateProject(ProjectGetDto projectGetDto);
+    
     Task CreateBoard(int projectId, BoardGetDto board);
     Task UpdateBoard(int projectId, BoardGetDto board);
     Task DeleteBoard(int boardId);
