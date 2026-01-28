@@ -1,3 +1,8 @@
+export type Project = {
+    projectId: number;
+    projectName: string;
+}
+
 export type Board = {
     projectId: number;
     boardId: number;
@@ -38,6 +43,7 @@ export type ChecklistItem = {
 }
 
 export interface State {
+    projects: Record<number, Project>;
     boards: Record<number, Board>;
     cardLists: Record<number, CardList>;
     cards: Record<number, Card>;

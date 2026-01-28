@@ -55,18 +55,32 @@ body {
 
 .navbar-header {
     display: flex;
+    align-items: center;
     background-color: var(--bg);
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 15px;
     border-bottom: 2px solid var(--color-border);
     font-size: larger;
+    color: var(--text-color);
 }
 
 .navbar-header a {
     text-decoration: none;
-    padding: 10px;
+    display: flex;
+    align-items: center;
     color: var(--text-color);
+}
+
+.navbar-header-project-view {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-header-project-view img {
+    filter: invert(1);
+    opacity: 0.75;
 }
 
 .app-user {

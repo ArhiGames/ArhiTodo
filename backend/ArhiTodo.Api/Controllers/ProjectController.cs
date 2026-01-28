@@ -28,6 +28,14 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("{projectId:int}")]
+    public async Task<IActionResult> GetProject(int projectId)
+    {
+        ProjectGetDto? projectGetDto = await projectService.GetProject(projectId);
+        if (projectGetDto == null) return NotFound();
+        return Ok(projectGetDto);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {

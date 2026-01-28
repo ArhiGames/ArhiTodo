@@ -6,5 +6,6 @@ public interface IProjectService
 {
     Task<ProjectGetDto> CreateProject(ProjectCreateDto projectCreateDto);
     Task<bool> DeleteProject(int projectId);
+    Task<ProjectGetDto?> GetProject(int projectId);
     Task<List<ProjectGetDto>> GetProjects();
 }

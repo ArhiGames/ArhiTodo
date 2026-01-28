@@ -1,5 +1,5 @@
-import type { Project } from "../../Models/Project.ts";
 import { Link } from "react-router-dom";
+import type {Project} from "../../Models/States/types.ts";
 
 const ProjectCardComp = (props: { project: Project } ) => {
 

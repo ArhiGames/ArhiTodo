@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
@@ -16,6 +15,8 @@ import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/Ca
 import NoBoardComp from "../Board/NoBoardComp.tsx";
 import {buildChecklistConnection} from "../../Contexts/Realtime/ConnectionBuilders/ChecklistConnectionBuilder.ts";
 import {buildLabelConnection} from "../../Contexts/Realtime/ConnectionBuilders/LabelConnectionBuilder.ts";
+import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
+import {useNavigate, useParams} from "react-router-dom";
 
 const ProjectViewComp = () => {
 
@@ -56,6 +57,24 @@ const ProjectViewComp = () => {
         const run = async () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
+
+            fetch(`${API_BASE_URL}/project/${projectId}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch project");
+                    }
+
+                    return res.json();
+                })
+                .then((projectGetDto: ProjectGetDto) => {
+                    if (dispatch) {
+                        dispatch({type: "INIT_PROJECT", payload: projectGetDto});
+                    }
+                })
+                .catch(console.error);
 
             fetch(`${API_BASE_URL}/project/${projectId}/board`,
                 {

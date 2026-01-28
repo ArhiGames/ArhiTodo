@@ -21,6 +21,12 @@ public class ProjectService(IProjectRepository projectRepository) : IProjectServ
         return succeeded;
     }
 
+    public async Task<ProjectGetDto?> GetProject(int projectId)
+    {
+        Project? project = await projectRepository.GetAsync(projectId);
+        return project?.ToGetDto();
+    }
+
     public async Task<List<ProjectGetDto>> GetProjects()
     {
         List<Project> projects = await projectRepository.GetAllAsync();

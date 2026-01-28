@@ -41,7 +41,7 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
                         <p>{appUser?.email}</p>
                         <button onClick={handleAccountSettingsButtonPressed}>Account settings</button>
                         <button onClick={handleAdministrationButtonPressed}>Administration</button>
-                        <button onClick={logout}>Sign out</button>
+                        <button onClick={() => logout(true)}>Sign out</button>
                     </div>
                 </Popover>)
             }

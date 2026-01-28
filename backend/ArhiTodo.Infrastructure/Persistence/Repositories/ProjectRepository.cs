@@ -26,6 +26,13 @@ public class ProjectRepository(ProjectDataBase projectDatabase) : IProjectReposi
         return true;
     }
 
+    public async Task<Project?> GetAsync(int projectId)
+    {
+        Project? project = await projectDatabase.Projects
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        return project;
+    }
+
     public async Task<List<Project>> GetAllAsync()
     {
         List<Project> projects = await projectDatabase.Projects.ToListAsync();

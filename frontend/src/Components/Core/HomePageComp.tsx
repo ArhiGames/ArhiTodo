@@ -1,14 +1,17 @@
-import {useEffect, useState} from "react";
-import type {Project} from "../../Models/Project.ts";
+import {useEffect} from "react";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import type {Project} from "../../Models/States/types.ts";
+import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
 
 const HomePageComp = () => {
 
     const { token, checkRefresh } = useAuth();
-    const [projects, setProjects] = useState<Project[]>();
+    const kanbanState = useKanbanState();
+    const dispatch = useKanbanDispatch();
 
     useEffect(() => {
 
@@ -31,8 +34,10 @@ const HomePageComp = () => {
 
                     return res.json();
                 })
-                .then((fetchedProjects: Project[]) => {
-                    setProjects(fetchedProjects);
+                .then((fetchedProjects: ProjectGetDto[]) => {
+                    if (dispatch) {
+                        dispatch({type: "INIT_PROJECTS", payload: fetchedProjects});
+                    }
                 })
                 .catch(err => {
                     if (err.name === "AbortError") {
@@ -46,11 +51,11 @@ const HomePageComp = () => {
 
         return () => abortController.abort();
 
-    }, [checkRefresh, token]);
+    }, [checkRefresh, dispatch, token]);
 
     return (
         <div className="projects-container">
-            {projects?.map((project: Project) => {
+            {Object.values(kanbanState.projects).map((project: Project) => {
                 return (
                     <ProjectCardComp key={project.projectId} project={project}/>
                 )
