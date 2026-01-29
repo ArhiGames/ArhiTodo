@@ -1,10 +1,10 @@
-import type { CardGetDto } from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
+import type { CardGetDto } from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import CardComp from "../Card/CardComp.tsx";
 import type {Card, Checklist, ChecklistItem, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
-import type {ChecklistGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";

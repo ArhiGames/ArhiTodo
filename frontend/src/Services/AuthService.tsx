@@ -1,8 +1,8 @@
 import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
-import type { UserLoginResponseDto } from "../Models/DTOs/UserLoginResponseDto.ts";
+import type { UserLoginResponseDto } from "../Models/BackendDtos/Auth/UserLoginResponseDto.ts";
 import { AUTH_BASE_URL } from "../config/api.ts";
-import type {PasswordAuthorizerResult} from "../Models/BackendDtos/PasswordAuthorizerResult.ts";
+import type {PasswordAuthorizerResult} from "../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
 
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");

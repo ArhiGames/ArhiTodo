@@ -1,4 +1,4 @@
-import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
+import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
 import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";

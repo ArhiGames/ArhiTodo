@@ -1,5 +1,5 @@
 import "./CardDetailChecklistsComp.css"
-import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
+import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
@@ -8,7 +8,7 @@ import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hoo
 import type { ChecklistItem } from "../../../../Models/States/types.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
-import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import type {ChecklistGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import {useParams} from "react-router-dom";
 
 interface Props {

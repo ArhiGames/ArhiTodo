@@ -11,6 +11,13 @@ namespace ArhiTodo.Controllers;
 [ApiController]
 public class AccountController(IAuthService authService) : ControllerBase
 {
+    [HttpGet("accounts/{page:int?}")]
+    public async Task<IActionResult> GetAccounts(int page = 0)
+    {
+        List<UserGetDto> users = await authService.GetUsers(page);
+        return Ok(users);
+    }
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateAccountDto createAccountDto)
     {

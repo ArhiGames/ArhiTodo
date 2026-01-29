@@ -6,7 +6,7 @@ import "./LabelSelector.css"
 import EditableLabel from "./EditableLabel.tsx";
 import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 
 interface Props {

@@ -1,7 +1,7 @@
 import type { InitBoardPayload } from "../Action.ts";
 import type {Card, CardList, Checklist, ChecklistItem, Label, State} from "../../../../Models/States/types.ts";
-import type { CardListGetDto } from "../../../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
-import type {LabelGetDto} from "../../../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import type { CardListGetDto } from "../../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
+import type {LabelGetDto} from "../../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 
 const initBoardAction = (state: State, payload: InitBoardPayload) => {
 

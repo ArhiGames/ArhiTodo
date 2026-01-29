@@ -1,4 +1,4 @@
-import type { CardGetDto } from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
+import type { CardGetDto } from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type { Label, State } from "../../Models/States/types.ts";
@@ -6,7 +6,7 @@ import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
-import type {ChecklistGetDto} from "../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 
 const CardComp = (props: { card: CardGetDto }) => {
 

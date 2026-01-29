@@ -4,7 +4,7 @@ import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewBoardHeaderComp = () => {

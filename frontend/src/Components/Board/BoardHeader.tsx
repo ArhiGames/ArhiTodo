@@ -3,7 +3,7 @@ import type { Board } from "../../Models/States/types.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {BoardGetDto} from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";

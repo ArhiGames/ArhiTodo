@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
-import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
 import EditableUserComp from "./EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
 import InviteUserComp from "./InviteUserComp.tsx";
 import ViewInvitationLinksComp from "./ViewInvitationLinksComp.tsx";
-import {API_BASE_URL} from "../../../../config/api.ts";
+import {AUTH_BASE_URL} from "../../../../config/api.ts";
+import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 const AdminUserManagementComp = () => {
 
     const navigate = useNavigate();
     const { appUser, token, checkRefresh } = useAuth();
     const { userId } = useParams();
-    const [users, setUsers] = useState<UserWithClaims[]>([]);
-    const [currentViewingUser, setCurrentViewingUser] = useState<UserWithClaims | null>(null);
+    const [users, setUsers] = useState<UserGetDto[]>([]);
+    const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
     const [isViewingCreatedInvitationsLinks, setIsViewingCreatedInvitationsLinks] = useState<boolean>(false);
 
     useEffect(() => {
@@ -32,10 +32,10 @@ const AdminUserManagementComp = () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || controller.signal.aborted) return;
 
-            fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
+            fetch(`${AUTH_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
                 {
                     method: "GET",
-                    headers: { Authorization: `Bearer ${refreshedToken}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: controller.signal
                 })
                 .then(res => {
@@ -45,7 +45,7 @@ const AdminUserManagementComp = () => {
 
                     return res.json();
                 })
-                .then((user: UserWithClaims)=> {
+                .then((user: UserGetDto)=> {
                     setCurrentViewingUser(user)
                 })
                 .catch(err => {
@@ -72,10 +72,10 @@ const AdminUserManagementComp = () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || controller.signal.aborted) return;
 
-            fetch(`${API_BASE_URL}/account/admin/accountmanagement`,
+            fetch(`${AUTH_BASE_URL}/accounts/0`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${refreshedToken}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: controller.signal
                 })
                 .then(res => {
@@ -85,7 +85,7 @@ const AdminUserManagementComp = () => {
 
                     return res.json();
                 })
-                .then((res: UserWithClaims[]) => {
+                .then((res: UserGetDto[]) => {
                     setUsers(res);
                 })
                 .catch(err => {
@@ -102,10 +102,8 @@ const AdminUserManagementComp = () => {
 
     }, [userId, token, checkRefresh]);
 
-    function onEditUser(user: UserWithClaims) {
-
+    function onEditUser(user: UserGetDto) {
         navigate(`/admin/dashboard/users/${user.userId}`);
-
     }
 
     return (
@@ -113,7 +111,7 @@ const AdminUserManagementComp = () => {
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
             <div className="user-management-users-div">
-                {users.map((user: UserWithClaims) => (
+                {users.map((user: UserGetDto) => (
                     <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
                 ))}
             </div>

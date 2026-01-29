@@ -15,7 +15,7 @@ import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/Ca
 import NoBoardComp from "../Board/NoBoardComp.tsx";
 import {buildChecklistConnection} from "../../Contexts/Realtime/ConnectionBuilders/ChecklistConnectionBuilder.ts";
 import {buildLabelConnection} from "../../Contexts/Realtime/ConnectionBuilders/LabelConnectionBuilder.ts";
-import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
+import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders/ProjectConnectionBuilder.ts";
 

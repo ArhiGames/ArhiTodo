@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import type {CardListGetDto} from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewCardListComp = () => {

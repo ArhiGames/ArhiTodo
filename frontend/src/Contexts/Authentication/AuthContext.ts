@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { AppUser } from "../../Models/AppUser.ts";
-import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/PasswordAuthorizerResult.ts";
+import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
 
 export type AuthContextType = {
     appUser: AppUser | null;

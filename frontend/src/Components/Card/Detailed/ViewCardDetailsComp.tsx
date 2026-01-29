@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {type FormEvent, Fragment, useCallback, useEffect, useRef, useState} from "react";
 import LabelSelector from "../../Labels/LabelSelector.tsx";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import type {DetailedCardGetDto} from "../../../Models/BackendDtos/GetDtos/DetailedCardGetDto.ts";
+import type {DetailedCardGetDto} from "../../../Models/BackendDtos/Kanban/DetailedCardGetDto.ts";
 import type {Label, State} from "../../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {type Rgb, toRgb} from "../../../lib/Functions.ts";

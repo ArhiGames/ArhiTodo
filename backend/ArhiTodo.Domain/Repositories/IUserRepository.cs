@@ -6,6 +6,7 @@ public interface IUserRepository
 {
     Task<User?> CreateUserAsync(InvitationLink invitationLink, User user);
     Task<bool> ChangePassword(Guid guid, string hashedPassword);
+    Task<List<User>> GetUsers(int page = 0);
     Task<User?> GetUserByGuidAsync(Guid guid);
     Task<User?> GetUserByUsernameAsync(string username);
 

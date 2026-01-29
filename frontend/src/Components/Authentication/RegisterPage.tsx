@@ -1,8 +1,8 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {type ChangeEvent, type FormEvent, useState} from "react";
-import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/PasswordAuthorizerResult.ts";
-import type { Error } from "../../Models/BackendDtos/PasswordAuthorizerResult.ts"
+import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
+import type { Error } from "../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts"
 
 const RegisterPage = () => {
 

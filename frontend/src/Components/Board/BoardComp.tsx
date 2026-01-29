@@ -1,13 +1,13 @@
 import {type Dispatch, useEffect, useRef, useState} from "react"
-import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
-import type { BoardGetDto } from "../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import type {Board, CardList, Label, State} from "../../Models/States/types.ts";
-import type {LabelGetDto} from "../../Models/BackendDtos/GetDtos/LabelGetDto.ts";
+import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import LabelSelector from "../Labels/LabelSelector.tsx";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";

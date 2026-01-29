@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories;
@@ -78,6 +79,12 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         await LogoutEveryDevice(guid);
         
         return new PasswordAuthorizerResult(succeeded, []);
+    }
+
+    public async Task<List<UserGetDto>> GetUsers(int page = 0)
+    {
+        List<User> users = await userRepository.GetUsers(page);
+        return users.Select(u => u.ToGetDto()).ToList();
     }
 
     public async Task<string?> RefreshJwtToken(string refreshToken)

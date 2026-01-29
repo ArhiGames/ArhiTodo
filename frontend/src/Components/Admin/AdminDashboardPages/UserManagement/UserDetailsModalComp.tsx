@@ -1,5 +1,4 @@
 import Modal from "../../../../lib/Modal/Default/Modal.tsx";
-import type { UserWithClaims } from "../../../../Models/Administration/UserWithClaims.ts";
 import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
@@ -8,9 +7,10 @@ import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../../config/api.ts";
+import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 interface Props {
-    currentViewingUser: UserWithClaims;
+    currentViewingUser: UserGetDto;
 }
 
 const UserDetailsModalComp = ( { currentViewingUser }: Props) => {

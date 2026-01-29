@@ -4,7 +4,7 @@ import {useState} from "react";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
-import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
+import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {createPortal} from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 

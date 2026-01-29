@@ -2,7 +2,7 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Modal from "../../lib/Modal/Default/Modal.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type { ProjectGetDto } from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
+import type { ProjectGetDto } from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import { useNavigate } from "react-router-dom";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";

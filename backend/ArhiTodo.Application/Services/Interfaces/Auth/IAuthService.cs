@@ -8,6 +8,8 @@ public interface IAuthService
     Task<PasswordAuthorizerResult> CreateAccount(CreateAccountDto createAccountDto);
     Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent);
     Task<PasswordAuthorizerResult> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto);
+    Task<List<UserGetDto>> GetUsers(int page = 0);
+    
     Task<string?> RefreshJwtToken(string refreshToken);
     Task<bool> Logout(ClaimsPrincipal user, string userAgent);
     Task<bool> LogoutEveryDevice(Guid userId);

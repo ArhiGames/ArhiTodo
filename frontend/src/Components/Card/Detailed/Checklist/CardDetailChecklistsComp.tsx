@@ -1,4 +1,4 @@
-import type {ChecklistGetDto} from "../../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
+import type {ChecklistGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import "./CardDetailChecklistsComp.css"
 import CardDetailChecklistComp from "./CardDetailChecklistComp.tsx";
 import Popover from "../../../../lib/Popover/Popover.tsx";

@@ -42,6 +42,14 @@ public class UserRepository(IInvitationRepository invitationRepository, ProjectD
         return changedRows >= 1;
     }
 
+    public async Task<List<User>> GetUsers(int page = 0)
+    {
+        List<User> users = await database.Users
+            .Take(10).Skip(10 * page)
+            .ToListAsync();
+        return users;
+    }
+
     public async Task<User?> GetUserByGuidAsync(Guid guid)
     {
         User? user = await database.Users.FirstOrDefaultAsync(u => u.UserId == guid);

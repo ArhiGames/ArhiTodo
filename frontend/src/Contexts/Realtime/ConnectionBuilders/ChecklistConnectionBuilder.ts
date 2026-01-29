@@ -1,8 +1,8 @@
 import type {HubConnection} from "@microsoft/signalr";
 import type {Dispatch} from "react";
 import type {Action} from "../../Kanban/Actions/Action.ts";
-import type {ChecklistGetDto} from "../../../Models/BackendDtos/GetDtos/ChecklistGetDto.ts";
-import type {ChecklistItemGetDto} from "../../../Models/BackendDtos/GetDtos/ChecklistItemGetDto.ts";
+import type {ChecklistGetDto} from "../../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
+import type {ChecklistItemGetDto} from "../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
 
 export function buildChecklistConnection(hubConnection: HubConnection, dispatch: Dispatch<Action>) {
     hubConnection.on("CreateChecklist", (cardId: number, checklist: ChecklistGetDto) => {

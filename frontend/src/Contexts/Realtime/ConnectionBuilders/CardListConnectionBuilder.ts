@@ -1,7 +1,7 @@
 import type {HubConnection} from "@microsoft/signalr";
 import type {Dispatch} from "react";
 import type {Action} from "../../Kanban/Actions/Action.ts";
-import type {CardListGetDto} from "../../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type {CardListGetDto} from "../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 
 export function buildCardListConnection(hubConnection: HubConnection, dispatch: Dispatch<Action>) {
     hubConnection.on("CreateCardList", (boardId: number, cardList: CardListGetDto) => {

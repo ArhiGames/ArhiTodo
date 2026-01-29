@@ -1,5 +1,5 @@
 import type {HubConnection} from "@microsoft/signalr";
-import type {BoardGetDto} from "../../../Models/BackendDtos/GetDtos/BoardGetDto.ts";
+import type {BoardGetDto} from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import type {Dispatch} from "react";
 import type {Action} from "../../Kanban/Actions/Action.ts";
 

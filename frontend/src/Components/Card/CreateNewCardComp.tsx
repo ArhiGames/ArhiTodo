@@ -1,8 +1,8 @@
-import type { CardListGetDto } from "../../Models/BackendDtos/GetDtos/CardListGetDto.ts";
+import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import type {CardGetDto} from "../../Models/BackendDtos/GetDtos/CardGetDto.ts";
+import type {CardGetDto} from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 
 const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number }) => {
