@@ -1,0 +1,16 @@
+﻿using ArhiTodo.Application.DTOs.User;
+using ArhiTodo.Application.Mappers;
+using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Domain.Entities.Auth;
+using ArhiTodo.Domain.Repositories;
+
+namespace ArhiTodo.Application.Services.Implementations.Auth;
+
+public class UserService(IUserRepository userRepository) : IUserService
+{
+    public async Task<ClaimGetDto?> GrantClaim(Guid userId, ClaimPostDto claimPostDto)
+    {
+        UserClaim? userClaim = await userRepository.GrantClaimAsync(userId, claimPostDto.FromPostDto(userId));
+        return userClaim?.ToGetDto();
+    }
+}

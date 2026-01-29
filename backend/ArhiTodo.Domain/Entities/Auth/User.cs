@@ -2,9 +2,9 @@
 
 public class User
 {
-    public Guid UserId { get; } = Guid.NewGuid();
+    public Guid UserId { get; set; } = Guid.NewGuid();
 
-    public DateTimeOffset CreatedAt { get; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set;  } = DateTimeOffset.UtcNow;
     
     public required string UserName { get; set; }
 
@@ -15,4 +15,5 @@ public class User
     public string? JoinedViaInvitationKey { get; set; } = string.Empty;
 
     public List<UserSession> UserSessions { get; set; } = new();
+    public List<UserClaim> UserClaims { get; set; } = new();
 }

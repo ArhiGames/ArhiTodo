@@ -26,6 +26,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();

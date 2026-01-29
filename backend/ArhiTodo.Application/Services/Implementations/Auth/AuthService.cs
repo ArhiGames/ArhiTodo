@@ -8,7 +8,7 @@ using ArhiTodo.Domain.Services.Auth;
 
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
-public class AuthService(IUserRepository userRepository, ITokenService tokenService, 
+public class AuthService(IAccountRepository accountRepository, ITokenService tokenService, 
     IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
     ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer) : IAuthService
 {
@@ -34,13 +34,13 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
             JoinedViaInvitationKey = createAccountDto.InvitationKey
         };
 
-        User? createdUser = await userRepository.CreateUserAsync(invitationLink, user);
+        User? createdUser = await accountRepository.CreateUserAsync(invitationLink, user);
         return new PasswordAuthorizerResult(createdUser != null, []);
     }
 
     public async Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent)
     {
-        User? user = await userRepository.GetUserByUsernameAsync(loginDto.Username);
+        User? user = await accountRepository.GetUserByUsernameAsync(loginDto.Username);
         if (user == null) return null;
 
         bool passwordCorrect = passwordHashService.Verify(loginDto.Password, user.HashedPassword);
@@ -49,7 +49,8 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         string? refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         if (refreshToken == null) return null;
 
-        string jwt = jwtTokenGeneratorService.GenerateToken(user, new List<Claim>());
+        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
+        string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
         return new LoginGetDto(jwt, refreshToken);
     }
 
@@ -67,14 +68,14 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
 
         Guid guid = Guid.Parse(userId.Value);
 
-        User? foundUser = await userRepository.GetUserByGuidAsync(guid);
+        User? foundUser = await accountRepository.GetUserByGuidAsync(guid);
         if (foundUser == null) return new PasswordAuthorizerResult(false, []);
 
         bool isCorrectPassword = passwordHashService.Verify(updatePasswordDto.OldPassword, foundUser.HashedPassword);
         if (!isCorrectPassword) return new PasswordAuthorizerResult(false, []);
 
         string hashedPassword = passwordHashService.Hash(updatePasswordDto.NewPassword);
-        bool succeeded = await userRepository.ChangePassword(guid, hashedPassword);
+        bool succeeded = await accountRepository.ChangePassword(guid, hashedPassword);
 
         await LogoutEveryDevice(guid);
         
@@ -83,7 +84,7 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
 
     public async Task<List<UserGetDto>> GetUsers(int page = 0)
     {
-        List<User> users = await userRepository.GetUsers(page);
+        List<User> users = await accountRepository.GetUsers(page);
         return users.Select(u => u.ToGetDto()).ToList();
     }
 
@@ -92,11 +93,11 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
         byte[] byteToken = Convert.FromHexString(refreshToken);
         string hashedToken = tokenGeneratorService.Hash(byteToken, 32);
         
-        UserSession? userSession = await userRepository.GetUserSessionByToken(hashedToken);
+        UserSession? userSession = await accountRepository.GetUserSessionByToken(hashedToken);
         if (userSession == null) return null;
         
-        User user = userSession.User;
-        string jwt = jwtTokenGeneratorService.GenerateToken(user, new List<Claim>());
+        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
+        string jwt = jwtTokenGeneratorService.GenerateToken(userSession.User, claims);
         return jwt;
     }
 
@@ -107,16 +108,16 @@ public class AuthService(IUserRepository userRepository, ITokenService tokenServ
 
         Guid guid = Guid.Parse(userId.Value); 
         
-        UserSession? userSession = await userRepository.GetUserSessionByAgent(guid, userAgent);
+        UserSession? userSession = await accountRepository.GetUserSessionByAgent(guid, userAgent);
         if (userSession == null) return false;
 
-        bool succeeded = await userRepository.InvalidateUserSession(userSession.SessionId);
+        bool succeeded = await accountRepository.InvalidateUserSession(userSession.SessionId);
         return succeeded;
     }
 
     public async Task<bool> LogoutEveryDevice(Guid userId)
     {
-        bool succeeded = await userRepository.InvalidateUserSessions(userId);
+        bool succeeded = await accountRepository.InvalidateUserSessions(userId);
         return succeeded;
     }
 }

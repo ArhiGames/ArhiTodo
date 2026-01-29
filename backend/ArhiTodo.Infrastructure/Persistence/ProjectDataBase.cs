@@ -10,6 +10,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<UserClaim> UserClaims { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
     
@@ -33,13 +34,13 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
             if (adminUser != null) return;
             
             string hashedPassword = passwordHashService.Hash("admin");
-            User user = new()
+            User appUser = new()
             {
                 UserName = "admin",
                 Email = "admin@admin.admin",
                 HashedPassword = hashedPassword
             };
-            context.Set<User>().Add(user);
+            context.Set<User>().Add(appUser);
             context.SaveChanges();
         });
     }

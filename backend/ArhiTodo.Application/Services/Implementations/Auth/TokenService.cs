@@ -4,14 +4,14 @@ using ArhiTodo.Domain.Repositories;
 
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
-public class TokenService(IUserRepository userRepository, ITokenGeneratorService tokenGeneratorService) : ITokenService
+public class TokenService(IAccountRepository accountRepository, ITokenGeneratorService tokenGeneratorService) : ITokenService
 {
     public async Task<string?> GenerateRefreshTokenAndAddSessionEntry(User user, string userAgent)
     {
         byte[] refreshToken = tokenGeneratorService.GenerateSecureToken(32);
         string hashedToken = tokenGeneratorService.Hash(refreshToken, 32);
         
-        UserSession? existingSession = await userRepository.GetUserSessionByAgent(user.UserId, userAgent);
+        UserSession? existingSession = await accountRepository.GetUserSessionByAgent(user.UserId, userAgent);
         
         if (existingSession == null)
         {
@@ -23,7 +23,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
                 UserAgent = userAgent
             };
             
-            UserSession? createdUserSession = await userRepository.CreateUserSession(userSession);
+            UserSession? createdUserSession = await accountRepository.CreateUserSession(userSession);
             if (createdUserSession == null) return null;
         }
         else
@@ -31,7 +31,7 @@ public class TokenService(IUserRepository userRepository, ITokenGeneratorService
             existingSession.ExpiresAt = DateTimeOffset.UtcNow.AddDays(14);
             existingSession.TokenHash = hashedToken;
             
-            bool succeeded = await userRepository.UpdateUserSession(existingSession);
+            bool succeeded = await accountRepository.UpdateUserSession(existingSession);
             if (!succeeded) return null;
         }
         

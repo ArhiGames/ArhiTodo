@@ -13,6 +13,7 @@ public static class ApplicationInjection
     {
         builder.Services.AddScoped<IPasswordAuthorizer, PasswordAuthorizer>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
         builder.Services.AddScoped<IInvitationService, InvitationService>();

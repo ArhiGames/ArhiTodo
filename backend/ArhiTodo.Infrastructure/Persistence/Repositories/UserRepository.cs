@@ -1,116 +1,19 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(IInvitationRepository invitationRepository, ProjectDataBase database) : IUserRepository
+public class UserRepository(ProjectDataBase database) : IUserRepository
 {
-    public async Task<User?> CreateUserAsync(InvitationLink invitationLink, User user)
+    public async Task<UserClaim?> GrantClaimAsync(Guid userId, UserClaim claim)
     {
-        await using IDbContextTransaction transaction = await database.Database.BeginTransactionAsync();
-
-        try
-        {
-            EntityEntry<User> userEntry = database.Users.Add(user);
-            await database.SaveChangesAsync();
-
-            bool succeeded = await invitationRepository.UseInvitationLink(invitationLink.InvitationLinkId);
-            if (!succeeded)
-            {
-                await transaction.RollbackAsync();
-                return null;
-            }
-
-            await transaction.CommitAsync();
-
-            return userEntry.Entity;
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
-
-    public async Task<bool> ChangePassword(Guid guid, string hashedPassword)
-    {
-        int changedRows = await database.Users
-            .Where(u => u.UserId == guid)
-            .ExecuteUpdateAsync(p => p.SetProperty(u => u.HashedPassword, hashedPassword));
-        return changedRows >= 1;
-    }
-
-    public async Task<List<User>> GetUsers(int page = 0)
-    {
-        List<User> users = await database.Users
-            .Take(10).Skip(10 * page)
-            .ToListAsync();
-        return users;
-    }
-
-    public async Task<User?> GetUserByGuidAsync(Guid guid)
-    {
-        User? user = await database.Users.FirstOrDefaultAsync(u => u.UserId == guid);
-        return user;
-    }
-
-    public async Task<User?> GetUserByUsernameAsync(string username)
-    {
-        User? user = await database.Users.FirstOrDefaultAsync(u => u.UserName == username);
-        return user;
-    }
-    
-    public async Task<UserSession?> CreateUserSession(UserSession userSession)
-    {
-        EntityEntry<UserSession> userSessionEntry = database.UserSessions.Add(userSession);
+        User? user = await database.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null) return null;
+        
+        user.UserClaims.Add(claim);
         await database.SaveChangesAsync();
-        return userSessionEntry.Entity;
-    }
-
-    public async Task<UserSession?> GetUserSessionByAgent(Guid userId, string userAgent)
-    {
-        UserSession? userSession = await database.UserSessions
-            .Include(us => us.User)
-            .FirstOrDefaultAsync(us => us.UserId == userId && 
-                                       us.UserAgent == userAgent && 
-                                       us.ExpiresAt > DateTime.UtcNow);
-        return userSession;
-    }
-
-    public async Task<UserSession?> GetUserSessionByToken(string hashedToken)
-    {
-        UserSession? userSession = await database.UserSessions
-            .Include(us => us.User)
-            .FirstOrDefaultAsync(us => us.TokenHash == hashedToken &&
-                                       us.ExpiresAt > DateTime.UtcNow);
-        return userSession;
-    }
-
-    public async Task<bool> UpdateUserSession(UserSession userSession)
-    {
-        int changedRows = await database.UserSessions
-            .Where(us => us.SessionId == userSession.SessionId)
-            .ExecuteUpdateAsync(p => p
-                .SetProperty(us => us.TokenHash, userSession.TokenHash)
-                .SetProperty(us => us.ExpiresAt, userSession.ExpiresAt));
-        return changedRows >= 1;
-    }
-
-    public async Task<bool> InvalidateUserSession(Guid userSessionId)
-    {
-        int changedRows = await database.UserSessions
-            .Where(us => us.SessionId == userSessionId)
-            .ExecuteDeleteAsync();
-        return changedRows >= 1;
-    }
-
-    public async Task<bool> InvalidateUserSessions(Guid userId)
-    {
-        int changedRows = await database.UserSessions
-            .Where(us => us.UserId == userId)
-            .ExecuteDeleteAsync();
-        return changedRows >= 1;
+        
+        return claim;
     }
 }
