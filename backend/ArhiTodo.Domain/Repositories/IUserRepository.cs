@@ -5,4 +5,5 @@ namespace ArhiTodo.Domain.Repositories;
 public interface IUserRepository
 {
     Task<UserClaim?> GrantClaimAsync(Guid userId, UserClaim claim);
+    Task<bool> RevokeClaimAsync(Guid userId, string claimType);
 }

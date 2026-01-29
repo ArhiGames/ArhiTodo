@@ -13,4 +13,10 @@ public class UserService(IUserRepository userRepository) : IUserService
         UserClaim? userClaim = await userRepository.GrantClaimAsync(userId, claimPostDto.FromPostDto(userId));
         return userClaim?.ToGetDto();
     }
+
+    public async Task<bool> RevokeClaim(Guid userId, string claimType)
+    {
+        bool succeeded = await userRepository.RevokeClaimAsync(userId, claimType);
+        return succeeded;
+    }
 }

@@ -13,7 +13,8 @@ public static class UserMapper
             CreatedAt = user.CreatedAt,
             UserName = user.UserName,
             Email = user.Email,
-            JoinedViaInvitationKey = user.JoinedViaInvitationKey
+            JoinedViaInvitationKey = user.JoinedViaInvitationKey,
+            UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList()
         };
     }
 }

@@ -16,4 +16,19 @@ public class UserRepository(ProjectDataBase database) : IUserRepository
         
         return claim;
     }
+
+    public async Task<bool> RevokeClaimAsync(Guid userId, string claimType)
+    {
+        User? user = await database.Users
+            .Include(u => u.UserClaims)
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null) return false;
+
+        UserClaim? userClaim = user.UserClaims.Find(uc => uc.Type == claimType);
+        if (userClaim == null) return false; 
+        bool removed = user.UserClaims.Remove(userClaim);
+
+        await database.SaveChangesAsync();
+        return removed;
+    }
 }

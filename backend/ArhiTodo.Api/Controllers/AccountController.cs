@@ -17,6 +17,14 @@ public class AccountController(IAuthService authService) : ControllerBase
         List<UserGetDto> users = await authService.GetUsers(page);
         return Ok(users);
     }
+
+    [HttpGet("accounts/user/{userId:guid}")]
+    public async Task<IActionResult> GetUserAccount(Guid userId)
+    {
+        UserGetDto? user = await authService.GetUser(userId);
+        if (user == null) return NotFound();
+        return Ok(user);
+    }
     
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateAccountDto createAccountDto)

@@ -88,6 +88,12 @@ public class AuthService(IAccountRepository accountRepository, ITokenService tok
         return users.Select(u => u.ToGetDto()).ToList();
     }
 
+    public async Task<UserGetDto?> GetUser(Guid guid)
+    {
+        User? user = await accountRepository.GetUserByGuidAsync(guid);
+        return user?.ToGetDto();
+    }
+
     public async Task<string?> RefreshJwtToken(string refreshToken)
     {
         byte[] byteToken = Convert.FromHexString(refreshToken);
