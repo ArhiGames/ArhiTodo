@@ -79,7 +79,6 @@ body {
 }
 
 .navbar-header-project-view img {
-    filter: invert(1);
     opacity: 0.75;
 }
 
@@ -924,6 +923,20 @@ body {
     cursor: pointer;
     background-color: var(--std-button-highlight);
     transform: translateY(-2px);
+}
+
+.iconized-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon {
+    filter: invert(1);
+}
+
+.icon.clickable:hover {
+    cursor: pointer;
 }
 
 .valid-submit-button {

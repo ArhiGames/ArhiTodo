@@ -3,7 +3,7 @@ import LoggedInUserCardComp from "../User/LoggedInUserCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Project} from "../../Models/States/types.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import EditProjectModalComp from "../Project/EditProjectModalComp.tsx";
 
 const NavbarHeaderComp = () => {
@@ -11,11 +11,16 @@ const NavbarHeaderComp = () => {
     const { appUser } = useAuth();
     const kanbanState = useKanbanState();
     const location = useLocation();
-    const match = matchPath({ path: "/projects/:projectId/board/:boardId" }, location.pathname);
+    const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
     const [isEditingProject, setIsEditingProject] = useState<boolean>(false);
 
     const projectId = match?.params.projectId;
     const project: Project | null = kanbanState.projects[Number(projectId)];
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsEditingProject(false);
+    }, [location]);
 
     function getNavigationJsx() {
 
@@ -26,10 +31,10 @@ const NavbarHeaderComp = () => {
         return (
             <div className="navbar-header-project-view">
                 <Link to="/">
-                    <img style={{ height: "32px", marginRight: "1rem" }} src="/public/back-arrow.svg" alt="Back"/>
+                    <img className="icon" style={{ height: "32px", marginRight: "1rem" }} src="/back-arrow.svg" alt="Back"/>
                 </Link>
                 <p>{project.projectName}</p>
-                <img onClick={() => setIsEditingProject(true)} style={{ height: "20px" }} src="/public/edit-icon.svg" alt="Edit"/>
+                <img className="icon clickable" onClick={() => setIsEditingProject(true)} style={{ height: "20px" }} src="/edit-icon.svg" alt="Edit"/>
             </div>
         )
 

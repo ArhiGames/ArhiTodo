@@ -140,6 +140,7 @@ export type Action =
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
     { type: "UPDATE_PROJECT", payload: UpdateProjectPayload } |
+    { type: "DELETE_PROJECT", payload: { projectId: number } } |
 
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |

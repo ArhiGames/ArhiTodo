@@ -107,12 +107,12 @@ const CardListEditPopover = (props: Props) => {
     return (
         <Popover element={props.editIconRef} close={props.onClose}>
             <div className="cardlist-popover-actions">
-                <button className="button standard-button" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteAllCards(true)}>
                     <img src="/trashcan-icon.svg" alt="" height="20px"/>
                     <p>Delete all cards from list</p>
                 </button>
-                <button className="button standard-button" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteCardList(true)}>
                     <img src="/trashcan-icon.svg" alt="" height="20px"/>
                     <p>Delete</p>

@@ -5,6 +5,8 @@ import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
+import {createPortal} from "react-dom";
+import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 
 interface Props {
     onClose: () => void;
@@ -14,8 +16,10 @@ interface Props {
 const EditProjectModalComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
-    const [projectName, setProjectName] = useState<string>(props.project.projectName);
     const dispatch = useKanbanDispatch();
+
+    const [projectName, setProjectName] = useState<string>(props.project.projectName);
+    const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
 
     async function handleProjectNameInputBlurred() {
 
@@ -55,18 +59,49 @@ const EditProjectModalComp = (props: Props) => {
 
     }
 
-    return (
-        <Modal modalSize="modal-large" onClosed={props.onClose} header={
-            <input className="classic-input" style={{ width: "100%", marginRight: "1rem" }} onBlur={handleProjectNameInputBlurred}
-                   value={projectName} onChange={(e) => setProjectName(e.target.value)}/>
-        } footer={
-            <div className="edit-project-modal-footer">
-            </div>
-        }>
-            <div className="edit-project-modal">
+    async function onDeleteProjectConfirmed() {
 
-            </div>
-        </Modal>
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/project/${props.project.projectId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to delete project")
+                }
+
+                if (dispatch) {
+                    dispatch({type: "DELETE_PROJECT", payload: { projectId: props.project.projectId }})
+                }
+            })
+            .catch(console.error);
+
+        props.onClose();
+    }
+
+    return (
+        <>
+            <Modal modalSize="modal-large" onClosed={props.onClose} header={
+                <input className="classic-input" style={{ width: "100%", marginRight: "1rem" }} onBlur={handleProjectNameInputBlurred}
+                       value={projectName} onChange={(e) => setProjectName(e.target.value)}/>
+            } footer={
+                <button onClick={() => setIsTryingToDelete(true)} className="button standard-button iconized-button">
+                    <img className="icon" height="32px" src="/trashcan-icon.svg" alt="Delete"/>
+                    <p>Remove</p>
+                </button>
+            }>
+                <div className="edit-project-modal">
+
+                </div>
+            </Modal>
+            { isTryingToDelete && (
+                createPortal(<ConfirmationModal title="Authorization required!" actionDescription="If you confirm this action, the project will be permanently deleted. Please consider this action carefully!"
+                                                onConfirmed={onDeleteProjectConfirmed} onClosed={() => setIsTryingToDelete(false)}/>, document.body)
+            ) }
+        </>
     )
 
 }

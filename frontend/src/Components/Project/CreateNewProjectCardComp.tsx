@@ -5,14 +5,17 @@ import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { ProjectGetDto } from "../../Models/BackendDtos/GetDtos/ProjectGetDto.ts";
 import { useNavigate } from "react-router-dom";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 
 const CreateNewProjectCardComp = () => {
+
+    const { checkRefresh } = useAuth();
+    const navigate = useNavigate();
+    const dispatch = useKanbanDispatch();
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [projectName, setProjectName] = useState<string>("");
     const projectNameInputRef = useRef<HTMLInputElement>(null);
-    const { checkRefresh } = useAuth();
-    const navigate = useNavigate();
 
     function onNewProjectClicked() {
         setIsCreating(true);
@@ -46,6 +49,9 @@ const CreateNewProjectCardComp = () => {
                     return res.json();
                 })
                 .then((createdProject: ProjectGetDto) => {
+                    if (dispatch) {
+                        dispatch({ type: "INIT_PROJECT", payload: { projectId: createdProject.projectId, projectName: createdProject.projectName } });
+                    }
                     navigate(`/projects/${createdProject.projectId}/board`)
                 })
                 .catch(err => {

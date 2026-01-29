@@ -3,7 +3,7 @@ import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type { Board, State } from "../../Models/States/types.ts";
+import type {Board, Project, State} from "../../Models/States/types.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
@@ -28,8 +28,6 @@ const ProjectViewComp = () => {
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
 
-    const projectIdNum: number = Number(projectId ?? 0);
-
     const [activeBoardId, setActiveBoardId] = useState<number | null>(null);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,6 +48,15 @@ const ProjectViewComp = () => {
         }
 
     }
+
+    useEffect(() => {
+
+        const project: Project | null = state.projects[Number(projectId)];
+        if (!project) {
+            navigate("/");
+        }
+
+    }, [navigate, projectId, state.projects]);
 
     useEffect(() => {
 
@@ -166,13 +173,13 @@ const ProjectViewComp = () => {
             <div className="board-selectors">
                 {Object.values(state.boards).map((board: Board) => {
                     return (
-                        board.projectId === projectIdNum ?
-                            <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={projectIdNum} board={board}/> : null
+                        board.projectId === Number(projectId) ?
+                            <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={Number(projectId)} board={board}/> : null
                     )
                 })}
                 <CreateNewBoardHeaderComp/>
             </div>
-            { activeBoardId ? <BoardComp projectId={projectIdNum} boardId={activeBoardId}/> : <NoBoardComp/> }
+            { activeBoardId ? <BoardComp projectId={Number(projectId)} boardId={activeBoardId}/> : <NoBoardComp/> }
 
         </div>
     )
