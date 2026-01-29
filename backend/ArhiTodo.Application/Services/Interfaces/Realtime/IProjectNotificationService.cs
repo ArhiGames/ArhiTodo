@@ -5,4 +5,5 @@ namespace ArhiTodo.Application.Services.Interfaces.Realtime;
 public interface IProjectNotificationService
 {
     void UpdateProject(ProjectGetDto projectGetDto);
+    void DeleteProject(int projectId);
 }

@@ -12,4 +12,9 @@ public class ProjectNotificationService(IHubContext<BoardHub, IBoardClient> hubC
     {
         hubContext.Clients.Group($"grp-project-{projectGetDto.ProjectId}").UpdateProject(projectGetDto);
     }
+
+    public void DeleteProject(int projectId)
+    {
+        hubContext.Clients.Group($"grp-project-{projectId}").DeleteProject(projectId);
+    }
 }

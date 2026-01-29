@@ -29,6 +29,10 @@ public class ProjectService(IProjectRepository projectRepository, IProjectNotifi
     public async Task<bool> DeleteProject(int projectId)
     {
         bool succeeded = await projectRepository.DeleteAsync(projectId);
+        if (succeeded)
+        {
+            projectNotificationService.DeleteProject(projectId);
+        }
         return succeeded;
     }
 

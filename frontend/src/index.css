@@ -7,20 +7,17 @@
 }
 
 :root {
-    --bg-dark: hsl(0, 0%, 7%);
-    --bg: hsl(0, 0%, 12%);
-    --bg-light: hsl(0, 0%, 18%);
-    --bg-x-light: hsl(0, 0%, 25%);
-    --bg-xx-light: hsl(0, 0%, 32%);
-    --bg-xxx-light: hsl(0, 0%, 40%);
+    --bg-dark: hsl(0, 0%, 5%);
+    --bg: hsl(0, 0%, 9%);
+    --bg-light: hsl(0, 0%, 13%);
+    --bg-x-light: hsl(0, 0%, 20%);
+    --bg-xx-light: hsl(0, 0%, 26%);
+    --bg-xxx-light: hsl(0, 0%, 32%);
 
-    --bg-popover: hsl(0, 0%, 22%);
+    --bg-popover: hsl(0, 0%, 15%);
 
     --color-border: hsl(0, 0%, 5%);
     --highlight-color-border: hsl(0, 0%, 95%);
-
-    --button-cancel: hsl(0, 0%, 50%);
-    --button-cancel-focus: hsl(0, 0%, 60%);
 
     --box-shadow: hsl(0, 0%, 5%);
 
@@ -28,8 +25,8 @@
     --text-color-shaded: hsl(0, 0%, 78%);
     --text-color-failure: hsl(0, 100%, 63%);
 
-    --std-button: hsl(0, 0%, 50%);
-    --std-button-highlight: hsl(0, 0%, 65%);
+    --std-button: hsl(0, 0%, 28%);
+    --std-button-highlight: hsl(0, 0%, 40%);
     --success-color: hsl(113, 60%, 60%);
     --success-color-highlight: hsl(113, 80%, 80%);
 
@@ -514,14 +511,14 @@ body {
     border-radius: 15px;
     border: none;
     margin-left: auto;
-    background-color: var(--button-cancel);
+    background-color: var(--bg-xx-light);
     opacity: 60%;
     transition: background-color 0.3s, transform 0.3s;
 }
 
 .creation-card-form button[type="reset"]:hover {
     cursor: pointer;
-    background-color: var(--button-cancel-focus);
+    background-color: var(--bg-xx-light);
     transform: translateY(-2px);
 }
 
@@ -871,6 +868,8 @@ body {
 /*-----------------------------------------------*/
 .popover {
     background-color: var(--bg-popover);
+    border-bottom: var(--color-border) solid 3px;
+    border-right: var(--color-border) solid 2px;
     color: var(--text-color);
     padding: 15px;
     border-radius: 10px;
