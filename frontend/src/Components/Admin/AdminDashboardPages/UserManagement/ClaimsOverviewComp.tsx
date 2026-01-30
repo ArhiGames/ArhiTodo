@@ -1,4 +1,4 @@
-import { defaultAppClaims, type DefaultClaim } from "./Claims"
+import {type DefaultClaim, defaultGlobalClaims} from "../../../../lib/Claims.ts"
 import type { Claim } from "../../../../Models/Claim.ts";
 import EditableClaimsComp from "./EditableClaimsComp.tsx";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
@@ -18,7 +18,7 @@ const ClaimsOverviewComp = (props: Props) => {
 
     return (
         <div className="editable-claims-div">
-            { defaultAppClaims.claim.map((defaultClaim: DefaultClaim, index: number) => (
+            { defaultGlobalClaims.map((defaultClaim: DefaultClaim, index: number) => (
                 <EditableClaimsComp defaultClaim={defaultClaim}
                                     claim={props.currentViewingUser.userClaims.find((claim: Claim) => claim.claimType == defaultClaim.claimType)}
                                     canEdit={props.currentViewingUser.userName !== "admin" && !isSelf}

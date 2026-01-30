@@ -5,6 +5,8 @@ import {AUTH_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import UserSelectorUserCard from "./UserSelectorUserCard.tsx";
 import "./UserSelector.css"
+import {defaultBoardClaims, type DefaultClaim} from "../../../lib/Claims.ts";
+import UserSelectorToggleComp from "./UserSelectorToggleComp.tsx";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -14,7 +16,9 @@ interface Props {
 const UserSelector = (props: Props) => {
 
     const { checkRefresh } = useAuth();
+
     const [users, setUsers] = useState<UserGetDto[]>([]);
+    const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
 
     useEffect(() => {
 
@@ -44,14 +48,41 @@ const UserSelector = (props: Props) => {
 
     }, [checkRefresh]);
 
+    function onAbortButtonPressed() {
+        if (currentViewingUser) {
+            setCurrentViewingUser(null);
+            return;
+        }
+        props.close();
+    }
+
     return (
         <Popover element={props.element} close={props.close}>
             <div className="user-selector-popover">
-                {users.map((user: UserGetDto) => {
-                    return <UserSelectorUserCard user={user}/>
-                })}
+                {
+                    currentViewingUser ? (
+                        <>
+                            <div className="user-selector-user-information">
+                                <p style={{ fontWeight: "bold" }}>{currentViewingUser.userName}</p>
+                                <p style={{ opacity: "75%" }}>{currentViewingUser.email}</p>
+                            </div>
+                            <div className="user-selector-claims">
+                                {defaultBoardClaims.map((defaultClaim: DefaultClaim) => {
+                                    return <UserSelectorToggleComp defaultClaim={defaultClaim}/>;
+                                })}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="user-selector-users">
+                            {users.map((user: UserGetDto) => {
+                                return <UserSelectorUserCard onSelected={setCurrentViewingUser} user={user}/>
+                            })}
+                        </div>
+                    )
+                }
+
                 <div className="user-selector-footer">
-                    <button onClick={props.close} className="button standard-button">Abort</button>
+                    <button onClick={onAbortButtonPressed} className="button standard-button">Abort</button>
                 </div>
             </div>
         </Popover>

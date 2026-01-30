@@ -1,5 +1,22 @@
 .user-selector-popover {
     min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-selector-user-information {
+    text-align: center;
+}
+
+.user-selector-users {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-selector-claims {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -12,4 +29,12 @@
     padding: 10px;
     background-color: var(--bg-xx-light);
     border-radius: 15px;
+}
+
+.user-selector-toggle {
+    background-color: var(--bg-xx-light);
+    border-radius: 15px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
 }

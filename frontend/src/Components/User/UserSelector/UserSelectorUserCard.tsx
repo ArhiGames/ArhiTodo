@@ -1,6 +1,7 @@
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 interface Props {
+    onSelected: (user: UserGetDto) => void;
     user: UserGetDto;
 }
 
@@ -12,7 +13,7 @@ const UserSelectorUserCard = (props: Props) => {
                 <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
                 <p style={{ opacity: "75%" }}>{props.user.email}</p>
             </div>
-            <img src="/edit-icon.svg" alt="Edit" height="28px" className="icon clickable"/>
+            <img onClick={() => props.onSelected(props.user)} src="/edit-icon.svg" alt="Edit" height="28px" className="icon clickable"/>
         </div>
     )
 

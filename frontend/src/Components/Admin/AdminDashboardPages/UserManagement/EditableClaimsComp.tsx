@@ -1,5 +1,5 @@
 import type { Claim } from "../../../../Models/Claim.ts";
-import type { DefaultClaim } from "./Claims.ts";
+import type { DefaultClaim } from "../../../../lib/Claims.ts";
 import FancyToggleComp from "../../../../lib/FancyToggle/FancyToggleComp.tsx";
 import { useState } from "react";
 
