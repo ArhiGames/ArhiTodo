@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ArhiTodo.Infrastructure.Persistence.Configuration;
+namespace ArhiTodo.Infrastructure.Persistence.Configuration.Kanban;
 
 public class CardConfiguration : IEntityTypeConfiguration<Card>
 {

@@ -1,5 +1,6 @@
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
+using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,14 @@ namespace ArhiTodo.Controllers;
 [Route("api")]
 public class BoardController(IBoardService boardService, ILabelService labelService) : ControllerBase
 {
+    [HttpPut("board/{boardId:int}/permissions/{userId:guid}")]
+    public async Task<IActionResult> UpdateClaim(int boardId, Guid userId, [FromBody] ClaimPostDto claimPostDto)
+    {
+        ClaimGetDto? claim = await boardService.UpdateBoardUserClaim(boardId, userId, claimPostDto);
+        if (claim == null) return NotFound();
+        return Ok(claim);
+    }
+    
     [HttpPost("board/{boardId:int}/label")]
     public async Task<IActionResult> CreateLabel(int boardId, [FromBody] LabelCreateDto labelCreateDto)
     {

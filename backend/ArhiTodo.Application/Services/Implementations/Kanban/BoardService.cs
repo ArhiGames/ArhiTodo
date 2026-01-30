@@ -1,7 +1,9 @@
 ﻿using ArhiTodo.Application.DTOs.Board;
+using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 
@@ -9,6 +11,13 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository) : IBoardService
 {
+    public async Task<ClaimGetDto?> UpdateBoardUserClaim(int boardId, Guid userId, ClaimPostDto claimPostDto)
+    {
+        BoardUserClaim? boardUserClaim =
+            await boardRepository.UpdateBoardUserClaimAsync(claimPostDto.ToBoardUserClaim(userId, boardId));
+        return boardUserClaim?.ToGetDto();
+    }
+
     public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
         Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(projectId));

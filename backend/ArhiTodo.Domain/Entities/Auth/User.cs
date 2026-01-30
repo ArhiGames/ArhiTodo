@@ -16,4 +16,5 @@ public class User
 
     public List<UserSession> UserSessions { get; set; } = new();
     public List<UserClaim> UserClaims { get; set; } = new();
+    public List<BoardUserClaim> BoardUserClaims { get; set; } = new();
 }

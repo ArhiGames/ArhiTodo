@@ -13,6 +13,8 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     public DbSet<UserClaim> UserClaims { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
+
+    public DbSet<BoardUserClaim> BoardPermissions { get; set; }
     
     public DbSet<Project> Projects { get; set; }
     public DbSet<Board> Boards { get; set; }
@@ -40,6 +42,19 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
                 Email = "admin@admin.admin",
                 HashedPassword = hashedPassword
             };
+
+            appUser.UserClaims =
+            [
+                new UserClaim { UserId = appUser.UserId, Type = "create_projects", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "delete_others_boards", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "modify_others_boards", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "access_admin_dashboard", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "manage_users", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "delete_users", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "invite_other_users", Value = "true" },
+                new UserClaim { UserId = appUser.UserId, Type = "update_app_settings", Value = "true" }
+            ];
+            
             context.Set<User>().Add(appUser);
             context.SaveChanges();
         });

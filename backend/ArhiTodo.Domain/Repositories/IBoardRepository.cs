@@ -1,9 +1,11 @@
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 
 namespace ArhiTodo.Domain.Repositories;
 
 public interface IBoardRepository
 {
+    Task<BoardUserClaim?> UpdateBoardUserClaimAsync(BoardUserClaim boardUserClaim);
     Task<Board?> CreateAsync(Board board);
     Task<Board?> UpdateAsync(Board board);
     Task<bool> DeleteAsync(int boardId);

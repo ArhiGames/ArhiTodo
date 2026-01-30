@@ -1,3 +1,4 @@
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -5,28 +6,50 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories;
 
-public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepository
+public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
+    public async Task<BoardUserClaim?> UpdateBoardUserClaimAsync(BoardUserClaim boardUserClaim)
+    {
+        User? user = await database.Users
+            .Include(u => u.BoardUserClaims)
+            .FirstOrDefaultAsync(u => u.UserId == boardUserClaim.UserId);
+        if (user == null) return null;
+
+        BoardUserClaim? foundBoardUserClaim =
+            user.BoardUserClaims.FirstOrDefault(buc => buc.Type == boardUserClaim.Type);
+        if (foundBoardUserClaim == null)
+        {
+            user.BoardUserClaims.Add(boardUserClaim);
+        }
+        else
+        {
+            foundBoardUserClaim.Value = boardUserClaim.Value;
+        }
+        
+        await database.SaveChangesAsync();
+        return boardUserClaim;
+    }
+
     public async Task<Board?> CreateAsync(Board board)
     {
-        EntityEntry<Board> boardEntry = projectsDatabase.Boards.Add(board);
-        await projectsDatabase.SaveChangesAsync();
+        EntityEntry<Board> boardEntry = database.Boards.Add(board);
+        await database.SaveChangesAsync();
         return boardEntry.Entity;
     }
 
     public async Task<Board?> UpdateAsync(Board board)
     {
-        EntityEntry<Board> boardEntry = projectsDatabase.Boards.Attach(board);
+        EntityEntry<Board> boardEntry = database.Boards.Attach(board);
 
         boardEntry.Property(b => b.BoardName).IsModified = true;
         
-        await projectsDatabase.SaveChangesAsync();
+        await database.SaveChangesAsync();
         return board;
     }
 
     public async Task<bool> DeleteAsync(int boardId)
     {
-        int deletedRows = await projectsDatabase.Boards
+        int deletedRows = await database.Boards
             .Where(b => b.BoardId == boardId)
             .ExecuteDeleteAsync();
         return deletedRows == 1;
@@ -34,7 +57,7 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
 
     public async Task<List<Board>> GetAllAsync(int projectId)
     {
-        List<Board> boards = await projectsDatabase.Boards
+        List<Board> boards = await database.Boards
             .Where(b => b.ProjectId == projectId)
             .ToListAsync();
 
@@ -43,7 +66,7 @@ public class BoardRepository(ProjectDataBase projectsDatabase) : IBoardRepositor
 
     public async Task<Board?> GetAsync(int boardId)
     {
-        Board? board = await projectsDatabase.Boards
+        Board? board = await database.Boards
             .Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
                     .ThenInclude(c => c.CardLabels)
