@@ -20,7 +20,7 @@ const ClaimsOverviewComp = (props: Props) => {
         <div className="editable-claims-div">
             { defaultAppClaims.claim.map((defaultClaim: DefaultClaim, index: number) => (
                 <EditableClaimsComp defaultClaim={defaultClaim}
-                                    claim={props.currentViewingUser.claims.find((claim: Claim) => claim.type == defaultClaim.claimType)}
+                                    claim={props.currentViewingUser.userClaims.find((claim: Claim) => claim.claimType == defaultClaim.claimType)}
                                     canEdit={props.currentViewingUser.userName !== "admin" && !isSelf}
                                     updatedClaims={props.updatedClaims} setUpdatedClaims={props.setUpdatedClaims}
                                     key={index}/>

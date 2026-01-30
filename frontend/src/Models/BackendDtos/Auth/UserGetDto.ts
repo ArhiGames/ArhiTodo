@@ -6,5 +6,5 @@ export type UserGetDto = {
     userName: string;
     email: string;
     joinedViaInvitationKey: string;
-    claims: Claim[];
+    userClaims: Claim[];
 }

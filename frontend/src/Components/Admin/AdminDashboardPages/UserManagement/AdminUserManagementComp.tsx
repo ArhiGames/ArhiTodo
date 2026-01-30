@@ -32,7 +32,7 @@ const AdminUserManagementComp = () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || controller.signal.aborted) return;
 
-            fetch(`${AUTH_BASE_URL}/account/admin/accountmanagement/users/${userId}`,
+            fetch(`${AUTH_BASE_URL}/accounts/user/${userId}`,
                 {
                     method: "GET",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
@@ -45,7 +45,7 @@ const AdminUserManagementComp = () => {
 
                     return res.json();
                 })
-                .then((user: UserGetDto)=> {
+                .then((user: UserGetDto) => {
                     setCurrentViewingUser(user)
                 })
                 .catch(err => {
@@ -125,7 +125,7 @@ const AdminUserManagementComp = () => {
             }
             {
                 currentViewingUser && (
-                    createPortal(<UserDetailsModalComp currentViewingUser={currentViewingUser}/>, document.body)
+                    createPortal(<UserDetailsModalComp setCurrentViewingUser={setCurrentViewingUser} currentViewingUser={currentViewingUser}/>, document.body)
                 )
             }
 

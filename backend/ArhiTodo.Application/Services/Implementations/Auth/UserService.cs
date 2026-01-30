@@ -14,6 +14,16 @@ public class UserService(IUserRepository userRepository) : IUserService
         return userClaim?.ToGetDto();
     }
 
+    public async Task<List<ClaimGetDto>?> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
+    {
+        List<UserClaim> claims = claimPostDtos.Select(c => c.FromPostDto(userId)).ToList();
+        List<UserClaim>? userClaims = await userRepository.UpdateClaimsAsync(userId, claims);
+        if (userClaims == null) return null;
+
+        List<ClaimGetDto> claimGetDtos = userClaims.Select(uc => uc.ToGetDto()).ToList();
+        return claimGetDtos;
+    }
+
     public async Task<bool> RevokeClaim(Guid userId, string claimType)
     {
         bool succeeded = await userRepository.RevokeClaimAsync(userId, claimType);

@@ -15,6 +15,14 @@ public class UserController(IUserService userService) : ControllerBase
         if (claimGetDto == null) return NotFound();
         return Ok(claimGetDto);
     }
+    
+    [HttpPut("user/{userId:guid}/claims")]
+    public async Task<IActionResult> UpdateClaims(Guid userId, [FromBody] List<ClaimPostDto> claimPostDtos)
+    {
+        List<ClaimGetDto>? claimGetDtos = await userService.UpdateClaims(userId, claimPostDtos);
+        if (claimGetDtos == null) return NotFound();
+        return Ok(claimGetDtos);
+    }
 
     [HttpDelete("user/{userId:guid}/claim/{claimType}")]
     public async Task<IActionResult> RevokeClaim(Guid userId, string claimType)

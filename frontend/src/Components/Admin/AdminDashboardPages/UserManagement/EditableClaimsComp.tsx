@@ -13,18 +13,18 @@ interface Props {
 
 const EditableClaimsComp = (props: Props) => {
 
-    const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.value == "true");
+    const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.claimValue == "true");
 
     function onToggleValueChanged(newValue: boolean) {
 
         setClaimBooleanValue(newValue);
 
-        const foundClaim: Claim | undefined = props.updatedClaims.find((predicate: Claim) => (predicate.type === props.defaultClaim.claimType));
+        const foundClaim: Claim | undefined = props.updatedClaims.find((predicate: Claim) => (predicate.claimType === props.defaultClaim.claimType));
         if (foundClaim) {
-            const newClaims: Claim[] = props.updatedClaims.filter((predicate: Claim) => (predicate.type !== props.defaultClaim.claimType));
+            const newClaims: Claim[] = props.updatedClaims.filter((predicate: Claim) => (predicate.claimType !== props.defaultClaim.claimType));
             props.setUpdatedClaims(newClaims);
         } else {
-            const newClaims: Claim[] = [...props.updatedClaims, { type: props.defaultClaim.claimType, value: String(newValue) } ];
+            const newClaims: Claim[] = [...props.updatedClaims, { claimType: props.defaultClaim.claimType, claimValue: String(newValue) } ];
             props.setUpdatedClaims(newClaims);
         }
 

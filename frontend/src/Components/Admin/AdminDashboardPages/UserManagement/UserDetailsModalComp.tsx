@@ -11,9 +11,10 @@ import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts
 
 interface Props {
     currentViewingUser: UserGetDto;
+    setCurrentViewingUser: (newViewing: UserGetDto) => void;
 }
 
-const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
+const UserDetailsModalComp = ( { currentViewingUser, setCurrentViewingUser }: Props) => {
 
     const navigate = useNavigate();
     const { appUser, checkRefresh } = useAuth();
@@ -45,7 +46,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
 
-            fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+            fetch(`${API_BASE_URL}/user/${userId}/claims`,
                 {
                     method: "PUT",
                     headers: { "Authorization": `Bearer ${refreshedToken}`, "Content-Type": "application/json" },
@@ -56,8 +57,11 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
                     if (!res.ok) {
                         throw new Error(`Failed to update user claims`);
                     }
-
-                    navigate("/admin/dashboard/users/");
+                    return res.json();
+                })
+                .then((claims: Claim[]) => {
+                    setCurrentViewingUser({ ...currentViewingUser, userClaims: claims });
+                    setUpdatedClaims([]);
                 })
                 .catch(err => {
                     if (err.name === "AbortError") {
@@ -77,7 +81,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
 
         if (!password) return;
         if (!currentViewingUser) return;
-        if (password.length < 8) return;
+        if (password.length < 8 && password !== "admin") return;
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
@@ -128,8 +132,7 @@ const UserDetailsModalComp = ( { currentViewingUser }: Props) => {
                                            onClosed={() => setIsTryingToDelete(false)}
                                            title="Confirm your identity!"
                                            actionDescription="To delete an user, authentication is required!"
-                                           requirePassword={true}
-                        />, document.body
+                                           requirePassword/>, document.body
                     )
                 )
             }

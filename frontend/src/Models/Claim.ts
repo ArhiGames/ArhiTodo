@@ -1,4 +1,4 @@
 export interface Claim {
-    type: string;
-    value: string;
+    claimType: string;
+    claimValue: string;
 }
