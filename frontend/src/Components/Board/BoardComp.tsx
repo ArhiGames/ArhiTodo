@@ -1,4 +1,4 @@
-import {type Dispatch, useEffect, useRef, useState} from "react"
+import {type Dispatch, useEffect, useState} from "react"
 import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
@@ -6,16 +6,15 @@ import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {Board, CardList, Label, State} from "../../Models/States/types.ts";
+import type {Board, CardList, State} from "../../Models/States/types.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
-import LabelSelector from "../Labels/LabelSelector.tsx";
-import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
 import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
+import BoardCompHeader from "./BoardCompHeader.tsx";
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 
@@ -26,12 +25,9 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
 
-    const board: BoardGetDto = getUnnormalizedKanbanState()
+    const board: BoardGetDto = getUnnormalizedKanbanState();
 
-    const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
-    const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
-
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     function getUnnormalizedKanbanState() {
@@ -75,31 +71,6 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         }
 
     }, [props.boardId, kanbanState.boards, props.projectId, navigate]);
-
-    function onFilteringLabelSelected(labelId: number) {
-        setCurrentFilteringLabels(labels => [...labels, labelId]);
-    }
-
-    function onFilteringLabelUnselected(labelId: number) {
-        setCurrentFilteringLabels(currentFilteringLabels.filter(filteringLabelId => filteringLabelId !== labelId));
-    }
-
-    function startEditingLabels(onTarget: HTMLElement) {
-        seeLabelsButtonRef.current = onTarget;
-        setIsEditingLabels(true);
-    }
-
-    function getLabelJsxFor(labelId: number) {
-        const label: Label = kanbanState.labels[labelId];
-        const rgb: Rgb = toRgb(label.labelColor);
-        return (
-            <div key={labelId} onClick={(e) => startEditingLabels(e.currentTarget)}
-                 className="board-label"
-                 style={{ backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})` }}>
-                <p>{label.labelText}</p>
-            </div>
-        )
-    }
 
     useEffect(() => {
 
@@ -164,30 +135,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
     return (
         <div className="board-body">
-            <div className="current-board-header">
-                <p>Labels: </p>
-                {
-                    currentFilteringLabels.length > 0 ? (
-                        <div className="board-labels">
-                            {
-                                currentFilteringLabels.map((labelId: number) => {
-                                    return getLabelJsxFor(labelId);
-                                })
-                            }
-                        </div>
-                    ) : (
-                        <button className="button standard-button"
-                                onClick={(e) => startEditingLabels(e.currentTarget)}>All</button>
-                    )
-                }
-
-                { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} onClose={() => setIsEditingLabels(false)}
-                                                    actionTitle="Filter labels"
-                                                    boardId={props.boardId} projectId={props.projectId}
-                                                    selectedLabels={currentFilteringLabels}
-                                                    onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}/>
-                }
-            </div>
+            <BoardCompHeader currentFilteringLabels={currentFilteringLabels} setCurrentFilteringLabels={setCurrentFilteringLabels}/>
             {
                 isLoaded && (
                     <>

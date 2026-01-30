@@ -1,0 +1,15 @@
+.user-selector-popover {
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-selector-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--bg-xx-light);
+    border-radius: 15px;
+}
