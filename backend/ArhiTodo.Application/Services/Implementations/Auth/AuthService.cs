@@ -38,6 +38,12 @@ public class AuthService(IAccountRepository accountRepository, ITokenService tok
         return new PasswordAuthorizerResult(createdUser != null, []);
     }
 
+    public async Task<bool> DeleteAccount(Guid userId)
+    {
+        bool succeeded = await accountRepository.DeleteUserAsync(userId);
+        return succeeded;
+    }
+
     public async Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent)
     {
         User? user = await accountRepository.GetUserByUsernameAsync(loginDto.Username);

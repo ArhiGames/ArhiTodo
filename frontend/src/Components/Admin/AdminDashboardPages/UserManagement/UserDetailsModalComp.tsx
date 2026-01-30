@@ -6,7 +6,7 @@ import type {Claim} from "../../../../Models/Claim.ts";
 import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
-import {API_BASE_URL} from "../../../../config/api.ts";
+import {API_BASE_URL, AUTH_BASE_URL} from "../../../../config/api.ts";
 import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 interface Props {
@@ -86,7 +86,7 @@ const UserDetailsModalComp = ( { currentViewingUser, setCurrentViewingUser }: Pr
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/account/admin/accountmanagement/users/${currentViewingUser.userId}`,
+        fetch(`${AUTH_BASE_URL}/accounts/user/${currentViewingUser.userId}`,
             {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${refreshedToken}`, "Content-Type": "application/json" },

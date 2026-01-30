@@ -5,6 +5,7 @@ namespace ArhiTodo.Domain.Repositories;
 public interface IAccountRepository
 {
     Task<User?> CreateUserAsync(InvitationLink invitationLink, User appUser);
+    Task<bool> DeleteUserAsync(Guid userId);
     Task<bool> ChangePassword(Guid guid, string hashedPassword);
     Task<List<User>> GetUsers(int page = 0);
     Task<User?> GetUserByGuidAsync(Guid guid);

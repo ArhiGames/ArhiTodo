@@ -34,6 +34,14 @@ public class AccountRepository(IInvitationRepository invitationRepository, Proje
         }
     }
 
+    public async Task<bool> DeleteUserAsync(Guid userId)
+    {
+        int changedRows = await database.Users
+            .Where(u => u.UserId == userId)
+            .ExecuteDeleteAsync();
+        return changedRows == 1;
+    }
+
     public async Task<bool> ChangePassword(Guid guid, string hashedPassword)
     {
         int changedRows = await database.Users

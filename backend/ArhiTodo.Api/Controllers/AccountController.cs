@@ -101,5 +101,14 @@ public class AccountController(IAuthService authService) : ControllerBase
         bool succeeded = await authService.LogoutEveryDevice(userId);
         if (!succeeded) return Unauthorized();
         return Ok();
-    } 
+    }
+
+    [Authorize]
+    [HttpDelete("accounts/user/{userId:guid}")]
+    public async Task<IActionResult> DeleteAccount(Guid userId)
+    {
+        bool succeeded = await authService.DeleteAccount(userId);
+        if (!succeeded) return NotFound();
+        return NoContent();
+    }
 }

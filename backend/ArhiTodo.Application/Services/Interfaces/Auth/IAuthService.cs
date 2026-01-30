@@ -6,6 +6,7 @@ namespace ArhiTodo.Application.Services.Interfaces.Auth;
 public interface IAuthService
 {
     Task<PasswordAuthorizerResult> CreateAccount(CreateAccountDto createAccountDto);
+    Task<bool> DeleteAccount(Guid userId);
     Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent);
     Task<PasswordAuthorizerResult> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto);
     Task<List<UserGetDto>> GetUsers(int page = 0);
