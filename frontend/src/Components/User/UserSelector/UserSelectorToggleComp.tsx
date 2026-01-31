@@ -31,7 +31,7 @@ const UserSelectorToggleComp = (props: Props) => {
                 <p style={{ fontWeight: "bold" }}>{props.defaultClaim.claimName}</p>
                 <p style={{ opacity: "75%" }}>{props.defaultClaim.claimDescription}</p>
             </div>
-            <FancyToggleComp checked={checked} setChecked={onCheckedStateChanged}></FancyToggleComp>
+            <FancyToggleComp checked={checked} setChecked={onCheckedStateChanged}/>
         </div>
     )
 

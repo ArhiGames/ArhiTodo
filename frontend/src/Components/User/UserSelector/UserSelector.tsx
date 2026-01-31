@@ -80,6 +80,18 @@ const UserSelector = (props: Props) => {
                 if (!res.ok) {
                     throw new Error(`Failed updating board permissions of user ${currentViewingUser.userId}`);
                 }
+
+                return res.json();
+            })
+            .then((boardUserClaims: Claim[]) => {
+
+                const newUsers = [...users];
+                const foundUser: UserGetDto | undefined = newUsers.find((user: UserGetDto) => user.userId === currentViewingUser.userId)
+                if (!foundUser) return;
+                foundUser.boardUserClaims = boardUserClaims;
+
+                setUsers(newUsers);
+                setCurrentViewingUser(null);
             })
             .catch(console.error)
             .finally(() => {
