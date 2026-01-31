@@ -11,11 +11,11 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository) : IBoardService
 {
-    public async Task<ClaimGetDto?> UpdateBoardUserClaim(int boardId, Guid userId, ClaimPostDto claimPostDto)
+    public async Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
-        BoardUserClaim? boardUserClaim =
-            await boardRepository.UpdateBoardUserClaimAsync(claimPostDto.ToBoardUserClaim(userId, boardId));
-        return boardUserClaim?.ToGetDto();
+        List<BoardUserClaim>? boardUserClaims =
+            await boardRepository.UpdateBoardUserClaimAsync(userId, claimPostDtos.Select(c => c.ToBoardUserClaim(userId, boardId)).ToList());
+        return boardUserClaims?.Select(buc => buc.ToGetDto()).ToList();
     }
 
     public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)

@@ -10,7 +10,7 @@ import AccountSettingsNavbarComp from "./Components/User/AccountSettingsPage/Acc
 import PasswordManagerPageComp from "./Components/User/AccountSettingsPage/PasswordManagerPageComp.tsx";
 import AdminDashboardNavbarComp from "./Components/Admin/AdminDashboardNavbarComp.tsx";
 import AdminAppSettingsComp from "./Components/Admin/AdminDashboardPages/AdminAppSettingsComp.tsx";
-import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/UserManagement/AdminUserManagementComp.tsx";
+import AdminUserManagementComp from "./Components/Admin/AdminDashboardPages/UserManagement/User/AdminUserManagementComp.tsx";
 import AdminUserGroupsSettingsComp from "./Components/Admin/AdminDashboardPages/AdminUserGroupsSettingsComp.tsx";
 import RegisterPage from "./Components/Authentication/RegisterPage.tsx";
 import KanbanProvider from "./Contexts/Kanban/KanbanProvider.tsx";

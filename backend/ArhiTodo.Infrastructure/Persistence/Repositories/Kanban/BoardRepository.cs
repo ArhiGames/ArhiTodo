@@ -8,26 +8,29 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
-    public async Task<BoardUserClaim?> UpdateBoardUserClaimAsync(BoardUserClaim boardUserClaim)
+    public async Task<List<BoardUserClaim>?> UpdateBoardUserClaimAsync(Guid userId, List<BoardUserClaim> boardUserClaims)
     {
         User? user = await database.Users
             .Include(u => u.BoardUserClaims)
-            .FirstOrDefaultAsync(u => u.UserId == boardUserClaim.UserId);
+            .FirstOrDefaultAsync(u => u.UserId == userId);
         if (user == null) return null;
 
-        BoardUserClaim? foundBoardUserClaim =
-            user.BoardUserClaims.FirstOrDefault(buc => buc.Type == boardUserClaim.Type);
-        if (foundBoardUserClaim == null)
+        foreach (BoardUserClaim boardUserClaim in boardUserClaims)
         {
-            user.BoardUserClaims.Add(boardUserClaim);
-        }
-        else
-        {
-            foundBoardUserClaim.Value = boardUserClaim.Value;
+            BoardUserClaim? foundBoardUserClaim =
+                user.BoardUserClaims.FirstOrDefault(buc => buc.Type == boardUserClaim.Type);
+            if (foundBoardUserClaim == null)
+            {
+                user.BoardUserClaims.Add(boardUserClaim);
+            }
+            else
+            {
+                foundBoardUserClaim.Value = boardUserClaim.Value;
+            }
         }
         
         await database.SaveChangesAsync();
-        return boardUserClaim;
+        return user.BoardUserClaims;
     }
 
     public async Task<Board?> CreateAsync(Board board)

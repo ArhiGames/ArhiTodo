@@ -1,5 +1,6 @@
 import { type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import "./Popover.css"
 
 interface PopoverProps {
     element: RefObject<HTMLElement | null>;

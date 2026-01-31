@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
-import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
+import type { InvitationLink } from "../../../../../Models/InvitationLink.ts";
+import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
 import ViewInvitationLinkComp from "./ViewInvitationLinkComp.tsx";
-import Modal from "../../../../lib/Modal/Default/Modal.tsx";
+import Modal from "../../../../../lib/Modal/Default/Modal.tsx";
 import { createPortal } from "react-dom";
-import {API_BASE_URL} from "../../../../config/api.ts";
+import {API_BASE_URL} from "../../../../../config/api.ts";
 
 const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
 

@@ -386,7 +386,10 @@ const ViewCardDetailsComp = () => {
                    <div className="card-details-footer">
                        <div style={{ display: "flex", gap: "0.5rem" }}>
                            <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
-                           <button className="button heavy-action-button" onClick={() => setIsDeletingCard(true)}>Delete</button>
+                           <button className="button standard-button button-with-icon" onClick={() => setIsDeletingCard(true)}>
+                               <img src="/trashcan-icon.svg" alt="" className="icon" height="24px"/>
+                               <p>Delete</p>
+                           </button>
                            { isDeletingCard && <ConfirmationModal title="Card deletion"
                                                                   actionDescription="If you confirm this action, this card will be deleted permanently."
                                                                   onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }

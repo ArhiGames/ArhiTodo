@@ -7,4 +7,5 @@ export type UserGetDto = {
     email: string;
     joinedViaInvitationKey: string;
     userClaims: Claim[];
+    boardUserClaims: Claim[];
 }

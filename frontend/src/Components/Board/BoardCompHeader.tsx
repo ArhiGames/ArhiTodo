@@ -19,7 +19,7 @@ const BoardCompHeader = (props: Props) => {
     const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
 
-    const boardMembersButtonRef = useRef<HTMLButtonElement>(null);
+    const boardMembersButtonRef = useRef<HTMLImageElement>(null);
     const [isEditingMembers, setIsEditingMembers] = useState<boolean>(false);
 
     function onFilteringLabelSelected(labelId: number) {
@@ -49,7 +49,8 @@ const BoardCompHeader = (props: Props) => {
 
     return (
         <div className="current-board-header">
-            <button ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)} className="button standard-button">Board members</button>
+            <img src="/settings-icon.svg" alt="Settings" style={{ height: "36px" }} ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)}
+                 className="icon clickable"/>
             { isEditingMembers && (
                 <UserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>
             )}

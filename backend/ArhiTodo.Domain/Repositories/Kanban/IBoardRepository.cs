@@ -5,7 +5,7 @@ namespace ArhiTodo.Domain.Repositories.Kanban;
 
 public interface IBoardRepository
 {
-    Task<BoardUserClaim?> UpdateBoardUserClaimAsync(BoardUserClaim boardUserClaim);
+    Task<List<BoardUserClaim>?> UpdateBoardUserClaimAsync(Guid userId, List<BoardUserClaim> boardUserClaims);
     Task<Board?> CreateAsync(Board board);
     Task<Board?> UpdateAsync(Board board);
     Task<bool> DeleteAsync(int boardId);

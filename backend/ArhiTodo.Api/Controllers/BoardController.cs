@@ -13,11 +13,11 @@ namespace ArhiTodo.Controllers;
 public class BoardController(IBoardService boardService, ILabelService labelService) : ControllerBase
 {
     [HttpPut("board/{boardId:int}/permissions/{userId:guid}")]
-    public async Task<IActionResult> UpdateClaim(int boardId, Guid userId, [FromBody] ClaimPostDto claimPostDto)
+    public async Task<IActionResult> UpdateClaims(int boardId, Guid userId, [FromBody] List<ClaimPostDto> claimPostDto)
     {
-        ClaimGetDto? claim = await boardService.UpdateBoardUserClaim(boardId, userId, claimPostDto);
-        if (claim == null) return NotFound();
-        return Ok(claim);
+        List<ClaimGetDto>? claims = await boardService.UpdateBoardUserClaim(boardId, userId, claimPostDto);
+        if (claims == null) return NotFound();
+        return Ok(claims);
     }
     
     [HttpPost("board/{boardId:int}/label")]

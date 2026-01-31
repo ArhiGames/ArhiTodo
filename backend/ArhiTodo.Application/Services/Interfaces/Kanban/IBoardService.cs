@@ -5,7 +5,7 @@ namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface IBoardService
 {
-    Task<ClaimGetDto?> UpdateBoardUserClaim(int boardId, Guid userId, ClaimPostDto claimPostDto);
+    Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos);
     Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto);
     Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto);
     Task<bool> DeleteBoard(int projectId, int boardId);

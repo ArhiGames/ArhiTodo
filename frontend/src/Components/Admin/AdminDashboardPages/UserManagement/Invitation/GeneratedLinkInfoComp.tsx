@@ -1,7 +1,7 @@
-import Modal from "../../../../lib/Modal/Default/Modal.tsx";
-import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
+import Modal from "../../../../../lib/Modal/Default/Modal.tsx";
+import type { InvitationLink } from "../../../../../Models/InvitationLink.ts";
 import { useEffect, useState } from "react";
-import { formatRemainingTime } from "../../../../lib/Functions.ts";
+import { formatRemainingTime } from "../../../../../lib/Functions.ts";
 
 interface Props {
     invitationLink: InvitationLink;

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
+import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
 import EditableUserComp from "./EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
-import InviteUserComp from "./InviteUserComp.tsx";
-import ViewInvitationLinksComp from "./ViewInvitationLinksComp.tsx";
-import {AUTH_BASE_URL} from "../../../../config/api.ts";
-import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
+import InviteUserComp from "../Invitation/InviteUserComp.tsx";
+import ViewInvitationLinksComp from "../Invitation/ViewInvitationLinksComp.tsx";
+import {AUTH_BASE_URL} from "../../../../../config/api.ts";
+import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 const AdminUserManagementComp = () => {
 

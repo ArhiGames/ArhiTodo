@@ -7,31 +7,22 @@
 }
 
 :root {
-    --bg-dark: hsl(0, 0%, 5%);
-    --bg: hsl(0, 0%, 9%);
-    --bg-light: hsl(0, 0%, 13%);
-    --bg-x-light: hsl(0, 0%, 20%);
-    --bg-xx-light: hsl(0, 0%, 26%);
-    --bg-xxx-light: hsl(0, 0%, 32%);
+    --bg-dark: hsl(220, 15%, 5%);
+    --bg: hsl(220, 15%, 8%);
+    --bg-light: hsl(220, 12%, 14%);
+    --bg-x-light: hsl(220, 12%, 20%);
+    --bg-xx-light: hsl(220, 10%, 28%);
+    --bg-xxx-light: hsl(220, 12%, 36%);
 
-    --bg-popover: hsl(0, 0%, 15%);
+    --bg-popover: hsl(220, 12%, 16%);
 
-    --color-border: hsl(0, 0%, 5%);
-    --highlight-color-border: hsl(0, 0%, 95%);
+    --primary: hsl(210, 100%, 60%);
+    --primary-hover: hsl(210, 100%, 70%);
 
-    --box-shadow: hsl(0, 0%, 5%);
+    --text-color: hsl(0, 0%, 98%);
+    --text-color-shaded: hsl(220, 10%, 70%);
 
-    --text-color: hsl(0, 0%, 95%);
-    --text-color-shaded: hsl(0, 0%, 78%);
-    --text-color-failure: hsl(0, 100%, 63%);
-
-    --std-button: hsl(0, 0%, 28%);
-    --std-button-highlight: hsl(0, 0%, 40%);
-    --success-color: hsl(113, 60%, 60%);
-    --success-color-highlight: hsl(113, 80%, 80%);
-
-    --red-warning: hsl(0, 100%, 22%);
-    --red-warning-highlight: hsl(0, 100%, 35%);
+    --highlight-selection: hsl(209, 100%, 93%);
 
     --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
     0 1px 2px hsl(0, 0%, 30%),
@@ -57,7 +48,7 @@ body {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 15px;
-    border-bottom: 2px solid var(--color-border);
+    border: 1px solid var(--bg-light);
     font-size: larger;
     color: var(--text-color);
 }
@@ -81,7 +72,7 @@ body {
 
 .app-user {
     color: var(--text-color);
-    padding: 10px;
+    padding: 5px;
     margin-left: auto;
     border-radius: 10px;
     transition: background-color 0.3s;
@@ -157,9 +148,8 @@ body {
 }
 
 .project-card {
-    background-color: var(--bg);
+    background-color: var(--bg-light);
     color: var(--text-color);
-    box-shadow: 2px 2px 4px 0 var(--box-shadow);
 
     padding: 1rem;
     min-height: 150px;
@@ -180,7 +170,7 @@ body {
 
 .project-card:hover {
     cursor: pointer;
-    background-color: var(--bg-light);
+    background-color: var(--bg-x-light);
     transform: translateY(-4px);
 }
 
@@ -252,6 +242,7 @@ body {
 
 .board-body {
     background-color: var(--bg);
+    border: 1px solid var(--bg-light);
     border-radius: 0 0 15px 15px;
     display: flex;
     flex-direction: column;
@@ -427,7 +418,7 @@ body {
 }
 
 .card:hover {
-    border-color: var(--highlight-color-border);
+    border-color: var(--highlight-selection);
     cursor: pointer;
 }
 
@@ -592,7 +583,6 @@ body {
 .card-detail-name:focus {
     outline: none;
     color: var(--text-color);
-    box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
 .card-details-labels {
@@ -638,7 +628,6 @@ body {
 
 .card-details-modal textarea:focus {
     outline: none;
-    box-shadow: 0 0 2px 0 var(--box-shadow);
     color: var(--text-color);
 }
 
@@ -866,14 +855,6 @@ body {
 /*-----------------------------------------------*/
 /*---------------------Pop overs-----------------*/
 /*-----------------------------------------------*/
-.popover {
-    background-color: var(--bg-popover);
-    border-bottom: var(--color-border) solid 3px;
-    border-right: var(--color-border) solid 2px;
-    color: var(--text-color);
-    padding: 15px;
-    border-radius: 10px;
-}
 
 .logged-in-user-popover {
     width: 260px;
@@ -905,7 +886,7 @@ body {
 
 .button {
     border: none;
-    border-radius: 15px;
+    border-radius: 8px;
     padding: 0.5rem;
     font-size: medium;
     color: var(--text-color);
@@ -913,15 +894,22 @@ body {
 }
 
 .standard-button {
-    background-color: var(--std-button);
+    background-color: var(--bg-xx-light);
     transition: background-color 0.3s, transform 0.3s;
     color: var(--text-color);
 }
 
 .standard-button:hover {
     cursor: pointer;
-    background-color: var(--std-button-highlight);
+    background-color: var(--bg-xxx-light);
     transform: translateY(-2px);
+}
+
+.button-with-icon {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .iconized-button {
@@ -931,7 +919,7 @@ body {
 }
 
 .icon {
-    filter: invert(1);
+    filter: invert(0.75);
 }
 
 .icon.clickable:hover {
@@ -939,31 +927,20 @@ body {
 }
 
 .valid-submit-button {
-    background-color: var(--success-color);
+    background-color: var(--primary);
     transition: background-color 0.3s, transform 0.3s;
 }
 
 .valid-submit-button:hover {
     cursor: pointer;
-    background-color: var(--success-color-highlight);
-    transform: translateY(-2px);
-}
-
-.heavy-action-button {
-    background-color: var(--red-warning);
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.heavy-action-button:hover {
-    cursor: pointer;
-    background-color: var(--red-warning-highlight);
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
 }
 
 .classic-input {
     padding: 15px;
     border: none;
-    border-radius: 15px;
+    border-radius: 8px;
     color: var(--text-color);
     background-color: var(--bg-xx-light);
     font-size: medium;
@@ -977,10 +954,8 @@ body {
 
 .classic-input:focus {
     outline: none;
-    box-shadow: 0 0 2px 0 var(--box-shadow);
 }
 
 .error-text {
-    color: var(--text-color-failure);
     font-size: larger;
 }

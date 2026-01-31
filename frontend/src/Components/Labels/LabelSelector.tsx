@@ -277,7 +277,10 @@ const LabelSelector = ( props: Props ) => {
                                         className="button standard-button">Cancel</button>
                                 { currentlyEditingLabelId !== null && (
                                     <button onClick={deleteLabel}
-                                            className="button heavy-action-button">Delete</button>
+                                            className="button standard-button button-with-icon">
+                                            <img src="/trashcan-icon.svg" alt="" className="icon" height="22px"></img>
+                                            <p>Delete</p>
+                                    </button>
                                 ) }
                             </div>
                         </>

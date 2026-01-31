@@ -33,7 +33,10 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
 
     return (
         <div className="app-user" ref={element} onClick={handleOnClicked}>
-            <p>{props.appUser.unique_name}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                <p>{props.appUser.unique_name}</p>
+                <img src="/user-icon.svg" alt="" className="icon" height="38px"></img>
+            </div>
             { popoverOpened && (
                 <Popover element={element} close={closePopover} offsetX={-10} offsetY={5}>
                     <div className="logged-in-user-popover">

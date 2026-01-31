@@ -1,0 +1,8 @@
+.popover {
+    background-color: var(--bg-popover);
+    border: 1px solid var(--bg-xx-light);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 10px;
+}

@@ -1,4 +1,4 @@
-import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
+import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 const EditableUserComp = (props: { user: UserGetDto, onEdit: (user: UserGetDto) => void,
     canEdit: boolean, isSelf: boolean }) => {

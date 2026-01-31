@@ -1,9 +1,9 @@
-import type { InvitationLink } from "../../../../Models/InvitationLink.ts";
+import type { InvitationLink } from "../../../../../Models/InvitationLink.ts";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
-import { formatRemainingTime } from "../../../../lib/Functions.ts";
-import TagComp from "../../../../lib/Tags/TagComp.tsx";
-import {API_BASE_URL} from "../../../../config/api.ts";
+import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
+import { formatRemainingTime } from "../../../../../lib/Functions.ts";
+import TagComp from "../../../../../lib/Tags/TagComp.tsx";
+import {API_BASE_URL} from "../../../../../config/api.ts";
 
 interface Props {
     invitationLink: InvitationLink;

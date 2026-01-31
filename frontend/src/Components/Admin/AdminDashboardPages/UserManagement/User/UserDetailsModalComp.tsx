@@ -1,13 +1,13 @@
-import Modal from "../../../../lib/Modal/Default/Modal.tsx";
+import Modal from "../../../../../lib/Modal/Default/Modal.tsx";
 import ClaimsOverviewComp from "./ClaimsOverviewComp.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {Claim} from "../../../../Models/Claim.ts";
-import { useAuth } from "../../../../Contexts/Authentication/useAuth.ts";
+import type {Claim} from "../../../../../Models/Claim.ts";
+import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
 import { createPortal } from "react-dom";
-import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
-import {API_BASE_URL, AUTH_BASE_URL} from "../../../../config/api.ts";
-import type {UserGetDto} from "../../../../Models/BackendDtos/Auth/UserGetDto.ts";
+import ConfirmationModal from "../../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL, AUTH_BASE_URL} from "../../../../../config/api.ts";
+import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
 interface Props {
     currentViewingUser: UserGetDto;
@@ -114,7 +114,10 @@ const UserDetailsModalComp = ( { currentViewingUser, setCurrentViewingUser }: Pr
                                <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button> }
                            <button onClick={() => navigate("/admin/dashboard/users/")} className="button standard-button">Abort</button>
                            { (!isSelf && !isViewingAdminUser) &&
-                               <button onClick={() => setIsTryingToDelete(true)} className="button heavy-action-button">Delete user</button> }
+                               <button onClick={() => setIsTryingToDelete(true)} className="button standard-button button-with-icon">
+                                   <img src="/trashcan-icon.svg" alt="" className="icon" height="24px"/>
+                                   <p>Delete user</p>
+                               </button> }
                        </>
                    }>
                 <div className="edit-user-claims">
