@@ -1,8 +1,8 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Repositories;
+using ArhiTodo.Domain.Repositories.Auth;
 using Microsoft.EntityFrameworkCore;
 
-namespace ArhiTodo.Infrastructure.Persistence.Repositories;
+namespace ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
 
 public class UserRepository(ProjectDataBase database) : IUserRepository
 {

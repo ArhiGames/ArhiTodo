@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
 
-namespace ArhiTodo.Domain.Repositories;
+namespace ArhiTodo.Domain.Repositories.Auth;
 
 public interface IUserRepository
 {

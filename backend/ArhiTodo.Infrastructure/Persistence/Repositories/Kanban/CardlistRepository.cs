@@ -1,9 +1,9 @@
 using ArhiTodo.Domain.Entities.Kanban;
-using ArhiTodo.Domain.Repositories;
+using ArhiTodo.Domain.Repositories.Kanban;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace ArhiTodo.Infrastructure.Persistence.Repositories;
+namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class CardlistRepository(ProjectDataBase projectDataBase) : ICardlistRepository
 {

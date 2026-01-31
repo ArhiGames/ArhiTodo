@@ -1,8 +1,10 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Realtime;
-using ArhiTodo.Domain.Repositories;
+using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Kanban;
 using ArhiTodo.Domain.Services.Auth;
 using ArhiTodo.Infrastructure.Persistence;
-using ArhiTodo.Infrastructure.Persistence.Repositories;
+using ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+using ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
 using ArhiTodo.Infrastructure.Realtime.Services;
 using ArhiTodo.Infrastructure.Services;
@@ -27,6 +29,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();

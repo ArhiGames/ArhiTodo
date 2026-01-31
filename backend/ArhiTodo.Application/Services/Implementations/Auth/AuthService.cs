@@ -3,12 +3,12 @@ using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Repositories;
+using ArhiTodo.Domain.Repositories.Auth;
 using ArhiTodo.Domain.Services.Auth;
 
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
-public class AuthService(IAccountRepository accountRepository, ITokenService tokenService, 
+public class AuthService(IAccountRepository accountRepository, ISessionRepository sessionRepository, ITokenService tokenService, 
     IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
     ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer) : IAuthService
 {
@@ -88,9 +88,9 @@ public class AuthService(IAccountRepository accountRepository, ITokenService tok
         return new PasswordAuthorizerResult(succeeded, []);
     }
 
-    public async Task<List<UserGetDto>> GetUsers(int page = 0)
+    public async Task<List<UserGetDto>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId)
     {
-        List<User> users = await accountRepository.GetUsers(page);
+        List<User> users = await accountRepository.GetUsers(page, includeGlobalPermissions, boardPermissionsBoardId);
         return users.Select(u => u.ToGetDto()).ToList();
     }
 
@@ -105,7 +105,7 @@ public class AuthService(IAccountRepository accountRepository, ITokenService tok
         byte[] byteToken = Convert.FromHexString(refreshToken);
         string hashedToken = tokenGeneratorService.Hash(byteToken, 32);
         
-        UserSession? userSession = await accountRepository.GetUserSessionByToken(hashedToken);
+        UserSession? userSession = await sessionRepository.GetUserSessionByToken(hashedToken);
         if (userSession == null) return null;
         
         List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
@@ -120,16 +120,16 @@ public class AuthService(IAccountRepository accountRepository, ITokenService tok
 
         Guid guid = Guid.Parse(userId.Value); 
         
-        UserSession? userSession = await accountRepository.GetUserSessionByAgent(guid, userAgent);
+        UserSession? userSession = await sessionRepository.GetUserSessionByAgent(guid, userAgent);
         if (userSession == null) return false;
 
-        bool succeeded = await accountRepository.InvalidateUserSession(userSession.SessionId);
+        bool succeeded = await sessionRepository.InvalidateUserSession(userSession.SessionId);
         return succeeded;
     }
 
     public async Task<bool> LogoutEveryDevice(Guid userId)
     {
-        bool succeeded = await accountRepository.InvalidateUserSessions(userId);
+        bool succeeded = await sessionRepository.InvalidateUserSessions(userId);
         return succeeded;
     }
 }

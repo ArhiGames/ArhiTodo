@@ -14,7 +14,8 @@ public static class UserMapper
             UserName = user.UserName,
             Email = user.Email,
             JoinedViaInvitationKey = user.JoinedViaInvitationKey,
-            UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList()
+            UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList(),
+            BoardUserClaims = user.BoardUserClaims.Select(buc => buc.ToGetDto()).ToList()
         };
     }
 }

@@ -1,6 +1,6 @@
 using ArhiTodo.Domain.Entities.Kanban;
 
-namespace ArhiTodo.Domain.Repositories;
+namespace ArhiTodo.Domain.Repositories.Kanban;
 
 public interface IProjectRepository
 {

@@ -3,7 +3,7 @@ using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
-using ArhiTodo.Domain.Repositories;
+using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 

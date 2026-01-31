@@ -82,6 +82,7 @@ const UserSelector = (props: Props) => {
                 }
 
                 <div className="user-selector-footer">
+                    { currentViewingUser && <button className="button standard-button">Save</button> }
                     <button onClick={onAbortButtonPressed} className="button standard-button">Abort</button>
                 </div>
             </div>

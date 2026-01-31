@@ -6,6 +6,11 @@
     gap: 1rem;
 }
 
+.user-selector-footer {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .user-selector-user-information {
     text-align: center;
 }

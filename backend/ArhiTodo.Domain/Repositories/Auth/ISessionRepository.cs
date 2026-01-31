@@ -1,16 +1,9 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
 
-namespace ArhiTodo.Domain.Repositories;
+namespace ArhiTodo.Domain.Repositories.Auth;
 
-public interface IAccountRepository
+public interface ISessionRepository
 {
-    Task<User?> CreateUserAsync(InvitationLink invitationLink, User appUser);
-    Task<bool> DeleteUserAsync(Guid userId);
-    Task<bool> ChangePassword(Guid guid, string hashedPassword);
-    Task<List<User>> GetUsers(int page = 0);
-    Task<User?> GetUserByGuidAsync(Guid guid);
-    Task<User?> GetUserByUsernameAsync(string username);
-
     Task<UserSession?> CreateUserSession(UserSession userSession);
     Task<UserSession?> GetUserSessionByAgent(Guid userId, string userAgent);
     Task<UserSession?> GetUserSessionByToken(string hashedToken);

@@ -1,5 +1,4 @@
 ﻿using ArhiTodo.Application.DTOs.User;
-using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Application.DTOs.Auth;
 
@@ -14,6 +13,7 @@ public class UserGetDto
     public required string Email { get; set; }
 
     public List<ClaimGetDto> UserClaims { get; set; } = new();
+    public List<ClaimGetDto> BoardUserClaims { get; set; } = new();
 
     public string? JoinedViaInvitationKey { get; set; } = string.Empty;
 }
