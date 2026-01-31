@@ -3,7 +3,7 @@ import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {Board, Project, State} from "../../Models/States/types.ts";
+import type {Board, State} from "../../Models/States/types.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
@@ -29,6 +29,8 @@ const ProjectViewComp = () => {
     const dispatch = useKanbanDispatch();
 
     const [activeBoardId, setActiveBoardId] = useState<number | null>(null);
+    const [hasLoadedProject, setHasLoadedProject] = useState<boolean>(false);
+    const [hasLoadedBoards, setHasLoadedBoards] = useState<boolean>(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function loadDefaultBoard() {
@@ -50,13 +52,11 @@ const ProjectViewComp = () => {
     }
 
     useEffect(() => {
-
-        const project: Project | null = state.projects[Number(projectId)];
-        if (!project) {
+        if (!hasLoadedProject) return;
+        if (!state.projects[Number(projectId)]) {
             navigate("/");
         }
-
-    }, [navigate, projectId, state.projects]);
+    }, [navigate, projectId, state.projects, hasLoadedProject]);
 
     useEffect(() => {
 
@@ -82,7 +82,8 @@ const ProjectViewComp = () => {
                         dispatch({type: "INIT_PROJECT", payload: projectGetDto});
                     }
                 })
-                .catch(console.error);
+                .catch(console.error)
+                .finally(() => setHasLoadedProject(true))
 
             fetch(`${API_BASE_URL}/project/${projectId}/board`,
                 {
@@ -98,10 +99,8 @@ const ProjectViewComp = () => {
                     return res.json();
                 })
                 .then((fetchedBoards: Board[]) => {
-
                     if (dispatch) {
-                        dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
-                    }
+                        dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});}
 
                 })
                 .catch(err => {
@@ -110,7 +109,8 @@ const ProjectViewComp = () => {
                     }
 
                     console.error(err);
-                });
+                })
+                .finally(() => setHasLoadedBoards(true));
         }
 
         run();
@@ -179,7 +179,7 @@ const ProjectViewComp = () => {
                 })}
                 <CreateNewBoardHeaderComp/>
             </div>
-            { activeBoardId ? <BoardComp projectId={Number(projectId)} boardId={activeBoardId}/> : <NoBoardComp/> }
+            { activeBoardId && hasLoadedBoards ? <BoardComp projectId={Number(projectId)} boardId={activeBoardId}/> : <NoBoardComp/> }
 
         </div>
     )

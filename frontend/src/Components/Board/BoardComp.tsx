@@ -65,11 +65,9 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
     }
 
     useEffect(() => {
-
         if (!kanbanState.boards[props.boardId]) {
             navigate(`/projects/${props.projectId}/board/`);
         }
-
     }, [props.boardId, kanbanState.boards, props.projectId, navigate]);
 
     useEffect(() => {

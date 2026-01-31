@@ -31,7 +31,7 @@ const UserSelector = (props: Props) => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) return null;
 
-            fetch(`${AUTH_BASE_URL}/accounts/0?includeGlobalPermissions=true&boardPermissionsBoardId=${boardId}`, {
+            fetch(`${AUTH_BASE_URL}/accounts/0?boardPermissionsBoardId=${boardId}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             })
