@@ -1,0 +1,96 @@
+.cardlist-background {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-light);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0.5rem;
+    width: 320px;
+    max-height: 95%;
+    color: var(--text-color);
+}
+
+.cardlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardlist-header h3 {
+    width: 88%;
+    overflow: clip;
+}
+
+.cardlist-header input {
+    width: 100%;
+}
+
+.cardlist-actions img {
+    filter: invert(1);
+    border-radius: 5px;
+    padding: 2px;
+    transition: filter 0.2s;
+}
+
+.cardlist-actions img:hover {
+    cursor: pointer;
+}
+
+.cardlist-popover-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cardlist-popover-actions img {
+    filter: invert(1);
+}
+
+.add-cardlist-button {
+    padding: 15px;
+    min-width: 320px;
+    max-width: 320px;
+    height: fit-content;
+    margin: 1rem 0.5rem;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: large;
+
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    opacity: 60%;
+
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.add-cardlist-button:hover {
+    cursor: pointer;
+    background-color: var(--bg-x-light);
+    opacity: 80%;
+}
+
+.creation-cardlist {
+    background-color: var(--bg-light);
+    padding: 0.8rem;
+    border-radius: 10px;
+    margin: 1rem 0.5rem;
+    width: 320px;
+    height: fit-content;
+}
+
+.creation-cardlist form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cards {
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
+}

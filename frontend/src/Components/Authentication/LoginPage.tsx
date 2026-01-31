@@ -1,6 +1,7 @@
 import {type ChangeEvent, type FormEvent, useState} from "react";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import { useNavigate } from "react-router-dom";
+import "./Login.css"
 
 const LoginPage = () => {
 

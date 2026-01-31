@@ -1,0 +1,32 @@
+.account-settings-page {
+    display: flex;
+}
+
+.detailed-settings-panel {
+    margin: 0.6rem 0 0 0;
+    height: calc(100vh - 150px);
+    background-color: var(--bg);
+    border: 1px solid var(--bg-light);
+    width: 100vw;
+    border-radius: 15px;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.account-settings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 25%
+}
+
+.account-pwsmanager-page form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.account-pwsmanager-page form label {
+    margin-top: 0.6rem;
+}

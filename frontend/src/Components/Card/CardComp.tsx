@@ -7,6 +7,7 @@ import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
+import "./Card.css"
 
 const CardComp = (props: { card: CardGetDto }) => {
 

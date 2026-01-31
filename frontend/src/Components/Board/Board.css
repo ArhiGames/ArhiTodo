@@ -1,0 +1,61 @@
+.board-body {
+    background-color: var(--bg);
+    border: 1px solid var(--bg-light);
+    border-radius: 0 0 15px 15px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 175px);
+}
+
+.board-content {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+}
+
+.no-board-selected {
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    font-size: xx-large;
+}
+
+.create-new-board-popup {
+    display: flex;
+    flex-direction: column;
+}
+
+.create-new-board-popup input {
+    margin-bottom: 0.5rem;
+}
+
+.board-labels {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.board-label {
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 10px;
+    font-size: medium;
+    transition: filter 0.2s;
+}
+
+.board-label:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+}
+
+.current-board-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px;
+    color: var(--text-color);
+    font-size: large;
+}
+
+.current-board-header .button {
+    max-width: 200px;
+}

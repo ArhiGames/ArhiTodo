@@ -8,6 +8,7 @@ import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
+import "./BoardHeader.css"
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
 
@@ -104,7 +105,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
             <div ref={containerDivRef}>
                 <Link className={`board-header ${props.isSelected ? " selected-board-header" : ""}`} to={`/projects/${props.projectId}/board/${props.board.boardId}`}>
                     <p>{props.board.boardName}</p>
-                    <img onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/>
+                    <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/>
                 </Link>
                 {
                     isEditing && (

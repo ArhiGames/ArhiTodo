@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
+import "./AccountSettings.css"
 
 const AccountSettingsNavbarComp = () => {
 

@@ -1,0 +1,47 @@
+.projects-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1127px;
+    gap: 1rem;
+}
+
+.project-card {
+    background-color: var(--bg-light);
+    color: var(--text-color);
+
+    padding: 1rem;
+    min-height: 150px;
+    width: 23%;
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 15px;
+    text-decoration: none;
+
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.project-card:hover {
+    cursor: pointer;
+    background-color: var(--bg-x-light);
+    transform: translateY(-4px);
+}
+
+.create-project-card {
+    opacity: 60%;
+}
+
+.create-new-project-modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-color);
+}

@@ -1,0 +1,44 @@
+.invite-user {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--bg-light);
+    border-radius: 15px;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
+}
+
+.invitation-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem
+}
+
+.generated-invitation-link-body {
+    color: var(--text-color);
+    margin-top: 5px;
+}
+
+.generated-link-text {
+    margin-right: 0.5rem;
+    color: var(--text-color);
+    background-color: var(--bg-x-light);
+    padding: 1rem;
+    border-radius: 15px;
+}
+
+.view-invitation-links-div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.view-invitation-link-div {
+    display: flex;
+    background-color: var(--bg-x-light);
+    border-radius: 15px;
+    color: var(--text-color);
+    padding: 1rem;
+}

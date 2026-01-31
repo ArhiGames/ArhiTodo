@@ -9,6 +9,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import CardListEditPopover from "./CardListEditPopover.tsx";
+import "./CardList.css"
 
 const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filteringLabels: number[] }) => {
 

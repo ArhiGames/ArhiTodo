@@ -1,0 +1,41 @@
+.navbar-header {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    border: 1px solid var(--bg-light);
+    font-size: larger;
+    color: var(--text-color);
+}
+
+.navbar-header a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.navbar-header-project-view {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.navbar-header-project-view img {
+    opacity: 0.75;
+}
+
+.app-user {
+    color: var(--text-color);
+    padding: 5px;
+    margin-left: auto;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.app-user:hover {
+    background-color: var(--bg-light);
+    cursor: pointer;
+}

@@ -1,0 +1,50 @@
+.board-selectors {
+    display: flex;
+    color: var(--text-color);
+}
+
+.board-header {
+    display: flex;
+    text-align: center;
+    background-color: var(--bg);
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 15px 15px 0 0;
+    padding: 1rem;
+    align-items: center;
+    gap: 0.8rem;
+
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.board-header img {
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.board-header:hover img {
+    opacity: 100%;
+}
+
+.edit-board-popup form {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+
+.selected-board-header {
+    background-color: var(--bg-light);
+    transform: translateY(-2px);
+}
+
+.board-header:hover {
+    cursor: pointer;
+    background-color: var(--bg-light);
+    transform: translateY(-2px);
+}
+
+.create-board-header {
+    border: none;
+    font-size: medium;
+    opacity: 60%;
+}

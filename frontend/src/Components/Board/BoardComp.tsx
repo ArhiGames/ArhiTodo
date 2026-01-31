@@ -15,6 +15,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import BoardCompHeader from "./BoardCompHeader.tsx";
+import "./Board.css"
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 

@@ -5,6 +5,7 @@ import ViewInvitationLinkComp from "./ViewInvitationLinkComp.tsx";
 import Modal from "../../../../../lib/Modal/Default/Modal.tsx";
 import { createPortal } from "react-dom";
 import {API_BASE_URL} from "../../../../../config/api.ts";
+import "./InvitationLinks.css"
 
 const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
 

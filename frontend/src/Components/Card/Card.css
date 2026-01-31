@@ -1,0 +1,120 @@
+.card {
+    background-color: var(--bg-x-light);
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 0.5rem;
+    color: var(--text-color);
+    transition: border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.card:hover {
+    border-color: var(--highlight-selection);
+    cursor: pointer;
+}
+
+.card p {
+    word-wrap: break-word;
+}
+
+.card-checkmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    border-radius: 50%;
+    background-color: var(--bg-xx-light);
+    font-weight: bold;
+    font-size: smaller;
+    transform: translateX(-3rem);
+    min-width: 0;
+    height: 22px;
+    transition: all 0.3s;
+}
+
+.card-checkmark.visible {
+    min-width: 22px;
+    opacity: 1;
+    padding: 4px;
+    transform: translateX(0);
+    margin-right: 0.35rem;
+}
+
+.card-checkmark:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+}
+
+.card-checklist-hint {
+    background-color: var(--bg-xx-light);
+    padding: 5px;
+    border-radius: 10px;
+    width: fit-content;
+    font-size: smaller;
+}
+
+.creation-card {
+    border-radius: 10px;
+    background-color: var(--bg-light);
+    padding: 2px;
+
+    transition: background-color 0.3s;
+}
+
+.creation-card p {
+    font-size: xx-large;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.creation-card:hover {
+    background-color: var(--bg-x-light);
+    cursor: pointer;
+}
+
+.creation-card-form {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+
+.creation-card-form span {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.creation-card-form .submit-button {
+    width: 100%;
+}
+
+.creation-card-form button[type="reset"] {
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 15px;
+    border: none;
+    margin-left: auto;
+    background-color: var(--bg-xx-light);
+    opacity: 60%;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.creation-card-form button[type="reset"]:hover {
+    cursor: pointer;
+    background-color: var(--bg-xx-light);
+    transform: translateY(-2px);
+}
+
+.card-labels-div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.card-label {
+    padding: 5px;
+    border-radius: 8px;
+    width: fit-content;
+    font-size: small;
+}

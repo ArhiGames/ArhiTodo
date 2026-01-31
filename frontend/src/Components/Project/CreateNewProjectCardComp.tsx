@@ -89,7 +89,7 @@ const CreateNewProjectCardComp = () => {
                     createPortal(
                         <Modal header={<h2>Create new project</h2>} modalSize="modal-small" onClosed={onClose}
                                footer={<></>}>
-                            <div className="create-new-board-modal">
+                            <div className="create-new-project-modal">
                                 <form onSubmit={onCreateProjectSubmit}>
                                     <label>Project name</label>
                                     <input ref={projectNameInputRef} placeholder="Project name" className="classic-input"

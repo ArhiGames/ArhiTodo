@@ -10,6 +10,7 @@ import {type Rgb, toRgb} from "../../../lib/Functions.ts";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
+import "./DetailedCard.css"
 
 const ViewCardDetailsComp = () => {
 
