@@ -16,14 +16,15 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     //[Authorize(Policy = "CreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
-        ProjectGetDto project = await projectService.CreateProject(projectCreateDto);
+        ProjectGetDto? project = await projectService.CreateProject(User, projectCreateDto);
+        if (project == null) return NotFound();
         return Ok(project);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
     {
-        ProjectGetDto? project = await projectService.UpdateProject(projectUpdateDto);
+        ProjectGetDto? project = await projectService.UpdateProject(User, projectUpdateDto);
         if (project == null) return NotFound();
         return Ok(project);
     }

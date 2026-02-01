@@ -8,6 +8,8 @@ public class Board
 
     public string BoardName { get; set; } = string.Empty;
     
+    public required Guid CreatedBy { get; set; }
+    
     public int ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 

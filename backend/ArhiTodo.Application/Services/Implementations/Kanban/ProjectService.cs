@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.Project;
+﻿using System.Security.Claims;
+using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
@@ -9,16 +10,24 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IProjectRepository projectRepository, IProjectNotificationService projectNotificationService) : IProjectService
 {
-    public async Task<ProjectGetDto> CreateProject(ProjectCreateDto projectCreateDto)
+    public async Task<ProjectGetDto?> CreateProject(ClaimsPrincipal user, ProjectCreateDto projectCreateDto)
     {
-        Project project = projectCreateDto.FromCreateDto();
+        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return null;
+        Guid userId = Guid.Parse(userIdClaim.Value);
+        
+        Project project = projectCreateDto.FromCreateDto(userId);
         await projectRepository.CreateAsync(project);
         return project.ToGetDto();
     }
 
-    public async Task<ProjectGetDto?> UpdateProject(ProjectUpdateDto projectUpdateDto)
+    public async Task<ProjectGetDto?> UpdateProject(ClaimsPrincipal user, ProjectUpdateDto projectUpdateDto)
     {
-        Project? project = await projectRepository.UpdateProject(projectUpdateDto.FromUpdateDto());
+        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return null;
+        Guid userId = Guid.Parse(userIdClaim.Value);
+        
+        Project? project = await projectRepository.UpdateProject(projectUpdateDto.FromUpdateDto(userId));
         if (project == null) return null;
 
         ProjectGetDto projectGetDto = project.ToGetDto();

@@ -5,19 +5,21 @@ namespace ArhiTodo.Application.Mappers;
 
 public static class BoardMapper
 {
-    public static Board FromCreateDto(this BoardCreateDto boardCreateDto, int projectId)
+    public static Board FromCreateDto(this BoardCreateDto boardCreateDto, Guid createdBy, int projectId)
     {
         return new Board
         {
             ProjectId = projectId,
+            CreatedBy = createdBy,
             BoardName = boardCreateDto.BoardName
         };
     }
 
-    public static Board FromUpdateDto(this BoardUpdateDto boardUpdateDto)
+    public static Board FromUpdateDto(this BoardUpdateDto boardUpdateDto, Guid createdBy)
     {
         return new Board
         {
+            CreatedBy = createdBy,
             BoardId = boardUpdateDto.BoardId,
             BoardName = boardUpdateDto.BoardName
         };

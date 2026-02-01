@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.Board;
+﻿using System.Security.Claims;
+using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
@@ -18,9 +19,13 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardUserClaims?.Select(buc => buc.ToGetDto()).ToList();
     }
 
-    public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
+    public async Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto)
     {
-        Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(projectId));
+        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return null;
+        Guid userId = Guid.Parse(userIdClaim.Value);
+        
+        Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(userId, projectId));
         if (board == null) return null;
         
         BoardGetDto boardGetDto = board.ToGetDto();
@@ -28,9 +33,13 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardGetDto;
     }
 
-    public async Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
+    public async Task<BoardGetDto?> UpdateBoard(ClaimsPrincipal user, int projectId, BoardUpdateDto boardUpdateDto)
     {
-        Board? board = await boardRepository.UpdateAsync(boardUpdateDto.FromUpdateDto());
+        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return null;
+        Guid userId = Guid.Parse(userIdClaim.Value);
+        
+        Board? board = await boardRepository.UpdateAsync(boardUpdateDto.FromUpdateDto(userId));
         if (board == null) return null;
 
         BoardGetDto boardGetDto = board.ToGetDto();

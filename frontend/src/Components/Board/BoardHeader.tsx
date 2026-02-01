@@ -115,7 +115,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                                     <label>Title</label>
                                     <input ref={inputRef} className="classic-input" placeholder={props.board.boardName} maxLength={35} required
                                            value={newName} onChange={(e) => setNewName(e.target.value)}/>
-                                    <div style={{ display: "flex", gap: "1rem" }}>
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
                                         <button type="submit" className={`button ${newName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Change</button>
                                         <button onClick={tryDeleteBoard} type="button" className="button standard-button button-with-icon">
                                             <img src="/trashcan-icon.svg" alt="" className="icon" style={{ height: "24px" }}></img>

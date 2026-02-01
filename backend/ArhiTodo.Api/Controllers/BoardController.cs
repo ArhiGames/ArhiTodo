@@ -54,7 +54,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardCreateDto boardCreateDto)
     {
-        BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
+        BoardGetDto? board = await boardService.CreateBoard(User, projectId, boardCreateDto);
         if (board == null) return NotFound();
         return Ok(board);
     }
@@ -62,7 +62,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPut("project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardUpdateDto boardUpdateDto)
     {
-        BoardGetDto? board = await boardService.UpdateBoard(projectId, boardUpdateDto);
+        BoardGetDto? board = await boardService.UpdateBoard(User, projectId, boardUpdateDto);
         if (board == null) return NotFound();
         return Ok(board);
     }
