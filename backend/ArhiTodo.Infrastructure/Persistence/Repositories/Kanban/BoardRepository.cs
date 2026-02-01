@@ -8,7 +8,7 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
-    public async Task<List<BoardUserClaim>?> UpdateBoardUserClaimAsync(Guid userId, List<BoardUserClaim> boardUserClaims)
+    public async Task<List<BoardUserClaim>?> UpdateBoardUserClaimAsync(int boardId, Guid userId, List<BoardUserClaim> boardUserClaims)
     {
         User? user = await database.Users
             .Include(u => u.BoardUserClaims)
@@ -18,7 +18,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         foreach (BoardUserClaim boardUserClaim in boardUserClaims)
         {
             BoardUserClaim? foundBoardUserClaim =
-                user.BoardUserClaims.FirstOrDefault(buc => buc.Type == boardUserClaim.Type);
+                user.BoardUserClaims.FirstOrDefault(buc => buc.Type == boardUserClaim.Type && buc.BoardId == boardUserClaim.BoardId);
             if (foundBoardUserClaim == null)
             {
                 user.BoardUserClaims.Add(boardUserClaim);
@@ -30,7 +30,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         }
         
         await database.SaveChangesAsync();
-        return user.BoardUserClaims;
+        return user.BoardUserClaims.Where(buc => buc.BoardId == boardId).ToList();
     }
 
     public async Task<Board?> CreateAsync(Board board)

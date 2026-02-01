@@ -14,7 +14,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     public async Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
         List<BoardUserClaim>? boardUserClaims =
-            await boardRepository.UpdateBoardUserClaimAsync(userId, claimPostDtos.Select(c => c.ToBoardUserClaim(userId, boardId)).ToList());
+            await boardRepository.UpdateBoardUserClaimAsync(boardId, userId, claimPostDtos.Select(c => c.ToBoardUserClaim(userId, boardId)).ToList());
         return boardUserClaims?.Select(buc => buc.ToGetDto()).ToList();
     }
 
