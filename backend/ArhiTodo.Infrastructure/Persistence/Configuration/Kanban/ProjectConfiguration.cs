@@ -20,5 +20,6 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .HasMaxLength(30);
 
         builder.HasMany(p => p.Boards);
+        builder.HasMany(p => p.ProjectManagers);
     }
 }

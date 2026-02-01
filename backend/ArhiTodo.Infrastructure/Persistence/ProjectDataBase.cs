@@ -14,6 +14,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
 
+    public DbSet<ProjectManager> ProjectManagers { get; set; }
     public DbSet<BoardUserClaim> BoardUserClaims { get; set; }
     
     public DbSet<Project> Projects { get; set; }

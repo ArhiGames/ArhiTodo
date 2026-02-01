@@ -15,6 +15,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.UserClaims);
         builder.HasMany(u => u.UserSessions);
         builder.HasMany(u => u.BoardUserClaims);
+        builder.HasMany(u => u.ProjectManagers);
 
         builder.HasIndex(u => u.UserName)
             .IsUnique();

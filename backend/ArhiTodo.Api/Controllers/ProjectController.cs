@@ -1,3 +1,4 @@
+using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,29 @@ namespace ArhiTodo.Controllers;
 [Route("api/project")]
 public class ProjectController(IProjectService projectService) : ControllerBase
 {
+    [HttpPost("{projectId:int}/managers/{userId:guid}")]
+    public async Task<IActionResult> AddProjectManager(int projectId, Guid userId)
+    {
+        bool succeeded = await projectService.AddProjectManager(projectId, userId);
+        if (!succeeded) return NotFound();
+        return Ok();
+    }
+
+    [HttpDelete("{projectId:int}/managers/{userId:guid}")]
+    public async Task<IActionResult> RemoveManager(int projectId, Guid userId)
+    {
+        bool succeeded = await projectService.RemoveProjectManager(projectId, userId);
+        if (!succeeded) return NotFound();
+        return NoContent();
+    }
+
+    [HttpGet("{projectId:int}/managers/")]
+    public async Task<IActionResult> GetProjectManagers(int projectId)
+    {
+        List<UserGetDto> projectManagers = await projectService.GetProjectManagers(projectId);
+        return Ok(projectManagers);
+    }
+    
     [HttpPost]
     // @Todo
     //[Authorize(Policy = "CreateProjects")]

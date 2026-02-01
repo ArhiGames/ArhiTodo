@@ -11,5 +11,6 @@ public class Project
     public required Guid OwnedByUserId { get; set; }
     public User Owner { get; set; } = null!;
 
+    public List<ProjectManager> ProjectManagers { get; set; } = new();
     public List<Board> Boards { get; set; } = new();
 }    

@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
+using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Kanban;
 
@@ -10,6 +12,24 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IProjectRepository projectRepository, IProjectNotificationService projectNotificationService) : IProjectService
 {
+    public async Task<bool> AddProjectManager(int projectId, Guid userId)
+    {
+        await projectRepository.AddProjectManager(new ProjectManager { ProjectId = projectId, UserId = userId });
+        return true;
+    }
+
+    public async Task<bool> RemoveProjectManager(int projectId, Guid userId)
+    {
+        bool succeeeded = await projectRepository.RemoveProjectManager(projectId, userId);
+        return succeeeded;
+    }
+
+    public async Task<List<UserGetDto>> GetProjectManagers(int projectId)
+    {
+        List<User> projectManagers = await projectRepository.GetProjectManagers(projectId);
+        return projectManagers.Select(pm => pm.ToGetDto()).ToList();
+    }
+
     public async Task<ProjectGetDto?> CreateProject(ClaimsPrincipal user, ProjectCreateDto projectCreateDto)
     {
         Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);

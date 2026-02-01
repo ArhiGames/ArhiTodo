@@ -17,6 +17,7 @@ public class User
     public string? JoinedViaInvitationKey { get; set; } = string.Empty;
 
     public List<Project> OwningProjects { get; set; } = new();
+    public List<ProjectManager> ProjectManagers { get; set; } = new();
     public List<Board> OwningBoards { get; set; } = new();
     public List<UserSession> UserSessions { get; set; } = new();
     public List<UserClaim> UserClaims { get; set; } = new();

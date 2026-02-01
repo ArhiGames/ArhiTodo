@@ -7,6 +7,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {createPortal} from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import "./EditProject.css"
 
 interface Props {
     onClose: () => void;
@@ -94,7 +95,10 @@ const EditProjectModalComp = (props: Props) => {
                 </button>
             }>
                 <div className="edit-project-modal">
-
+                    <section>
+                        <h3>Managers</h3>
+                        <p>Project managers have full access to all project settings, boards, etc. However, project managers cannot delete the project</p>
+                    </section>
                 </div>
             </Modal>
             { isTryingToDelete && (
