@@ -1,0 +1,29 @@
+.edit-project-modal {
+    font-size: medium;
+}
+
+.edit-project-modal-managers {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.edit-project-modal-manager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--bg-x-light);
+    border-radius: 5px;
+}
+
+.edit-project-modal-manager button {
+    width: fit-content;
+}
+
+.project-manager-label {
+    padding: 3px;
+    background-color: var(--bg-xx-light);
+    border-radius: 5px;
+}

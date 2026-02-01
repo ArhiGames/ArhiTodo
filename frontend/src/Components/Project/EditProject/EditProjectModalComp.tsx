@@ -1,13 +1,14 @@
-import Modal from "../../lib/Modal/Default/Modal.tsx";
-import type {Project} from "../../Models/States/types.ts";
+import Modal from "../../../lib/Modal/Default/Modal.tsx";
+import type {Project} from "../../../Models/States/types.ts";
 import {useState} from "react";
-import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import {API_BASE_URL} from "../../config/api.ts";
-import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
+import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {API_BASE_URL} from "../../../config/api.ts";
+import type {ProjectGetDto} from "../../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {createPortal} from "react-dom";
-import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import "./EditProject.css"
+import EditProjectProjectManagersComp from "./EditProjectProjectManagersComp.tsx";
 
 interface Props {
     onClose: () => void;
@@ -95,10 +96,7 @@ const EditProjectModalComp = (props: Props) => {
                 </button>
             }>
                 <div className="edit-project-modal">
-                    <section>
-                        <h3>Managers</h3>
-                        <p>Project managers have full access to all project settings, boards, etc. However, project managers cannot delete the project</p>
-                    </section>
+                    <EditProjectProjectManagersComp project={props.project}/>
                 </div>
             </Modal>
             { isTryingToDelete && (

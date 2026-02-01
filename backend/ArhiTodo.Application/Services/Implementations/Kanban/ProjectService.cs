@@ -38,6 +38,9 @@ public class ProjectService(IProjectRepository projectRepository, IProjectNotifi
         
         Project project = projectCreateDto.FromCreateDto(userId);
         await projectRepository.CreateAsync(project);
+
+        await AddProjectManager(project.ProjectId, userId);
+        
         return project.ToGetDto();
     }
 

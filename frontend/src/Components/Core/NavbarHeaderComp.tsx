@@ -4,7 +4,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Project} from "../../Models/States/types.ts";
 import {useEffect, useState} from "react";
-import EditProjectModalComp from "../Project/EditProjectModalComp.tsx";
+import EditProjectModalComp from "../Project/EditProject/EditProjectModalComp.tsx";
 import "./Navbar.css"
 
 const NavbarHeaderComp = () => {
