@@ -6,6 +6,10 @@
     gap: 1rem;
 }
 
+.user-selector-popover h3 {
+    align-self: center;
+}
+
 .user-selector-footer {
     display: flex;
     gap: 0.5rem;
@@ -42,4 +46,25 @@
     padding: 10px;
     display: flex;
     align-items: center;
+}
+
+.user-selector-add-user {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-selector-add-user-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-x-light);
+    border-radius: 5px;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.user-selector-add-user-user:hover {
+    background-color: var(--bg-xx-light);
+    cursor: pointer;
 }

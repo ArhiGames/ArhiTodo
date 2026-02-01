@@ -5,10 +5,10 @@ import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import UserSelectorUserCard from "./UserSelectorUserCard.tsx";
 import "./UserSelector.css"
-import {defaultBoardClaims, type DefaultClaim} from "../../../lib/Claims.ts";
-import UserSelectorToggleComp from "./UserSelectorToggleComp.tsx";
 import {useParams} from "react-router-dom";
 import type {Claim} from "../../../Models/Claim.ts";
+import UserSelectorEditUserClaimsComp from "./UserSelectorEditUserClaimsComp.tsx";
+import UserSelectorAddUserComp from "./UserSelectorAddUserComp.tsx";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -20,9 +20,12 @@ const UserSelector = (props: Props) => {
     const { checkRefresh } = useAuth();
     const { boardId } = useParams();
 
-    const [users, setUsers] = useState<UserGetDto[]>([]);
+    const [boardMembers, setBoardMembers] = useState<UserGetDto[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
     const [updatedClaims, setUpdatedClaims] = useState<Claim[]>([]);
+
+    const [isAddingUser, setIsAddingUser] = useState<boolean>(false);
+    const [updatedUsers, setUpdatedUsers] = useState<{ userId: string, newMemberState: boolean }[]>([]);
 
     useEffect(() => {
 
@@ -43,7 +46,7 @@ const UserSelector = (props: Props) => {
                     return res.json();
                 })
                 .then((user: UserGetDto[]) => {
-                    setUsers(user);
+                    setBoardMembers(user);
                 })
                 .catch(console.error);
         }
@@ -55,9 +58,14 @@ const UserSelector = (props: Props) => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setUpdatedClaims([]);
-    }, [currentViewingUser]);
+        setUpdatedUsers([]);
+    }, [currentViewingUser, isAddingUser]);
 
     function onAbortButtonPressed() {
+        if (isAddingUser) {
+            setIsAddingUser(false);
+            return;
+        }
         if (currentViewingUser) {
             setCurrentViewingUser(null);
             return;
@@ -65,8 +73,9 @@ const UserSelector = (props: Props) => {
         props.close();
     }
 
-    async function onSaveChangesButtonPressed() {
+    async function onSaveClaimChangesButtonPressed() {
         if (!currentViewingUser) return;
+        if (updatedClaims.length <= 0) return;
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return null;
@@ -85,12 +94,12 @@ const UserSelector = (props: Props) => {
             })
             .then((boardUserClaims: Claim[]) => {
 
-                const newUsers = [...users];
+                const newUsers = [...boardMembers];
                 const foundUser: UserGetDto | undefined = newUsers.find((user: UserGetDto) => user.userId === currentViewingUser.userId)
                 if (!foundUser) return;
                 foundUser.boardUserClaims = boardUserClaims;
 
-                setUsers(newUsers);
+                setBoardMembers(newUsers);
                 setCurrentViewingUser(null);
             })
             .catch(console.error)
@@ -99,27 +108,51 @@ const UserSelector = (props: Props) => {
             })
     }
 
+    async function onSaveMembersChangesButtonPressed() {
+        if (!isAddingUser) return;
+        if (updatedUsers.length <= 0) return;
+
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/board/${boardId}/members`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            body: JSON.stringify(updatedUsers),
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Could not update the board members states");
+                }
+
+                return res.json();
+            })
+            .then((user: UserGetDto[]) => {
+                setBoardMembers(user);
+                setIsAddingUser(false);
+            })
+            .catch(console.error)
+            .finally(() => {
+                setUpdatedUsers([]);
+            })
+    }
+
     return (
         <Popover element={props.element} close={props.close}>
             <div className="user-selector-popover">
                 {
-                    currentViewingUser ? (
+                    isAddingUser ? (
                         <>
-                            <div className="user-selector-user-information">
-                                <p style={{ fontWeight: "bold" }}>{currentViewingUser.userName}</p>
-                                <p style={{ opacity: "75%" }}>{currentViewingUser.email}</p>
-                            </div>
-                            <div className="user-selector-claims">
-                                {defaultBoardClaims.map((defaultClaim: DefaultClaim) => {
-                                    return <UserSelectorToggleComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims}
-                                            defaultClaim={defaultClaim}
-                                            claim={currentViewingUser.boardUserClaims.find(buc => buc.claimType === defaultClaim.claimType)}/>;
-                                })}
-                            </div>
+                            <h3>Manage users</h3>
+                            <UserSelectorAddUserComp setBoardMembers={setBoardMembers} boardMembers={boardMembers}
+                                                     updatedUsers={updatedUsers} setUpdatedUsers={setUpdatedUsers}/>
                         </>
+                    ) : currentViewingUser ? (
+                        <UserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>
                     ) : (
                         <div className="user-selector-users">
-                            {users.map((user: UserGetDto) => {
+                            <h3>Members</h3>
+                            {boardMembers.map((user: UserGetDto) => {
                                 return <UserSelectorUserCard onSelected={setCurrentViewingUser} user={user}/>
                             })}
                         </div>
@@ -127,8 +160,15 @@ const UserSelector = (props: Props) => {
                 }
 
                 <div className="user-selector-footer">
-                    { currentViewingUser && <button className={`button ${updatedClaims.length > 0 ? 
-                        "valid-submit-button" : "standard-button"}`} onClick={onSaveChangesButtonPressed}>Save</button> }
+                    { !currentViewingUser && !isAddingUser && <button onClick={() => setIsAddingUser(true)}
+                                                                      className="button standard-button">Manage users</button> }
+                    { isAddingUser ? (
+                        <button className={`button ${updatedUsers.length > 0 ? 
+                            "valid-submit-button" : "standard-button"}`} onClick={onSaveMembersChangesButtonPressed}>Save</button>
+                    ) : currentViewingUser ? (
+                        <button className={`button ${updatedClaims.length > 0 ?
+                            "valid-submit-button" : "standard-button"}`} onClick={onSaveClaimChangesButtonPressed}>Save</button>
+                    ) : null }
                     <button onClick={onAbortButtonPressed} className="button standard-button">Abort</button>
                 </div>
             </div>

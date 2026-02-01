@@ -9,6 +9,8 @@ public interface IBoardService
 {
     Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos);
     Task<List<UserGetDto>> GetBoardMembers(int boardId);
+    Task<List<UserGetDto>> UpdateBoardMemberStatus(int boardId,
+        List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos);
     
     Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto);
     Task<BoardGetDto?> UpdateBoard(ClaimsPrincipal user, int projectId, BoardUpdateDto boardUpdateDto);

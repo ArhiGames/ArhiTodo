@@ -21,6 +21,14 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
         return Ok(claims);
     }
 
+    [HttpPut("board/{boardId:int}/members")]
+    public async Task<IActionResult> UpdateMemberStatus(int boardId,
+        [FromBody] List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
+    {
+        List<UserGetDto> userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
+        return Ok(userGetDtos);
+    }
+
     [HttpGet("board/{boardId:int}/members")]
     public async Task<IActionResult> GetBoardMembers(int boardId)
     {

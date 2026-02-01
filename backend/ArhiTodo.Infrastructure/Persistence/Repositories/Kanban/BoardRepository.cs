@@ -8,6 +8,13 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
+    public async Task<BoardUserClaim> AddBoardUserClaimAsync(BoardUserClaim boardUserClaim)
+    {
+        EntityEntry<BoardUserClaim> createdBoardUserClaim = database.BoardUserClaims.Add(boardUserClaim);
+        await database.SaveChangesAsync();
+        return createdBoardUserClaim.Entity;
+    }
+
     public async Task<List<BoardUserClaim>?> UpdateBoardUserClaimAsync(int boardId, Guid userId, List<BoardUserClaim> boardUserClaims)
     {
         User? user = await database.Users
@@ -37,9 +44,17 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     {
         List<User> users = await database.Users
             .Include(u => u.BoardUserClaims.Where(buc => buc.BoardId == boardId))
-            .Where(u => u.BoardUserClaims.Any(buc => buc.Type == "view_board" && buc.Value == "true"))
+            .Where(u => u.BoardUserClaims.Any(buc => buc.BoardId == boardId && buc.Type == "view_board" && buc.Value == "true"))
             .ToListAsync();
         return users;
+    }
+
+    public async Task<bool> DeleteBoardClaims(int boardId, Guid userId)
+    {
+        int changedRows = await database.BoardUserClaims
+            .Where(buc => buc.UserId == userId && buc.BoardId == boardId)
+            .ExecuteDeleteAsync();
+        return changedRows >= 1;
     }
 
     public async Task<Board?> CreateAsync(Board board)

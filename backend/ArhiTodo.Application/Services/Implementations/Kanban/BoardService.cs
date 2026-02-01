@@ -26,6 +26,28 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardMembers.Select(bm => bm.ToGetDto()).ToList();
     }
 
+    public async Task<List<UserGetDto>> UpdateBoardMemberStatus(int boardId, List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
+    {
+        foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
+        {
+            if (boardMemberStatusUpdateDto.NewMemberState)
+            {
+                await boardRepository.AddBoardUserClaimAsync(new BoardUserClaim
+                {
+                    Type = "view_board",
+                    Value = "true",
+                    BoardId = boardId,
+                    UserId = boardMemberStatusUpdateDto.UserId
+                });
+            }
+            else
+            {
+                await boardRepository.DeleteBoardClaims(boardId, boardMemberStatusUpdateDto.UserId);
+            }
+        }
+        return await GetBoardMembers(boardId);
+    }
+
     public async Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto)
     {
         Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
