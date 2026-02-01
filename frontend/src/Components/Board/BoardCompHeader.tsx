@@ -4,7 +4,7 @@ import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {type Dispatch, type SetStateAction, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import {useParams} from "react-router-dom";
-import UserSelector from "../User/UserSelector/UserSelector.tsx";
+import UserSelector from "./UserSelector/UserSelector.tsx";
 
 interface Props {
     currentFilteringLabels: number[];

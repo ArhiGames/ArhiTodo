@@ -10,7 +10,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(u => u.UserId);
 
+        builder.HasMany(u => u.OwningProjects);
+        builder.HasMany(u => u.OwningBoards);
         builder.HasMany(u => u.UserClaims);
+        builder.HasMany(u => u.UserSessions);
+        builder.HasMany(u => u.BoardUserClaims);
 
         builder.HasIndex(u => u.UserName)
             .IsUnique();

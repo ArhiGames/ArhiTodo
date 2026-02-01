@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
@@ -17,6 +18,12 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         List<BoardUserClaim>? boardUserClaims =
             await boardRepository.UpdateBoardUserClaimAsync(boardId, userId, claimPostDtos.Select(c => c.ToBoardUserClaim(userId, boardId)).ToList());
         return boardUserClaims?.Select(buc => buc.ToGetDto()).ToList();
+    }
+
+    public async Task<List<UserGetDto>> GetBoardMembers(int boardId)
+    {
+        List<User> boardMembers = await boardRepository.GetBoardMembers(boardId);
+        return boardMembers.Select(bm => bm.ToGetDto()).ToList();
     }
 
     public async Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto)

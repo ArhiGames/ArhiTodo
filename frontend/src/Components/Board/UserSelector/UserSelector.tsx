@@ -1,7 +1,7 @@
 import Popover from "../../../lib/Popover/Popover.tsx";
 import {type RefObject, useEffect, useState} from "react";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
-import {API_BASE_URL, AUTH_BASE_URL} from "../../../config/api.ts";
+import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import UserSelectorUserCard from "./UserSelectorUserCard.tsx";
 import "./UserSelector.css"
@@ -31,7 +31,7 @@ const UserSelector = (props: Props) => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) return null;
 
-            fetch(`${AUTH_BASE_URL}/accounts/0?boardPermissionsBoardId=${boardId}`, {
+            fetch(`${API_BASE_URL}/board/${boardId}/members`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             })

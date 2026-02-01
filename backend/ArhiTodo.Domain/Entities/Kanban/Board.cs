@@ -8,7 +8,8 @@ public class Board
 
     public string BoardName { get; set; } = string.Empty;
     
-    public required Guid CreatedBy { get; set; }
+    public required Guid OwnedByUserId { get; set; }
+    public User Owner { get; set; } = null!;
     
     public int ProjectId { get; set; }
     public Project Project { get; set; } = null!;

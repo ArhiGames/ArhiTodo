@@ -10,6 +10,11 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
     {
         builder.HasKey(p => p.ProjectId);
 
+        builder.HasOne(p => p.Owner)
+            .WithMany(u => u.OwningProjects)
+            .HasForeignKey(p => p.OwnedByUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Property(p => p.ProjectName)
             .IsRequired()
             .HasMaxLength(30);

@@ -9,7 +9,7 @@ public static class ProjectMapper
     {
         return new Project
         {
-            CreatedBy = createdBy,
+            OwnedByUserId = createdBy,
             ProjectName = projectCreateDto.ProjectName
         };
     }
@@ -18,7 +18,7 @@ public static class ProjectMapper
     {
         return new Project
         {
-            CreatedBy = createdBy,
+            OwnedByUserId = createdBy,
             ProjectId = projectUpdateDto.ProjectId,
             ProjectName = projectUpdateDto.ProjectName
         };

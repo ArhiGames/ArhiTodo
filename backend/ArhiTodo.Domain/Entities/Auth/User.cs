@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Domain.Entities.Auth;
+﻿using ArhiTodo.Domain.Entities.Kanban;
+
+namespace ArhiTodo.Domain.Entities.Auth;
 
 public class User
 {
@@ -14,6 +16,8 @@ public class User
 
     public string? JoinedViaInvitationKey { get; set; } = string.Empty;
 
+    public List<Project> OwningProjects { get; set; } = new();
+    public List<Board> OwningBoards { get; set; } = new();
     public List<UserSession> UserSessions { get; set; } = new();
     public List<UserClaim> UserClaims { get; set; } = new();
     public List<BoardUserClaim> BoardUserClaims { get; set; } = new();

@@ -1,3 +1,5 @@
+using ArhiTodo.Domain.Entities.Auth;
+
 namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Project
@@ -6,7 +8,8 @@ public class Project
     
     public required string ProjectName { get; set; }
     
-    public required Guid CreatedBy { get; set; }
+    public required Guid OwnedByUserId { get; set; }
+    public User Owner { get; set; } = null!;
 
     public List<Board> Boards { get; set; } = new();
 }    

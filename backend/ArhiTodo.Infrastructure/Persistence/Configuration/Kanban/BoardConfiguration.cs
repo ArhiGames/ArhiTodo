@@ -10,6 +10,11 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
     {
         builder.HasKey(b => b.BoardId);
 
+        builder.HasOne(b => b.Owner)
+            .WithMany(u => u.OwningBoards)
+            .HasForeignKey(b => b.OwnedByUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Property(b => b.BoardName)
             .IsRequired()
             .HasMaxLength(35);

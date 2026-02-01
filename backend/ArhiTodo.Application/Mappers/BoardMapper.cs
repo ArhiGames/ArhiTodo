@@ -10,7 +10,7 @@ public static class BoardMapper
         return new Board
         {
             ProjectId = projectId,
-            CreatedBy = createdBy,
+            OwnedByUserId = createdBy,
             BoardName = boardCreateDto.BoardName
         };
     }
@@ -19,7 +19,7 @@ public static class BoardMapper
     {
         return new Board
         {
-            CreatedBy = createdBy,
+            OwnedByUserId = createdBy,
             BoardId = boardUpdateDto.BoardId,
             BoardName = boardUpdateDto.BoardName
         };

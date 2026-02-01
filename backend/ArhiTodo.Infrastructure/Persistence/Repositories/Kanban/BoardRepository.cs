@@ -33,6 +33,15 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         return user.BoardUserClaims.Where(buc => buc.BoardId == boardId).ToList();
     }
 
+    public async Task<List<User>> GetBoardMembers(int boardId)
+    {
+        List<User> users = await database.Users
+            .Include(u => u.BoardUserClaims.Where(buc => buc.BoardId == boardId))
+            .Where(u => u.BoardUserClaims.Any(buc => buc.Type == "view_board" && buc.Value == "true"))
+            .ToListAsync();
+        return users;
+    }
+
     public async Task<Board?> CreateAsync(Board board)
     {
         EntityEntry<Board> boardEntry = database.Boards.Add(board);
