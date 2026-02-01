@@ -99,7 +99,7 @@ const CardListEditPopover = (props: Props) => {
         return (
             createPortal(<ConfirmationModal title="Confirmation required"
                                             actionDescription="If you confirm this action, the entire card list will be deleted. This includes all cards in the card list"
-                                            onClosed={() => setIsTryingToDeleteAllCards(false)}
+                                            onClosed={() => setIsTryingToDeleteCardList(false)}
                                             onConfirmed={onDeleteCardlistConfirmed}/>, document.body)
         )
     }

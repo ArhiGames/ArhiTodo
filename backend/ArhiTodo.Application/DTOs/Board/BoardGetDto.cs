@@ -7,6 +7,8 @@ public class BoardGetDto
     public int BoardId { get; set; }
         
     public required string BoardName { get; set; }
+
+    public required Guid OwnedByUserId { get; set; }
     
     public List<CardListGetDto> CardLists { get; set; } = new();
 }

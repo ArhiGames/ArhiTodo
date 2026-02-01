@@ -7,7 +7,7 @@ export function buildBoardConnection(hubConnection: HubConnection, dispatch: Dis
     hubConnection.on("CreateBoard", (projectId: number, board: BoardGetDto) => {
         dispatch({
             type: "CREATE_BOARD_OPTIMISTIC",
-            payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName }
+            payload: { projectId: projectId, boardId: board.boardId, boardName: board.boardName, ownedByUserId: board.ownedByUserId }
         });
     });
 

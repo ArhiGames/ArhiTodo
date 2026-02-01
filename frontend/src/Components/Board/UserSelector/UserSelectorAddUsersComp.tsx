@@ -11,7 +11,7 @@ interface Props {
     setUpdatedUsers: Dispatch<SetStateAction<{ userId: string, newMemberState: boolean }[]>>
 }
 
-const UserSelectorAddUserComp = (props: Props) => {
+const UserSelectorAddUsersComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
     const [users, setUsers] = useState<UserGetDto[]>([]);
@@ -56,4 +56,4 @@ const UserSelectorAddUserComp = (props: Props) => {
 
 }
 
-export default UserSelectorAddUserComp;
+export default UserSelectorAddUsersComp;

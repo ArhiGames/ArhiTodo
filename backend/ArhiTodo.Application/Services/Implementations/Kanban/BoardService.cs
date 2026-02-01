@@ -56,6 +56,15 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         
         Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(userId, projectId));
         if (board == null) return null;
+
+        await UpdateBoardMemberStatus(board.BoardId, [ new BoardMemberStatusUpdateDto(userId, true) ]);
+        await UpdateBoardUserClaim(board.BoardId, userId, [
+            new ClaimPostDto("manage_users", "true"),
+            new ClaimPostDto("manage_board", "true"),
+            new ClaimPostDto("manage_cardlists", "true"),
+            new ClaimPostDto("manage_cards", "true"),
+            new ClaimPostDto("manage_labels", "true"),
+        ]);
         
         BoardGetDto boardGetDto = board.ToGetDto();
         boardNotificationService.CreateBoard(Guid.NewGuid(), projectId, boardGetDto);

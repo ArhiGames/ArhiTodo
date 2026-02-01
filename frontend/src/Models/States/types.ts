@@ -1,12 +1,14 @@
 export type Project = {
     projectId: number;
     projectName: string;
+    ownedByUserId: string;
 }
 
 export type Board = {
     projectId: number;
     boardId: number;
     boardName: string;
+    ownedByUserId: string;
 }
 
 export type CardList = {

@@ -1,4 +1,6 @@
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
+import {useParams} from "react-router-dom";
+import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 
 interface Props {
     onSelected: (user: UserGetDto) => void;
@@ -7,10 +9,23 @@ interface Props {
 
 const UserSelectorUserCard = (props: Props) => {
 
+    const { projectId, boardId } = useParams();
+    const kanbanState = useKanbanState();
+
+    const isProjectOwner: boolean = kanbanState.projects[Number(projectId)].ownedByUserId === props.user.userId;
+    const isBoardOwner: boolean = kanbanState.boards[Number(boardId)].ownedByUserId === props.user.userId;
+
     return (
         <div className="user-selector-user">
             <div>
-                <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                    { isProjectOwner ? (
+                        <p className="user-selector-user-label">Project owner</p>
+                    ) : isBoardOwner ? (
+                        <p className="user-selector-user-label">Board owner</p>
+                    ) : null}
+                    <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
+                </div>
                 <p style={{ opacity: "75%" }}>{props.user.email}</p>
             </div>
             <img onClick={() => props.onSelected(props.user)} src="/edit-icon.svg" alt="Edit" height="22px" className="icon clickable"/>

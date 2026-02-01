@@ -8,6 +8,7 @@ const initBoardsAction = (state: State, payload: { projectId: number, boards: In
             projectId: payload.projectId,
             boardId: b.boardId,
             boardName: b.boardName,
+            ownedByUserId: b.ownedByUserId
         }
         return acc;
     }, {} as Record<number, Board>);

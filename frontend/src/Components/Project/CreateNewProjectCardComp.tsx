@@ -50,7 +50,11 @@ const CreateNewProjectCardComp = () => {
                 })
                 .then((createdProject: ProjectGetDto) => {
                     if (dispatch) {
-                        dispatch({ type: "INIT_PROJECT", payload: { projectId: createdProject.projectId, projectName: createdProject.projectName } });
+                        dispatch({ type: "INIT_PROJECT", payload: {
+                                projectId: createdProject.projectId,
+                                projectName: createdProject.projectName,
+                                ownedByUserId: createdProject.ownedByUserId
+                        } });
                     }
                     navigate(`/projects/${createdProject.projectId}/board`)
                 })

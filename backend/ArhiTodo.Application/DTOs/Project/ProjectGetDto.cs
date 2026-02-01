@@ -8,5 +8,7 @@ public class ProjectGetDto
     
     public required string ProjectName { get; set; }
     
+    public required Guid OwnedByUserId { get; set; }
+    
     public List<BoardGetDto> Boards { get; set; } = new();
 }

@@ -4,6 +4,7 @@ import type { LabelGetDto } from "../../../Models/BackendDtos/Kanban/LabelGetDto
 export type InitProjectPayload = {
     projectId: number;
     projectName: string;
+    ownedByUserId: string;
 }
 
 export type UpdateProjectPayload = {
@@ -14,6 +15,7 @@ export type UpdateProjectPayload = {
 export type InitBoardsPayload = {
     boardId: number;
     boardName: string;
+    ownedByUserId: string;
 }
 
 export type InitBoardPayload = {
@@ -49,6 +51,7 @@ export type CreateBoardPayload = {
     projectId: number;
     boardId: number;
     boardName: string;
+    ownedByUserId: string;
 }
 
 export type CreateBoardSucceededPayload = {

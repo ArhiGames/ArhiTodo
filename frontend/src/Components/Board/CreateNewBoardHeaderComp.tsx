@@ -12,7 +12,7 @@ const CreateNewBoardHeaderComp = () => {
     const createBoardHeaderRef = useRef<HTMLDivElement | null>(null);
     const boardNameInputRef = useRef<HTMLInputElement | null>(null);
     const { projectId } = useParams();
-    const { checkRefresh } = useAuth();
+    const { checkRefresh, appUser } = useAuth();
     const navigate = useNavigate();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
@@ -29,10 +29,17 @@ const CreateNewBoardHeaderComp = () => {
 
     async function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (!appUser) return;
+
         if (dispatch) {
             const predictedId: number = Date.now() * -1;
 
-            dispatch({type: "CREATE_BOARD_OPTIMISTIC", payload: { projectId: Number(projectId), boardId: predictedId, boardName: boardName }});
+            dispatch({ type: "CREATE_BOARD_OPTIMISTIC", payload: {
+                    projectId: Number(projectId),
+                    boardId: predictedId,
+                    boardName: boardName,
+                    ownedByUserId: appUser.id
+            }});
 
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) {

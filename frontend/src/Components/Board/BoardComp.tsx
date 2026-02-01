@@ -34,10 +34,12 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
     function getUnnormalizedKanbanState() {
 
         let boardName: string = "";
+        let ownedByUserId: string = "";
         for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
             const board: Board = Object.values(kanbanState.boards)[i];
             if (board.boardId === props.boardId) {
                 boardName = board.boardName;
+                ownedByUserId = board.ownedByUserId;
                 break;
             }
         }
@@ -59,7 +61,8 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         const boardGetDto: BoardGetDto = {
             boardId: props.boardId,
             boardName: boardName,
-            cardLists: cardLists
+            cardLists: cardLists,
+            ownedByUserId: ownedByUserId
         }
 
         return boardGetDto;

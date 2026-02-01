@@ -10,6 +10,7 @@ const initProjectAction = (state: State, payload: InitProjectPayload) => {
             [payload.projectId]: {
                 projectId: payload.projectId,
                 projectName: payload.projectName,
+                ownedByUserId: payload.ownedByUserId
             }
         }
     }
