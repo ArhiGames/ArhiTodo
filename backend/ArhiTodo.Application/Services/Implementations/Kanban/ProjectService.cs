@@ -12,16 +12,27 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IProjectRepository projectRepository, IProjectNotificationService projectNotificationService) : IProjectService
 {
-    public async Task<bool> AddProjectManager(int projectId, Guid userId)
+    public async Task<List<UserGetDto>?> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
-        await projectRepository.AddProjectManager(new ProjectManager { ProjectId = projectId, UserId = userId });
-        return true;
+        foreach (ProjectManagerStatusUpdateDto projectManagerStatusUpdateDto in projectManagerStatusUpdateDtos)
+        {
+            if (projectManagerStatusUpdateDto.NewManagerState)
+            {
+                await projectRepository.AddProjectManager(new ProjectManager { ProjectId = projectId, UserId = projectManagerStatusUpdateDto.UserId });
+            }
+            else
+            {
+                await projectRepository.RemoveProjectManager(projectId, projectManagerStatusUpdateDto.UserId);
+            }
+        }
+        
+        return await GetProjectManagers(projectId);
     }
 
     public async Task<bool> RemoveProjectManager(int projectId, Guid userId)
     {
-        bool succeeeded = await projectRepository.RemoveProjectManager(projectId, userId);
-        return succeeeded;
+        bool succeeded = await projectRepository.RemoveProjectManager(projectId, userId);
+        return succeeded;
     }
 
     public async Task<List<UserGetDto>> GetProjectManagers(int projectId)
@@ -39,7 +50,9 @@ public class ProjectService(IProjectRepository projectRepository, IProjectNotifi
         Project project = projectCreateDto.FromCreateDto(userId);
         await projectRepository.CreateAsync(project);
 
-        await AddProjectManager(project.ProjectId, userId);
+        await UpdateProjectManagerStates(project.ProjectId, [
+            new ProjectManagerStatusUpdateDto(userId, true)
+        ]);
         
         return project.ToGetDto();
     }

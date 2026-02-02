@@ -8,7 +8,7 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class ProjectRepository(ProjectDataBase database) : IProjectRepository
 {
-    public async Task<ProjectManager> AddProjectManager(ProjectManager projectManager)
+    public async Task<ProjectManager?> AddProjectManager(ProjectManager projectManager)
     {
         EntityEntry<ProjectManager> entityEntryProjectManager = database.ProjectManagers.Add(projectManager);
         await database.SaveChangesAsync();

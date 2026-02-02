@@ -5,7 +5,7 @@ namespace ArhiTodo.Domain.Repositories.Kanban;
 
 public interface IProjectRepository
 {
-    Task<ProjectManager> AddProjectManager(ProjectManager projectManager);
+    Task<ProjectManager?> AddProjectManager(ProjectManager projectManager);
     Task<bool> RemoveProjectManager(int projectId, Guid userId);
     Task<List<User>> GetProjectManagers(int projectId);
     

@@ -12,12 +12,12 @@ namespace ArhiTodo.Controllers;
 [Route("api/project")]
 public class ProjectController(IProjectService projectService) : ControllerBase
 {
-    [HttpPost("{projectId:int}/managers/{userId:guid}")]
-    public async Task<IActionResult> AddProjectManager(int projectId, Guid userId)
+    [HttpPut("{projectId:int}/managers")]
+    public async Task<IActionResult> UpdateProjectManagers(int projectId, [FromBody] List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
-        bool succeeded = await projectService.AddProjectManager(projectId, userId);
-        if (!succeeded) return NotFound();
-        return Ok();
+        List<UserGetDto>? projectManagers = await projectService.UpdateProjectManagerStates(projectId, projectManagerStatusUpdateDtos);
+        if (projectManagers == null) return NotFound();
+        return Ok(projectManagers);
     }
 
     [HttpDelete("{projectId:int}/managers/{userId:guid}")]
@@ -28,7 +28,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("{projectId:int}/managers/")]
+    [HttpGet("{projectId:int}/managers")]
     public async Task<IActionResult> GetProjectManagers(int projectId)
     {
         List<UserGetDto> projectManagers = await projectService.GetProjectManagers(projectId);

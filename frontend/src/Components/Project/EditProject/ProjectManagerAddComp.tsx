@@ -4,6 +4,9 @@ import UserSelector from "../../User/UserSelector/UserSelector.tsx";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import ProjectManagerAddUserComp from "./ProjectManagerAddUserComp.tsx";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../../config/api.ts";
+import {matchPath} from "react-router-dom";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 
 interface Props {
     projectManagers: UserGetDto[];
@@ -11,6 +14,9 @@ interface Props {
 }
 
 const ProjectManagerAddComp = (props: Props) => {
+
+    const { checkRefresh } = useAuth();
+    const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
 
     const [isAddingProjectManager, setIsAddingProjectManager] = useState<boolean>(false);
     const addProjectManagerDivRef = useRef<HTMLButtonElement | null>(null);
@@ -51,7 +57,30 @@ const ProjectManagerAddComp = (props: Props) => {
 
     }, [isAddingProjectManager, isSavingProjectManagerChanges, props.projectManagers]);
 
-    function saveChangesConfirmed() {
+    async function saveChangesConfirmed() {
+
+        if (!match) return;
+
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/project/${match.params.projectId}/managers`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            body: JSON.stringify(updatedProjectManagerStates)
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Failed to update project managers of project ${match.params.projectId}`);
+                }
+
+                return res.json();
+            })
+            .then((projectManagers: UserGetDto[]) => {
+                props.setProjectManagers(projectManagers);
+            })
+            .catch(console.error)
+            .finally(() => setIsSavingProjectManagerChanges(false))
 
     }
 
