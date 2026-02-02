@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
 import EditableUserComp from "./EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,8 +15,44 @@ const AdminUserManagementComp = () => {
     const { appUser, token, checkRefresh } = useAuth();
     const { userId } = useParams();
     const [users, setUsers] = useState<UserGetDto[]>([]);
+    const [usersCount, setUsersCount] = useState<number>(0);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
     const [isViewingCreatedInvitationsLinks, setIsViewingCreatedInvitationsLinks] = useState<boolean>(false);
+
+    const loadUsers = async (page: number) => {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${AUTH_BASE_URL}/accounts/${page}`,
+            {
+                method: 'GET',
+                headers: {"Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}`}
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch accounts with claims")
+                }
+
+                return res.json();
+            })
+            .then((foundUsers: UserGetDto[]) => {
+                const newUsers = [...users];
+                for (const foundUser of foundUsers) {
+                    if (!newUsers.some((user: UserGetDto) => user.userId === foundUser.userId)) {
+                        newUsers.push(foundUser);
+                    }
+                }
+                setUsers(newUsers);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    }
+
+    async function onLoadMoreButtonPressed() {
+        const nextPage = (Math.floor(users.length / 5) - 1) + Math.floor(usersCount / 5);
+        await loadUsers(nextPage - 1);
+    }
 
     useEffect(() => {
 
@@ -64,43 +100,32 @@ const AdminUserManagementComp = () => {
 
     useEffect(() => {
 
-        if (userId) return;
-
-        const controller = new AbortController();
-
         const run = async () => {
             const refreshedToken: string | null = await checkRefresh();
-            if (!refreshedToken || controller.signal.aborted) return;
+            if (!refreshedToken) return;
 
-            fetch(`${AUTH_BASE_URL}/accounts/0`,
-                {
-                    method: 'GET',
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-                    signal: controller.signal
-                })
+            await fetch(`${AUTH_BASE_URL}/accounts/count`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            })
                 .then(res => {
                     if (!res.ok) {
-                        throw new Error("Failed to fetch accounts with claims")
+                        throw new Error("Could not retrieve account num!");
                     }
 
                     return res.json();
                 })
-                .then((res: UserGetDto[]) => {
-                    setUsers(res);
+                .then((userCount: { userCount: number }) => {
+                    setUsersCount(userCount.userCount);
                 })
-                .catch(err => {
-                    if (err.name === "AbortError") {
-                        return;
-                    }
-                    console.error(err);
-                });
+                .catch(console.error);
+
+            await loadUsers(0);
         }
 
         run();
 
-        return () => controller.abort();
-
-    }, [userId, token, checkRefresh]);
+    }, [checkRefresh]);
 
     function onEditUser(user: UserGetDto) {
         navigate(`/admin/dashboard/users/${user.userId}`);
@@ -114,6 +139,7 @@ const AdminUserManagementComp = () => {
                 {users.map((user: UserGetDto) => (
                     <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
                 ))}
+                { usersCount > users.length && <button onClick={onLoadMoreButtonPressed} className="users-show-more">Show more...</button> }
             </div>
             <nav className="user-management-nav">
                 <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>

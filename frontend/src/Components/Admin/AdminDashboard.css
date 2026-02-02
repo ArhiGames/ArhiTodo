@@ -87,3 +87,21 @@
     flex-direction: column;
     gap: 0.35rem;
 }
+
+.users-show-more {
+    width: 100%;
+    padding: 0.5rem;
+    opacity: 75%;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: none;
+    background-color: var(--bg-light);
+    color: var(--text-color);
+    font-size: large;
+    transition: opacity 0.3s;
+}
+
+.users-show-more:hover {
+    opacity: 1;
+    cursor: pointer;
+}
