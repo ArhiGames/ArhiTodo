@@ -94,6 +94,11 @@ public class AuthService(IAccountRepository accountRepository, ISessionRepositor
         return users.Select(u => u.ToGetDto()).ToList();
     }
 
+    public async Task<int> GetUserCount()
+    {
+        return await accountRepository.GetUserCount();
+    }
+
     public async Task<UserGetDto?> GetUser(Guid guid)
     {
         User? user = await accountRepository.GetUserByGuidAsync(guid);

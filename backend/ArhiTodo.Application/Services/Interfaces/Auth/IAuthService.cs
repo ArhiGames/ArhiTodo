@@ -9,8 +9,9 @@ public interface IAuthService
     Task<bool> DeleteAccount(Guid userId);
     Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent);
     Task<PasswordAuthorizerResult> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto);
-    Task<List<UserGetDto>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId);
     Task<UserGetDto?> GetUser(Guid guid);
+    Task<List<UserGetDto>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId);
+    Task<int> GetUserCount();
     
     Task<string?> RefreshJwtToken(string refreshToken);
     Task<bool> Logout(ClaimsPrincipal user, string userAgent);

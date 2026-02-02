@@ -4,7 +4,7 @@ import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {type Dispatch, type SetStateAction, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import {useParams} from "react-router-dom";
-import UserSelector from "./UserSelector/UserSelector.tsx";
+import BoardUserSelector from "./UserSelector/BoardUserSelector.tsx";
 
 interface Props {
     currentFilteringLabels: number[];
@@ -52,7 +52,7 @@ const BoardCompHeader = (props: Props) => {
             <img src="/settings-icon.svg" alt="Settings" style={{ height: "36px" }} ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)}
                  className="icon clickable"/>
             { isEditingMembers && (
-                <UserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>
+                <BoardUserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>
             )}
             <p style={{ marginLeft: "1rem" }}>Labels: </p>
             {

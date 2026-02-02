@@ -1,4 +1,4 @@
-.user-selector-popover {
+.board-user-selector-popover {
     min-width: 300px;
     max-width: 400px;
     display: flex;
@@ -6,32 +6,32 @@
     gap: 1rem;
 }
 
-.user-selector-popover h3 {
+.board-user-selector-popover h3 {
     align-self: center;
 }
 
-.user-selector-footer {
+.board-user-selector-footer {
     display: flex;
     gap: 0.5rem;
 }
 
-.user-selector-user-information {
+.board-user-selector-user-information {
     text-align: center;
 }
 
-.user-selector-users {
+.board-user-selector-users {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.user-selector-claims {
+.board-user-selector-claims {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.user-selector-user {
+.board-user-selector-user {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -40,13 +40,13 @@
     border-radius: 15px;
 }
 
-.user-selector-user-label {
+.board-user-selector-user-label {
     padding: 3px;
     background-color: var(--bg-xx-light);
     border-radius: 5px;
 }
 
-.user-selector-toggle {
+.board-user-selector-toggle {
     background-color: var(--bg-x-light);
     border-radius: 15px;
     padding: 10px;
@@ -54,13 +54,13 @@
     align-items: center;
 }
 
-.user-selector-add-user {
+.board-user-selector-add-user {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.user-selector-add-user-user {
+.board-user-selector-add-user-user {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -70,7 +70,7 @@
     transition: background-color 0.3s;
 }
 
-.user-selector-add-user-user:hover {
+.board-user-selector-add-user-user:hover {
     background-color: var(--bg-xx-light);
     cursor: pointer;
 }

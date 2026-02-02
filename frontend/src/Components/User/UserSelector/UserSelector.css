@@ -1,0 +1,39 @@
+.user-selector {
+    width: 320px;
+    color: var(--text-color);
+}
+
+.user-selector-users {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.selectable-user {
+    padding: 8px;
+    background-color: var(--bg-x-light);
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.selectable-user:hover {
+    background-color: var(--bg-xx-light);
+    cursor: pointer;
+}
+
+.user-selector-pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.user-selector-pages button {
+    width: fit-content;
+}
+
+.user-selector-pages button:disabled {
+    opacity: 75%;
+}

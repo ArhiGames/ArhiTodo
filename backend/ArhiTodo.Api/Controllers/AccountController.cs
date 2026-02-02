@@ -11,12 +11,19 @@ namespace ArhiTodo.Controllers;
 [ApiController]
 public class AccountController(IAuthService authService) : ControllerBase
 {
-    [HttpGet("accounts/{page:int=0}")]
+    [HttpGet("accounts/{page:int}")]
     public async Task<IActionResult> GetAccounts(int page, [FromQuery] bool? includeGlobalPermissions, 
         [FromQuery] int? boardPermissionsBoardId)
     {
         List<UserGetDto> users = await authService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
         return Ok(users);
+    }
+
+    [HttpGet("accounts/count")]
+    public async Task<IActionResult> GetUserCount()
+    {
+        int userCount = await authService.GetUserCount();
+        return Ok(new { userCount });
     }
 
     [HttpGet("accounts/user/{userId:guid}")]

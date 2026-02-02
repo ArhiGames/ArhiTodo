@@ -66,10 +66,15 @@ public class AccountRepository(IInvitationRepository invitationRepository, Proje
 
         List<User> users = await request
             .OrderBy(u => u.CreatedAt)
-            .Skip(10 * page)
-            .Take(10)
+            .Skip(5 * page)
+            .Take(5)
             .ToListAsync();
         return users;
+    }
+
+    public async Task<int> GetUserCount()
+    {
+        return await database.Users.CountAsync();
     }
 
     public async Task<User?> GetUserByGuidAsync(Guid guid)

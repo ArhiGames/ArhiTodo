@@ -10,7 +10,7 @@ interface Props {
     claim: Claim | undefined;
 }
 
-const UserSelectorToggleComp = (props: Props) => {
+const BoardUserSelectorToggleComp = (props: Props) => {
 
     const [checked, setChecked] = useState<boolean>(props.claim?.claimValue === "true");
 
@@ -26,7 +26,7 @@ const UserSelectorToggleComp = (props: Props) => {
     }
 
     return (
-        <div className="user-selector-toggle">
+        <div className="board-user-selector-toggle">
             <div>
                 <p style={{ fontWeight: "bold" }}>{props.defaultClaim.claimName}</p>
                 <p style={{ opacity: "75%" }}>{props.defaultClaim.claimDescription}</p>
@@ -37,4 +37,4 @@ const UserSelectorToggleComp = (props: Props) => {
 
 }
 
-export default UserSelectorToggleComp;
+export default BoardUserSelectorToggleComp;
