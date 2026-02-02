@@ -4,6 +4,7 @@ import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import ProjectManagerCard from "./ProjectManagerCard.tsx";
+import ProjectManagerAddComp from "./ProjectManagerAddComp.tsx";
 
 interface Props {
     project: Project;
@@ -14,6 +15,7 @@ const EditProjectProjectManagersComp = (props: Props) => {
     const { checkRefresh } = useAuth();
 
     const [projectManagers, setProjectManagers] = useState<UserGetDto[]>([]);
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -36,7 +38,8 @@ const EditProjectProjectManagersComp = (props: Props) => {
                 .then((projectManagers: UserGetDto[]) => {
                     setProjectManagers(projectManagers);
                 })
-                .catch(console.error);
+                .catch(console.error)
+                .finally(() => setLoaded(true));
 
         }
         run();
@@ -45,13 +48,21 @@ const EditProjectProjectManagersComp = (props: Props) => {
 
     return (
         <section>
-            <h3>Managers</h3>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
+                <h3>Managers</h3>
+                { loaded && <ProjectManagerAddComp projectManagers={projectManagers} setProjectManagers={setProjectManagers}/> }
+            </div>
             <p>Project managers have full access to all project settings, boards, etc. However, project managers cannot delete the project</p>
             <div className="edit-project-modal-managers">
-                {projectManagers.map((projectManager: UserGetDto) => {
-                    return <ProjectManagerCard project={props.project} projectManager={projectManager}
-                                               projectManagers={projectManagers} setProjectManagers={setProjectManagers}/>
-                })}
+                {loaded && (
+                        <>
+                            {projectManagers.map((projectManager: UserGetDto) => {
+                                return <ProjectManagerCard project={props.project} projectManager={projectManager} key={projectManager.userId}
+                                                           projectManagers={projectManagers} setProjectManagers={setProjectManagers}/>
+                            })}
+
+                        </>
+                    )}
             </div>
         </section>
     )

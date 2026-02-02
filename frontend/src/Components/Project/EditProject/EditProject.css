@@ -22,8 +22,53 @@
     width: fit-content;
 }
 
+.edit-project-modal-manager.add {
+    border: none;
+    color: var(--text-color);
+    padding: 3px;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.edit-project-modal-manager.add:hover {
+    cursor: pointer;
+    background-color: var(--bg-xx-light);
+}
+
+.edit-project-modal-manager.add p {
+    font-size: x-large;
+    opacity: 75%;
+}
+
 .project-manager-label {
     padding: 3px;
     background-color: var(--bg-xx-light);
     border-radius: 5px;
+}
+
+.project-manager-add-user-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-x-light);
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.project-manager-add-user-user:hover {
+    cursor: pointer;
+    background-color: var(--bg-xx-light);
+}
+
+.project-manager-add-user-label {
+    padding: 3px;
+    background-color: var(--bg-xx-light);
+    border-radius: 5px;
+}
+
+.add-project-manager-footer {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
 }

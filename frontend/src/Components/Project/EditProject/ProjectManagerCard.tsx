@@ -55,7 +55,7 @@ const ProjectManagerCard = (props: Props) => {
             { isDeleting && <ConfirmationModal title="Confirm your action!"
                                                actionDescription="If you confirm this action, this user will be removed as the project manager for this project. You can make them the project manager again at any time."
                                                onClosed={() => setIsDeleting(false)}
-                                               onConfirmed={onDeleteProjectManagerConfirmed} ></ConfirmationModal> }
+                                               onConfirmed={onDeleteProjectManagerConfirmed}/> }
         </div>
     )
 

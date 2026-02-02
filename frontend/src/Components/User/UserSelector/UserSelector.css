@@ -32,8 +32,9 @@
 
 .user-selector-pages button {
     width: fit-content;
+    transition: all 0.2s;
 }
 
 .user-selector-pages button:disabled {
-    opacity: 75%;
+    opacity: 50%;
 }
