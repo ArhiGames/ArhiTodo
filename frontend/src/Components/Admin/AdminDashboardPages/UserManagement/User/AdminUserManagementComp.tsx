@@ -135,7 +135,7 @@ const AdminUserManagementComp = () => {
         <div className="admin-settings-content admin-usermanagement-page">
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
-            <div className="user-management-users-div">
+            <div className="user-management-users-div scroller">
                 {users.map((user: UserGetDto) => (
                     <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
                 ))}

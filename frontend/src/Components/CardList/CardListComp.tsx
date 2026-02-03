@@ -181,7 +181,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                         )
                     }
                 </div>
-                <div className="cards">
+                <div className="cards scroller">
                     {unnormalizedCards.map((card: CardGetDto) => {
                         let contains: boolean = props.filteringLabels.length === 0;
                         for (const filteringLabelId of props.filteringLabels) {

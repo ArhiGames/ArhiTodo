@@ -70,7 +70,7 @@ const ViewInvitationLinksComp = (props: { onClosed: () => void }) => {
                 createPortal(
                     <Modal onClosed={props.onClosed} header={<h2>Generated invitation links</h2>} modalSize="modal-large"
                         footer={null}>
-                        <div className="view-invitation-links-div">
+                        <div className="view-invitation-links-div scroller">
                             {invitationLinks.map((invitationLink: InvitationLink, index: number) => {
                                 return <ViewInvitationLinkComp invitationLink={invitationLink} key={index}/>
                             })}

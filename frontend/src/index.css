@@ -17,6 +17,9 @@
 
     --bg-popover: hsl(220, 12%, 16%);
 
+    --scrollbar-background: var(--bg);
+    --scrollbar-foreground: var(--bg-xx-light);
+
     --primary: hsl(210, 100%, 60%);
     --primary-hover: hsl(210, 100%, 70%);
 
@@ -40,6 +43,21 @@
 body {
     background-color: var(--bg-dark);
     font-family: Arial, serif;
+}
+
+@supports (scrollbar-width: auto) {
+    .scroller {
+        scrollbar-color: var(--scrollbar-foreground) var(--scrollbar-background);
+    }
+}
+
+@supports selector(::-webkit-scrollbar) {
+    .scroller::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-foreground);
+    }
+    .scroller::-webkit-scrollbar-track {
+        background: var(--scrollbar-background);
+    }
 }
 
 /*-----------------------------------------------*/

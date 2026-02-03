@@ -141,7 +141,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
             {
                 isLoaded && (
                     <>
-                        <div className="board-content">
+                        <div className="board-content scroller">
                             {
                                 board ? (
                                     <>

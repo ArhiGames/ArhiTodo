@@ -47,8 +47,8 @@
 }
 
 .modal-header button {
-    background-color: var(--button-cancel);
     color: var(--text-color);
+    background-color: transparent;
     width: 45px;
     margin-left: auto;
     padding: 10px;
@@ -59,7 +59,6 @@
 }
 
 .modal-header button:hover {
-    background-color: var(--button-cancel-focus);
     transform: translateY(-2px);
     cursor: pointer;
 }

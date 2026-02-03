@@ -12,7 +12,7 @@ const Modal = (props: { header: ReactNode, children: ReactNode, footer: ReactNod
                     {props.header}
                     <button onClick={props.onClosed} className="modal-close-button">X</button>
                 </div>
-                <div className="modal-body">
+                <div className="modal-body scroller">
                     { props.children }
                 </div>
                 <div className="modal-footer">

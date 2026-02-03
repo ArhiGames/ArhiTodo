@@ -286,7 +286,7 @@ const LabelSelector = ( props: Props ) => {
                         </>
                     ) : (
                         <>
-                            <div className="label-selector-existing">
+                            <div className="label-selector-existing scroller">
                                 {
                                     Object.values(kanbanState.labels).map((label: Label) => {
                                         return ( label.boardId == props.boardId && (
