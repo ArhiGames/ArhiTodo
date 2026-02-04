@@ -2,12 +2,15 @@
 
 public class Label
 {
-    public int LabelId { get; set; }
+    public int LabelId { get; private set; }
+    public int LabelColor { get; private set; }
+    public string LabelText { get; private set; } = string.Empty;
 
-    public required int LabelColor { get; set; }
+    private Label() { }
 
-    public required string LabelText { get; set; }
-    
-    public int BoardId { get; set; }
-    public Board Board { get; set; } = null!;
+    public Label(string labelText, int labelColor)
+    {
+        LabelText = labelText;
+        LabelColor = labelColor;
+    }
 }

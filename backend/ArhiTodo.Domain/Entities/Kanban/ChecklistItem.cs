@@ -3,11 +3,13 @@
 public class ChecklistItem
 {
     public int ChecklistItemId { get; set; }
-
-    public required string ChecklistItemName { get; set; }
-    
+    public string ChecklistItemName { get; set; } = string.Empty;
     public bool IsDone { get; set; }
-    
-    public int ChecklistId { get; set; }
-    public Checklist Checklist { get; set; } = null!;
+
+    private ChecklistItem() { }
+
+    public ChecklistItem(string checklistItemName)
+    {
+        ChecklistItemName = checklistItemName;
+    }
 }

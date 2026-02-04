@@ -1,19 +1,22 @@
+using ArhiTodo.Domain.Common;
+
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Card
+public class Card : AggregateRoot<int>
 {
-    public int CardId { get; set; }
+    public bool IsDone { get; private set; }
+    public string CardName { get; private set; } = string.Empty;
+    public string CardDescription { get; private set; } = string.Empty;
     
-    public bool IsDone { get; set; }
-    
-    public required string CardName { get; set; }
-
-    public string CardDescription { get; set; } = string.Empty;
-    
-    public List<CardLabel> CardLabels { get; set; } = [];
     public List<Checklist> Checklists { get; set; } = [];
-    
-    
-    public int CardListId { get; set; }
-    public CardList CardList { get; set; } = null!;
+
+    private readonly List<int> _labelIds = new();
+    public IReadOnlyCollection<int> LabelIds => _labelIds.AsReadOnly();
+
+    private Card() { }
+
+    public Card(string cardName)
+    {
+        CardName = cardName;
+    }
 }
