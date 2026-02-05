@@ -5,7 +5,7 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Project
 {
-    public long ProjectId { get; init; }
+    public int ProjectId { get; init; }
     
     public string ProjectName { get; private set; } = string.Empty;
 

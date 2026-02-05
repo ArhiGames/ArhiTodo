@@ -2,9 +2,9 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Card
 {
-    public long CardListId { get; private set; }
+    public int CardListId { get; private set; }
     
-    public long CardId { get; init; }
+    public int CardId { get; init; }
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
@@ -17,9 +17,25 @@ public class Card
 
     private Card() { }
 
-    public Card(string cardName)
+    public Card(int cardListId, string cardName)
+    {
+        CardListId = cardListId;
+        CardName = cardName;
+    }
+
+    public void RenameCard(string cardName)
     {
         CardName = cardName;
+    }
+
+    public void ChangeCardDescription(string cardDescription)
+    {
+        CardDescription = cardDescription;
+    }
+
+    public void UpdateCardState(bool isDone)
+    {
+        IsDone = isDone;
     }
 
     public void AddChecklist(Checklist checklist)

@@ -28,7 +28,6 @@ public static class InfrastructureInjection
         
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IBoardRepository, BoardRepository>();
-        builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
         builder.Services.AddScoped<ICardRepository, CardRepository>();
         builder.Services.AddScoped<ILabelRepository, LabelRepository>();
         builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();

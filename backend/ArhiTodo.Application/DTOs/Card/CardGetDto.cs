@@ -4,7 +4,7 @@ namespace ArhiTodo.Application.DTOs.Card;
 
 public class CardGetDto
 {
-    public long CardId { get; set; }
+    public int CardId { get; set; }
     
     public bool IsDone { get; set; }
     
@@ -12,6 +12,6 @@ public class CardGetDto
 
     public string CardDescription { get; set; } = string.Empty;
     
-    public List<long> LabelIds { get; set; } = [];
+    public List<int> LabelIds { get; set; } = [];
     public List<ChecklistGetDto> Checklists { get; set; } = [];
 }

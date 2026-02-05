@@ -4,7 +4,7 @@ namespace ArhiTodo.Application.DTOs.Board;
 
 public class BoardGetDto
 {
-    public long BoardId { get; set; }
+    public int BoardId { get; set; }
         
     public required string BoardName { get; set; }
 

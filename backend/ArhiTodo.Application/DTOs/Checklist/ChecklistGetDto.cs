@@ -4,7 +4,7 @@ namespace ArhiTodo.Application.DTOs.Checklist;
 
 public class ChecklistGetDto
 {
-    public long ChecklistId { get; set; }
+    public int ChecklistId { get; set; }
     
     public required string ChecklistName { get; set; }
 

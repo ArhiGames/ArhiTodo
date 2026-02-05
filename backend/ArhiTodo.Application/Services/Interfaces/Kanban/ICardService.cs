@@ -9,5 +9,5 @@ public interface ICardService
     Task<CardGetDto?> PatchCardStatus(int boardId, int cardId, bool isDone);
     Task<CardGetDto?> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto);
     Task<CardGetDto?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto);
-    Task<CardGetDto?> GetCard(int cardId, bool includeChecklist = true);
+    Task<CardGetDto?> GetCard(int cardId);
 }

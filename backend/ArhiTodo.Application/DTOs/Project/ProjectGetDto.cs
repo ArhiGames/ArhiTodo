@@ -4,7 +4,7 @@ namespace ArhiTodo.Application.DTOs.Project;
 
 public class ProjectGetDto
 {
-    public long ProjectId { get; init; }
+    public int ProjectId { get; init; }
     
     public required string ProjectName { get; set; }
     

@@ -3,45 +3,67 @@ using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class CardListService(ICardListNotificationService cardListNotificationService, ICardlistRepository cardlistRepository) : ICardListService
+public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitOfWork, 
+    ICardListNotificationService cardListNotificationService) : ICardListService
 {
     public async Task<CardListGetDto?> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
     {
-        CardList? createdCardList = await cardlistRepository.CreateAsync(cardListCreateDto.FromCreateDto(boardId));
-        if (createdCardList == null) return null;
+        Board? board = await boardRepository.GetAsync(boardId, true, false);
+        if (board == null) return null;
 
-        CardListGetDto cardListGetDto = createdCardList.ToGetDto();
+        CardList cardList = new(boardId, cardListCreateDto.CardListName);
+        board.AddCardlist(cardList);
+        await unitOfWork.SaveChangesAsync();
+
+        CardListGetDto cardListGetDto = cardList.ToGetDto();
         cardListNotificationService.CreateCardList(boardId, cardListGetDto);
         return cardListGetDto;
     }
 
     public async Task<CardListGetDto?> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
     {
-        CardList? updatedCardList = await cardlistRepository.UpdateAsync(cardListUpdateDto.FromUpdateDto(boardId));
-        if (updatedCardList == null) return null;
+        Board? board = await boardRepository.GetAsync(boardId, true, false);
+        if (board == null) return null;
 
-        CardListGetDto cardListGetDto = updatedCardList.ToGetDto();
+        CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListUpdateDto.CardListId);
+        if (cardList == null) return null;
+        
+        cardList.ChangeCardListName(cardListUpdateDto.CardListName);
+        await unitOfWork.SaveChangesAsync();
+
+        CardListGetDto cardListGetDto = cardList.ToGetDto();
         cardListNotificationService.UpdateCardList(boardId, cardListGetDto);
         return cardListGetDto;
     }
 
     public async Task<bool> DeleteCards(int boardId, int cardListId)
     {
-        bool succeeded = await cardlistRepository.DeleteCardsAsync(cardListId);
-        if (succeeded)
-        {
-            cardListNotificationService.DeleteCardsFromCardList(boardId, cardListId);
-        }
-        return succeeded;
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board == null) return false;
+
+        CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
+        if (cardList == null) return false;
+        
+        cardList.ClearCards();
+        await unitOfWork.SaveChangesAsync();
+        
+        cardListNotificationService.DeleteCardsFromCardList(boardId, cardListId);
+        return true;
     }
 
     public async Task<bool> DeleteCardList(int boardId, int cardListId)
     {
-        bool succeeded = await cardlistRepository.DeleteAsync(cardListId);
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board == null) return false;
+
+        bool succeeded = board.RemoveCardlist(cardListId);
+        await unitOfWork.SaveChangesAsync();
+        
         if (succeeded)
         {
             cardListNotificationService.DeleteCardList(boardId, cardListId);

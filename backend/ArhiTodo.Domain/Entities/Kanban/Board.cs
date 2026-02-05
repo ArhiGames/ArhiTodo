@@ -4,9 +4,9 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Board
 {
-    public long ProjectId { get; private set; }
+    public int ProjectId { get; private set; }
     
-    public long BoardId { get; init; }
+    public int BoardId { get; init; }
     public string BoardName { get; private set; } = string.Empty;
     
     public Guid OwnedByUserId { get; private set; }
@@ -23,7 +23,7 @@ public class Board
     
     private Board() {  }
 
-    public Board(long projectId, string name, Guid createdByUserId)
+    public Board(int projectId, string name, Guid createdByUserId)
     {
         ProjectId = projectId;
         BoardName = name;
@@ -60,15 +60,20 @@ public class Board
         return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
     }
 
-    public void AddCardList(string cardListName)
+    public void AddCardlist(CardList cardList)
     {
-        CardList cardList = new(cardListName);
         _cardLists.Add(cardList);
     }
 
+    public bool RemoveCardlist(int cardListId)
+    {
+        CardList? cardList = _cardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
+        return cardList != null && _cardLists.Remove(cardList);
+    }
+    
     public void AddLabel(string labelText, int labelColor)
     {
-        Label label = new(labelText, labelColor);
+        Label label = new(BoardId, labelText, labelColor);
         _labels.Add(label);
     }
 }

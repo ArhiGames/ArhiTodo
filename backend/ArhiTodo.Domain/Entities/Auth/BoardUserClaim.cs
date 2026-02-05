@@ -18,7 +18,7 @@ public class BoardUserClaim
 
     public string Value { get; private set; } = string.Empty;
     
-    public long BoardId { get; init; }
+    public int BoardId { get; init; }
     public Board Board { get; } = null!;
     
     public Guid UserId { get; init; }
@@ -26,7 +26,7 @@ public class BoardUserClaim
 
     private BoardUserClaim() { }
     
-    public BoardUserClaim(BoardClaims boardClaim, string value, long boardId, Guid userId)
+    public BoardUserClaim(BoardClaims boardClaim, string value, int boardId, Guid userId)
     {
         Type = boardClaim.ToString();
         Value = value;

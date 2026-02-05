@@ -2,7 +2,7 @@
 
 public class LabelGetDto
 {
-    public long LabelId { get; set; }
+    public int LabelId { get; set; }
 
     public required int LabelColor { get; set; }
 
