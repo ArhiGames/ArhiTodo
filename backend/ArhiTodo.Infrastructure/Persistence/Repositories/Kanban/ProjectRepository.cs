@@ -14,33 +14,19 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         return createdProject.Entity;
     }
 
-    public async Task<Project?> UpdateProject(Project project)
-    {
-        Project? foundProject = await database.Projects
-            .FirstOrDefaultAsync(p => p.ProjectId == project.ProjectId);
-        if (foundProject == null) return null;
-
-        foundProject.ProjectName = project.ProjectName;
-        await database.SaveChangesAsync();
-
-        return foundProject;
-    }
-
     public async Task<bool> DeleteAsync(int projectId)
     {
-        Project? project = await database.Projects
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null) return false;
-
-        database.Projects.Remove(project);
-        await database.SaveChangesAsync();
-        
-        return true;
+        int changedRows = await database.Projects
+            .Where(p => p.ProjectId == projectId)
+            .ExecuteDeleteAsync();
+        return changedRows == 1;
     }
 
     public async Task<Project?> GetAsync(int projectId)
     {
         Project? project = await database.Projects
+            .Include(p => p.Owner)
+            .Include(p => p.ProjectManagers)
             .FirstOrDefaultAsync(p => p.ProjectId == projectId);
         return project;
     }

@@ -5,7 +5,6 @@ namespace ArhiTodo.Domain.Repositories.Kanban;
 public interface IProjectRepository
 {
     Task<Project> CreateAsync(Project project);
-    Task<Project?> UpdateProject(Project project);
     Task<bool> DeleteAsync(int projectId);
     Task<Project?> GetAsync(int projectId);
     Task<List<Project>> GetAllAsync();

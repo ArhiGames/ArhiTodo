@@ -14,25 +14,6 @@ public class LabelRepository(ProjectDataBase database) : ILabelRepository
         return labelEntry.Entity;
     }
 
-    public async Task<Label?> UpdateLabelAsync(int labelId, string? labelText, int? labelColor)
-    {
-        Label? label = await database.Labels.FindAsync(labelId);
-        if (label == null) return null;
-
-        if (labelText != null)
-        {
-            label.LabelText = labelText;
-        }
-
-        if (labelColor.HasValue)
-        {
-            label.LabelColor = labelColor.Value;
-        }
-
-        await database.SaveChangesAsync();
-        return label;
-    }
-
     public async Task<bool> DeleteLabelAsync(int labelId)
     {
         int removedRows = await database.Labels
@@ -47,26 +28,5 @@ public class LabelRepository(ProjectDataBase database) : ILabelRepository
             .Where(l => l.BoardId == boardId)
             .ToListAsync();
         return labels;
-    }
-
-    public async Task<CardLabel?> AddLabelToCard(int cardId, int labelId)
-    {
-        CardLabel cardLabel = new()
-        {
-            CardId = cardId,
-            LabelId = labelId
-        };
-        
-        EntityEntry<CardLabel> cardLabelEntry = database.CardLabels.Add(cardLabel);
-        await database.SaveChangesAsync();
-        return cardLabelEntry.Entity;
-    }
-
-    public async Task<bool> RemoveLabelFromCard(int cardId, int labelId)
-    {
-        int removedRows = await database.CardLabels
-            .Where(cl => cl.CardId == cardId && cl.LabelId == labelId)
-            .ExecuteDeleteAsync();
-        return removedRows == 1;
     }
 }

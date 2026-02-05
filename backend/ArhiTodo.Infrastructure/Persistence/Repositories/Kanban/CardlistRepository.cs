@@ -14,17 +14,6 @@ public class CardlistRepository(ProjectDataBase projectDataBase) : ICardlistRepo
         return cardListEntry.Entity;
     }
 
-    public async Task<CardList?> UpdateAsync(CardList cardList)
-    {
-        CardList? foundCardList = await projectDataBase.CardLists.FindAsync(cardList.CardListId);
-        if (foundCardList == null) return null;
-
-        foundCardList.CardListName = cardList.CardListName;
-        await projectDataBase.SaveChangesAsync();
-
-        return foundCardList;
-    }
-
     public async Task<bool> DeleteCardsAsync(int cardListId)
     {
         int removedRows = await projectDataBase.Cards
