@@ -1,15 +1,14 @@
-using ArhiTodo.Domain.Exceptions;
-
 namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class CardList
 {
-    public int CardListId { get; private set; }
-
+    public long BoardId { get; private set; }
+    
+    public long CardListId { get; private set; }
     public string CardListName { get; private set; } = string.Empty;
 
-    private readonly List<int> _cardIds = new();
-    public IReadOnlyCollection<int> CardIds => _cardIds.AsReadOnly();
+    private readonly List<Card> _cards = new();
+    public IReadOnlyCollection<Card> Cards => _cards.AsReadOnly();
 
     private CardList() { }
 
@@ -18,12 +17,8 @@ public class CardList
         CardListName = cardListName;
     }
     
-    public void AddCard(int cardId)
+    public void AddCard(Card card)
     {
-        if (_cardIds.Contains(cardId))
-        {
-            throw new CardAlreadyExistsException();
-        }
-        _cardIds.Add(cardId);
+        _cards.Add(card);
     }
 }    

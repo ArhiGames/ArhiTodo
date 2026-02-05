@@ -22,7 +22,6 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     public DbSet<CardList> CardLists { get; set; }
     public DbSet<Card> Cards { get; set; }
     public DbSet<Label> Labels { get; set; }
-    public DbSet<CardLabel> CardLabels { get; set; }
     
     public DbSet<Checklist> Checklists { get; set; }
     public DbSet<ChecklistItem> ChecklistItems { get; set; }

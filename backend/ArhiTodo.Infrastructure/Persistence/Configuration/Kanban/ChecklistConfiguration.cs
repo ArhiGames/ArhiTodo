@@ -16,7 +16,7 @@ public class ChecklistConfiguration : IEntityTypeConfiguration<Checklist>
 
         builder.HasMany(cl => cl.ChecklistItems);
 
-        builder.HasOne(cl => cl.Card)
+        builder.HasOne<Card>()
             .WithMany(c => c.Checklists)
             .HasForeignKey(cl => cl.CardId)
             .OnDelete(DeleteBehavior.Cascade);

@@ -14,16 +14,14 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
             .IsRequired()
             .HasMaxLength(90);
 
-        builder.Property(c => c.CardDescription)
-            .HasMaxLength(8192);
+        builder.Property(c => c.CardDescription);
 
-        builder.HasOne(c => c.CardList)
+        builder.HasOne<CardList>()
             .WithMany(cl => cl.Cards)
             .HasForeignKey(c => c.CardListId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(c => c.CardLabels);
-
+        builder.HasMany(c => c.Labels);
         builder.HasMany(c => c.Checklists);
     }
 }

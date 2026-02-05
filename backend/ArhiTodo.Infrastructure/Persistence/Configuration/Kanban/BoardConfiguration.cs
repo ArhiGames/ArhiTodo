@@ -19,17 +19,17 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
             .IsRequired()
             .HasMaxLength(35);
 
-        builder.HasOne(b => b.Project)
+        builder.HasOne<Project>()
             .WithMany(p => p.Boards)
             .HasForeignKey(b => b.ProjectId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(b => b.CardLists)
-            .WithOne(cl => cl.Board)
+            .WithOne()
             .HasForeignKey(cl => cl.BoardId);
 
         builder.HasMany(b => b.Labels)
-            .WithOne(l => l.Board)
+            .WithOne()
             .HasForeignKey(l => l.BoardId);
     }
 }

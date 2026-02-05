@@ -2,7 +2,9 @@
 
 public class ChecklistItem
 {
-    public int ChecklistItemId { get; set; }
+    public long ChecklistId { get; private set; }
+    
+    public long ChecklistItemId { get; set; }
     public string ChecklistItemName { get; set; } = string.Empty;
     public bool IsDone { get; set; }
 

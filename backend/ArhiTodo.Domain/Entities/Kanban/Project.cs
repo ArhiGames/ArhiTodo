@@ -1,41 +1,49 @@
-using ArhiTodo.Domain.Common;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Exceptions;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Project : AggregateRoot<int>
+public class Project
 {
+    public long ProjectId { get; init; }
+    
     public string ProjectName { get; private set; } = string.Empty;
 
-    private readonly List<int> _boardIds = new();
-    public IReadOnlyCollection<int> BoardIds => _boardIds.AsReadOnly();
+    private readonly List<Board> _boards = [];
+    public IReadOnlyCollection<Board> Boards => _boards.AsReadOnly();
 
-    public Guid OwnedByUserId { get; private set; }
+    public Guid OwnedByUserId { get; }
+    public User Owner { get; } = null!;
 
-    private readonly List<Guid> _projectManagerIds = new();
-    public IReadOnlyCollection<Guid> ProjectManagerIds => _projectManagerIds.AsReadOnly();
+    private readonly List<ProjectManager> _projectManagers = [];
+    public IReadOnlyCollection<ProjectManager> ProjectManagers => _projectManagers.AsReadOnly();
     
     private Project() {  }
 
-    public Project(string name, Guid ownerId)
+    public Project(string name, User user)
     {
         ProjectName = name;
-        OwnedByUserId = ownerId;
+        Owner = user;
+        OwnedByUserId = user.UserId;
     }
 
-    public void AddBoard(int boardId, Guid userId)
+    public void AddProjectManager(ProjectManager user)
     {
-        if (!_boardIds.Contains(boardId))
+        if (_projectManagers.Exists(pm => pm.UserId == user.UserId))
         {
-            throw new BoardAlreadyExistsException();
+            throw new AlreadyExistsException("Project manager with id already exists!");
         }
 
-        if (!_projectManagerIds.Contains(userId) && userId != OwnedByUserId)
+        _projectManagers.Add(user);
+    }
+
+    public void AddBoard(Board board, Guid userId)
+    {
+        if (!_projectManagers.Exists(pm => pm.UserId == userId) && userId != OwnedByUserId)
         {
             throw new BoardPermissionException("The user is neither a project manager nor the project owner!");
         }
         
-        _boardIds.Add(boardId);
+        _boards.Add(board);
     }
 }    

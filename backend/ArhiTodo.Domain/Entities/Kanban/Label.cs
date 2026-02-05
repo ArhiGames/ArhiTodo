@@ -2,7 +2,9 @@
 
 public class Label
 {
-    public int LabelId { get; private set; }
+    public long BoardId { get; private set; }
+    
+    public long LabelId { get; private set; }
     public int LabelColor { get; private set; }
     public string LabelText { get; private set; } = string.Empty;
 

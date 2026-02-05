@@ -2,10 +2,12 @@
 
 public class Checklist
 {
-    public int ChecklistId { get; private set; }
+    public long CardId { get; private set; }
+    
+    public long ChecklistId { get; private set; }
     public string ChecklistName { get; private set; } = string.Empty;
 
-    private readonly List<ChecklistItem> _checklistItems = new();
+    private readonly List<ChecklistItem> _checklistItems = [];
     public IReadOnlyCollection<ChecklistItem> ChecklistItems => _checklistItems.AsReadOnly();
     
     private Checklist() { }

@@ -16,7 +16,7 @@ public class ChecklistItemConfiguration : IEntityTypeConfiguration<ChecklistItem
 
         builder.HasIndex(ci => ci.IsDone);
 
-        builder.HasOne(ci => ci.Checklist)
+        builder.HasOne<Checklist>()
             .WithMany(cl => cl.ChecklistItems)
             .HasForeignKey(ci => ci.ChecklistId)
             .OnDelete(DeleteBehavior.Cascade);
