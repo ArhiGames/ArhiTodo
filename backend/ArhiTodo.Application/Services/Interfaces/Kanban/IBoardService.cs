@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 
@@ -9,11 +8,11 @@ public interface IBoardService
 {
     Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos);
     Task<List<UserGetDto>> GetBoardMembers(int boardId);
-    Task<List<UserGetDto>> UpdateBoardMemberStatus(int boardId,
+    Task<List<UserGetDto>?> UpdateBoardMemberStatus(int boardId,
         List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos);
     
-    Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto);
-    Task<BoardGetDto?> UpdateBoard(ClaimsPrincipal user, int projectId, BoardUpdateDto boardUpdateDto);
+    Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto);
+    Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto);
     Task<bool> DeleteBoard(int projectId, int boardId);
     
     Task<List<BoardGetDto>> GetEveryBoard(int projectId);

@@ -9,6 +9,7 @@ public interface IBoardRepository
     
     Task<Board?> CreateAsync(Board board);
     Task<bool> DeleteAsync(int boardId);
-    Task<Board?> GetAsync(int boardId);
+    Task<Board?> GetAsync(int boardId, bool includeCardlists = true, bool includeCards = true, 
+        bool includeChecklists = false, bool includeChecklistItems = false);
     Task<List<Board>> GetAllAsync(int projectId);
 }

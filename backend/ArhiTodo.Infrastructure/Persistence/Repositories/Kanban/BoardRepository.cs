@@ -41,16 +41,37 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         return boards;
     }
 
-    public async Task<Board?> GetAsync(int boardId)
+    public async Task<Board?> GetAsync(int boardId, bool includeCardlists = true, bool includeCards = true, 
+        bool includeChecklists = false, bool includeChecklistItems = false)
     {
-        Board? board = await database.Boards
-            .Include(b => b.CardLists)
+        IQueryable<Board> query = database.Boards
+            .Include(b => b.Owner)
+            .Include(b => b.BoardUserClaims);
+
+        if (includeChecklistItems)
+        {
+            query = query.Include(b => b.CardLists)
                 .ThenInclude(cl => cl.Cards)
                     .ThenInclude(c => c.Checklists)
-                        .ThenInclude(c => c.ChecklistItems)
-            .AsSplitQuery()
-            .FirstOrDefaultAsync(b => b.BoardId == boardId);
+                        .ThenInclude(cl => cl.ChecklistItems);
+        }
+        else if (includeChecklists)
+        {
+            query = query.Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards)
+                    .ThenInclude(c => c.Checklists);
+        }
+        else if (includeCards)
+        {
+            query = query.Include(b => b.CardLists)
+                .ThenInclude(cl => cl.Cards);
+        }
+        else if (includeCardlists)
+        {
+            query = query.Include(b => b.CardLists);
+        }
 
+        Board? board = await query.AsSplitQuery().FirstOrDefaultAsync(b => b.BoardId == boardId);
         return board;
     }
 }

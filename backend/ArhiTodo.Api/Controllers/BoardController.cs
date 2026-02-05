@@ -25,7 +25,8 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     public async Task<IActionResult> UpdateMemberStatus(int boardId,
         [FromBody] List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
-        List<UserGetDto> userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
+        List<UserGetDto>? userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
+        if (userGetDtos == null) return NotFound();
         return Ok(userGetDtos);
     }
 
@@ -39,7 +40,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardCreateDto boardCreateDto)
     {
-        BoardGetDto? board = await boardService.CreateBoard(User, projectId, boardCreateDto);
+        BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
         if (board == null) return NotFound();
         return Ok(board);
     }
@@ -47,7 +48,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPut("project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardUpdateDto boardUpdateDto)
     {
-        BoardGetDto? board = await boardService.UpdateBoard(User, projectId, boardUpdateDto);
+        BoardGetDto? board = await boardService.UpdateBoard(projectId, boardUpdateDto);
         if (board == null) return NotFound();
         return Ok(board);
     }

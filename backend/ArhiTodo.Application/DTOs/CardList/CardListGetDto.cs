@@ -4,7 +4,7 @@ namespace ArhiTodo.Application.DTOs.CardList;
 
 public class CardListGetDto
 {
-    public int CardListId { get; set; }
+    public long CardListId { get; set; }
     
     public required string CardListName { get; set; }
     

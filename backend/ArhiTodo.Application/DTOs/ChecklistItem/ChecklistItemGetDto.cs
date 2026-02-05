@@ -2,7 +2,7 @@
 
 public class ChecklistItemGetDto
 {
-    public int ChecklistItemId { get; set; }
+    public long ChecklistItemId { get; set; }
 
     public required string ChecklistItemName { get; set; }
     

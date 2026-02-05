@@ -30,6 +30,36 @@ public class Board
         OwnedByUserId = createdByUserId;
     }
 
+    public void ChangeName(string boardName)
+    {
+        BoardName = boardName;
+    }
+
+    public void AddUserClaim(BoardClaims boardClaim, string value, Guid userId)
+    {
+        BoardUserClaim boardUserClaim = new(boardClaim, value, BoardId, userId);
+        _boardUserClaims.Add(boardUserClaim);
+    }
+    
+    public void UpdateUserClaim(BoardClaims boardClaims, string newValue)
+    {
+        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaims.ToString());
+        boardUserClaim?.UpdateValue(newValue);
+    }
+
+    public void AddMember(Guid userId)
+    {
+        BoardUserClaim boardUserClaim = new(BoardClaims.ViewBoard, "true", BoardId, userId);
+        _boardUserClaims.Add(boardUserClaim);
+    }
+
+    public bool RemoveMember(Guid userId)
+    {
+        BoardUserClaim? foundBoardUserClaim = _boardUserClaims.FirstOrDefault(bc => bc.UserId == userId
+            && bc.Type == nameof(BoardClaims.ViewBoard));
+        return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
+    }
+
     public void AddCardList(string cardListName)
     {
         CardList cardList = new(cardListName);

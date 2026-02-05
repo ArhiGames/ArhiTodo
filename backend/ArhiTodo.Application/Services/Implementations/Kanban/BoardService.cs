@@ -1,23 +1,34 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
+using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository) : IBoardService
+public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
+    IUnitOfWork unitOfWork, ICurrentUser currentUser) : IBoardService
 {
     public async Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
-        List<BoardUserClaim>? boardUserClaims =
-            await boardRepository.UpdateBoardUserClaimAsync(boardId, userId, claimPostDtos.Select(c => c.ToBoardUserClaim(userId, boardId)).ToList());
-        return boardUserClaims?.Select(buc => buc.ToGetDto()).ToList();
+        Board? board = await boardRepository.GetAsync(boardId, false);
+        if (board == null) return null;
+        
+        foreach (ClaimPostDto claimPostDto in claimPostDtos)
+        {
+            bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaims boardClaim);
+            if (!succeeded) return null;
+            board.UpdateUserClaim(boardClaim, claimPostDto.ClaimValue);
+        }
+
+        await unitOfWork.SaveChangesAsync();
+        return board.BoardUserClaims.Select(bc => bc.ToGetDto()).ToList();
     }
 
     public async Task<List<UserGetDto>> GetBoardMembers(int boardId)
@@ -26,60 +37,51 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardMembers.Select(bm => bm.ToGetDto()).ToList();
     }
 
-    public async Task<List<UserGetDto>> UpdateBoardMemberStatus(int boardId, List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
+    public async Task<List<UserGetDto>?> UpdateBoardMemberStatus(int boardId, List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board == null) return null;
+        
         foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
         {
             if (boardMemberStatusUpdateDto.NewMemberState)
             {
-                await boardRepository.AddBoardUserClaimAsync(new BoardUserClaim
-                {
-                    Type = "view_board",
-                    Value = "true",
-                    BoardId = boardId,
-                    UserId = boardMemberStatusUpdateDto.UserId
-                });
+                board.AddMember(boardMemberStatusUpdateDto.UserId);
             }
             else
             {
-                await boardRepository.DeleteBoardClaims(boardId, boardMemberStatusUpdateDto.UserId);
+                board.RemoveMember(boardMemberStatusUpdateDto.UserId);
             }
         }
+
+        await unitOfWork.SaveChangesAsync();
         return await GetBoardMembers(boardId);
     }
 
-    public async Task<BoardGetDto?> CreateBoard(ClaimsPrincipal user, int projectId, BoardCreateDto boardCreateDto)
+    public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
-        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) return null;
-        Guid userId = Guid.Parse(userIdClaim.Value);
+        Board board = new(projectId, boardCreateDto.BoardName, currentUser.UserId);
+        await unitOfWork.SaveChangesAsync();
         
-        Board? board = await boardRepository.CreateAsync(boardCreateDto.FromCreateDto(userId, projectId));
-        if (board == null) return null;
-
-        await UpdateBoardMemberStatus(board.BoardId, [ new BoardMemberStatusUpdateDto(userId, true) ]);
-        await UpdateBoardUserClaim(board.BoardId, userId, [
-            new ClaimPostDto("manage_users", "true"),
-            new ClaimPostDto("manage_board", "true"),
-            new ClaimPostDto("manage_cardlists", "true"),
-            new ClaimPostDto("manage_cards", "true"),
-            new ClaimPostDto("manage_labels", "true"),
-        ]);
+        board.AddMember(currentUser.UserId);
+        foreach (BoardClaims boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaims>())
+        {
+            board.AddUserClaim(boardClaim, "true", currentUser.UserId);
+        }
         
         BoardGetDto boardGetDto = board.ToGetDto();
         boardNotificationService.CreateBoard(Guid.NewGuid(), projectId, boardGetDto);
         return boardGetDto;
     }
 
-    public async Task<BoardGetDto?> UpdateBoard(ClaimsPrincipal user, int projectId, BoardUpdateDto boardUpdateDto)
+    public async Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
     {
-        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) return null;
-        Guid userId = Guid.Parse(userIdClaim.Value);
-        
-        Board? board = await boardRepository.UpdateAsync(boardUpdateDto.FromUpdateDto(userId));
+        Board? board = await boardRepository.GetAsync(boardUpdateDto.BoardId);
         if (board == null) return null;
-
+        
+        board.ChangeName(boardUpdateDto.BoardName);
+        await unitOfWork.SaveChangesAsync();
+        
         BoardGetDto boardGetDto = board.ToGetDto();
         boardNotificationService.UpdateBoard(Guid.NewGuid(), projectId, boardGetDto);
         return boardGetDto;
@@ -88,12 +90,10 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     public async Task<bool> DeleteBoard(int projectId, int boardId)
     {
         bool succeeded = await boardRepository.DeleteAsync(boardId);
-
         if (succeeded)
         {
             boardNotificationService.DeleteBoard(Guid.NewGuid(), projectId, boardId);
         }
-        
         return succeeded;
     }
 

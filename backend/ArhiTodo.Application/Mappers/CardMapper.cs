@@ -5,15 +5,6 @@ namespace ArhiTodo.Application.Mappers;
 
 public static class CardMapper
 {
-    public static Card FromCreateDto(this CardCreateDto cardCreateDto, int cardListId)
-    {
-        return new Card
-        {
-            CardListId = cardListId,
-            CardName = cardCreateDto.CardName
-        };
-    }
-
     public static CardGetDto ToGetDto(this Card card)
     {
         return new CardGetDto
@@ -22,7 +13,7 @@ public static class CardMapper
             IsDone = card.IsDone,
             CardName = card.CardName,
             CardDescription = card.CardDescription,
-            LabelIds = card.CardLabels.Select(cl => cl.LabelId).ToList(),
+            LabelIds = card.Labels.Select(l => l.LabelId).ToList(),
             Checklists = card.Checklists.Select(cl => cl.ToGetDto()).ToList()
         };
     }
