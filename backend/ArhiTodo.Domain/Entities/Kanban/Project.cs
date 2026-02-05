@@ -27,6 +27,11 @@ public class Project
         OwnedByUserId = user.UserId;
     }
 
+    public void ChangeName(string projectName)
+    {
+        ProjectName = projectName;
+    }
+
     public void AddProjectManager(ProjectManager user)
     {
         if (_projectManagers.Exists(pm => pm.UserId == user.UserId))
@@ -35,6 +40,16 @@ public class Project
         }
 
         _projectManagers.Add(user);
+    }
+
+    public bool RemoveProjectManager(Guid projectManagerId)
+    {
+        ProjectManager? projectManager = _projectManagers.FirstOrDefault(pm => pm.UserId == projectManagerId);
+        if (projectManager == null)
+        {
+            throw new NothingToDeleteException("The project manager cannot be deleted, because it wasn't found");
+        }
+        return _projectManagers.Remove(projectManager);
     }
 
     public void AddBoard(Board board, Guid userId)

@@ -1,71 +1,84 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Mappers;
+using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class ProjectService(IProjectRepository projectRepository, IProjectNotificationService projectNotificationService) : IProjectService
+public class ProjectService(IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
+    IUserRepository userRepository, IProjectNotificationService projectNotificationService, ICurrentUser currentUser) : IProjectService
 {
     public async Task<List<UserGetDto>?> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project == null) return null;
+        
         foreach (ProjectManagerStatusUpdateDto projectManagerStatusUpdateDto in projectManagerStatusUpdateDtos)
         {
             if (projectManagerStatusUpdateDto.NewManagerState)
             {
-                await projectRepository.AddProjectManager(new ProjectManager { ProjectId = projectId, UserId = projectManagerStatusUpdateDto.UserId });
+                project.AddProjectManager(new ProjectManager(projectId, projectManagerStatusUpdateDto.UserId));
             }
             else
             {
-                await projectRepository.RemoveProjectManager(projectId, projectManagerStatusUpdateDto.UserId);
+                project.RemoveProjectManager(projectManagerStatusUpdateDto.UserId);
             }
         }
-        
+
+        await unitOfWork.SaveChangesAsync();
         return await GetProjectManagers(projectId);
     }
 
-    public async Task<bool> RemoveProjectManager(int projectId, Guid userId)
+    public async Task<bool> RemoveProjectManager(int projectId, Guid projectManagerId)
     {
-        bool succeeded = await projectRepository.RemoveProjectManager(projectId, userId);
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project == null) return false;
+        
+        bool succeeded = project.RemoveProjectManager(projectManagerId);
+        if (succeeded)
+        {
+            await unitOfWork.SaveChangesAsync();
+        }
         return succeeded;
     }
 
-    public async Task<List<UserGetDto>> GetProjectManagers(int projectId)
+    public async Task<List<UserGetDto>?> GetProjectManagers(int projectId)
     {
-        List<User> projectManagers = await projectRepository.GetProjectManagers(projectId);
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project == null) return null;
+
+        List<User> projectManagers =
+            await userRepository.GetUsers(project.ProjectManagers.Select(pm => pm.UserId).ToList());
         return projectManagers.Select(pm => pm.ToGetDto()).ToList();
     }
 
-    public async Task<ProjectGetDto?> CreateProject(ClaimsPrincipal user, ProjectCreateDto projectCreateDto)
+    public async Task<ProjectGetDto?> CreateProject(ProjectCreateDto projectCreateDto)
     {
-        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) return null;
-        Guid userId = Guid.Parse(userIdClaim.Value);
+        User? foundUser = await userRepository.GetUser(currentUser.UserId);
+        if (foundUser == null) return null;
         
-        Project project = projectCreateDto.FromCreateDto(userId);
-        await projectRepository.CreateAsync(project);
-
-        await UpdateProjectManagerStates(project.ProjectId, [
-            new ProjectManagerStatusUpdateDto(userId, true)
-        ]);
+        Project project = new(projectCreateDto.ProjectName, foundUser);
+        await unitOfWork.SaveChangesAsync(); // To apply the new id
+        project.AddProjectManager(new ProjectManager(project.ProjectId, foundUser.UserId));
         
         return project.ToGetDto();
     }
 
-    public async Task<ProjectGetDto?> UpdateProject(ClaimsPrincipal user, ProjectUpdateDto projectUpdateDto)
+    public async Task<ProjectGetDto?> UpdateProject(ProjectUpdateDto projectUpdateDto)
     {
-        Claim? userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null) return null;
-        Guid userId = Guid.Parse(userIdClaim.Value);
-        
-        Project? project = await projectRepository.UpdateProject(projectUpdateDto.FromUpdateDto(userId));
+        Project? project = await projectRepository.GetAsync(projectUpdateDto.ProjectId);
         if (project == null) return null;
 
+        project.ChangeName(projectUpdateDto.ProjectName);
+        await unitOfWork.SaveChangesAsync();
+        
         ProjectGetDto projectGetDto = project.ToGetDto();
         projectNotificationService.UpdateProject(projectGetDto);
         return projectGetDto;

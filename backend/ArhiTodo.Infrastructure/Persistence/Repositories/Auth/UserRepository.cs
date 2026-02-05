@@ -6,6 +6,20 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
 
 public class UserRepository(ProjectDataBase database) : IUserRepository
 {
+    public async Task<List<User>> GetUsers(List<Guid> userIds)
+    {
+        List<User> users = await database.Users
+            .Where(u => userIds.Contains(u.UserId))
+            .ToListAsync();
+        return users;
+    }
+
+    public async Task<User?> GetUser(Guid userId)
+    {
+        User? user = await database.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        return user;
+    }
+
     public async Task<List<UserClaim>?> UpdateClaimsAsync(Guid userId, List<UserClaim> claims)
     {
         User? user = await database.Users

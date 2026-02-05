@@ -1,9 +1,13 @@
-﻿using ArhiTodo.Application.Services.Interfaces.Realtime;
+﻿using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 using ArhiTodo.Domain.Services.Auth;
+using ArhiTodo.Infrastructure.Identity;
 using ArhiTodo.Infrastructure.Persistence;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+using ArhiTodo.Infrastructure.Persistence.Repositories.Common;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
 using ArhiTodo.Infrastructure.Realtime.Services;
@@ -20,6 +24,8 @@ public static class InfrastructureInjection
 {
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IBoardRepository, BoardRepository>();
         builder.Services.AddScoped<ICardlistRepository, CardlistRepository>();
@@ -28,6 +34,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IChecklistRepository, ChecklistRepository>();
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
+        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();

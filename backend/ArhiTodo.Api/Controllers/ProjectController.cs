@@ -31,7 +31,8 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpGet("{projectId:int}/managers")]
     public async Task<IActionResult> GetProjectManagers(int projectId)
     {
-        List<UserGetDto> projectManagers = await projectService.GetProjectManagers(projectId);
+        List<UserGetDto>? projectManagers = await projectService.GetProjectManagers(projectId);
+        if (projectManagers == null) return NotFound();
         return Ok(projectManagers);
     }
     
@@ -40,7 +41,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     //[Authorize(Policy = "CreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
-        ProjectGetDto? project = await projectService.CreateProject(User, projectCreateDto);
+        ProjectGetDto? project = await projectService.CreateProject(projectCreateDto);
         if (project == null) return NotFound();
         return Ok(project);
     }
@@ -48,7 +49,7 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
     {
-        ProjectGetDto? project = await projectService.UpdateProject(User, projectUpdateDto);
+        ProjectGetDto? project = await projectService.UpdateProject(projectUpdateDto);
         if (project == null) return NotFound();
         return Ok(project);
     }
