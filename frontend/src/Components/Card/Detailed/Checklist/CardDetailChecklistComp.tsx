@@ -155,7 +155,7 @@ const CardDetailChecklistComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${boardId}/checklist/${props.checklistId}/item`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist/${props.checklistId}/item`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistItemName: addingTaskInputValue })
@@ -266,7 +266,8 @@ const CardDetailChecklistComp = (props: Props) => {
             <div className="card-detail-checklist-items">
                 {checklistItems.map((checklistItem: ChecklistItemGetDto) => {
                     if (!showingCompletedTasks && checklistItem.isDone) return null;
-                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} checklistId={props.checklistId} checklistItem={checklistItem}/>
+                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} cardId={props.cardId}
+                                                        checklistId={props.checklistId} checklistItem={checklistItem}/>
                 })}
             </div>
             <div className="card-detail-checklistitem-add">

@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Domain.Entities.Kanban;
+﻿using ArhiTodo.Domain.Exceptions;
+
+namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Checklist
 {
@@ -12,14 +14,31 @@ public class Checklist
     
     private Checklist() { }
 
-    public Checklist(string checklistName)
+    public Checklist(int cardId, string checklistName)
+    {
+        CardId = cardId;
+        ChecklistName = checklistName;
+    }
+
+    public void RenameChecklist(string checklistName)
     {
         ChecklistName = checklistName;
     }
 
-    public void AddChecklistItem(string checklistItemName)
+    public ChecklistItem AddChecklistItem(string checklistItemName)
     {
         ChecklistItem checklistItem = new(checklistItemName);
         _checklistItems.Add(checklistItem);
+        return checklistItem;
+    }
+
+    public bool RemoveChecklistItem(int checklistItemId)
+    {
+        ChecklistItem? checklistItem = _checklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
+        if (checklistItem == null)
+        {
+            throw new NothingToDeleteException("There is no checklist item with the specified id on this checklist");
+        }
+        return _checklistItems.Remove(checklistItem);
     }
 }

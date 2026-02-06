@@ -1,3 +1,5 @@
+using ArhiTodo.Domain.Exceptions;
+
 namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Card
@@ -41,6 +43,31 @@ public class Card
     public void AddChecklist(Checklist checklist)
     {
         _checklists.Add(checklist);
+    }
+
+    public bool RemoveChecklist(int checklistId)
+    {
+        Checklist? checklist = _checklists.FirstOrDefault(cl => cl.ChecklistId == checklistId);
+        if (checklist == null)
+        {
+            throw new NothingToDeleteException("There is no checklist with specified id on this card!");
+        }
+        return _checklists.Remove(checklist);
+    }
+
+    public ChecklistItem? UpdateChecklistItemState(int checklistItemId, bool isDone)
+    {
+        foreach (Checklist checklist in _checklists)
+        {
+            ChecklistItem? checklistItem =
+                checklist.ChecklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
+            if (checklistItem != null)
+            {
+                checklistItem.UpdateChecklistItemState(isDone);
+                return checklistItem;
+            }
+        }
+        return null;
     }
 
     public void AddLabel(Label label)

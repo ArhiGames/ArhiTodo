@@ -7,6 +7,7 @@ import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 
 interface Props {
+    cardId: number;
     checklistId: number;
     checklistItem: ChecklistItemGetDto;
 }
@@ -43,7 +44,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${boardId}/checklist/item/${checklistItemId}/done/${checked}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist/item/${checklistItemId}/done/${checked}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -94,7 +95,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${boardId}/checklist/${checklistItem.checklistId}/item/${checklistItemId}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist/${checklistItem.checklistId}/item/${checklistItemId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -146,7 +147,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${boardId}/checklist/${props.checklistId}/item`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${props.cardId}/checklist/${props.checklistId}/item`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({
