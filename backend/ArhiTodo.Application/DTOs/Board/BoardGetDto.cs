@@ -10,5 +10,5 @@ public class BoardGetDto
 
     public required Guid OwnedByUserId { get; set; }
     
-    public List<CardListGetDto> CardLists { get; set; } = new();
+    public List<CardListGetDto> CardLists { get; set; } = [];
 }

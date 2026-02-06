@@ -13,7 +13,7 @@ public static class CardMapper
             IsDone = card.IsDone,
             CardName = card.CardName,
             CardDescription = card.CardDescription,
-            LabelIds = card.Labels.Select(l => l.LabelId).ToList(),
+            LabelIds = card.Labels.Select(cl => cl.LabelId).ToList(),
             Checklists = card.Checklists.Select(cl => cl.ToGetDto()).ToList()
         };
     }

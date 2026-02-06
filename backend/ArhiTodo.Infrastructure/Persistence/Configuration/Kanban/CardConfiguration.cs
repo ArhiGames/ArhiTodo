@@ -14,8 +14,6 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
             .IsRequired()
             .HasMaxLength(90);
 
-        builder.Property(c => c.CardDescription);
-
         builder.HasOne<CardList>()
             .WithMany(cl => cl.Cards)
             .HasForeignKey(c => c.CardListId)

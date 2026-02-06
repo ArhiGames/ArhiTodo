@@ -14,8 +14,8 @@ public class Card
     private readonly List<Checklist> _checklists = [];
     public IReadOnlyCollection<Checklist> Checklists => _checklists.AsReadOnly();
     
-    private readonly List<Label> _labels = [];
-    public IReadOnlyCollection<Label> Labels => _labels.AsReadOnly();
+    private readonly List<CardLabel> _labels = [];
+    public IReadOnlyCollection<CardLabel> Labels => _labels.AsReadOnly();
 
     private Card() { }
 
@@ -72,12 +72,12 @@ public class Card
 
     public void AddLabel(Label label)
     {
-        _labels.Add(label);
+        _labels.Add(new CardLabel(label.LabelId, CardId));
     }
 
     public bool RemoveLabel(int labelId)
     {
-        Label? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
+        CardLabel? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
         if (label == null)
         {
             throw new NothingToDeleteException("There is no label with the specified id on this card!");

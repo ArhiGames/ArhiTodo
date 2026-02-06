@@ -37,7 +37,8 @@ public class LabelsController(ILabelService labelService) : ControllerBase
     [HttpGet("board/{boardId:int}/label")]
     public async Task<IActionResult> GetLabels(int boardId)
     {
-        List<LabelGetDto> labels = await labelService.GetEveryLabel(boardId);
+        List<LabelGetDto>? labels = await labelService.GetEveryLabel(boardId);
+        if (labels == null) return NotFound();
         return Ok(labels);
     } 
 }

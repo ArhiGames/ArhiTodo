@@ -12,12 +12,12 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     {
         List<User> users = await database.Users
             .Include(u => u.BoardUserClaims.Where(buc => buc.BoardId == boardId))
-            .Where(u => u.BoardUserClaims.Any(buc => buc.BoardId == boardId && buc.Type == "view_board" && buc.Value == "true"))
+            .Where(u => u.BoardUserClaims.Any(buc => buc.BoardId == boardId && buc.Type == nameof(BoardClaims.ViewBoard) && buc.Value == "true"))
             .ToListAsync();
         return users;
     }
 
-    public async Task<Board?> CreateAsync(Board board)
+    public async Task<Board> CreateAsync(Board board)
     {
         EntityEntry<Board> boardEntry = database.Boards.Add(board);
         await database.SaveChangesAsync();
@@ -46,8 +46,8 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     {
         IQueryable<Board> query = database.Boards
             .Include(b => b.Owner)
-            .Include(b => b.BoardUserClaims)
-            .Include(b => b.Labels);
+            .Include(b => b.Labels)
+            .Include(b => b.BoardUserClaims);
 
         if (includeChecklistItems)
         {
@@ -64,13 +64,23 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         }
         else if (includeCards)
         {
-            query = query.Include(b => b.CardLists)
-                .ThenInclude(cl => cl.Cards);
+            query = query
+                .Include(b => b.CardLists)
+                    .ThenInclude(cl => cl.Cards)
+                        .ThenInclude(c => c.Labels);
         }
         else if (includeCardlists)
         {
             query = query.Include(b => b.CardLists);
         }
+
+        if (includeCardlists && includeCards)
+        {
+            query = query
+                .Include(b => b.CardLists)
+                    .ThenInclude(cl => cl.Cards)
+                        .ThenInclude(c => c.Labels);
+        } 
 
         Board? board = await query.AsSplitQuery().FirstOrDefaultAsync(b => b.BoardId == boardId);
         return board;

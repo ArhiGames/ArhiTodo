@@ -63,10 +63,12 @@ public class ProjectService(IUnitOfWork unitOfWork, IProjectRepository projectRe
     {
         User? foundUser = await userRepository.GetUser(currentUser.UserId);
         if (foundUser == null) return null;
-        
-        Project project = new(projectCreateDto.ProjectName, foundUser);
-        await unitOfWork.SaveChangesAsync(); // To apply the new id
+
+        Project project = await projectRepository.CreateAsync(
+            new Project(projectCreateDto.ProjectName, foundUser));
         project.AddProjectManager(new ProjectManager(project.ProjectId, foundUser.UserId));
+
+        await unitOfWork.SaveChangesAsync();
         
         return project.ToGetDto();
     }

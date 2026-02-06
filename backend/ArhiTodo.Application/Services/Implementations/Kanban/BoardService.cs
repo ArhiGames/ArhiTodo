@@ -60,14 +60,16 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
-        Board board = new(projectId, boardCreateDto.BoardName, currentUser.UserId);
-        await unitOfWork.SaveChangesAsync();
+        Board board = await boardRepository.CreateAsync(
+            new Board(projectId, boardCreateDto.BoardName, currentUser.UserId));
         
         board.AddMember(currentUser.UserId);
         foreach (BoardClaims boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaims>())
         {
+            if (boardClaim == BoardClaims.ViewBoard) continue; // Handled by the AddMember method
             board.AddUserClaim(boardClaim, "true", currentUser.UserId);
         }
+        await unitOfWork.SaveChangesAsync();
         
         BoardGetDto boardGetDto = board.ToGetDto();
         boardNotificationService.CreateBoard(Guid.NewGuid(), projectId, boardGetDto);
@@ -105,7 +107,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<BoardGetDto?> GetBoard(int boardId)
     {
-        Board? board = await boardRepository.GetAsync(boardId);
+        Board? board = await boardRepository.GetAsync(boardId, true, true, true, true);
         return board?.ToGetDto();
     }
 }

@@ -42,9 +42,9 @@ public class Board
         _boardUserClaims.Add(boardUserClaim);
     }
     
-    public void UpdateUserClaim(BoardClaims boardClaims, string newValue)
+    public void UpdateUserClaim(BoardClaims boardClaim, string newValue)
     {
-        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaims.ToString());
+        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaim.ToString());
         boardUserClaim?.UpdateValue(newValue);
     }
 

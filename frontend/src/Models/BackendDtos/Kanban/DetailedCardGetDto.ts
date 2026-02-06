@@ -5,6 +5,6 @@ export type DetailedCardGetDto = {
     isDone: boolean;
     cardName: string;
     cardDescription: string;
+    labels: number[];
     checklists: ChecklistGetDto[];
-    labels: { labelId: number }[];
 }

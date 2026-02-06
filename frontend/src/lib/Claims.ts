@@ -49,27 +49,27 @@ export const defaultGlobalClaims: DefaultClaim[] = [
 
 export const defaultBoardClaims: DefaultClaim[] = [
     {
-        claimType: "manage_users",
+        claimType: "ManageUsers",
         claimName: "Manage users",
         claimDescription: "If enabled the user can add, remove users, additionally the user can change the permissions of users"
     },
     {
-        claimType: "manage_board",
+        claimType: "ManageBoard",
         claimName: "Manage board",
         claimDescription: "If enabled the user can edit & delete this board"
     },
     {
-        claimType: "manage_cardlists",
+        claimType: "ManageCardLists",
         claimName: "Manage card lists",
         claimDescription: "If enabled the user can create, edit & delete card lists"
     },
     {
-        claimType: "manage_cards",
+        claimType: "ManageCards",
         claimName: "Manage cards",
         claimDescription: "If enabled the user can create, edit & delete cards"
     },
     {
-        claimType: "manage_labels",
+        claimType: "ManageLabels",
         claimName: "Manage labels",
         claimDescription: "If enabled the user can create, edit & delete labels"
     },

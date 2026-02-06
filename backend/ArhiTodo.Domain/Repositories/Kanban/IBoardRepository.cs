@@ -7,7 +7,7 @@ public interface IBoardRepository
 {
     Task<List<User>> GetBoardMembers(int boardId);
     
-    Task<Board?> CreateAsync(Board board);
+    Task<Board> CreateAsync(Board board);
     Task<bool> DeleteAsync(int boardId);
     Task<Board?> GetAsync(int boardId, bool includeCardlists = true, bool includeCards = true, 
         bool includeChecklists = false, bool includeChecklistItems = false);

@@ -24,6 +24,7 @@ public static class InfrastructureInjection
 {
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -31,7 +32,6 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<ICardRepository, CardRepository>();
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
-        builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
