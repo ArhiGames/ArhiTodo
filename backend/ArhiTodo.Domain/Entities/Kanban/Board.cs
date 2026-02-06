@@ -1,4 +1,5 @@
 using ArhiTodo.Domain.Entities.Auth;
+using ArhiTodo.Domain.Exceptions;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
@@ -71,9 +72,20 @@ public class Board
         return cardList != null && _cardLists.Remove(cardList);
     }
     
-    public void AddLabel(string labelText, int labelColor)
+    public Label AddLabel(string labelText, int labelColor)
     {
         Label label = new(BoardId, labelText, labelColor);
         _labels.Add(label);
+        return label;
+    }
+
+    public bool RemoveLabel(int labelId)
+    {
+        Label? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
+        if (label == null)
+        {
+            throw new NothingToDeleteException("There is no label to delete with the specified id on this board");
+        }
+        return _labels.Remove(label);
     }
 }

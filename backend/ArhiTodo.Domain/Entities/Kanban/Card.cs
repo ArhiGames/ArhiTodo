@@ -74,4 +74,14 @@ public class Card
     {
         _labels.Add(label);
     }
+
+    public bool RemoveLabel(int labelId)
+    {
+        Label? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
+        if (label == null)
+        {
+            throw new NothingToDeleteException("There is no label with the specified id on this card!");
+        }
+        return _labels.Remove(label);
+    }
 }

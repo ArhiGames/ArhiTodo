@@ -74,7 +74,7 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
         BoardGetDto? boardGetDto = await boardService.GetBoard(boardId);
         if (boardGetDto == null) return NotFound();
         
-        List<LabelGetDto> labels = await labelService.GetEveryLabel(boardId);
+        List<LabelGetDto>? labels = await labelService.GetEveryLabel(boardId);
         return Ok(new { board = boardGetDto, labels });
     }
 }

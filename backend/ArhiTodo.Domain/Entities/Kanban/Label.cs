@@ -16,4 +16,14 @@ public class Label
         LabelText = labelText;
         LabelColor = labelColor;
     }
+
+    public void RenameLabel(string labelText)
+    {
+        LabelText = labelText;
+    }
+
+    public void ChangeLabelColor(int labelColor)
+    {
+        LabelColor = labelColor;
+    }
 }

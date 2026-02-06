@@ -46,7 +46,8 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     {
         IQueryable<Board> query = database.Boards
             .Include(b => b.Owner)
-            .Include(b => b.BoardUserClaims);
+            .Include(b => b.BoardUserClaims)
+            .Include(b => b.Labels);
 
         if (includeChecklistItems)
         {
