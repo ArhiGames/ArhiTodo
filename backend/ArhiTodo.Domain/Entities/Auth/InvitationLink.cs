@@ -1,25 +1,54 @@
-﻿namespace ArhiTodo.Domain.Entities.Auth;
+﻿using ArhiTodo.Domain.Exceptions.Auth;
+
+namespace ArhiTodo.Domain.Entities.Auth;
 
 public class InvitationLink
 {
-    public int InvitationLinkId { get; set; }
+    public int InvitationLinkId { get; private set; }
     
-    public required string InvitationKey { get; set; }
+    public string InvitationKey { get; private set; }
 
-    public required string InvitationLinkName { get; set; }
+    public string InvitationLinkName { get; private set; }
+
+    public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
     
-    public required DateTimeOffset CreatedDate { get; set; }
-    
-    public required DateTimeOffset ExpiresDate { get; set; }
-    
-    public required Guid CreatedByUser { get; set; }
+    public DateTimeOffset ExpiresDate { get; private set; }
     
     // 0 => infinite
-    public required int MaxUses { get; set; }
+    public int MaxUses { get; private set; }
 
-    public int Uses { get; set; } = 0;
+    public int Uses { get; private set; }
     
     // If the invitation link is active, can be active even if the expire date has been crossed
     // Just means if someone manually deactivated this key 
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; private set; } = true;
+    
+    public Guid CreatedByUserId { get; private set; }
+    public User CreatedByUser { get; } = null!;
+
+    private InvitationLink() { }
+    
+    public InvitationLink(string invitationKey, string invitationLinkName, int maxUses, DateTimeOffset expiresDate, Guid createdByUserId)
+    {
+        InvitationKey = invitationKey;
+        InvitationLinkName = invitationLinkName;
+        MaxUses = maxUses;
+        ExpiresDate = expiresDate;
+        CreatedByUserId = createdByUserId;
+    }
+
+    public void Use()
+    {
+        if (Uses >= MaxUses)
+        {
+            throw new InvitationLinkOverused();
+        }
+
+        Uses++;
+    }
+
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 }

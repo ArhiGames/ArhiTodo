@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
 
-public class AccountRepository(IInvitationRepository invitationRepository, ProjectDataBase database) : IAccountRepository
+public class AccountRepository(ProjectDataBase database) : IAccountRepository
 {
     public async Task<User?> CreateUserAsync(InvitationLink invitationLink, User user)
     {
@@ -17,12 +17,8 @@ public class AccountRepository(IInvitationRepository invitationRepository, Proje
             EntityEntry<User> userEntry = database.Users.Add(user);
             await database.SaveChangesAsync();
 
-            bool succeeded = await invitationRepository.UseInvitationLink(invitationLink.InvitationLinkId);
-            if (!succeeded)
-            {
-                await transaction.RollbackAsync();
-                return null;
-            }
+            invitationLink.Use();
+            await database.SaveChangesAsync();
 
             await transaction.CommitAsync();
 
@@ -30,6 +26,7 @@ public class AccountRepository(IInvitationRepository invitationRepository, Proje
         }
         catch (Exception)
         {
+            await transaction.RollbackAsync();
             return null;
         }
     }

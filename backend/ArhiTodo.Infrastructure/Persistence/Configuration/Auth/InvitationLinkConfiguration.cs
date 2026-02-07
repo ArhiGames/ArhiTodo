@@ -25,8 +25,14 @@ public class InvitationLinkConfiguration : IEntityTypeConfiguration<InvitationLi
         builder.Property(il => il.ExpiresDate)
             .IsRequired();
 
-        builder.Property(il => il.CreatedByUser)
-            .IsRequired()
-            .HasMaxLength(256);
+        builder.HasOne(il => il.CreatedByUser)
+            .WithMany()
+            .HasForeignKey(il => il.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasQueryFilter(il => il.IsActive &&
+                                     (il.MaxUses == 0 || il.Uses < il.MaxUses) &&
+                                     (il.ExpiresDate == DateTimeOffset.UnixEpoch ||
+                                      DateTimeOffset.UtcNow < il.ExpiresDate));
     }
 }

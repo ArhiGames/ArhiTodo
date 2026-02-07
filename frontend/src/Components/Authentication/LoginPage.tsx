@@ -13,7 +13,7 @@ const LoginPage = () => {
 
     const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
-        if (userName.length <= 0 || (password.length <= 8 && password !== "admin")) return;
+        if (userName.length <= 0 || (password.length < 8 && password !== "admin")) return;
 
         e.preventDefault();
         try {

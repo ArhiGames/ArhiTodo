@@ -71,7 +71,7 @@ public class AccountController(IAuthService authService) : ControllerBase
     [HttpPut("account/change/password")]
     public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordDto updatePasswordDto)
     {
-        PasswordAuthorizerResult passwordAuthorizerResult = await authService.ChangePassword(User, updatePasswordDto);
+        PasswordAuthorizerResult passwordAuthorizerResult = await authService.ChangePassword(updatePasswordDto);
         if (!passwordAuthorizerResult.Succeeded) return Unauthorized(passwordAuthorizerResult);
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         return Ok(passwordAuthorizerResult);
@@ -96,7 +96,7 @@ public class AccountController(IAuthService authService) : ControllerBase
     {
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         
-        bool succeeded = await authService.Logout(User, Request.Headers.UserAgent.ToString());
+        bool succeeded = await authService.Logout(Request.Headers.UserAgent.ToString());
         if (!succeeded) return Unauthorized();
         
         return Ok();

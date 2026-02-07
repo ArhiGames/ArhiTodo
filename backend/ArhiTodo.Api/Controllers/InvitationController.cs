@@ -13,7 +13,7 @@ public class InvitationController(IInvitationService invitationService) : Contro
     //[Authorize(Policy = "InviteUsers")]
     public async Task<IActionResult> GenerateInvitationLink([FromBody] GenerateInvitationDto generateInvitationDto)
     {
-        InvitationLink? createdInvitationLink = await invitationService.GenerateInvitationLink(User, generateInvitationDto);
+        InvitationLink? createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
         if (createdInvitationLink == null) return NotFound();
         return Ok(createdInvitationLink);
     }

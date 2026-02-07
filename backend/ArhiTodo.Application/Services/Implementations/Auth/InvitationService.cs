@@ -1,18 +1,16 @@
-﻿using System.Security.Claims;
-using ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Common;
 
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
-public class InvitationService(IInvitationRepository invitationRepository, ITokenGeneratorService tokenGeneratorService) : IInvitationService
+public class InvitationService(IInvitationRepository invitationRepository, ITokenGeneratorService tokenGeneratorService,
+    ICurrentUser currentUser, IUnitOfWork unitOfWork) : IInvitationService
 {
-    public async Task<InvitationLink?> GenerateInvitationLink(ClaimsPrincipal user, GenerateInvitationDto generateInvitationDto)
+    public async Task<InvitationLink?> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto)
     {
-        Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userId == null) return null;
-        
         byte[] secureInvitationLinkToken = tokenGeneratorService.GenerateSecureToken(8);
         
         DateTimeOffset createdDate = DateTimeOffset.UtcNow;
@@ -25,30 +23,33 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
             _ => throw new InvalidOperationException()
         };
 
-        InvitationLink invitationLink = new()
-        {
-            InvitationLinkName = generateInvitationDto.InvitationLinkName,
-            InvitationKey = Convert.ToHexString(secureInvitationLinkToken),
-            CreatedDate = createdDate,
-            ExpiresDate = expireDate,
-            CreatedByUser = Guid.Parse(userId.Value),
-            MaxUses = generateInvitationDto.MaxUses
-        };
+        string invitationKey = Convert.ToHexString(secureInvitationLinkToken);
+
+        InvitationLink invitationLink = new(invitationKey,
+            generateInvitationDto.InvitationLinkName,
+            generateInvitationDto.MaxUses,
+            expireDate,
+            currentUser.UserId);
         
         InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(invitationLink);
         return generatedInvitationLink;
+    }
+    
+    public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
+    {
+        InvitationLink? invitationLink = await invitationRepository.GetInvitationLinkById(invitationLinkId);
+        if (invitationLink == null) return false;
+        
+        invitationLink.Deactivate();
+        await unitOfWork.SaveChangesAsync();
+        
+        return true;
     }
 
     public async Task<InvitationLink?> GetUsableInvitationLink(string invitationLinkKey)
     {
         InvitationLink? invitationLink = await invitationRepository.GetUsableInvitationLink(invitationLinkKey);
         return invitationLink;
-    }
-
-    public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
-    {
-        bool succeeded = await invitationRepository.InvalidateInvitationLinkAsync(invitationLinkId);
-        return succeeded;
     }
 
     public async Task<List<InvitationLink>> GetInvitationLinks()

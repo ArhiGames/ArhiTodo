@@ -11,7 +11,8 @@ namespace ArhiTodo.Application.Services.Implementations.Auth;
 
 public class AuthService(IBoardRepository boardRepository, IAccountRepository accountRepository, ISessionRepository sessionRepository, 
     ITokenService tokenService, IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
-    ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer) : IAuthService
+    ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer, 
+    ICurrentUser currentUser) : IAuthService
 {
     public async Task<PasswordAuthorizerResult> CreateAccount(CreateAccountDto createAccountDto)
     {
@@ -55,7 +56,7 @@ public class AuthService(IBoardRepository boardRepository, IAccountRepository ac
         return new LoginGetDto(jwt, refreshToken);
     }
 
-    public async Task<PasswordAuthorizerResult> ChangePassword(ClaimsPrincipal user, UpdatePasswordDto updatePasswordDto)
+    public async Task<PasswordAuthorizerResult> ChangePassword(UpdatePasswordDto updatePasswordDto)
     {
         PasswordAuthorizerResult passwordAuthorizerResult =
             passwordAuthorizer.VerifyPasswordSecurity(updatePasswordDto.NewPassword);
@@ -63,22 +64,17 @@ public class AuthService(IBoardRepository boardRepository, IAccountRepository ac
         {
             return passwordAuthorizerResult;
         }
-            
-        Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userId == null) return new PasswordAuthorizerResult(false, []);
 
-        Guid guid = Guid.Parse(userId.Value);
-
-        User? foundUser = await accountRepository.GetUserByGuidAsync(guid);
+        User? foundUser = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
         if (foundUser == null) return new PasswordAuthorizerResult(false, []);
 
         bool isCorrectPassword = passwordHashService.Verify(updatePasswordDto.OldPassword, foundUser.HashedPassword);
         if (!isCorrectPassword) return new PasswordAuthorizerResult(false, []);
 
         string hashedPassword = passwordHashService.Hash(updatePasswordDto.NewPassword);
-        bool succeeded = await accountRepository.ChangePassword(guid, hashedPassword);
+        bool succeeded = await accountRepository.ChangePassword(currentUser.UserId, hashedPassword);
 
-        await LogoutEveryDevice(guid);
+        await LogoutEveryDevice(currentUser.UserId);
         
         return new PasswordAuthorizerResult(succeeded, []);
     }
@@ -124,14 +120,9 @@ public class AuthService(IBoardRepository boardRepository, IAccountRepository ac
         return jwt;
     }
 
-    public async Task<bool> Logout(ClaimsPrincipal user, string userAgent)
+    public async Task<bool> Logout(string userAgent)
     {
-        Claim? userId = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userId == null) return false;
-
-        Guid guid = Guid.Parse(userId.Value); 
-        
-        UserSession? userSession = await sessionRepository.GetUserSessionByAgent(guid, userAgent);
+        UserSession? userSession = await sessionRepository.GetUserSessionByAgent(currentUser.UserId, userAgent);
         if (userSession == null) return false;
 
         bool succeeded = await sessionRepository.InvalidateUserSession(userSession.SessionId);
