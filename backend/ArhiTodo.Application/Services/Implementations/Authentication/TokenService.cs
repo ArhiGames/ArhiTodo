@@ -1,12 +1,12 @@
-﻿using ArhiTodo.Application.Services.Interfaces.Auth;
+﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Common;
 
-namespace ArhiTodo.Application.Services.Implementations.Auth;
+namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
 public class TokenService(IUnitOfWork unitOfWork, ITokenGeneratorService tokenGeneratorService) : ITokenService
 {
-    public async Task<string?> GenerateRefreshTokenAndAddSessionEntry(User user, string userAgent)
+    public async Task<string> GenerateRefreshTokenAndAddSessionEntry(User user, string userAgent)
     {
         byte[] refreshToken = tokenGeneratorService.GenerateSecureToken(32);
         string hashedToken = tokenGeneratorService.Hash(refreshToken, 32);

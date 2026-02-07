@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Authentication;
 
-namespace ArhiTodo.Application.Services.Implementations.Auth;
+namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
 public class TokenGeneratorService : ITokenGeneratorService
 {

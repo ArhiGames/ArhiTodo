@@ -1,6 +1,7 @@
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectGetDto = ArhiTodo.Application.DTOs.Project.ProjectGetDto;
@@ -36,9 +37,8 @@ public class ProjectController(IProjectService projectService) : ControllerBase
         return Ok(projectManagers);
     }
     
+    [Authorize(Policy = nameof(UserClaimTypes.CreateProjects))]
     [HttpPost]
-    // @Todo
-    //[Authorize(Policy = "CreateProjects")]
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
         ProjectGetDto? project = await projectService.CreateProject(projectCreateDto);

@@ -1,5 +1,4 @@
 using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Exceptions;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 

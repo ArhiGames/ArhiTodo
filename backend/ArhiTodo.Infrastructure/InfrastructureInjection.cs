@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.Services.Interfaces.Auth;
+﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Repositories.Auth;
 using ArhiTodo.Domain.Repositories.Common;
@@ -12,6 +13,7 @@ using ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
 using ArhiTodo.Infrastructure.Realtime.Services;
 using ArhiTodo.Infrastructure.Services;
+using ArhiTodo.Infrastructure.Services.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,7 @@ public static class InfrastructureInjection
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -33,7 +36,6 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-        builder.Services.AddScoped<ISessionRepository, SessionRepository>();
         builder.Services.AddScoped<IJwtTokenGeneratorService, JwtTokenGeneratorService>();
         builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
 

@@ -1,14 +1,12 @@
-﻿using ArhiTodo.Domain.Exceptions.Auth;
-
-namespace ArhiTodo.Domain.Entities.Auth;
+﻿namespace ArhiTodo.Domain.Entities.Auth;
 
 public class InvitationLink
 {
     public int InvitationLinkId { get; private set; }
-    
-    public string InvitationKey { get; private set; }
 
-    public string InvitationLinkName { get; private set; }
+    public string InvitationKey { get; private set; } = string.Empty;
+
+    public string InvitationLinkName { get; private set; } = string.Empty;
 
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
     

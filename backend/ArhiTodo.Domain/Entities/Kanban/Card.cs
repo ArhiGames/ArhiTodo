@@ -1,5 +1,3 @@
-using ArhiTodo.Domain.Exceptions;
-
 namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Card

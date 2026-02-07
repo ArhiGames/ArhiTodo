@@ -11,14 +11,14 @@ export const defaultGlobalClaims: DefaultClaim[] = [
         claimDescription: "If enabled the user can create projects where ever he wants"
     },
     {
-        claimType: "DeleteOthersBoards",
-        claimName: "Delete projects",
-        claimDescription: "If enabled the user can just delete other's boards without special permissions"
+        claimType: "ModifyOthersProjects",
+        claimName: "Modify projects",
+        claimDescription: "If enabled the user can just access other's projects & edit them without special permissions"
     },
     {
-        claimType: "ModifyOthersBoards",
-        claimName: "Modify projects",
-        claimDescription: "If enabled the user has writing permissions for every project & board"
+        claimType: "DeleteOthersProjects",
+        claimName: "Delete projects",
+        claimDescription: "If enabled the user can just delete other's projects without special permissions"
     },
     {
         claimType: "AccessAdminDashboard",

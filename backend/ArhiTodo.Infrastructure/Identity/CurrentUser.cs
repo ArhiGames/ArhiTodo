@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Authentication;
 using Microsoft.AspNetCore.Http;
 
 namespace ArhiTodo.Infrastructure.Identity;

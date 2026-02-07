@@ -1,9 +1,10 @@
-﻿using ArhiTodo.Application.Services.Interfaces.Auth;
-using ArhiTodo.Domain.Entities.Lib;
+﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ArhiTodo.Application.Services.Implementations.Auth;
+namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
 public class PasswordAuthorizer : IPasswordAuthorizer
 {
@@ -31,7 +32,7 @@ public class PasswordAuthorizer : IPasswordAuthorizer
         _requireDigit = requireDigitStr?.ToLower() is "true";
     }
     
-    public PasswordAuthorizerResult VerifyPasswordSecurity(string password)
+    public Result VerifyPasswordSecurity(string password)
     {
         bool containsWhiteSpace = password.Contains(' ');
         bool hasRequiredDigitAmount = password.Length >= _requiredDigits;
@@ -42,12 +43,21 @@ public class PasswordAuthorizer : IPasswordAuthorizer
         bool succeeded = !containsWhiteSpace && hasRequiredDigitAmount && hasUppercase && hasNonAlphaNumeric &&
                          hasDigit;
 
-        List<Error> errors = new();
-        if (containsWhiteSpace) errors.Add(new Error("MustContainWhiteSpaces", "White spaces are not allowed in passwords!"));
-        if (!hasRequiredDigitAmount) errors.Add(new Error("RequiresDigitAmount", $"The password is required to contain at least {_requiredDigits} characters!"));
-        if (!hasUppercase) errors.Add(new Error("RequiresUppercase", "The password is required to contain at least one uppercase letter!"));
-        if (!hasNonAlphaNumeric) errors.Add(new Error("RequiresNonAlphaNumeric", "The password is required to contain at least one non alpha numeric character!"));
-        if (!hasDigit) errors.Add(new Error("RequiresDigit", "The password is required to contain at least one digit!"));
-        return new PasswordAuthorizerResult(succeeded, errors);
+        if (containsWhiteSpace) return Result.Failure(new Error("MustContainWhiteSpaces", ErrorType.PasswordRequirements, 
+            "White spaces are not allowed in passwords!"));
+        
+        if (!hasRequiredDigitAmount) return Result.Failure(new Error("RequiresDigitAmount", ErrorType.PasswordRequirements, 
+            $"The password is required to contain at least {_requiredDigits} characters!"));
+        
+        if (!hasUppercase) return Result.Failure(new Error("RequiresUppercase", ErrorType.PasswordRequirements,
+            "The password is required to contain at least one uppercase letter!"));
+        
+        if (!hasNonAlphaNumeric) return Result.Failure(new Error("RequiresNonAlphaNumeric", ErrorType.PasswordRequirements,
+            "The password is required to contain at least one non alpha numeric character!"));
+        
+        if (!hasDigit) return Result.Failure(new Error("RequiresDigit", ErrorType.PasswordRequirements,
+            "The password is required to contain at least one digit!"));
+
+        return succeeded ? Result.Success() : Errors.PasswordRequirements;
     }
 }

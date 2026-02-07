@@ -1,6 +1,4 @@
-﻿using ArhiTodo.Domain.Exceptions;
-
-namespace ArhiTodo.Domain.Entities.Auth;
+﻿namespace ArhiTodo.Domain.Entities.Auth;
 
 public class User
 {
@@ -17,7 +15,7 @@ public class User
     public string? JoinedViaInvitationKey { get; private set; } = string.Empty;
 
     private readonly List<UserSession> _userSessions = [];
-    public IReadOnlyCollection<UserSession> UserSessions => _userSessions;
+    public IReadOnlyCollection<UserSession> UserSessions => _userSessions.Where(us => us.ExpiresAt > DateTimeOffset.UtcNow).ToList();
 
     private readonly List<UserClaim> _userClaims = [];
     public IReadOnlyCollection<UserClaim> UserClaims => _userClaims;
@@ -47,14 +45,19 @@ public class User
         _userSessions.Add(userSession);
     }
 
-    public bool RemoveUserSession(string tokenHash, string userAgent)
+    public bool RemoveUserSession(string userAgent)
     {
-        UserSession? foundUserSession = _userSessions.FirstOrDefault(us => us.TokenHash == tokenHash && us.UserAgent == userAgent);
+        UserSession? foundUserSession = _userSessions.FirstOrDefault(us => us.UserAgent == userAgent);
         if (foundUserSession == null)
         {
             throw new NothingToDeleteException(
                 "There is no user session with the provided hash & user agent on this user");
         }
         return _userSessions.Remove(foundUserSession);
+    }
+
+    public void ClearUserSessions()
+    {
+        _userClaims.Clear();
     }
 }

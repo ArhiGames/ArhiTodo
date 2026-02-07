@@ -1,16 +1,22 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
-using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Application.Services.Interfaces.Authorization;
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
 using ArhiTodo.Domain.Repositories.Common;
 
-namespace ArhiTodo.Application.Services.Implementations.Auth;
+namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
 public class InvitationService(IInvitationRepository invitationRepository, ITokenGeneratorService tokenGeneratorService,
-    ICurrentUser currentUser, IUnitOfWork unitOfWork) : IInvitationService
+    ICurrentUser currentUser, IUnitOfWork unitOfWork, IAuthorizationService authorizationService) : IInvitationService
 {
-    public async Task<InvitationLink?> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto)
+    public async Task<Result<InvitationLink>> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto)
     {
+        bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.InviteOtherUsers));
+        if (!authorized) return Errors.Forbidden;
+        
         byte[] secureInvitationLinkToken = tokenGeneratorService.GenerateSecureToken(8);
         
         DateTimeOffset createdDate = DateTimeOffset.UtcNow;
@@ -32,29 +38,29 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
             currentUser.UserId);
         
         InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(invitationLink);
-        return generatedInvitationLink;
+        return generatedInvitationLink is null ? Errors.Unknown : generatedInvitationLink;
+    }
+
+    public async Task<Result<List<InvitationLink>>> GetInvitationLinks()
+    {
+        bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.InviteOtherUsers));
+        if (!authorized) return Errors.Forbidden;
+        
+        List<InvitationLink> invitationLinks = await invitationRepository.GetInvitationLinksAsync();
+        return invitationLinks;
     }
     
-    public async Task<bool> InvalidateInvitationLink(int invitationLinkId)
+    public async Task<Result> InvalidateInvitationLink(int invitationLinkId)
     {
+        bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.InviteOtherUsers));
+        if (!authorized) return Errors.Forbidden;
+        
         InvitationLink? invitationLink = await invitationRepository.GetInvitationLinkById(invitationLinkId);
-        if (invitationLink == null) return false;
+        if (invitationLink == null) return Errors.NotFound;
         
         invitationLink.Deactivate();
         await unitOfWork.SaveChangesAsync();
         
-        return true;
-    }
-
-    public async Task<InvitationLink?> GetUsableInvitationLink(string invitationLinkKey)
-    {
-        InvitationLink? invitationLink = await invitationRepository.GetUsableInvitationLink(invitationLinkKey);
-        return invitationLink;
-    }
-
-    public async Task<List<InvitationLink>> GetInvitationLinks()
-    {
-        List<InvitationLink> invitationLinks = await invitationRepository.GetInvitationLinksAsync();
-        return invitationLinks;
+        return Result.Success();
     }
 }

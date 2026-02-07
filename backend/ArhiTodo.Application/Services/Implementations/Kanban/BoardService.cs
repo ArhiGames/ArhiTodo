@@ -2,7 +2,7 @@
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
-using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.Auth;

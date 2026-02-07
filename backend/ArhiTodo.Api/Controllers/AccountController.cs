@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
-using ArhiTodo.Application.Services.Interfaces.Auth;
+using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,27 +10,30 @@ namespace ArhiTodo.Controllers;
 
 [Route("auth/")]
 [ApiController]
-public class AccountController(IAuthService authService) : ControllerBase
+public class AccountController(IUserService userService, IAuthService authService) : ControllerBase
 {
+    [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/{page:int}")]
     public async Task<IActionResult> GetAccounts(int page, [FromQuery] bool? includeGlobalPermissions, 
         [FromQuery] int? boardPermissionsBoardId)
     {
-        List<UserGetDto> users = await authService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
+        List<UserGetDto> users = await userService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
         return Ok(users);
     }
 
+    [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/count")]
     public async Task<IActionResult> GetUserCount()
     {
-        int userCount = await authService.GetUserCount();
+        int userCount = await userService.GetUserCount();
         return Ok(new { userCount });
     }
 
+    [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/user/{userId:guid}")]
     public async Task<IActionResult> GetUserAccount(Guid userId)
     {
-        UserGetDto? user = await authService.GetUser(userId);
+        UserGetDto? user = await userService.GetUser(userId);
         if (user == null) return NotFound();
         return Ok(user);
     }
@@ -111,7 +115,7 @@ public class AccountController(IAuthService authService) : ControllerBase
         return Ok();
     }
 
-    [Authorize]
+    [Authorize(Policy = nameof(UserClaimTypes.DeleteUsers))]
     [HttpDelete("accounts/user/{userId:guid}")]
     public async Task<IActionResult> DeleteAccount(Guid userId)
     {

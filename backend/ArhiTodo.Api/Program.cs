@@ -1,5 +1,6 @@
 using System.Text;
 using ArhiTodo.Application;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,28 +86,32 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("CreateProjects", policy =>
+builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(nameof(UserClaimTypes.CreateProjects), policy =>
     {
-        policy.RequireClaim("create_projects", "true");
-    });
-    options.AddPolicy("ManageUsers", policy =>
+        policy.RequireClaim(nameof(UserClaimTypes.CreateProjects), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.ManageUsers), policy =>
     {
-        policy.RequireClaim("access_admin_dashboard", "true");
-        policy.RequireClaim("manage_users", "true");
-    });
-    options.AddPolicy("DeleteUsers", policy =>
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.ManageUsers), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.DeleteUsers), policy =>
     {
-        policy.RequireClaim("access_admin_dashboard", "true");
-        policy.RequireClaim("delete_users", "true");
-    });
-    options.AddPolicy("InviteUsers", policy =>
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.DeleteUsers), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.InviteOtherUsers), policy =>
     {
-        policy.RequireClaim("access_admin_dashboard", "true");
-        policy.RequireClaim("invite_other_users", "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.InviteOtherUsers), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.UpdateAppSettings), policy =>
+    {
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings), "true");
     });
-});
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();

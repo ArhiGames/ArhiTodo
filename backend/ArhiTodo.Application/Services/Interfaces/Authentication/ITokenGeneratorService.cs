@@ -1,4 +1,4 @@
-﻿namespace ArhiTodo.Application.Services.Interfaces.Auth;
+﻿namespace ArhiTodo.Application.Services.Interfaces.Authentication;
 
 public interface ITokenGeneratorService
 {
