@@ -10,11 +10,20 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
     public async Task<List<User>> GetBoardMembers(int boardId)
     {
-        List<User> users = await database.Users
-            .Include(u => u.BoardUserClaims.Where(buc => buc.BoardId == boardId))
-            .Where(u => u.BoardUserClaims.Any(buc => buc.BoardId == boardId && buc.Type == nameof(BoardClaims.ViewBoard) && buc.Value == "true"))
+        List<User> users = await database.BoardUserClaims
+            .Include(buc => buc.User)
+            .Where(buc => buc.Type == nameof(BoardClaimTypes.ViewBoard) && buc.Value == "true")
+            .Select(buc => buc.User)
             .ToListAsync();
         return users;
+    }
+
+    public async Task<List<BoardUserClaim>> GetBoardPermissions(int boardId)
+    {
+        List<BoardUserClaim> boardPermissions = await database.BoardUserClaims
+            .Where(buc => buc.BoardId == boardId)
+            .ToListAsync();
+        return boardPermissions;
     }
 
     public async Task<Board> CreateAsync(Board board)

@@ -22,7 +22,7 @@ public class BoardUserClaimConfiguration : IEntityTypeConfiguration<BoardUserCla
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(buc => buc.User)
-            .WithMany(u => u.BoardUserClaims)
+            .WithMany()
             .HasForeignKey(buc => buc.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

@@ -6,42 +6,42 @@ export type DefaultClaim = {
 
 export const defaultGlobalClaims: DefaultClaim[] = [
     {
-        claimType: "create_projects",
+        claimType: "CreateProjects",
         claimName: "Create projects",
         claimDescription: "If enabled the user can create projects where ever he wants"
     },
     {
-        claimType: "delete_others_boards",
+        claimType: "DeleteOthersBoards",
         claimName: "Delete projects",
         claimDescription: "If enabled the user can just delete other's boards without special permissions"
     },
     {
-        claimType: "modify_others_boards",
+        claimType: "ModifyOthersBoards",
         claimName: "Modify projects",
         claimDescription: "If enabled the user has writing permissions for every project & board"
     },
     {
-        claimType: "access_admin_dashboard",
+        claimType: "AccessAdminDashboard",
         claimName: "Access admin dashboard",
         claimDescription: "If enabled, the user can access the admin dashboard, but cannot modify anything"
     },
     {
-        claimType: "manage_users",
+        claimType: "ManageUsers",
         claimName: "Manage users",
         claimDescription: "If enabled, the user can manage users, add them to groups & change their permissions"
     },
     {
-        claimType: "delete_users",
+        claimType: "DeleteUsers",
         claimName: "Delete users",
         claimDescription: "If enabled, the user can delete other user's accounts"
     },
     {
-        claimType: "invite_other_users",
+        claimType: "InviteOtherUsers",
         claimName: "Invite users",
         claimDescription: "If enabled, the user can generate invitation links for other's to use this service"
     },
     {
-        claimType: "update_app_settings",
+        claimType: "UpdateAppSettings",
         claimName: "Update app settings",
         claimDescription: "If enabled, the user can change the general app settings"
     },

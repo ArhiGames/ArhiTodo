@@ -36,24 +36,12 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
             if (adminUser != null) return;
             
             string hashedPassword = passwordHashService.Hash("admin");
-            User appUser = new()
-            {
-                UserName = "admin",
-                Email = "admin@admin.admin",
-                HashedPassword = hashedPassword
-            };
+            User appUser = new("admin", "admin@admin.admin", hashedPassword);
 
-            appUser.UserClaims =
-            [
-                new UserClaim { UserId = appUser.UserId, Type = "create_projects", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "delete_others_boards", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "modify_others_boards", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "access_admin_dashboard", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "manage_users", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "delete_users", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "invite_other_users", Value = "true" },
-                new UserClaim { UserId = appUser.UserId, Type = "update_app_settings", Value = "true" }
-            ];
+            foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
+            {
+                appUser.AddUserClaim(userClaimType, "true");
+            }
             
             context.Set<User>().Add(appUser);
             context.SaveChanges();

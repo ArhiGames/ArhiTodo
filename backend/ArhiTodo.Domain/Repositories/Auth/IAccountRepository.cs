@@ -8,8 +8,9 @@ public interface IAccountRepository
     Task<bool> DeleteUserAsync(Guid userId);
     Task<bool> ChangePassword(Guid guid, string hashedPassword);
     
-    Task<List<User>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId);
+    Task<List<User>> GetUsers(int page, bool includeGlobalPermissions);
     Task<int> GetUserCount();
-    Task<User?> GetUserByGuidAsync(Guid guid);
-    Task<User?> GetUserByUsernameAsync(string username);
+    Task<List<User>> GetUsersByGuidsAsync(List<Guid> guids);
+    Task<User?> GetUserByGuidAsync(Guid guid, bool includeSessions = false);
+    Task<User?> GetUserByUsernameAsync(string username, bool includeSessions = false);
 }

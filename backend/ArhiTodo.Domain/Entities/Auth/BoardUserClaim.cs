@@ -2,7 +2,7 @@
 
 namespace ArhiTodo.Domain.Entities.Auth;
 
-public enum BoardClaims
+public enum BoardClaimTypes
 {
     ManageUsers,
     ManageBoard,
@@ -26,9 +26,9 @@ public class BoardUserClaim
 
     private BoardUserClaim() { }
     
-    public BoardUserClaim(BoardClaims boardClaim, string value, int boardId, Guid userId)
+    public BoardUserClaim(BoardClaimTypes boardClaimType, string value, int boardId, Guid userId)
     {
-        Type = boardClaim.ToString();
+        Type = boardClaimType.ToString();
         Value = value;
         BoardId = boardId;
         UserId = userId;

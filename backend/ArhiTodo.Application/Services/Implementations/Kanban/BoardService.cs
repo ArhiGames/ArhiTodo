@@ -22,7 +22,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         
         foreach (ClaimPostDto claimPostDto in claimPostDtos)
         {
-            bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaims boardClaim);
+            bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaimTypes boardClaim);
             if (!succeeded) return null;
             board.UpdateUserClaim(boardClaim, claimPostDto.ClaimValue);
         }
@@ -64,9 +64,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             new Board(projectId, boardCreateDto.BoardName, currentUser.UserId));
         
         board.AddMember(currentUser.UserId);
-        foreach (BoardClaims boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaims>())
+        foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
         {
-            if (boardClaim == BoardClaims.ViewBoard) continue; // Handled by the AddMember method
+            if (boardClaim == BoardClaimTypes.ViewBoard) continue; // Handled by the AddMember method
             board.AddUserClaim(boardClaim, "true", currentUser.UserId);
         }
         await unitOfWork.SaveChangesAsync();

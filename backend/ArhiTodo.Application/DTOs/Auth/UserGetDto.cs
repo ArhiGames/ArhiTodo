@@ -12,8 +12,8 @@ public class UserGetDto
 
     public required string Email { get; set; }
 
-    public List<ClaimGetDto> UserClaims { get; set; } = new();
-    public List<ClaimGetDto> BoardUserClaims { get; set; } = new();
+    public List<ClaimGetDto> UserClaims { get; set; } = [];
+    public List<ClaimGetDto> BoardUserClaims { get; set; } = [];
 
     public string? JoinedViaInvitationKey { get; set; } = string.Empty;
 }

@@ -10,12 +10,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(u => u.UserId);
 
-        builder.HasMany(u => u.OwningProjects);
-        builder.HasMany(u => u.OwningBoards);
-        builder.HasMany(u => u.UserClaims);
-        builder.HasMany(u => u.UserSessions);
-        builder.HasMany(u => u.BoardUserClaims);
-        builder.HasMany(u => u.ProjectManagers);
+        builder.Property(u => u.UserId)
+            .ValueGeneratedNever();
+
+        builder.HasMany(u => u.UserClaims)
+            .WithOne(uc => uc.User)
+            .HasForeignKey(uc => uc.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(u => u.UserSessions)
+            .WithOne(us => us.User)
+            .HasForeignKey(us => us.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(u => u.UserName)
             .IsUnique();

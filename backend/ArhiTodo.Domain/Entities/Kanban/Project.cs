@@ -23,7 +23,6 @@ public class Project
     public Project(string name, User user)
     {
         ProjectName = name;
-        Owner = user;
         OwnedByUserId = user.UserId;
     }
 

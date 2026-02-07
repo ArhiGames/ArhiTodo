@@ -10,6 +10,9 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
     {
         builder.HasKey(us => us.SessionId);
 
+        builder.Property(us => us.SessionId)
+            .ValueGeneratedNever();
+
         builder.HasOne(us => us.User)
             .WithMany(u => u.UserSessions)
             .HasForeignKey(us => us.UserId)

@@ -2,15 +2,30 @@
 
 public class UserSession
 {
-    public Guid SessionId { get; } = Guid.NewGuid();
+    public Guid SessionId { get; init; } = Guid.NewGuid();
     
-    public required Guid UserId { get; set; }
+    public string TokenHash { get; private set; } = string.Empty;
     
-    public required string TokenHash { get; set; }
+    public string UserAgent { get; private set; } = string.Empty;
     
-    public required DateTimeOffset ExpiresAt { get; set; }
+    public DateTimeOffset ExpiresAt { get; private set; }
     
-    public required string UserAgent { get; set; }
+    public Guid UserId { get; private set; }
+    public User User { get; } = null!;
+    
+    private UserSession() { }
 
-    public User User { get; set; } = null!;
+    public UserSession(Guid userId, string tokenHash, string userAgent, DateTimeOffset expireDate)
+    {
+        UserId = userId;
+        TokenHash = tokenHash;
+        UserAgent = userAgent;
+        ExpiresAt = expireDate;
+    }
+
+    public void UpdateUserSession(DateTimeOffset expiresAt, string tokenHash)
+    {
+        ExpiresAt = expiresAt;
+        TokenHash = tokenHash;
+    }
 }

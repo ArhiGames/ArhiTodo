@@ -4,12 +4,13 @@ using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Auth;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Kanban;
 using ArhiTodo.Domain.Services.Auth;
 
 namespace ArhiTodo.Application.Services.Implementations.Auth;
 
-public class AuthService(IAccountRepository accountRepository, ISessionRepository sessionRepository, ITokenService tokenService, 
-    IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
+public class AuthService(IBoardRepository boardRepository, IAccountRepository accountRepository, ISessionRepository sessionRepository, 
+    ITokenService tokenService, IJwtTokenGeneratorService jwtTokenGeneratorService, IPasswordHashService passwordHashService,
     ITokenGeneratorService tokenGeneratorService, IInvitationService invitationService, IPasswordAuthorizer passwordAuthorizer) : IAuthService
 {
     public async Task<PasswordAuthorizerResult> CreateAccount(CreateAccountDto createAccountDto)
@@ -26,14 +27,8 @@ public class AuthService(IAccountRepository accountRepository, ISessionRepositor
         
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
-        User user = new()
-        {
-            UserName = createAccountDto.Username,
-            Email = createAccountDto.Email,
-            HashedPassword = hashedPassword,
-            JoinedViaInvitationKey = createAccountDto.InvitationKey
-        };
-
+        User user = new(createAccountDto.Username, createAccountDto.Email, hashedPassword,
+            invitationLink.InvitationKey);
         User? createdUser = await accountRepository.CreateUserAsync(invitationLink, user);
         return new PasswordAuthorizerResult(createdUser != null, []);
     }
@@ -46,7 +41,7 @@ public class AuthService(IAccountRepository accountRepository, ISessionRepositor
 
     public async Task<LoginGetDto?> Login(LoginDto loginDto, string userAgent)
     {
-        User? user = await accountRepository.GetUserByUsernameAsync(loginDto.Username);
+        User? user = await accountRepository.GetUserByUsernameAsync(loginDto.Username, true);
         if (user == null) return null;
 
         bool passwordCorrect = passwordHashService.Verify(loginDto.Password, user.HashedPassword);
@@ -54,7 +49,7 @@ public class AuthService(IAccountRepository accountRepository, ISessionRepositor
 
         string? refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         if (refreshToken == null) return null;
-
+        
         List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
         return new LoginGetDto(jwt, refreshToken);
@@ -90,8 +85,19 @@ public class AuthService(IAccountRepository accountRepository, ISessionRepositor
 
     public async Task<List<UserGetDto>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId)
     {
-        List<User> users = await accountRepository.GetUsers(page, includeGlobalPermissions, boardPermissionsBoardId);
-        return users.Select(u => u.ToGetDto()).ToList();
+        List<User> users = await accountRepository.GetUsers(page, includeGlobalPermissions);
+        List<UserGetDto> userGetDtos = users.Select(u => u.ToGetDto()).ToList();
+
+        if (boardPermissionsBoardId == null) return userGetDtos;
+        
+        List<BoardUserClaim> boardUserClaims = await boardRepository.GetBoardPermissions(boardPermissionsBoardId.Value);
+        foreach (BoardUserClaim boardUserClaim in boardUserClaims)
+        {
+            UserGetDto? foundUser = userGetDtos.FirstOrDefault(u => u.UserId == boardUserClaim.UserId);
+            foundUser?.BoardUserClaims.Add(boardUserClaim.ToGetDto());
+        }
+
+        return userGetDtos;
     }
 
     public async Task<int> GetUserCount()

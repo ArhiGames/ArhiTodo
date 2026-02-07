@@ -12,8 +12,8 @@ using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class ProjectService(IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
-    IUserRepository userRepository, IProjectNotificationService projectNotificationService, ICurrentUser currentUser) : IProjectService
+public class ProjectService(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
+    IProjectNotificationService projectNotificationService, ICurrentUser currentUser) : IProjectService
 {
     public async Task<List<UserGetDto>?> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
@@ -53,21 +53,21 @@ public class ProjectService(IUnitOfWork unitOfWork, IProjectRepository projectRe
     {
         Project? project = await projectRepository.GetAsync(projectId);
         if (project == null) return null;
-
-        List<User> projectManagers =
-            await userRepository.GetUsers(project.ProjectManagers.Select(pm => pm.UserId).ToList());
+        
+        List<Guid> userIds = project.ProjectManagers.Select(pm => pm.UserId).ToList();
+        List<User> projectManagers = await accountRepository.GetUsersByGuidsAsync(userIds);
+        
         return projectManagers.Select(pm => pm.ToGetDto()).ToList();
     }
 
     public async Task<ProjectGetDto?> CreateProject(ProjectCreateDto projectCreateDto)
     {
-        User? foundUser = await userRepository.GetUser(currentUser.UserId);
+        User? foundUser = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
         if (foundUser == null) return null;
 
         Project project = await projectRepository.CreateAsync(
             new Project(projectCreateDto.ProjectName, foundUser));
         project.AddProjectManager(new ProjectManager(project.ProjectId, foundUser.UserId));
-
         await unitOfWork.SaveChangesAsync();
         
         return project.ToGetDto();

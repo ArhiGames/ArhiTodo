@@ -36,28 +36,28 @@ public class Board
         BoardName = boardName;
     }
 
-    public void AddUserClaim(BoardClaims boardClaim, string value, Guid userId)
+    public void AddUserClaim(BoardClaimTypes boardClaimType, string value, Guid userId)
     {
-        BoardUserClaim boardUserClaim = new(boardClaim, value, BoardId, userId);
+        BoardUserClaim boardUserClaim = new(boardClaimType, value, BoardId, userId);
         _boardUserClaims.Add(boardUserClaim);
     }
     
-    public void UpdateUserClaim(BoardClaims boardClaim, string newValue)
+    public void UpdateUserClaim(BoardClaimTypes boardClaimType, string newValue)
     {
-        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaim.ToString());
+        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaimType.ToString());
         boardUserClaim?.UpdateValue(newValue);
     }
 
     public void AddMember(Guid userId)
     {
-        BoardUserClaim boardUserClaim = new(BoardClaims.ViewBoard, "true", BoardId, userId);
+        BoardUserClaim boardUserClaim = new(BoardClaimTypes.ViewBoard, "true", BoardId, userId);
         _boardUserClaims.Add(boardUserClaim);
     }
 
     public bool RemoveMember(Guid userId)
     {
         BoardUserClaim? foundBoardUserClaim = _boardUserClaims.FirstOrDefault(bc => bc.UserId == userId
-            && bc.Type == nameof(BoardClaims.ViewBoard));
+            && bc.Type == nameof(BoardClaimTypes.ViewBoard));
         return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
     }
 
