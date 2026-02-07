@@ -1,3 +1,5 @@
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
@@ -65,26 +67,32 @@ public class Board
         _cardLists.Add(cardList);
     }
 
-    public bool RemoveCardlist(int cardListId)
+    public Result RemoveCardlist(int cardListId)
     {
         CardList? cardList = _cardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
-        return cardList != null && _cardLists.Remove(cardList);
+        if (cardList == null)
+        {
+            return new Error("NoCardListWithId", ErrorType.Conflict,
+                "There is no cardlist with the specified id on this board!");
+        } 
+        return _cardLists.Remove(cardList) ? Result.Success() : Errors.Unknown;
     }
     
-    public Label AddLabel(string labelText, int labelColor)
+    public Result<Label> AddLabel(string labelText, int labelColor)
     {
         Label label = new(BoardId, labelText, labelColor);
         _labels.Add(label);
         return label;
     }
 
-    public bool RemoveLabel(int labelId)
+    public Result DeleteLabel(int labelId)
     {
         Label? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
         if (label == null)
         {
-            throw new NothingToDeleteException("There is no label to delete with the specified id on this board");
+            return new Error("NoLabelToDelete", ErrorType.Conflict,
+                "There is no label with the specified id on this board!");
         }
-        return _labels.Remove(label);
+        return _labels.Remove(label) ? Result.Success() : Errors.Unknown;
     }
 }

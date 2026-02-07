@@ -18,10 +18,12 @@ public class ApiControllerBase : ControllerBase
         {
             ErrorType.Unknown => StatusCode(500, result.Error.Description),
             ErrorType.Unauthenticated => Unauthorized(result.Error.Description),
-            ErrorType.Forbidden => Forbid(result.Error.Description),
+            ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden, result.Error.Description),
             ErrorType.PasswordRequirements => BadRequest(result.Error.Description),
             ErrorType.InvalidInvitationLink => BadRequest(result.Error.Description),
             ErrorType.NotFound => NotFound(result.Error.Description),
+            ErrorType.InvalidInput => BadRequest(result.Error.Description),
+            ErrorType.Conflict => Conflict(result.Error.Description),
             _ => throw new ArgumentOutOfRangeException(nameof(result))
         };
     }

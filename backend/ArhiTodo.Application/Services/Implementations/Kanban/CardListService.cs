@@ -2,6 +2,7 @@
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -61,13 +62,13 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         Board? board = await boardRepository.GetAsync(boardId);
         if (board == null) return false;
 
-        bool succeeded = board.RemoveCardlist(cardListId);
+        Result removeCardlistResult = board.RemoveCardlist(cardListId);
         await unitOfWork.SaveChangesAsync();
         
-        if (succeeded)
+        if (removeCardlistResult.IsSuccess)
         {
             cardListNotificationService.DeleteCardList(boardId, cardListId);
         }
-        return succeeded;
+        return removeCardlistResult.IsSuccess;
     }
 }

@@ -1,3 +1,6 @@
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
+
 namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Card
@@ -43,14 +46,15 @@ public class Card
         _checklists.Add(checklist);
     }
 
-    public bool RemoveChecklist(int checklistId)
+    public Result RemoveChecklist(int checklistId)
     {
         Checklist? checklist = _checklists.FirstOrDefault(cl => cl.ChecklistId == checklistId);
         if (checklist == null)
         {
-            throw new NothingToDeleteException("There is no checklist with specified id on this card!");
+            return new Error("NoChecklistWithId", ErrorType.Conflict,
+                "There is no checklist with the specified id on this card!");
         }
-        return _checklists.Remove(checklist);
+        return _checklists.Remove(checklist) ? Result.Success() : Errors.Unknown;
     }
 
     public ChecklistItem? UpdateChecklistItemState(int checklistItemId, bool isDone)
@@ -73,13 +77,14 @@ public class Card
         _labels.Add(new CardLabel(label.LabelId, CardId));
     }
 
-    public bool RemoveLabel(int labelId)
+    public Result RemoveLabel(int labelId)
     {
         CardLabel? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
         if (label == null)
         {
-            throw new NothingToDeleteException("There is no label with the specified id on this card!");
+            return new Error("NoLabelWithId", ErrorType.Conflict,
+                "There is no label with the specified id on this card!");
         }
-        return _labels.Remove(label);
+        return _labels.Remove(label) ? Result.Success() : Errors.Unknown;
     }
 }

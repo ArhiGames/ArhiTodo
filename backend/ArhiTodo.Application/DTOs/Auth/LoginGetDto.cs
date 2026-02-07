@@ -1,3 +1,3 @@
 ﻿namespace ArhiTodo.Application.DTOs.Auth;
 
-public record LoginGetDto(string JwtToken, string RefreshToken);
+public record LoginGetDto(Guid UserId, string JwtToken, string RefreshToken);

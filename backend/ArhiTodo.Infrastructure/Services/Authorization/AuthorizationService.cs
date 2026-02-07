@@ -23,12 +23,10 @@ public class AuthorizationService(ICurrentUser currentUser, IAccountRepository a
         {
             if (requirement is not ClaimsAuthorizationRequirement claimsAuthorizationRequirement) continue;
             if (claimsAuthorizationRequirement.AllowedValues is null) continue;
-                
-            if (!user.UserClaims.Any(uc => nameof(uc.Type) == claimsAuthorizationRequirement.ClaimType && 
-                                           claimsAuthorizationRequirement.AllowedValues.Contains(uc.Value)))
-            {
-                return false;
-            }
+
+            bool hasClaim = user.UserClaims.Any(uc => uc.Type.ToString().Equals(claimsAuthorizationRequirement.ClaimType) &&
+                                                      claimsAuthorizationRequirement.AllowedValues.Contains(uc.Value));
+            if (!hasClaim) return false;
         }
 
         return true;

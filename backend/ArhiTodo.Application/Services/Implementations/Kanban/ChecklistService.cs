@@ -3,6 +3,7 @@ using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -47,13 +48,13 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card == null) return false;
 
-        bool succeeded = card.RemoveChecklist(checklistId);
-        if (succeeded)
+        Result removeChecklistResult = card.RemoveChecklist(checklistId);
+        if (removeChecklistResult.IsSuccess)
         {
             checklistNotificationService.DeleteChecklist(boardId, checklistId);
             await unitOfWork.SaveChangesAsync();
         }
-        return succeeded;
+        return removeChecklistResult.IsSuccess;
     }
 
     public async Task<ChecklistItemGetDto?> CreateChecklistItem(int boardId, int cardId, int checklistId, 
@@ -81,13 +82,13 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         Checklist? checklist = card.Checklists.FirstOrDefault(c => c.ChecklistId == checklistId);
         if (checklist == null) return false;
 
-        bool succeeded = checklist.RemoveChecklistItem(checklistItemId);
-        if (succeeded)
+        Result removeChecklistItemResult = checklist.RemoveChecklistItem(checklistItemId);
+        if (removeChecklistItemResult.IsSuccess)
         {
             await unitOfWork.SaveChangesAsync();
             checklistNotificationService.DeleteChecklistItemFromChecklist(boardId, checklistId, checklistItemId);
         }
-        return succeeded;
+        return removeChecklistItemResult.IsSuccess;
     }
 
     public async Task<ChecklistItemGetDto?> UpdateChecklistItem(int boardId, int cardId, int checklistId, 

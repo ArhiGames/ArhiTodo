@@ -48,7 +48,7 @@ public class AuthService(
         List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value)).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
         
-        return new LoginGetDto(jwt, refreshToken);
+        return new LoginGetDto(user.UserId, jwt, refreshToken);
     }
 
     public async Task<Result> ChangePassword(UpdatePasswordDto updatePasswordDto)
@@ -82,7 +82,7 @@ public class AuthService(
 
     public async Task<Result<string>> RefreshJwtToken(string refreshToken)
     {
-        User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
+        User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId, true);
         if (user is null) return Errors.Unauthenticated; 
         
         byte[] byteToken = Convert.FromHexString(refreshToken);
@@ -101,10 +101,10 @@ public class AuthService(
         User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId, true);
         if (user == null) return Errors.Unauthenticated;
 
-        bool succeeded = user.RemoveUserSession(userAgent);
+        Result removeUserSessionResult = user.RemoveUserSession(userAgent);
         await unitOfWork.SaveChangesAsync();
         
-        return succeeded ? Result.Success() : Errors.Unknown;
+        return removeUserSessionResult.IsSuccess ? Result.Success() : Errors.Unknown;
     }
 
     public async Task<Result> LogoutEveryDevice(Guid userId)

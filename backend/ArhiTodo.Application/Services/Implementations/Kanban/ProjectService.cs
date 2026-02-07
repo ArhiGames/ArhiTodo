@@ -5,6 +5,7 @@ using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Auth;
@@ -42,12 +43,12 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectId);
         if (project == null) return false;
         
-        bool succeeded = project.RemoveProjectManager(projectManagerId);
-        if (succeeded)
+        Result removeProjectManagerResult = project.RemoveProjectManager(projectManagerId);
+        if (removeProjectManagerResult.IsSuccess)
         {
             await unitOfWork.SaveChangesAsync();
         }
-        return succeeded;
+        return removeProjectManagerResult.IsSuccess;
     }
 
     public async Task<List<UserGetDto>?> GetProjectManagers(int projectId)

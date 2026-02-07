@@ -12,7 +12,7 @@ using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
+public class BoardService(IBoardNotificationService boardNotificationService, IProjectRepository projectRepository, IBoardRepository boardRepository,
     IUnitOfWork unitOfWork, ICurrentUser currentUser) : IBoardService
 {
     public async Task<List<ClaimGetDto>?> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
@@ -60,8 +60,12 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
-        Board board = await boardRepository.CreateAsync(
-            new Board(projectId, boardCreateDto.BoardName, currentUser.UserId));
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project == null) return null;
+
+        Board board = new(projectId, boardCreateDto.BoardName, currentUser.UserId);
+        project.AddBoard(board, currentUser.UserId);
+        await unitOfWork.SaveChangesAsync();
         
         board.AddMember(currentUser.UserId);
         foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())

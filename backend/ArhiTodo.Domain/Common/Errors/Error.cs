@@ -7,7 +7,9 @@ public enum ErrorType
     Forbidden,
     PasswordRequirements,
     InvalidInvitationLink,
-    NotFound
+    InvalidInput,
+    NotFound,
+    Conflict
 }
 
 public record Error(string Id, ErrorType ErrorType, string Description);
@@ -27,7 +29,7 @@ public static class Errors
 
     public static Error InvalidInvitationLink { get; } = new("InvalidInvitationLink",
         ErrorType.InvalidInvitationLink, "The used invitation link was invalid!");
-
+     
     public static Error NotFound { get; } = new("NotFound",
         ErrorType.NotFound, "Did not find the searched for resource");
 }

@@ -1,3 +1,5 @@
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
@@ -30,33 +32,37 @@ public class Project
         ProjectName = projectName;
     }
 
-    public void AddProjectManager(ProjectManager user)
+    public Result AddProjectManager(ProjectManager user)
     {
         if (_projectManagers.Exists(pm => pm.UserId == user.UserId))
         {
-            throw new AlreadyExistsException("Project manager with id already exists!");
+            return new Error("AlreadyExistingProjectManager", ErrorType.Conflict,
+                "The user with the specified id is already a project manager");
         }
-
         _projectManagers.Add(user);
+        return Result.Success();
     }
 
-    public bool RemoveProjectManager(Guid projectManagerId)
+    public Result RemoveProjectManager(Guid projectManagerId)
     {
         ProjectManager? projectManager = _projectManagers.FirstOrDefault(pm => pm.UserId == projectManagerId);
         if (projectManager == null)
         {
-            throw new NothingToDeleteException("The project manager cannot be deleted, because it wasn't found");
+            return new Error("NoProjectManagerWithId", ErrorType.Conflict,
+                "There is no user (project manager) with the specified id on this project!");
         }
-        return _projectManagers.Remove(projectManager);
+        return _projectManagers.Remove(projectManager) ? Result.Success() : Errors.Unknown;
     }
 
-    public void AddBoard(Board board, Guid userId)
+    public Result AddBoard(Board board, Guid userId)
     {
         if (!_projectManagers.Exists(pm => pm.UserId == userId) && userId != OwnedByUserId)
         {
-            throw new BoardPermissionException("The user is neither a project manager nor the project owner!");
+            return new Error("Insufficient rights", ErrorType.Forbidden, 
+                "The user is neither a project manager nor the project owner!");
         }
         
         _boards.Add(board);
+        return Result.Success();
     }
 }    

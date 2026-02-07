@@ -1,4 +1,7 @@
-﻿namespace ArhiTodo.Domain.Entities.Kanban;
+﻿using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
+
+namespace ArhiTodo.Domain.Entities.Kanban;
 
 public class Checklist
 {
@@ -30,13 +33,14 @@ public class Checklist
         return checklistItem;
     }
 
-    public bool RemoveChecklistItem(int checklistItemId)
+    public Result RemoveChecklistItem(int checklistItemId)
     {
         ChecklistItem? checklistItem = _checklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
         if (checklistItem == null)
         {
-            throw new NothingToDeleteException("There is no checklist item with the specified id on this checklist");
+            return new Error("NoChecklistItemWithId", ErrorType.Conflict,
+                "There is no checklist item with the specified id on this checklist!");
         }
-        return _checklistItems.Remove(checklistItem);
+        return _checklistItems.Remove(checklistItem) ? Result.Success() : Errors.Unknown;
     }
 }

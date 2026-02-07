@@ -35,14 +35,14 @@ public class AccountController(IUserService userService, IAuthService authServic
     public async Task<IActionResult> GetUserAccount(Guid userId)
     {
         Result<UserGetDto> user = await userService.GetUser(userId);
-        return user.IsSuccess ? Ok(user) : HandleFailure(user);
+        return user.IsSuccess ? Ok(user.Value) : HandleFailure(user);
     }
     
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateAccountDto createAccountDto)
     {
         Result passwordAuthorizerResult = await authService.CreateAccount(createAccountDto);
-        return passwordAuthorizerResult.IsSuccess ? Ok(passwordAuthorizerResult) : HandleFailure(passwordAuthorizerResult);
+        return passwordAuthorizerResult.IsSuccess ? Ok() : HandleFailure(passwordAuthorizerResult);
     }
     
     [HttpPost("login")]
@@ -52,6 +52,7 @@ public class AccountController(IUserService userService, IAuthService authServic
         if (!loginGetDto.IsSuccess) return HandleFailure(loginGetDto);
 
         List<Claim> claims = [
+            new(ClaimTypes.NameIdentifier, loginGetDto.Value!.UserId.ToString()),
             new(ClaimTypes.Authentication, loginGetDto.Value!.RefreshToken)
         ];
 
@@ -90,7 +91,7 @@ public class AccountController(IUserService userService, IAuthService authServic
         if (refreshToken == null) return Unauthorized();
 
         Result<string> jwt = await authService.RefreshJwtToken(refreshToken);
-        return jwt.IsSuccess ? Ok(new { token = jwt }) : HandleFailure(jwt);
+        return jwt.IsSuccess ? Ok(new { token = jwt.Value }) : HandleFailure(jwt);
     } 
 
     [Authorize(AuthenticationSchemes = "JwtUnvalidatedLifetime")]

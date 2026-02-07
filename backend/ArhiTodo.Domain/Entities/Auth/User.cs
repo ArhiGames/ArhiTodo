@@ -1,4 +1,7 @@
-﻿namespace ArhiTodo.Domain.Entities.Auth;
+﻿using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
+
+namespace ArhiTodo.Domain.Entities.Auth;
 
 public class User
 {
@@ -36,24 +39,26 @@ public class User
         _userClaims.Add(userClaim);
     }
 
-    public void AddUserSession(UserSession userSession)
+    public Result AddUserSession(UserSession userSession)
     {
-        if (_userSessions.Exists(us => us.TokenHash == userSession.TokenHash))
+        if (_userSessions.Exists(us => us.TokenHash == userSession.TokenHash || us.UserAgent == userSession.UserAgent))
         {
-            throw new AlreadyExistsException("User session with the exact token hash already exists for this user!");
+            return new Error("ConflictingSession", ErrorType.Conflict,
+                "There is already a session with the exact same token hash or user agent!");
         }
         _userSessions.Add(userSession);
+        return Result.Success();
     }
 
-    public bool RemoveUserSession(string userAgent)
+    public Result RemoveUserSession(string userAgent)
     {
         UserSession? foundUserSession = _userSessions.FirstOrDefault(us => us.UserAgent == userAgent);
         if (foundUserSession == null)
         {
-            throw new NothingToDeleteException(
-                "There is no user session with the provided hash & user agent on this user");
+            return new Error("NoSessionToRemove", ErrorType.Conflict,
+                "There is now user on this user with the specified user agent, nothing to remove!");
         }
-        return _userSessions.Remove(foundUserSession);
+        return _userSessions.Remove(foundUserSession) ? Result.Success() : Errors.Unknown;
     }
 
     public void ClearUserSessions()

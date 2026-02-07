@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Domain.Entities.Auth;
+﻿using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -17,7 +18,12 @@ public class AccountRepository(ProjectDataBase database) : IAccountRepository
             EntityEntry<User> userEntry = database.Users.Add(user);
             await database.SaveChangesAsync();
 
-            invitationLink.Use();
+            Result invitationResult = invitationLink.Use();
+            if (!invitationResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return null;    
+            }
             await database.SaveChangesAsync();
 
             await transaction.CommitAsync();

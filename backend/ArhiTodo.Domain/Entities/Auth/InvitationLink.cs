@@ -1,4 +1,7 @@
-﻿namespace ArhiTodo.Domain.Entities.Auth;
+﻿using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
+
+namespace ArhiTodo.Domain.Entities.Auth;
 
 public class InvitationLink
 {
@@ -22,7 +25,6 @@ public class InvitationLink
     public bool IsActive { get; private set; } = true;
     
     public Guid CreatedByUserId { get; private set; }
-    public User CreatedByUser { get; } = null!;
 
     private InvitationLink() { }
     
@@ -35,14 +37,15 @@ public class InvitationLink
         CreatedByUserId = createdByUserId;
     }
 
-    public void Use()
+    public Result Use()
     {
         if (Uses >= MaxUses)
         {
-            throw new InvitationLinkOverused();
+            return Errors.Forbidden;
         }
 
         Uses++;
+        return Result.Success();
     }
 
     public void Deactivate()

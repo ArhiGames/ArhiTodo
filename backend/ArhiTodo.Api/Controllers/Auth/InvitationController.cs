@@ -16,7 +16,7 @@ public class InvitationController(IInvitationService invitationService) : ApiCon
     public async Task<IActionResult> GenerateInvitationLink([FromBody] GenerateInvitationDto generateInvitationDto)
     {
         Result<InvitationLink> createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
-        return createdInvitationLink.IsSuccess ? Ok(createdInvitationLink) : HandleFailure(createdInvitationLink);
+        return createdInvitationLink.IsSuccess ? Ok(createdInvitationLink.Value) : HandleFailure(createdInvitationLink);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.InviteOtherUsers))]
@@ -32,6 +32,6 @@ public class InvitationController(IInvitationService invitationService) : ApiCon
     public async Task<IActionResult> GetInvitationLinks()
     {
         Result<List<InvitationLink>> invitationLinks = await invitationService.GetInvitationLinks();
-        return invitationLinks.IsSuccess ? Ok(invitationLinks) : HandleFailure(invitationLinks);
+        return invitationLinks.IsSuccess ? Ok(invitationLinks.Value) : HandleFailure(invitationLinks);
     }
 }

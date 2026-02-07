@@ -2,6 +2,7 @@
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -16,10 +17,12 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         Board? board = await boardRepository.GetAsync(boardId, false, false);
         if (board == null) return null;
         
-        Label createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
+        Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
+        if (!createdLabel.IsSuccess) return null;
+        
         await unitOfWork.SaveChangesAsync();
 
-        LabelGetDto labelGetDto = createdLabel.ToGetDto();
+        LabelGetDto labelGetDto = createdLabel.Value!.ToGetDto();
         labelNotificationService.CreateLabel(boardId, labelGetDto);
         return labelGetDto;
     }
@@ -46,14 +49,14 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         Board? board = await boardRepository.GetAsync(boardId, false, false);
         if (board == null) return false;
         
-        bool succeeded = board.RemoveLabel(labelId);
+        Result deleteLabelResult = board.DeleteLabel(labelId);
         await unitOfWork.SaveChangesAsync();
         
-        if (succeeded)
+        if (deleteLabelResult.IsSuccess)
         {
             labelNotificationService.DeleteLabel(boardId, labelId);
         }
-        return succeeded;
+        return deleteLabelResult.IsSuccess;
     }
 
     public async Task<List<LabelGetDto>?> GetEveryLabel(int boardId)
@@ -86,13 +89,13 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card == null) return false;
         
-        bool succeeded = card.RemoveLabel(labelId);
+        Result removeLabelResult = card.RemoveLabel(labelId);
         await unitOfWork.SaveChangesAsync();
         
-        if (succeeded)
+        if (removeLabelResult.IsSuccess)
         {
             labelNotificationService.RemoveLabelFromCard(boardId, cardId, labelId);
         }
-        return succeeded;
+        return removeLabelResult.IsSuccess;
     }
 }
