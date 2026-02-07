@@ -101,7 +101,7 @@ const CreateNewCardListComp = () => {
                         <input ref={cardListNameRef} placeholder="Name of a card list..."
                                type="text" value={cardListName}
                                onChange={(e) => setCardListName(e.target.value)}
-                               maxLength={35}
+                               minLength={1} maxLength={32} required
                                className="classic-input">
                         </input>
                         <button className={`button ${ cardListName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">Add list</button>

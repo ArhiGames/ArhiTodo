@@ -20,15 +20,35 @@ public class Card
 
     private Card() { }
 
-    public Card(int cardListId, string cardName)
+    private Card(int cardListId, string cardName)
     {
         CardListId = cardListId;
         CardName = cardName;
     }
 
-    public void RenameCard(string cardName)
+    private static Result ValidateCardName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 32)
+        {
+            return new Error("InvalidCardName", ErrorType.BadRequest, "The Card name must contain between 1-32 characters!");
+        }
+
+        return Result.Success();
+    }
+
+    public static Result<Card> Create(int cardListId, string cardName)
+    {
+        Result validateCardNameResult = ValidateCardName(cardName);
+        return validateCardNameResult.IsSuccess ? new Card(cardListId, cardName) : validateCardNameResult.Error!;
+    }
+
+    public Result RenameCard(string cardName)
+    {
+        Result validateCardNameResult = ValidateCardName(cardName);
+        if (!validateCardNameResult.IsSuccess) return validateCardNameResult;
+        
         CardName = cardName;
+        return Result.Success();
     }
 
     public void ChangeCardDescription(string cardDescription)

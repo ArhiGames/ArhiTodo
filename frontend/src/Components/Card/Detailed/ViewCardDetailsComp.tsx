@@ -380,7 +380,7 @@ const ViewCardDetailsComp = () => {
                        <input className="card-detail-name" value={inputtedCardName}
                               onChange={(e) => setInputtedCardName(e.target.value)}
                               onBlur={onCardRenamed}
-                              minLength={1} maxLength={90}/>
+                              minLength={1} maxLength={32}/>
                    </>
                }
                footer={

@@ -30,14 +30,9 @@ public class Project
 
     private static Result ValidateProjectName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 32)
         {
-            return new Error("EmptyProjectName", ErrorType.BadRequest, "The project name may not be empty");
-        }
-
-        if (name.Length < 1 || name.Length > 32)
-        {
-            return new Error("EmptyProjectName", ErrorType.BadRequest, "The project name must contain between 1-32 characters!");
+            return new Error("InvalidProjectName", ErrorType.BadRequest, "The project name must contain between 1-32 characters!");
         }
 
         return Result.Success();

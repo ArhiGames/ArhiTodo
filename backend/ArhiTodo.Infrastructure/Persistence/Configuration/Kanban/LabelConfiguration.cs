@@ -15,7 +15,7 @@ public class LabelConfiguration : IEntityTypeConfiguration<Label>
 
         builder.Property(l => l.LabelText)
             .IsRequired()
-            .HasMaxLength(25);
+            .HasMaxLength(24);
 
         builder.HasOne<Board>()
             .WithMany(b => b.Labels)

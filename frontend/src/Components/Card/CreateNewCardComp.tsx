@@ -106,7 +106,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number })
                     <input ref={cardRef} type="text"
                            placeholder="Enter a card name..."
                            className="classic-input"
-                           maxLength={90}
+                           maxLength={32} minLength={1} required
                            value={cardName}
                            onChange={(e) => setCardName(e.target.value)}/>
                     <span>

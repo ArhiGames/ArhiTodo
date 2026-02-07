@@ -243,7 +243,7 @@ const LabelSelector = ( props: Props ) => {
             <>
                 <input className="classic-input"
                        placeholder={ currentlyEditingLabelId !== null ? kanbanState.labels[currentlyEditingLabelId]?.labelText : "Label name..."}
-                       ref={labelNameInputRef} maxLength={35}
+                       ref={labelNameInputRef} maxLength={24}
                        value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                 <p>Color:</p>
                 <div className="color-selector">

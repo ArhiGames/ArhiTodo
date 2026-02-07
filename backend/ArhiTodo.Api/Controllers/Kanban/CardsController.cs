@@ -1,5 +1,6 @@
 using ArhiTodo.Application.DTOs.Card;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class CardsController(ICardService cardService, ILabelService labelService) : ControllerBase
+public class CardsController(ICardService cardService, ILabelService labelService) : ApiControllerBase
 {
     [HttpPost("board/{boardId:int}/card/{cardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> AddLabelToCard(int boardId, int cardId, int labelId)
@@ -29,9 +30,8 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     [HttpPost("board/{boardId:int}/cardlist/{cardListId:int}/card")]
     public async Task<IActionResult> PostCard(int boardId, int cardListId, [FromBody] CardCreateDto cardCreateDto)
     {
-        CardGetDto? card = await cardService.CreateCard(boardId, cardListId, cardCreateDto);
-        if (card == null) return NotFound();
-        return Ok(card);
+        Result<CardGetDto> card = await cardService.CreateCard(boardId, cardListId, cardCreateDto);
+        return card.IsSuccess ? Ok(card.Value) : HandleFailure(card);
     }
     
     [HttpDelete("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
@@ -53,9 +53,8 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     [HttpPatch("board/{boardId:int}/card/{cardId:int}/name")]
     public async Task<IActionResult> PatchCardName(int boardId, int cardId, [FromBody] PatchCardNameDto patchCardNameDto)
     {
-        CardGetDto? cardGetDto = await cardService.PatchCardName(boardId, cardId, patchCardNameDto);
-        if (cardGetDto == null) return NotFound();
-        return Ok();
+        Result<CardGetDto> cardGetDto = await cardService.PatchCardName(boardId, cardId, patchCardNameDto);
+        return cardGetDto.IsSuccess ? Ok() : HandleFailure(cardGetDto);
     }
 
     [HttpPatch("card/{cardId:int}/description")]

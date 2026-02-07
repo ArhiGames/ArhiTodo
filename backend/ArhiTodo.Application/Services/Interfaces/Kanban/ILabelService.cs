@@ -1,11 +1,12 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
+using ArhiTodo.Domain.Common.Result;
 
 namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface ILabelService
 {
-    Task<LabelGetDto?> CreateLabel(int boardId, LabelCreateDto labelCreateDto);
-    Task<LabelGetDto?> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto);
+    Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto);
+    Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto);
     Task<bool> DeleteLabel(int boardId, int labelId);
     Task<List<LabelGetDto>?> GetEveryLabel(int boardId);
     

@@ -2,6 +2,7 @@
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
@@ -12,13 +13,13 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 public class LabelService(IBoardRepository boardRepository, ICardRepository cardRepository, 
     ILabelNotificationService labelNotificationService, IUnitOfWork unitOfWork) : ILabelService
 {
-    public async Task<LabelGetDto?> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
+    public async Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
     {
         Board? board = await boardRepository.GetAsync(boardId, false, false);
-        if (board == null) return null;
+        if (board is null) return Errors.NotFound;
         
         Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
-        if (!createdLabel.IsSuccess) return null;
+        if (!createdLabel.IsSuccess) return createdLabel.Error!;
         
         await unitOfWork.SaveChangesAsync();
 
@@ -27,16 +28,19 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         return labelGetDto;
     }
 
-    public async Task<LabelGetDto?> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
+    public async Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
     {
         Board? board = await boardRepository.GetAsync(boardId, false, false);
-        if (board == null) return null;
+        if (board is null) return Errors.NotFound;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelUpdateDto.LabelId);
-        if (label == null) return null;
+        if (label is null) return Errors.NotFound;
 
-        label.RenameLabel(labelUpdateDto.LabelText);
+        Result renameLabelResult = label.RenameLabel(labelUpdateDto.LabelText);
+        if (!renameLabelResult.IsSuccess) return renameLabelResult.Error!;
+        
         label.ChangeLabelColor(labelUpdateDto.LabelColor);
+        
         await unitOfWork.SaveChangesAsync();
         
         LabelGetDto labelGetDto = label.ToGetDto();

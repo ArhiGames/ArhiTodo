@@ -1,5 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,22 +9,20 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class LabelsController(ILabelService labelService) : ControllerBase
+public class LabelsController(ILabelService labelService) : ApiControllerBase
 {
     [HttpPost("board/{boardId:int}/label")]
     public async Task<IActionResult> CreateLabel(int boardId, [FromBody] LabelCreateDto labelCreateDto)
     {
-        LabelGetDto? label = await labelService.CreateLabel(boardId, labelCreateDto);
-        if (label == null) return NotFound();
-        return Ok(label);
+        Result<LabelGetDto> createLabelResult = await labelService.CreateLabel(boardId, labelCreateDto);
+        return createLabelResult.IsSuccess ? Ok(createLabelResult.Value) : HandleFailure(createLabelResult);
     }
     
     [HttpPut("board/{boardId:int}/label/")]
     public async Task<IActionResult> UpdateLabel(int boardId, [FromBody] LabelUpdateDto labelUpdateDto)
     {
-        LabelGetDto? labelGetDto = await labelService.UpdateLabel(boardId, labelUpdateDto);
-        if (labelGetDto == null) return NotFound();
-        return Ok(labelGetDto);
+        Result<LabelGetDto> labelGetDto = await labelService.UpdateLabel(boardId, labelUpdateDto);
+        return labelGetDto.IsSuccess ? Ok(labelGetDto) : HandleFailure(labelGetDto);
     }
 
     [HttpDelete("board/{boardId:int}/label/{labelId:int}")]

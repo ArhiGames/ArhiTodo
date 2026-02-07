@@ -34,14 +34,9 @@ public class Board
 
     private static Result ValidateBoardName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 32)
         {
-            return new Error("EmptyBoardName", ErrorType.BadRequest, "The board name may not be empty");
-        }
-
-        if (name.Length < 1 || name.Length > 32)
-        {
-            return new Error("EmptyBoardName", ErrorType.BadRequest, "The board name must contain between 1-32 characters!");
+            return new Error("InvalidBoardName", ErrorType.BadRequest, "The board name must contain between 1-32 characters!");
         }
 
         return Result.Success();
@@ -117,9 +112,11 @@ public class Board
     
     public Result<Label> AddLabel(string labelText, int labelColor)
     {
-        Label label = new(BoardId, labelText, labelColor);
-        _labels.Add(label);
-        return label;
+        Result<Label> createLabelResult = Label.Create(BoardId, labelText, labelColor);
+        if (!createLabelResult.IsSuccess) return createLabelResult;
+        
+        _labels.Add(createLabelResult.Value!);
+        return createLabelResult.Value!;
     }
 
     public Result DeleteLabel(int labelId)

@@ -2,6 +2,7 @@
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
@@ -12,29 +13,33 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitOfWork, 
     ICardListNotificationService cardListNotificationService) : ICardListService
 {
-    public async Task<CardListGetDto?> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
+    public async Task<Result<CardListGetDto>> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
     {
         Board? board = await boardRepository.GetAsync(boardId, true, false);
-        if (board == null) return null;
+        if (board is null) return Errors.NotFound;
 
-        CardList cardList = new(boardId, cardListCreateDto.CardListName);
-        board.AddCardlist(cardList);
+        Result<CardList> createCardlistResult = CardList.Create(boardId, cardListCreateDto.CardListName);
+        if (!createCardlistResult.IsSuccess) return createCardlistResult.Error!;
+        
+        board.AddCardlist(createCardlistResult.Value!);
         await unitOfWork.SaveChangesAsync();
 
-        CardListGetDto cardListGetDto = cardList.ToGetDto();
+        CardListGetDto cardListGetDto = createCardlistResult.Value!.ToGetDto();
         cardListNotificationService.CreateCardList(boardId, cardListGetDto);
         return cardListGetDto;
     }
 
-    public async Task<CardListGetDto?> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
+    public async Task<Result<CardListGetDto>> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
     {
         Board? board = await boardRepository.GetAsync(boardId, true, false);
-        if (board == null) return null;
+        if (board is null) return Errors.NotFound;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListUpdateDto.CardListId);
-        if (cardList == null) return null;
+        if (cardList is null) return Errors.NotFound;
         
-        cardList.ChangeCardListName(cardListUpdateDto.CardListName);
+        Result updateCardListNameResult = cardList.ChangeCardListName(cardListUpdateDto.CardListName);
+        if (!updateCardListNameResult.IsSuccess) return updateCardListNameResult.Error!;
+        
         await unitOfWork.SaveChangesAsync();
 
         CardListGetDto cardListGetDto = cardList.ToGetDto();

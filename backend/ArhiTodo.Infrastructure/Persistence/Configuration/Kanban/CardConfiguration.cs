@@ -12,7 +12,7 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
 
         builder.Property(c => c.CardName)
             .IsRequired()
-            .HasMaxLength(90);
+            .HasMaxLength(32);
 
         builder.HasOne<CardList>()
             .WithMany(cl => cl.Cards)
