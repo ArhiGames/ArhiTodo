@@ -1,5 +1,6 @@
 ﻿using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.ValueObjects;
 
 namespace ArhiTodo.Domain.Entities.Auth;
 
@@ -11,7 +12,7 @@ public class User
 
     public string UserName { get; private set; } = string.Empty;
 
-    public string Email { get; private set; } = string.Empty;
+    public Email Email { get; private set; } = null!;
 
     public string HashedPassword { get; private set; } = string.Empty;
 
@@ -25,7 +26,7 @@ public class User
     
     private User() { }
 
-    public User(string userName, string email, string hashedPassword, string? joinedViaInvitationKey = null)
+    public User(string userName, Email email, string hashedPassword, string? joinedViaInvitationKey = null)
     {
         UserName = userName;
         Email = email;

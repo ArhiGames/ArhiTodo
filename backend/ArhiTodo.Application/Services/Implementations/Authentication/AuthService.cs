@@ -8,6 +8,7 @@ using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Services.Auth;
+using ArhiTodo.Domain.ValueObjects;
 
 namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
@@ -18,6 +19,9 @@ public class AuthService(
 {
     public async Task<Result> CreateAccount(CreateAccountDto createAccountDto)
     {
+        Result<Email> email = Email.Create(createAccountDto.Email);
+        if (!email.IsSuccess) return email;
+        
         Result passwordAuthorizerResult =
             passwordAuthorizer.VerifyPasswordSecurity(createAccountDto.Password);
         if (!passwordAuthorizerResult.IsSuccess) return passwordAuthorizerResult;
@@ -28,7 +32,7 @@ public class AuthService(
         
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
-        User user = new(createAccountDto.Username, createAccountDto.Email, hashedPassword,
+        User user = new(createAccountDto.Username, email.Value!, hashedPassword,
             invitationLink.InvitationKey);
         User? createdUser = await accountRepository.CreateUserAsync(invitationLink, user);
 

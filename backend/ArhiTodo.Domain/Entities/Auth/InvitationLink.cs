@@ -39,7 +39,7 @@ public class InvitationLink
 
     public Result Use()
     {
-        if (Uses >= MaxUses)
+        if (Uses >= MaxUses && MaxUses != 0)
         {
             return Errors.Forbidden;
         }

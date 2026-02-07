@@ -24,7 +24,7 @@ public class JwtTokenGeneratorService : IJwtTokenGeneratorService
     {
         claims.Add(new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()));
         claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email.ToString()));
 
         SigningCredentials signingCredentials = new(_securityKey, SecurityAlgorithms.HmacSha512Signature);
         SecurityTokenDescriptor tokenDescriptor = new()

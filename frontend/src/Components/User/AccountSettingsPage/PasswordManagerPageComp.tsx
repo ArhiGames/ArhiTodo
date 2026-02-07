@@ -1,7 +1,7 @@
 import {type FormEvent, useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {AUTH_BASE_URL} from "../../../config/api.ts";
-import type {Error, PasswordAuthorizerResult} from "../../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
+import type {Error} from "../../../Models/BackendDtos/Auth/Error.ts";
 
 const PasswordManagerPageComp = () => {
 
@@ -10,7 +10,7 @@ const PasswordManagerPageComp = () => {
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
-    const [errors, setErrors] = useState<Error[]>([]);
+    const [error, setError] = useState<Error>();
 
     async function changePassword() {
 
@@ -28,11 +28,12 @@ const PasswordManagerPageComp = () => {
             .then(res => {
                 if (res.ok) {
                     logout(false);
+                    return;
                 }
                 return res.json();
             })
-            .then((passwordAuthorizerResult: PasswordAuthorizerResult) => {
-                setErrors(passwordAuthorizerResult.errors);
+            .then((result: Error) => {
+                setError(result);
             })
 
     }
@@ -70,9 +71,7 @@ const PasswordManagerPageComp = () => {
                        placeholder="Confirm your new password..."
                        ref={confirmPasswordInputRef}>
                 </input>
-                { errors.length > 0 && errors.map((error: Error) => (
-                    <p className="error-text">{error.type}: {error.message}</p>
-                )) }
+                { error && <p className="error-text">{error.type}: {error.message}</p> }
                 <button type="submit" className={`button ${ (currentPassword.length >= 8 || currentPassword === "admin") && 
                     password.length >= 8 && password === confirmPassword ? 
                     "valid-submit-button" : "standard-button" }`}>

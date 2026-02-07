@@ -16,14 +16,14 @@ public class ApiControllerBase : ControllerBase
 
         return result.Error.ErrorType switch
         {
-            ErrorType.Unknown => StatusCode(500, result.Error.Description),
-            ErrorType.Unauthenticated => Unauthorized(result.Error.Description),
-            ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden, result.Error.Description),
-            ErrorType.PasswordRequirements => BadRequest(result.Error.Description),
-            ErrorType.InvalidInvitationLink => BadRequest(result.Error.Description),
-            ErrorType.NotFound => NotFound(result.Error.Description),
-            ErrorType.InvalidInput => BadRequest(result.Error.Description),
-            ErrorType.Conflict => Conflict(result.Error.Description),
+            ErrorType.Unknown => StatusCode(500, new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.Unauthenticated => Unauthorized(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden, new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.PasswordRequirements => BadRequest(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.InvalidInvitationLink => BadRequest(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.NotFound => NotFound(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.BadRequest => BadRequest(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
+            ErrorType.Conflict => Conflict(new { type = result.Error.ErrorType.ToString(), message = result.Error.Description} ),
             _ => throw new ArgumentOutOfRangeException(nameof(result))
         };
     }

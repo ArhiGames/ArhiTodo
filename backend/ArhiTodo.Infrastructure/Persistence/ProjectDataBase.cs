@@ -2,6 +2,7 @@ using System.Reflection;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Services.Auth;
+using ArhiTodo.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Infrastructure.Persistence;
@@ -36,7 +37,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
             if (adminUser != null) return;
             
             string hashedPassword = passwordHashService.Hash("admin");
-            User appUser = new("admin", "admin@admin.admin", hashedPassword);
+            User appUser = new("admin", Email.Create("admin@admin.admin").Value!, hashedPassword);
 
             foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
             {

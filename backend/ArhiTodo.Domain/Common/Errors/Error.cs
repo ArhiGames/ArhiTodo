@@ -7,7 +7,7 @@ public enum ErrorType
     Forbidden,
     PasswordRequirements,
     InvalidInvitationLink,
-    InvalidInput,
+    BadRequest,
     NotFound,
     Conflict
 }

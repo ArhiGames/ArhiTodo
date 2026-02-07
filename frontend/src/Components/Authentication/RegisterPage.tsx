@@ -1,8 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {type ChangeEvent, type FormEvent, useState} from "react";
-import type {PasswordAuthorizerResult} from "../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
-import type { Error } from "../../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts"
+import type { Error } from "../../Models/BackendDtos/Auth/Error.ts"
 import "./Login.css"
 
 const RegisterPage = () => {
@@ -14,7 +13,7 @@ const RegisterPage = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmedPassword, setConfirmedPassword] = useState<string>("");
-    const [errors, setErrors] = useState<Error[]>([]);
+    const [error, setError] = useState<Error | null>(null);
 
     const isValidInput = (password.length >= 8 && password === confirmedPassword);
 
@@ -24,18 +23,18 @@ const RegisterPage = () => {
         if (!invitationKey || !isValidInput) return;
 
         try {
-            const result: PasswordAuthorizerResult = await register(userName, email, password, invitationKey);
-            if (result.succeeded) {
+            const registerError: Error | null = await register(userName, email, password, invitationKey);
+            if (!registerError) {
                 navigate("/login");
             } else {
-                setErrors(result.errors);
+                setError(registerError);
             }
         }
         catch (e: unknown) {
             if (e instanceof Error) {
-                setErrors([ { type: "UnknownError", message: e.message } ]);
+                setError( { type: "UnknownError", message: e.message } );
             } else {
-                setErrors([ { type: "UnknownError", message: "An unknown error occurred" } ]);
+                setError( { type: "UnknownError", message: "An unknown error occurred" } );
             }
         }
 
@@ -43,22 +42,22 @@ const RegisterPage = () => {
 
     function onUserNameChanged(e: ChangeEvent<HTMLInputElement>)  {
         setUserName(e.target.value);
-        setErrors([]);
+        setError(null);
     }
 
     function onEmailChanged(e: ChangeEvent<HTMLInputElement>)  {
         setEmail(e.target.value);
-        setErrors([]);
+        setError(null);
     }
 
     function onPasswordChanged(e: ChangeEvent<HTMLInputElement>)  {
         setPassword(e.target.value.trim());
-        setErrors([]);
+        setError(null);
     }
 
     function onConfirmedPasswordChanged(e: ChangeEvent<HTMLInputElement>)  {
         setConfirmedPassword(e.target.value.trim());
-        setErrors([]);
+        setError(null);
     }
 
     return (
@@ -77,9 +76,7 @@ const RegisterPage = () => {
                            required minLength={8} type="password" placeholder="Enter your password..."/>
                     <input value={confirmedPassword} onChange={onConfirmedPasswordChanged}
                            required minLength={8} type="password" placeholder="Confirm your password..."/>
-                    { errors.length > 0 && errors.map((error: Error) => (
-                        <p className="error-text">{error.type}: {error.message}</p>
-                    )) }
+                    { error && <p className="error-text" key={error.type}>{error.type}: {error.message}</p> }
                     <button className={`button ${isValidInput ? "valid-submit-button" : "standard-button"}`} type="submit">Register</button>
                 </form>
             </div>

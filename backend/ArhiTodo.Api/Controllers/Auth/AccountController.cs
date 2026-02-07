@@ -80,7 +80,7 @@ public class AccountController(IUserService userService, IAuthService authServic
         if (!passwordAuthorizerResult.IsSuccess) return HandleFailure(passwordAuthorizerResult);
         
         await HttpContext.SignOutAsync("AuthRefreshCookie");
-        return Ok(passwordAuthorizerResult);
+        return passwordAuthorizerResult.IsSuccess ? Ok() : HandleFailure(passwordAuthorizerResult);
     }
 
     [Authorize(AuthenticationSchemes = "AuthRefreshCookie")]

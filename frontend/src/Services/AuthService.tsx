@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "../Models/JwtPayload.ts";
 import type { UserLoginResponseDto } from "../Models/BackendDtos/Auth/UserLoginResponseDto.ts";
 import { AUTH_BASE_URL } from "../config/api.ts";
-import type {PasswordAuthorizerResult} from "../Models/BackendDtos/Auth/PasswordAuthorizerResult.ts";
+import type { Error } from "../Models/BackendDtos/Auth/Error.ts"
 
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");
@@ -11,7 +11,7 @@ export const getJwtPayloadFromToken = () => {
 }
 
 export const registerApi = async (username: string, email: string,
-                                  password: string, invitationKey: string): Promise<PasswordAuthorizerResult> => {
+                                  password: string, invitationKey: string): Promise<Error | null> => {
 
     const response = await fetch(`${AUTH_BASE_URL}/register`, {
         method: "POST",
@@ -24,6 +24,9 @@ export const registerApi = async (username: string, email: string,
         }),
     });
 
+    if (response.ok) {
+        return null;
+    }
     return await response.json();
 
 }

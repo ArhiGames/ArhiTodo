@@ -1,4 +1,5 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
+using ArhiTodo.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.UserId)
             .ValueGeneratedNever();
+
+        builder.Property(u => u.Email)
+            .HasConversion(
+                email => email.ToString(),
+                str => Email.Create(str).Value!);
 
         builder.HasMany(u => u.UserClaims)
             .WithOne(uc => uc.User)
