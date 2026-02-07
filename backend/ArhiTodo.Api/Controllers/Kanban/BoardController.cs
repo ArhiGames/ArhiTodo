@@ -6,7 +6,7 @@ using ArhiTodo.Application.Services.Interfaces.Kanban;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ArhiTodo.Controllers;
+namespace ArhiTodo.Controllers.Kanban;
 
 [Authorize]
 [ApiController]

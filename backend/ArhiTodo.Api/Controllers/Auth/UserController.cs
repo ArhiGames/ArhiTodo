@@ -4,7 +4,7 @@ using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ArhiTodo.Controllers;
+namespace ArhiTodo.Controllers.Auth;
 
 [Route("api/")]
 [ApiController]

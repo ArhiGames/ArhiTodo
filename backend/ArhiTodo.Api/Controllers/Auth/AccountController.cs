@@ -1,59 +1,58 @@
 using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ArhiTodo.Controllers;
+namespace ArhiTodo.Controllers.Auth;
 
 [Route("auth/")]
 [ApiController]
-public class AccountController(IUserService userService, IAuthService authService) : ControllerBase
+public class AccountController(IUserService userService, IAuthService authService) : ApiControllerBase
 {
     [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/{page:int}")]
     public async Task<IActionResult> GetAccounts(int page, [FromQuery] bool? includeGlobalPermissions, 
         [FromQuery] int? boardPermissionsBoardId)
     {
-        List<UserGetDto> users = await userService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
-        return Ok(users);
+        Result<List<UserGetDto>> users = await userService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
+        return users.IsSuccess ? Ok(users.Value) : HandleFailure(users);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/count")]
     public async Task<IActionResult> GetUserCount()
     {
-        int userCount = await userService.GetUserCount();
-        return Ok(new { userCount });
+        Result<int> userCount = await userService.GetUserCount();
+        return userCount.IsSuccess ? Ok(new { userCount.Value }) : HandleFailure(userCount);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/user/{userId:guid}")]
     public async Task<IActionResult> GetUserAccount(Guid userId)
     {
-        UserGetDto? user = await userService.GetUser(userId);
-        if (user == null) return NotFound();
-        return Ok(user);
+        Result<UserGetDto> user = await userService.GetUser(userId);
+        return user.IsSuccess ? Ok(user) : HandleFailure(user);
     }
     
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateAccountDto createAccountDto)
     {
-        PasswordAuthorizerResult passwordAuthorizerResult = await authService.CreateAccount(createAccountDto);
-        if (!passwordAuthorizerResult.Succeeded) return Unauthorized(passwordAuthorizerResult);
-        return Ok(passwordAuthorizerResult);
+        Result passwordAuthorizerResult = await authService.CreateAccount(createAccountDto);
+        return passwordAuthorizerResult.IsSuccess ? Ok(passwordAuthorizerResult) : HandleFailure(passwordAuthorizerResult);
     }
     
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-        LoginGetDto? loginGetDto = await authService.Login(loginDto, Request.Headers.UserAgent.ToString());
-        if (loginGetDto == null) return Unauthorized("Wrong credentials!");
+        Result<LoginGetDto> loginGetDto = await authService.Login(loginDto, Request.Headers.UserAgent.ToString());
+        if (!loginGetDto.IsSuccess) return HandleFailure(loginGetDto);
 
         List<Claim> claims = [
-            new(ClaimTypes.Authentication, loginGetDto.RefreshToken)
+            new(ClaimTypes.Authentication, loginGetDto.Value!.RefreshToken)
         ];
 
         AuthenticationProperties authenticationProperties = new()
@@ -68,15 +67,17 @@ public class AccountController(IUserService userService, IAuthService authServic
             new ClaimsPrincipal(claimsIdentity),
             authenticationProperties);
         
-        return Ok(new { token = loginGetDto.JwtToken });
+        return Ok(new { token = loginGetDto.Value.JwtToken });
     }
 
     [Authorize]
     [HttpPut("account/change/password")]
     public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordDto updatePasswordDto)
     {
-        PasswordAuthorizerResult passwordAuthorizerResult = await authService.ChangePassword(updatePasswordDto);
-        if (!passwordAuthorizerResult.Succeeded) return Unauthorized(passwordAuthorizerResult);
+        Result passwordAuthorizerResult = await authService.ChangePassword(updatePasswordDto);
+        
+        if (!passwordAuthorizerResult.IsSuccess) return HandleFailure(passwordAuthorizerResult);
+        
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         return Ok(passwordAuthorizerResult);
     }
@@ -88,10 +89,8 @@ public class AccountController(IUserService userService, IAuthService authServic
         string? refreshToken = User.FindFirstValue(ClaimTypes.Authentication);
         if (refreshToken == null) return Unauthorized();
 
-        string? jwt = await authService.RefreshJwtToken(refreshToken);
-        if (jwt == null) return Unauthorized();
-
-        return Ok(new { token = jwt });
+        Result<string> jwt = await authService.RefreshJwtToken(refreshToken);
+        return jwt.IsSuccess ? Ok(new { token = jwt }) : HandleFailure(jwt);
     } 
 
     [Authorize(AuthenticationSchemes = "JwtUnvalidatedLifetime")]
@@ -100,27 +99,23 @@ public class AccountController(IUserService userService, IAuthService authServic
     {
         await HttpContext.SignOutAsync("AuthRefreshCookie");
         
-        bool succeeded = await authService.Logout(Request.Headers.UserAgent.ToString());
-        if (!succeeded) return Unauthorized();
-        
-        return Ok();
+        Result logoutResult = await authService.Logout(Request.Headers.UserAgent.ToString());
+        return logoutResult.IsSuccess ? Ok() : HandleFailure(logoutResult);
     }
 
     [Authorize]
     [HttpDelete("logout-all/{userId:guid}")]
     public async Task<IActionResult> LogoutEverySession(Guid userId)
     {
-        bool succeeded = await authService.LogoutEveryDevice(userId);
-        if (!succeeded) return Unauthorized();
-        return Ok();
+        Result logoutResult = await authService.LogoutEveryDevice(userId);
+        return logoutResult.IsSuccess ? Ok() : HandleFailure(logoutResult);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.DeleteUsers))]
     [HttpDelete("accounts/user/{userId:guid}")]
     public async Task<IActionResult> DeleteAccount(Guid userId)
     {
-        bool succeeded = await authService.DeleteAccount(userId);
-        if (!succeeded) return NotFound();
-        return NoContent();
+        Result deleteAccountResult = await authService.DeleteAccount(userId);
+        return deleteAccountResult.IsSuccess ? NoContent() : HandleFailure(deleteAccountResult);
     }
 }

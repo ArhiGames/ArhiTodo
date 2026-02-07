@@ -1,38 +1,37 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ArhiTodo.Controllers;
+namespace ArhiTodo.Controllers.Auth;
 
 [ApiController]
 [Route("api/invitation")]
-public class InvitationController(IInvitationService invitationService) : ControllerBase
+public class InvitationController(IInvitationService invitationService) : ApiControllerBase
 {
     [Authorize(Policy = nameof(UserClaimTypes.InviteOtherUsers))]
     [HttpPost("generate")]
     public async Task<IActionResult> GenerateInvitationLink([FromBody] GenerateInvitationDto generateInvitationDto)
     {
-        InvitationLink? createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
-        if (createdInvitationLink == null) return NotFound();
-        return Ok(createdInvitationLink);
+        Result<InvitationLink> createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
+        return createdInvitationLink.IsSuccess ? Ok(createdInvitationLink) : HandleFailure(createdInvitationLink);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.InviteOtherUsers))]
     [HttpPatch("invalidate/{invitationLinkId:int}")]
     public async Task<IActionResult> InvalidateInvitationLink(int invitationLinkId)
     {
-        bool succeeded = await invitationService.InvalidateInvitationLink(invitationLinkId);
-        if (!succeeded) return NotFound();
-        return Ok();
+        Result invalidateInvitationLinkResult = await invitationService.InvalidateInvitationLink(invitationLinkId);
+        return invalidateInvitationLinkResult.IsSuccess ? Ok() : HandleFailure(invalidateInvitationLinkResult);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.InviteOtherUsers))]
     [HttpGet]
     public async Task<IActionResult> GetInvitationLinks()
     {
-        List<InvitationLink> invitationLinks = await invitationService.GetInvitationLinks();
-        return Ok(invitationLinks);
+        Result<List<InvitationLink>> invitationLinks = await invitationService.GetInvitationLinks();
+        return invitationLinks.IsSuccess ? Ok(invitationLinks) : HandleFailure(invitationLinks);
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectGetDto = ArhiTodo.Application.DTOs.Project.ProjectGetDto;
 
-namespace ArhiTodo.Controllers;
+namespace ArhiTodo.Controllers.Kanban;
 
 [Authorize]
 [ApiController]
