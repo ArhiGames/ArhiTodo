@@ -93,6 +93,7 @@ const CardDetailChecklistsComp = ( props: Props ) => {
                             <form className="card-detail-add-checklist-form" onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
                                 <input ref={addChecklistNameInputRef} placeholder="Checklist name..." className="classic-input"
                                        value={inputtedChecklistName}
+                                       maxLength={32} minLength={1} required
                                        onChange={(e) => setInputtedChecklistName(e.target.value)}/>
                                 <div style={{ display: "flex", gap: "0.5rem" }}>
                                     <button className={`button ${inputtedChecklistName.length > 0 ? "valid-submit-button" : "standard-button"}`}

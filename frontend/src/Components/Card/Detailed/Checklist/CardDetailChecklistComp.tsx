@@ -218,14 +218,14 @@ const CardDetailChecklistComp = (props: Props) => {
                         <div className="card-detail-checklist-editing">
                             <form onSubmit={onChecklistUpdateSubmit} onReset={resetChecklistUpdate}>
                                 <input ref={editingChecklistRef} className="classic-input small"
-                                       value={inputtedChecklistName} onChange={(e) => setInputtedChecklistName(e.target.value)}/>
+                                       value={inputtedChecklistName} onChange={(e) => setInputtedChecklistName(e.target.value)}
+                                       maxLength={32} minLength={1} required/>
                                 <button type="submit"
                                         className={`button ${inputtedChecklistName.length > 0 && inputtedChecklistName !== checklist.checklistName 
                                             ? "valid-submit-button" : "standard-button"}`}>Submit</button>
                                 <button type="reset" className="button standard-button">Cancel</button>
                             </form>
                         </div>
-
                     ) : (
                         <>
                             <p>{checklist.checklistName}</p>
@@ -274,8 +274,9 @@ const CardDetailChecklistComp = (props: Props) => {
                 {
                     isAddingTask ? (
                         <form onSubmit={onAddTaskButtonPressed} onReset={cancelTaskAddition}>
-                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input small" minLength={1} maxLength={256}
-                                   required value={addingTaskInputValue}
+                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input small"
+                                   minLength={1} maxLength={256} required
+                                   value={addingTaskInputValue}
                                    onChange={(e) => setAddingTaskInputValue(e.target.value)}/>
                             <div style={{ display: "flex", gap: "0.5rem" }}>
                                 <button className={`button ${addingTaskInputValue.length > 0 ? "valid-submit-button" : "standard-button"}`}

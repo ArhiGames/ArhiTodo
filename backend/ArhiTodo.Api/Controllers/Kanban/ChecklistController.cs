@@ -1,6 +1,7 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,22 +10,20 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class ChecklistController(IChecklistService checklistService) : ControllerBase
+public class ChecklistController(IChecklistService checklistService) : ApiControllerBase
 {
     [HttpPost("board/{boardId:int}/card/{cardId:int}/checklist")]
     public async Task<IActionResult> CreateChecklistOnCard(int boardId, int cardId, [FromBody] ChecklistCreateDto checklistCreateDto)
     {
-        ChecklistGetDto? checklist = await checklistService.CreateChecklist(boardId, cardId, checklistCreateDto);
-        if (checklist == null) return NotFound();
-        return Ok(checklist);
+        Result<ChecklistGetDto> createChecklistResult = await checklistService.CreateChecklist(boardId, cardId, checklistCreateDto);
+        return createChecklistResult.IsSuccess ? Ok(createChecklistResult.Value) : HandleFailure(createChecklistResult);
     }
 
     [HttpPut("board/{boardId:int}/card/{cardId:int}/checklist")]
     public async Task<IActionResult> UpdateChecklist(int boardId, int cardId, [FromBody] ChecklistUpdateDto checklistUpdateDto)
     {
-        ChecklistGetDto? checklist = await checklistService.UpdateChecklist(boardId, cardId, checklistUpdateDto);
-        if (checklist == null) return NotFound();
-        return Ok(checklist);
+        Result<ChecklistGetDto> updateChecklistResult = await checklistService.UpdateChecklist(boardId, cardId, checklistUpdateDto);
+        return updateChecklistResult.IsSuccess ? Ok(updateChecklistResult.Value) : HandleFailure(updateChecklistResult);
     }
 
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}")]
@@ -39,20 +38,18 @@ public class ChecklistController(IChecklistService checklistService) : Controlle
     public async Task<IActionResult> CreateChecklistItemOnChecklist(int boardId, int cardId, 
         int checklistId, [FromBody] ChecklistItemCreateDto checklistItemCreateDto)
     {
-        ChecklistItemGetDto? checklistItemGetDto =
+        Result<ChecklistItemGetDto> checklistItemGetDto =
             await checklistService.CreateChecklistItem(boardId, cardId, checklistId, checklistItemCreateDto);
-        if (checklistItemGetDto == null) return NotFound();
-        return Ok(checklistItemGetDto);
+        return checklistItemGetDto.IsSuccess ? Ok(checklistItemGetDto.Value) : HandleFailure(checklistItemGetDto);
     }
 
     [HttpPut("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/item")]
     public async Task<IActionResult> UpdateChecklistItem(int boardId, int cardId, 
         int checklistId, [FromBody] ChecklistItemUpdateDto checklistItemUpdateDto)
     {
-        ChecklistItemGetDto? checklistItemGetDto =
+        Result<ChecklistItemGetDto> checklistItemGetDto =
             await checklistService.UpdateChecklistItem(boardId, cardId, checklistId, checklistItemUpdateDto);
-        if (checklistItemGetDto == null) return NotFound();
-        return Ok(checklistItemGetDto);
+        return checklistItemGetDto.IsSuccess ? Ok(checklistItemGetDto) : HandleFailure(checklistItemGetDto);
     }
 
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/item/{checklistItemId:int}")]

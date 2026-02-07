@@ -3,6 +3,7 @@ using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
@@ -13,29 +14,33 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 public class ChecklistService(ICardRepository cardRepository, IChecklistNotificationService checklistNotificationService,
     IUnitOfWork unitOfWork) : IChecklistService
 {
-    public async Task<ChecklistGetDto?> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto)
+    public async Task<Result<ChecklistGetDto>> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto)
     {
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card is null) return Errors.NotFound;
 
-        Checklist checklist = new(cardId, checklistCreateDto.ChecklistName);
-        card.AddChecklist(checklist);
+        Result<Checklist> createChecklistResult = Checklist.Create(cardId, checklistCreateDto.ChecklistName);
+        if (!createChecklistResult.IsSuccess) return createChecklistResult.Error!;
+        
+        card.AddChecklist(createChecklistResult.Value!);
         await unitOfWork.SaveChangesAsync();
 
-        ChecklistGetDto checklistGetDto = checklist.ToGetDto();
+        ChecklistGetDto checklistGetDto = createChecklistResult.Value!.ToGetDto();
         checklistNotificationService.CreateChecklist(boardId, cardId, checklistGetDto);
         return checklistGetDto;
     }
 
-    public async Task<ChecklistGetDto?> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto)
+    public async Task<Result<ChecklistGetDto>> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto)
     {
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card is null) return Errors.NotFound;
 
         Checklist? checklist = card.Checklists.FirstOrDefault(cl => cl.ChecklistId == checklistUpdateDto.ChecklistId);
-        if (checklist == null) return null;
+        if (checklist is null) return Errors.NotFound;
         
-        checklist.RenameChecklist(checklistUpdateDto.ChecklistName);
+        Result renameChecklistResult = checklist.RenameChecklist(checklistUpdateDto.ChecklistName);
+        if (!renameChecklistResult.IsSuccess) return renameChecklistResult.Error!;
+        
         await unitOfWork.SaveChangesAsync();
         
         ChecklistGetDto checklistGetDto = checklist.ToGetDto();
@@ -57,19 +62,21 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return removeChecklistResult.IsSuccess;
     }
 
-    public async Task<ChecklistItemGetDto?> CreateChecklistItem(int boardId, int cardId, int checklistId, 
+    public async Task<Result<ChecklistItemGetDto>> CreateChecklistItem(int boardId, int cardId, int checklistId, 
         ChecklistItemCreateDto checklistItemCreateDto)
     {
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card is null) return Errors.NotFound;
 
         Checklist? checklist = card.Checklists.FirstOrDefault(c => c.ChecklistId == checklistId);
-        if (checklist == null) return null;
+        if (checklist is null) return Errors.NotFound;
         
-        ChecklistItem createdChecklistItem = checklist.AddChecklistItem(checklistItemCreateDto.ChecklistItemName);
+        Result<ChecklistItem> createdChecklistItemResult = checklist.AddChecklistItem(checklistItemCreateDto.ChecklistItemName);
+        if (!createdChecklistItemResult.IsSuccess) return createdChecklistItemResult.Error!;
+        
         await unitOfWork.SaveChangesAsync();
 
-        ChecklistItemGetDto checklistItemGetDto = createdChecklistItem.ToGetDto();
+        ChecklistItemGetDto checklistItemGetDto = createdChecklistItemResult.Value!.ToGetDto();
         checklistNotificationService.CreateChecklistItemOnChecklist(boardId, checklistId, checklistItemGetDto);
         return checklistItemGetDto;
     }
@@ -91,18 +98,20 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return removeChecklistItemResult.IsSuccess;
     }
 
-    public async Task<ChecklistItemGetDto?> UpdateChecklistItem(int boardId, int cardId, int checklistId, 
+    public async Task<Result<ChecklistItemGetDto>> UpdateChecklistItem(int boardId, int cardId, int checklistId, 
         ChecklistItemUpdateDto checklistItemUpdateDto)
     {
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card is null) return Errors.NotFound;
         
         Checklist? checklist = card.Checklists.FirstOrDefault(c => c.ChecklistId == checklistId);
-        if (checklist == null) return null;
+        if (checklist is null) return Errors.NotFound;
         ChecklistItem? checklistItem = checklist.ChecklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemUpdateDto.ChecklistItemId);
-        if (checklistItem == null) return null;
+        if (checklistItem is null) return Errors.NotFound;
         
-        checklistItem.RenameChecklistItem(checklistItemUpdateDto.ChecklistItemName);
+        Result renameChecklistItemResult = checklistItem.RenameChecklistItem(checklistItemUpdateDto.ChecklistItemName);
+        if (!renameChecklistItemResult.IsSuccess) return renameChecklistItemResult.Error!;
+        
         await unitOfWork.SaveChangesAsync();
 
         ChecklistItemGetDto checklistItemGetDto = checklistItem.ToGetDto();

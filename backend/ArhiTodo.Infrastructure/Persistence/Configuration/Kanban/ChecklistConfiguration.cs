@@ -12,7 +12,7 @@ public class ChecklistConfiguration : IEntityTypeConfiguration<Checklist>
 
         builder.Property(cl => cl.ChecklistName)
             .IsRequired()
-            .HasMaxLength(90);
+            .HasMaxLength(32);
 
         builder.HasMany(cl => cl.ChecklistItems);
 
