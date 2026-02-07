@@ -17,7 +17,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Property(p => p.ProjectName)
             .IsRequired()
-            .HasMaxLength(30);
+            .HasMaxLength(32);
 
         builder.HasMany(p => p.Boards);
         builder.HasMany(p => p.ProjectManagers);

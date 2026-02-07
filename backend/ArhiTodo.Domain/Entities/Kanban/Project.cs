@@ -21,15 +21,41 @@ public class Project
     
     private Project() {  }
 
-    public Project(string name, User user)
+    private Project(string name, User user)
     {
         ProjectName = name;
         OwnedByUserId = user.UserId;
+        Owner = user;
     }
 
-    public void ChangeName(string projectName)
+    private static Result CheckProjectName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return new Error("EmptyProjectName", ErrorType.BadRequest, "The project name may not be empty");
+        }
+
+        if (name.Length < 1 || name.Length > 32)
+        {
+            return new Error("EmptyProjectName", ErrorType.BadRequest, "The project name must contain between 1-32 characters!");
+        }
+
+        return Result.Success();
+    }
+    
+    public static Result<Project> Create(string name, User user)
+    {
+        Result checkProjectNameResult = CheckProjectName(name);
+        return checkProjectNameResult.IsSuccess ? new Project(name, user) : checkProjectNameResult.Error!;
+    }
+
+    public Result ChangeName(string projectName)
+    {
+        Result checkProjectNameResult = CheckProjectName(projectName);
+        if (!checkProjectNameResult.IsSuccess) return checkProjectNameResult.Error!;
+        
         ProjectName = projectName;
+        return Result.Success();
     }
 
     public Result AddProjectManager(ProjectManager user)

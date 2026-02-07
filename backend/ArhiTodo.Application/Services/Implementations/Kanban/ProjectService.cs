@@ -5,6 +5,7 @@ using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
@@ -62,28 +63,31 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         return projectManagers.Select(pm => pm.ToGetDto()).ToList();
     }
 
-    public async Task<ProjectGetDto?> CreateProject(ProjectCreateDto projectCreateDto)
+    public async Task<Result<ProjectGetDto>> CreateProject(ProjectCreateDto projectCreateDto)
     {
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.CreateProjects));
-        if (!authorized) return null;
+        if (!authorized) return Errors.Forbidden;
         
         User? foundUser = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
-        if (foundUser == null) return null;
+        if (foundUser == null) return Errors.Unauthenticated;
 
-        Project project = await projectRepository.CreateAsync(
-            new Project(projectCreateDto.ProjectName, foundUser));
-        project.AddProjectManager(new ProjectManager(project.ProjectId, foundUser.UserId));
+        Result<Project> project = Project.Create(projectCreateDto.ProjectName, foundUser);
+        if (!project.IsSuccess) return project.Error!;
+
+        Project createdProject = await projectRepository.CreateAsync(project.Value!);
+        createdProject.AddProjectManager(new ProjectManager(createdProject.ProjectId, foundUser.UserId));
         await unitOfWork.SaveChangesAsync();
         
-        return project.ToGetDto();
+        return project.Value?.ToGetDto()!;
     }
 
-    public async Task<ProjectGetDto?> UpdateProject(ProjectUpdateDto projectUpdateDto)
+    public async Task<Result<ProjectGetDto>> UpdateProject(ProjectUpdateDto projectUpdateDto)
     {
         Project? project = await projectRepository.GetAsync(projectUpdateDto.ProjectId);
-        if (project == null) return null;
+        if (project == null) return Errors.NotFound;
 
-        project.ChangeName(projectUpdateDto.ProjectName);
+        Result changeNameResult = project.ChangeName(projectUpdateDto.ProjectName);
+        if (!changeNameResult.IsSuccess) return changeNameResult.Error!;
         await unitOfWork.SaveChangesAsync();
         
         ProjectGetDto projectGetDto = project.ToGetDto();

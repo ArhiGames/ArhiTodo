@@ -1,6 +1,7 @@
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api/project")]
-public class ProjectController(IProjectService projectService) : ControllerBase
+public class ProjectController(IProjectService projectService) : ApiControllerBase
 {
     [HttpPut("{projectId:int}/managers")]
     public async Task<IActionResult> UpdateProjectManagers(int projectId, [FromBody] List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
@@ -41,17 +42,15 @@ public class ProjectController(IProjectService projectService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
-        ProjectGetDto? project = await projectService.CreateProject(projectCreateDto);
-        if (project == null) return NotFound();
-        return Ok(project);
+        Result<ProjectGetDto> project = await projectService.CreateProject(projectCreateDto);
+        return project.IsSuccess ? Ok(project) : HandleFailure(project);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
     {
-        ProjectGetDto? project = await projectService.UpdateProject(projectUpdateDto);
-        if (project == null) return NotFound();
-        return Ok(project);
+        Result<ProjectGetDto> project = await projectService.UpdateProject(projectUpdateDto);
+        return project.IsSuccess ? Ok(project) : HandleFailure(project);
     }
 
     [HttpDelete("{projectId:int}")]

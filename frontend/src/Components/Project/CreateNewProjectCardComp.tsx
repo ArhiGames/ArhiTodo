@@ -96,7 +96,7 @@ const CreateNewProjectCardComp = () => {
                             <div className="create-new-project-modal">
                                 <form onSubmit={onCreateProjectSubmit}>
                                     <label>Project name</label>
-                                    <input ref={projectNameInputRef} placeholder="Project name" className="classic-input"
+                                    <input ref={projectNameInputRef} placeholder="Project name" className="classic-input" minLength={1} maxLength={32} required
                                         value={projectName} onChange={(e) => setProjectName(e.target.value)}/>
                                     <button type="submit" className={`button ${projectName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Create</button>
                                 </form>

@@ -55,6 +55,7 @@ const EditProjectModalComp = (props: Props) => {
             .catch(err => {
                 if (dispatch) {
                     dispatch({ type: "UPDATE_PROJECT", payload: { projectId: props.project.projectId, projectName: oldName }});
+                    setProjectName(oldName);
                 }
                 console.error(err);
             })
@@ -88,7 +89,7 @@ const EditProjectModalComp = (props: Props) => {
         <>
             <Modal modalSize="modal-large" onClosed={props.onClose} header={
                 <input className="classic-input" style={{ width: "100%", marginRight: "1rem" }} onBlur={handleProjectNameInputBlurred}
-                       value={projectName} onChange={(e) => setProjectName(e.target.value)}/>
+                       value={projectName} maxLength={32} onChange={(e) => setProjectName(e.target.value)}/>
             } footer={
                 <button onClick={() => setIsTryingToDelete(true)} className="button standard-button iconized-button">
                     <img className="icon" height="32px" src="/trashcan-icon.svg" alt="Delete"/>
