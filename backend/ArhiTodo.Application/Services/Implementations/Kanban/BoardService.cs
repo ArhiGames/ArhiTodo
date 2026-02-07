@@ -5,6 +5,8 @@ using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Common.Errors;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
@@ -58,38 +60,39 @@ public class BoardService(IBoardNotificationService boardNotificationService, IP
         return await GetBoardMembers(boardId);
     }
 
-    public async Task<BoardGetDto?> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
+    public async Task<Result<BoardGetDto>> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
         Project? project = await projectRepository.GetAsync(projectId);
-        if (project == null) return null;
+        if (project is null) return Errors.NotFound;
 
-        Board board = new(projectId, boardCreateDto.BoardName, currentUser.UserId);
-        project.AddBoard(board, currentUser.UserId);
-        await unitOfWork.SaveChangesAsync();
+        Result<Board> createBoardResult = Board.Create(projectId, boardCreateDto.BoardName, currentUser.UserId);
+        if (!createBoardResult.IsSuccess) return createBoardResult.Error!;
+
+        Board board = createBoardResult.Value!;
+            
+        Result addBoardResult = project.AddBoard(board, currentUser.UserId);
+        if (!addBoardResult.IsSuccess) return addBoardResult.Error!;
         
-        board.AddMember(currentUser.UserId);
-        foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
-        {
-            if (boardClaim == BoardClaimTypes.ViewBoard) continue; // Handled by the AddMember method
-            board.AddUserClaim(boardClaim, "true", currentUser.UserId);
-        }
+        board.InitializeCreatorPermissions(currentUser.UserId);
+
         await unitOfWork.SaveChangesAsync();
         
         BoardGetDto boardGetDto = board.ToGetDto();
-        boardNotificationService.CreateBoard(Guid.NewGuid(), projectId, boardGetDto);
+        boardNotificationService.CreateBoard(projectId, boardGetDto);
         return boardGetDto;
     }
 
-    public async Task<BoardGetDto?> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
+    public async Task<Result<BoardGetDto>> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
     {
         Board? board = await boardRepository.GetAsync(boardUpdateDto.BoardId);
-        if (board == null) return null;
+        if (board == null) return Errors.NotFound;
         
-        board.ChangeName(boardUpdateDto.BoardName);
+        Result changeBoardNameResult = board.ChangeName(boardUpdateDto.BoardName);
+        if (!changeBoardNameResult.IsSuccess) return changeBoardNameResult.Error!;
         await unitOfWork.SaveChangesAsync();
         
         BoardGetDto boardGetDto = board.ToGetDto();
-        boardNotificationService.UpdateBoard(Guid.NewGuid(), projectId, boardGetDto);
+        boardNotificationService.UpdateBoard(projectId, boardGetDto);
         return boardGetDto;
     }
 
@@ -98,7 +101,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IP
         bool succeeded = await boardRepository.DeleteAsync(boardId);
         if (succeeded)
         {
-            boardNotificationService.DeleteBoard(Guid.NewGuid(), projectId, boardId);
+            boardNotificationService.DeleteBoard(projectId, boardId);
         }
         return succeeded;
     }

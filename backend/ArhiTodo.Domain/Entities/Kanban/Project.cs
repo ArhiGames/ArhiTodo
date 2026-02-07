@@ -28,7 +28,7 @@ public class Project
         Owner = user;
     }
 
-    private static Result CheckProjectName(string name)
+    private static Result ValidateProjectName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -45,14 +45,14 @@ public class Project
     
     public static Result<Project> Create(string name, User user)
     {
-        Result checkProjectNameResult = CheckProjectName(name);
+        Result checkProjectNameResult = ValidateProjectName(name);
         return checkProjectNameResult.IsSuccess ? new Project(name, user) : checkProjectNameResult.Error!;
     }
 
     public Result ChangeName(string projectName)
     {
-        Result checkProjectNameResult = CheckProjectName(projectName);
-        if (!checkProjectNameResult.IsSuccess) return checkProjectNameResult.Error!;
+        Result checkProjectNameResult = ValidateProjectName(projectName);
+        if (!checkProjectNameResult.IsSuccess) return checkProjectNameResult;
         
         ProjectName = projectName;
         return Result.Success();

@@ -9,6 +9,8 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
     public void Configure(EntityTypeBuilder<Board> builder)
     {
         builder.HasKey(b => b.BoardId);
+        builder.Property(b => b.BoardId)
+            .ValueGeneratedOnAdd();
 
         builder.HasOne(b => b.Owner)
             .WithMany()
@@ -17,7 +19,7 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
 
         builder.Property(b => b.BoardName)
             .IsRequired()
-            .HasMaxLength(35);
+            .HasMaxLength(32);
 
         builder.HasOne<Project>()
             .WithMany(p => p.Boards)

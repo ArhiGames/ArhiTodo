@@ -25,16 +25,53 @@ public class Board
     
     private Board() {  }
 
-    public Board(int projectId, string name, Guid createdByUserId)
+    private Board(int projectId, string name, Guid createdByUserId)
     {
         ProjectId = projectId;
         BoardName = name;
         OwnedByUserId = createdByUserId;
     }
 
-    public void ChangeName(string boardName)
+    private static Result ValidateBoardName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return new Error("EmptyBoardName", ErrorType.BadRequest, "The board name may not be empty");
+        }
+
+        if (name.Length < 1 || name.Length > 32)
+        {
+            return new Error("EmptyBoardName", ErrorType.BadRequest, "The board name must contain between 1-32 characters!");
+        }
+
+        return Result.Success();
+    }
+
+    public static Result<Board> Create(int projectId, string name, Guid createdByUserId)
+    {
+        Result validateBoardNameResult = ValidateBoardName(name);
+        return validateBoardNameResult.IsSuccess
+            ? new Board(projectId, name, createdByUserId)
+            : validateBoardNameResult.Error!;
+    }
+
+    public Result ChangeName(string boardName)
+    {
+        Result validateBoardNameResult = ValidateBoardName(boardName);
+        if (!validateBoardNameResult.IsSuccess) return validateBoardNameResult;
+        
         BoardName = boardName;
+        return Result.Success();
+    }
+
+    public void InitializeCreatorPermissions(Guid userId)
+    {
+        AddMember(userId);
+        foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
+        {
+            if (boardClaim == BoardClaimTypes.ViewBoard) continue; // Handled by the AddMember method
+            AddUserClaim(boardClaim, "true", userId);
+        }
     }
 
     public void AddUserClaim(BoardClaimTypes boardClaimType, string value, Guid userId)

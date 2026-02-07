@@ -93,7 +93,7 @@ const CreateNewBoardHeaderComp = () => {
                             <input style={{ width: "100%" }} className="classic-input"
                                    placeholder="Board name..." value={boardName}
                                    onChange={e => setBoardName(e.target.value)}
-                                   maxLength={35}
+                                   maxLength={32}
                                    ref={boardNameInputRef}/>
                             <button className={`button ${boardName.length > 0 ? "valid-submit-button" : "standard-button"}`} type="submit">Create</button>
                         </form>

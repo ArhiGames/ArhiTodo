@@ -3,6 +3,7 @@ using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
+using ArhiTodo.Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class BoardController(IBoardService boardService, ILabelService labelService) : ControllerBase
+public class BoardController(IBoardService boardService, ILabelService labelService) : ApiControllerBase
 {
     [HttpPut("board/{boardId:int}/permissions/{userId:guid}")]
     public async Task<IActionResult> UpdateClaims(int boardId, Guid userId, [FromBody] List<ClaimPostDto> claimPostDto)
@@ -40,17 +41,15 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardCreateDto boardCreateDto)
     {
-        BoardGetDto? board = await boardService.CreateBoard(projectId, boardCreateDto);
-        if (board == null) return NotFound();
-        return Ok(board);
+        Result<BoardGetDto> board = await boardService.CreateBoard(projectId, boardCreateDto);
+        return board.IsSuccess ? Ok(board.Value) : HandleFailure(board);
     }
 
     [HttpPut("project/{projectId:int}/board/")]
     public async Task<IActionResult> UpdateBoard(int projectId, [FromBody] BoardUpdateDto boardUpdateDto)
     {
-        BoardGetDto? board = await boardService.UpdateBoard(projectId, boardUpdateDto);
-        if (board == null) return NotFound();
-        return Ok(board);
+        Result<BoardGetDto> board = await boardService.UpdateBoard(projectId, boardUpdateDto);
+        return board.IsSuccess ? Ok(board.Value) : HandleFailure(board);
     }
 
     [HttpDelete("project/{projectId:int}/board/{boardId:int}")]

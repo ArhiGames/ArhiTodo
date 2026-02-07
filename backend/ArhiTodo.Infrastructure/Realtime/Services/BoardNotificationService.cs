@@ -8,17 +8,17 @@ namespace ArhiTodo.Infrastructure.Realtime.Services;
 
 public class BoardNotificationService(IHubContext<BoardHub, IBoardClient> hubContext) : IBoardNotificationService
 {
-    public void CreateBoard(Guid invokedBy, int projectId, BoardGetDto boardGetDto)
+    public void CreateBoard(int projectId, BoardGetDto boardGetDto)
     {
         hubContext.Clients.Group($"grp-project-{projectId}").CreateBoard(projectId, boardGetDto);
     }
 
-    public void UpdateBoard(Guid invokedBy, int projectId, BoardGetDto boardGetDto)
+    public void UpdateBoard(int projectId, BoardGetDto boardGetDto)
     {
         hubContext.Clients.Group($"grp-project-{projectId}").UpdateBoard(projectId, boardGetDto);
     }
 
-    public void DeleteBoard(Guid invokedBy, int projectId, int boardId)
+    public void DeleteBoard(int projectId, int boardId)
     {
         hubContext.Clients.Group($"grp-project-{projectId}").DeleteBoard(boardId);
     }

@@ -43,14 +43,14 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
     public async Task<IActionResult> CreateProject([FromBody] ProjectCreateDto projectCreateDto)
     {
         Result<ProjectGetDto> project = await projectService.CreateProject(projectCreateDto);
-        return project.IsSuccess ? Ok(project) : HandleFailure(project);
+        return project.IsSuccess ? Ok(project.Value) : HandleFailure(project);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateDto projectUpdateDto)
     {
         Result<ProjectGetDto> project = await projectService.UpdateProject(projectUpdateDto);
-        return project.IsSuccess ? Ok(project) : HandleFailure(project);
+        return project.IsSuccess ? Ok(project.Value) : HandleFailure(project);
     }
 
     [HttpDelete("{projectId:int}")]

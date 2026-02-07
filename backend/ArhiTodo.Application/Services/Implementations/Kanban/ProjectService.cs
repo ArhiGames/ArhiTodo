@@ -78,7 +78,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         createdProject.AddProjectManager(new ProjectManager(createdProject.ProjectId, foundUser.UserId));
         await unitOfWork.SaveChangesAsync();
         
-        return project.Value?.ToGetDto()!;
+        return createdProject.ToGetDto()!;
     }
 
     public async Task<Result<ProjectGetDto>> UpdateProject(ProjectUpdateDto projectUpdateDto)
