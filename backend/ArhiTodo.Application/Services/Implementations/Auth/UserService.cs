@@ -12,18 +12,17 @@ public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepos
     public async Task<List<ClaimGetDto>?> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
     {
         User? user = await accountRepository.GetUserByGuidAsync(userId);
-        if (user == null) return null;
+        if (user is null) return null;
 
         foreach (ClaimPostDto claimPostDto in claimPostDtos)
         {
-            UserClaim? existingClaim = user.UserClaims.FirstOrDefault(uc => uc.Type == claimPostDto.ClaimType);
-            if (existingClaim == null)
+            bool succeededParsing = Enum.TryParse(claimPostDto.ClaimType, out UserClaimTypes userClaimType);
+            if (!succeededParsing) continue;
+            
+            UserClaim? existingClaim = user.UserClaims.FirstOrDefault(uc => uc.Type == userClaimType);
+            if (existingClaim is null)
             {
-                bool succeededParsing = Enum.TryParse(claimPostDto.ClaimType, out UserClaimTypes userClaimType);
-                if (succeededParsing)
-                {
-                    user.AddUserClaim(userClaimType, claimPostDto.ClaimValue);
-                }
+                user.AddUserClaim(userClaimType, claimPostDto.ClaimValue);
             }
             else
             {

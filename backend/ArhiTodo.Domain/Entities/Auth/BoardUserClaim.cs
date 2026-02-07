@@ -14,7 +14,7 @@ public enum BoardClaimTypes
 
 public class BoardUserClaim
 {
-    public string Type { get; private set; } = string.Empty;
+    public BoardClaimTypes Type { get; private set; }
 
     public string Value { get; private set; } = string.Empty;
     
@@ -28,7 +28,7 @@ public class BoardUserClaim
     
     public BoardUserClaim(BoardClaimTypes boardClaimType, string value, int boardId, Guid userId)
     {
-        Type = boardClaimType.ToString();
+        Type = boardClaimType;
         Value = value;
         BoardId = boardId;
         UserId = userId;

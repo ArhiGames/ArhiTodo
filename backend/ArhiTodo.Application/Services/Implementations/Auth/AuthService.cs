@@ -50,7 +50,7 @@ public class AuthService(IBoardRepository boardRepository, IAccountRepository ac
         string? refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         if (refreshToken == null) return null;
         
-        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
+        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value)).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
         return new LoginGetDto(jwt, refreshToken);
     }
@@ -119,7 +119,7 @@ public class AuthService(IBoardRepository boardRepository, IAccountRepository ac
         UserSession? userSession = await sessionRepository.GetUserSessionByToken(hashedToken);
         if (userSession == null) return null;
         
-        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type, uc.Value)).ToList();
+        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value)).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(userSession.User, claims);
         return jwt;
     }

@@ -15,10 +15,12 @@ public class UserClaimConfiguration : IEntityTypeConfiguration<UserClaim>
             .HasForeignKey(uc => uc.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(p => p.Type)
-            .HasMaxLength(32);
+        builder.Property(uc => uc.Type)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
         
         builder.Property(p => p.Value)
-            .HasMaxLength(32);
+            .HasMaxLength(16);
     }
 }

@@ -14,7 +14,7 @@ public enum UserClaimTypes
 
 public class UserClaim
 {
-    public string Type { get; private set; } = string.Empty;
+    public UserClaimTypes Type { get; private set; }
 
     public string Value { get; private set; } = string.Empty;
     
@@ -26,7 +26,7 @@ public class UserClaim
     public UserClaim(Guid userId, UserClaimTypes type, string value)
     {
         UserId = userId;
-        Type = type.ToString();
+        Type = type;
         Value = value;
     }
 

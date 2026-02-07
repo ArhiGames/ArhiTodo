@@ -44,7 +44,7 @@ public class Board
     
     public void UpdateUserClaim(BoardClaimTypes boardClaimType, string newValue)
     {
-        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaimType.ToString());
+        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaimType);
         boardUserClaim?.UpdateValue(newValue);
     }
 
@@ -57,7 +57,7 @@ public class Board
     public bool RemoveMember(Guid userId)
     {
         BoardUserClaim? foundBoardUserClaim = _boardUserClaims.FirstOrDefault(bc => bc.UserId == userId
-            && bc.Type == nameof(BoardClaimTypes.ViewBoard));
+            && bc.Type == BoardClaimTypes.ViewBoard);
         return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
     }
 

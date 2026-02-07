@@ -11,10 +11,12 @@ public class BoardUserClaimConfiguration : IEntityTypeConfiguration<BoardUserCla
         builder.HasKey(buc => new { buc.Type, buc.BoardId, buc.UserId });
 
         builder.Property(buc => buc.Type)
-            .HasMaxLength(32);
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
         
         builder.Property(buc => buc.Value)
-            .HasMaxLength(32);
+            .HasMaxLength(16);
 
         builder.HasOne(buc => buc.Board)
             .WithMany(b => b.BoardUserClaims)

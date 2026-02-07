@@ -7,11 +7,11 @@ public static class ClaimMapper
 {
     public static ClaimGetDto ToGetDto(this BoardUserClaim boardUserClaim)
     {
-        return new ClaimGetDto(boardUserClaim.Type, boardUserClaim.Value);
+        return new ClaimGetDto(boardUserClaim.Type.ToString(), boardUserClaim.Value);
     }
 
     public static ClaimGetDto ToGetDto(this UserClaim userClaim)
     {
-        return new ClaimGetDto(userClaim.Type, userClaim.Value);
+        return new ClaimGetDto(userClaim.Type.ToString(), userClaim.Value);
     }
 }
