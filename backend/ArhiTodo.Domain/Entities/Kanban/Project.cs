@@ -13,7 +13,7 @@ public class Project
     private readonly List<Board> _boards = [];
     public IReadOnlyCollection<Board> Boards => _boards.AsReadOnly();
 
-    public Guid OwnedByUserId { get; }
+    public Guid OwnerId { get; }
     public User Owner { get; } = null!;
 
     private readonly List<ProjectManager> _projectManagers = [];
@@ -24,7 +24,7 @@ public class Project
     private Project(string name, User user)
     {
         ProjectName = name;
-        OwnedByUserId = user.UserId;
+        OwnerId = user.UserId;
         Owner = user;
     }
 
@@ -67,17 +67,24 @@ public class Project
     public Result RemoveProjectManager(Guid projectManagerId)
     {
         ProjectManager? projectManager = _projectManagers.FirstOrDefault(pm => pm.UserId == projectManagerId);
-        if (projectManager == null)
+        if (projectManager is null)
         {
             return new Error("NoProjectManagerWithId", ErrorType.Conflict,
                 "There is no user (project manager) with the specified id on this project!");
         }
+
+        if (OwnerId == projectManagerId)
+        {
+            return new Error("TryingToDeleteOwner", ErrorType.Conflict,
+                "Cannot remove the owner of the project from the project manager list!");
+        }
+        
         return _projectManagers.Remove(projectManager) ? Result.Success() : Errors.Unknown;
     }
 
     public Result AddBoard(Board board, Guid userId)
     {
-        if (!_projectManagers.Exists(pm => pm.UserId == userId) && userId != OwnedByUserId)
+        if (!_projectManagers.Exists(pm => pm.UserId == userId) && userId != OwnerId)
         {
             return new Error("Insufficient rights", ErrorType.Forbidden, 
                 "The user is neither a project manager nor the project owner!");

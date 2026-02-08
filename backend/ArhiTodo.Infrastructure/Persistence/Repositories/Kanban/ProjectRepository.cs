@@ -1,3 +1,4 @@
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Kanban;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +15,10 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         return createdProject.Entity;
     }
 
-    public async Task<bool> DeleteAsync(int projectId)
+    public async Task RemoveAsync(Project project)
     {
-        int changedRows = await database.Projects
-            .Where(p => p.ProjectId == projectId)
-            .ExecuteDeleteAsync();
-        return changedRows == 1;
+        database.Projects.Remove(project);
+        await database.SaveChangesAsync();
     }
 
     public async Task<Project?> GetAsync(int projectId)
@@ -31,9 +30,36 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         return project;
     }
 
+    public async Task<Project?> GetAsync(int projectId, Guid userId)
+    {
+        Project? project = await database.Projects
+            .Include(p => p.Owner)
+            .Include(p => p.ProjectManagers)
+            .FirstOrDefaultAsync(p => p.OwnerId == userId ||
+                                      p.ProjectManagers.Any(pm => pm.UserId == userId) ||
+                                      p.Boards.Any(b => b.BoardUserClaims.Any(buc =>
+                                          buc.UserId == userId &&
+                                          buc.Type == BoardClaimTypes.ViewBoard &&
+                                          buc.Value == "true")));
+        return project;
+    }
+
     public async Task<List<Project>> GetAllAsync()
     {
         List<Project> projects = await database.Projects.ToListAsync();
+        return projects;
+    }
+
+    public async Task<List<Project>> GetAllAsync(Guid userId)
+    {
+        List<Project> projects = await database.Projects
+            .Where(p => p.OwnerId == userId || 
+                        p.ProjectManagers.Any(pm => pm.UserId == userId) || 
+                        p.Boards.Any(b => b.BoardUserClaims.Any(buc => 
+                            buc.UserId == userId && 
+                            buc.Type == BoardClaimTypes.ViewBoard && 
+                            buc.Value == "true")))
+            .ToListAsync();
         return projects;
     }
 }

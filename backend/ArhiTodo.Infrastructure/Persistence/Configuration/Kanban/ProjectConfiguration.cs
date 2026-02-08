@@ -14,7 +14,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.HasOne(p => p.Owner)
             .WithMany()
-            .HasForeignKey(p => p.OwnedByUserId)
+            .HasForeignKey(p => p.OwnerId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(p => p.ProjectName)

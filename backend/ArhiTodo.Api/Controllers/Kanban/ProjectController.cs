@@ -17,25 +17,22 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
     [HttpPut("{projectId:int}/managers")]
     public async Task<IActionResult> UpdateProjectManagers(int projectId, [FromBody] List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
-        List<UserGetDto>? projectManagers = await projectService.UpdateProjectManagerStates(projectId, projectManagerStatusUpdateDtos);
-        if (projectManagers == null) return NotFound();
-        return Ok(projectManagers);
+        Result<List<UserGetDto>> projectManagers = await projectService.UpdateProjectManagerStates(projectId, projectManagerStatusUpdateDtos);
+        return projectManagers.IsSuccess ? Ok(projectManagers.Value) : HandleFailure(projectManagers);
     }
 
     [HttpDelete("{projectId:int}/managers/{userId:guid}")]
     public async Task<IActionResult> RemoveManager(int projectId, Guid userId)
     {
-        bool succeeded = await projectService.RemoveProjectManager(projectId, userId);
-        if (!succeeded) return NotFound();
-        return NoContent();
+        Result removeProjectManagerResult = await projectService.RemoveProjectManager(projectId, userId);
+        return removeProjectManagerResult.IsSuccess ? NoContent() : HandleFailure(removeProjectManagerResult);
     }
 
     [HttpGet("{projectId:int}/managers")]
     public async Task<IActionResult> GetProjectManagers(int projectId)
     {
-        List<UserGetDto>? projectManagers = await projectService.GetProjectManagers(projectId);
-        if (projectManagers == null) return NotFound();
-        return Ok(projectManagers);
+        Result<List<UserGetDto>> projectManagers = await projectService.GetProjectManagers(projectId);
+        return projectManagers.IsSuccess ? Ok(projectManagers.Value) : HandleFailure(projectManagers);
     }
     
     [Authorize(Policy = nameof(UserClaimTypes.CreateProjects))]
@@ -56,23 +53,21 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
     [HttpDelete("{projectId:int}")]
     public async Task<IActionResult> DeleteProject(int projectId)
     {
-        bool success = await projectService.DeleteProject(projectId);
-        if (!success) return NotFound();
-        return NoContent();
+        Result deleteProjectResult = await projectService.DeleteProject(projectId);
+        return deleteProjectResult.IsSuccess ? NoContent() : HandleFailure(deleteProjectResult);
     }
 
     [HttpGet("{projectId:int}")]
     public async Task<IActionResult> GetProject(int projectId)
     {
-        ProjectGetDto? projectGetDto = await projectService.GetProject(projectId);
-        if (projectGetDto == null) return NotFound();
-        return Ok(projectGetDto);
+        Result<ProjectGetDto> projectGetDto = await projectService.GetProject(projectId);
+        return projectGetDto.IsSuccess ? Ok(projectGetDto.Value) : HandleFailure(projectGetDto);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {
-        List<ProjectGetDto> projects = await projectService.GetProjects();
-        return Ok(projects);
+        Result<List<ProjectGetDto>> projects = await projectService.GetProjects();
+        return projects.IsSuccess ? Ok(projects.Value) : HandleFailure(projects);
     }
 }

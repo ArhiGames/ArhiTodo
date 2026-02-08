@@ -11,7 +11,7 @@ public static class ProjectMapper
         {
             ProjectId = project.ProjectId,
             ProjectName = project.ProjectName,
-            OwnedByUserId = project.OwnedByUserId,
+            OwnedByUserId = project.OwnerId,
             Boards = project.Boards.Select(b => b.ToGetDto()).ToList()
         };
     }

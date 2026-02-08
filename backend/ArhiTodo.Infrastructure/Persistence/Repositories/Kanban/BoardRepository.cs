@@ -12,7 +12,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     {
         List<User> users = await database.BoardUserClaims
             .Include(buc => buc.User)
-            .Where(buc => buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true")
+            .Where(buc => buc.BoardId == boardId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true")
             .Select(buc => buc.User)
             .ToListAsync();
         return users;
