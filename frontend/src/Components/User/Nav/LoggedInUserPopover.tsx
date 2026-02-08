@@ -12,7 +12,7 @@ interface Props {
 const LoggedInUserPopover = (props: Props) => {
 
     const navigate = useNavigate();
-    const { appUser, logout } = useAuth();
+    const { appUser, jwtPayload, logout } = useAuth();
 
     function handleAccountSettingsButtonPressed(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
@@ -32,7 +32,7 @@ const LoggedInUserPopover = (props: Props) => {
                 <h2>{appUser?.unique_name}</h2>
                 <p>{appUser?.email}</p>
                 <button className="button standard-button" onClick={handleAccountSettingsButtonPressed}>Account settings</button>
-                <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button>
+                { jwtPayload?.AccessAdminDashboard === "true" && <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button> }
                 <button className="button standard-button" onClick={() => logout(true)}>Sign out</button>
             </div>
         </Popover>

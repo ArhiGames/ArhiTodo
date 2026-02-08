@@ -12,7 +12,7 @@ import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto
 const AdminUserManagementComp = () => {
 
     const navigate = useNavigate();
-    const { appUser, token, checkRefresh } = useAuth();
+    const { appUser, jwtPayload, token, checkRefresh } = useAuth();
     const { userId } = useParams();
     const [users, setUsers] = useState<UserGetDto[]>([]);
     const [usersCount, setUsersCount] = useState<number>(0);
@@ -36,13 +36,15 @@ const AdminUserManagementComp = () => {
                 return res.json();
             })
             .then((accounts: UserGetDto[]) => {
-                const newUsers = [...users];
-                for (const foundUser of accounts) {
-                    if (!newUsers.some((user: UserGetDto) => user.userId === foundUser.userId)) {
-                        newUsers.push(foundUser);
+                setUsers((oldUsers: UserGetDto[]) => {
+                    const newUsers = [...oldUsers];
+                    for (const foundUser of accounts) {
+                        if (!newUsers.some((user: UserGetDto) => user.userId === foundUser.userId)) {
+                            newUsers.push(foundUser);
+                        }
                     }
-                }
-                setUsers(newUsers);
+                    return newUsers;
+                });
             })
             .catch(err => {
                 console.error(err);
@@ -118,14 +120,17 @@ const AdminUserManagementComp = () => {
                 .then((userCount: { userCount: number }) => {
                     setUsersCount(userCount.userCount);
                 })
-                .catch(console.error);
+                .catch(console.error)
+                .finally(() => {
+                    setUsers([]);
+                    loadUsers(0);
+                })
 
-            await loadUsers(0);
         }
 
         run();
 
-    }, [checkRefresh]);
+    }, [checkRefresh, userId]);
 
     function onEditUser(user: UserGetDto) {
         navigate(`/admin/dashboard/users/${user.userId}`);
@@ -141,14 +146,21 @@ const AdminUserManagementComp = () => {
                 ))}
                 { usersCount > users.length && <button onClick={onLoadMoreButtonPressed} className="users-show-more">Show more...</button> }
             </div>
-            <nav className="user-management-nav">
-                <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
-            </nav>
             {
-                (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
-                    <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
+                jwtPayload?.InviteOtherUsers === "true" && (
+                    <>
+                        <nav className="user-management-nav">
+                            <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
+                        </nav>
+                        {
+                            (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
+                                <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
+                            )
+                        }
+                    </>
                 )
             }
+
             {
                 currentViewingUser && (
                     createPortal(<UserDetailsModalComp setCurrentViewingUser={setCurrentViewingUser} currentViewingUser={currentViewingUser}/>, document.body)

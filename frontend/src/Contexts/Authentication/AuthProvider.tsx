@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
     const [appUser, setAppUser] = useState<AppUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [jwtPayload, setJwtPayload] = useState<JwtPayload | null>(null);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     const register = async (userName: string, email: string,
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     function onLoggedIn(jwt: JwtPayload) {
         setToken(localStorage.getItem("token"));
+        setJwtPayload(jwt);
         setAppUser( { id: jwt.nameid, unique_name: jwt.unique_name, email: jwt.email} );
     }
 
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         setToken(null);
+        setJwtPayload(null);
         setAppUser(null);
         navigate("/login");
 
@@ -70,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const now = Date.now() / 1000;
         if (decoded.exp > now) {
             setToken(savedToken);
+            setJwtPayload(decoded);
             setAppUser({ id: decoded.nameid, unique_name: decoded.unique_name, email: decoded.email });
             return localStorage.getItem("token");
         }
@@ -112,6 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 appUser,
                 token,
+                jwtPayload,
                 isLoaded,
                 checkRefresh,
                 register,

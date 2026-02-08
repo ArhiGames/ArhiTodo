@@ -98,7 +98,8 @@ const CardComp = (props: { card: CardGetDto }) => {
             <div style={{ display: "flex", alignItems: "center" }}>
                 <div onClick={onStateChange}
                      className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</div>
-                <p>{props.card.cardName}</p>
+                <p className="card-name">{props.card.cardName}</p>
+                <div style={{ opacity: "0" }} className={`card-checkmark ${ (props.card.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
             { (props.card.checklists !== undefined && props.card.checklists.length > 0) && (
                 <div className="card-checklist-hint">

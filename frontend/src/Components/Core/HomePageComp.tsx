@@ -9,7 +9,7 @@ import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.
 
 const HomePageComp = () => {
 
-    const { token, checkRefresh } = useAuth();
+    const { token, jwtPayload, checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
 
@@ -60,7 +60,7 @@ const HomePageComp = () => {
                     <ProjectCardComp key={project.projectId} project={project}/>
                 )
             })}
-            <CreateNewProjectCardComp/>
+            { jwtPayload?.CreateProjects === "true" && <CreateNewProjectCardComp/> }
         </div>
     )
 }

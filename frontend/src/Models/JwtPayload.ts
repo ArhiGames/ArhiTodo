@@ -1,4 +1,12 @@
 export type JwtPayload = {
+    AccessAdminDashboard: "true",
+    CreateProjects: "true",
+    DeleteOthersProjects: "true",
+    DeleteUsers: "true",
+    InviteOtherUsers: "true",
+    ManageUsers: "true",
+    ModifyOthersProjects: "true",
+    UpdateAppSettings: "true",
     nameid: string;
     unique_name: string;
     email: string;

@@ -28,9 +28,9 @@ public class Card
 
     private static Result ValidateCardName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 32)
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 256)
         {
-            return new Error("InvalidCardName", ErrorType.BadRequest, "The Card name must contain between 1-32 characters!");
+            return new Error("InvalidCardName", ErrorType.BadRequest, "The Card name must contain between 1-256 characters!");
         }
 
         return Result.Success();

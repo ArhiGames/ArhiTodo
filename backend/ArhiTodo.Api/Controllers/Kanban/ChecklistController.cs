@@ -49,7 +49,7 @@ public class ChecklistController(IChecklistService checklistService) : ApiContro
     {
         Result<ChecklistItemGetDto> checklistItemGetDto =
             await checklistService.UpdateChecklistItem(boardId, cardId, checklistId, checklistItemUpdateDto);
-        return checklistItemGetDto.IsSuccess ? Ok(checklistItemGetDto) : HandleFailure(checklistItemGetDto);
+        return checklistItemGetDto.IsSuccess ? Ok(checklistItemGetDto.Value) : HandleFailure(checklistItemGetDto);
     }
 
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/item/{checklistItemId:int}")]
