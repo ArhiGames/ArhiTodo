@@ -107,7 +107,7 @@ const InvitationCreatorModalComp = (props: Props) => {
                 <div className="invitation-creator">
                     <div className="invitation-settings">
                         <h3>Link settings</h3>
-                        <input className="classic-input" placeholder="Description..." required maxLength={32}
+                        <input className="classic-input" placeholder="Description..." required minLength={1} maxLength={32}
                                value={invitationName} onChange={(e) => setInvitationName(e.target.value)}/>
                         <h3>Expire</h3>
                         <p>Controls how long the invitation link remains valid and how often it can be used</p>

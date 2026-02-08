@@ -32,7 +32,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsUnique();
 
         builder.Property(u => u.UserName)
-            .HasMaxLength(32)
+            .HasMaxLength(20)
             .IsRequired();
 
         builder.Property(u => u.HashedPassword)

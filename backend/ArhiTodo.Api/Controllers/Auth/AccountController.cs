@@ -27,7 +27,7 @@ public class AccountController(IUserService userService, IAuthService authServic
     public async Task<IActionResult> GetUserCount()
     {
         Result<int> userCount = await userService.GetUserCount();
-        return userCount.IsSuccess ? Ok(new { userCount.Value }) : HandleFailure(userCount);
+        return userCount.IsSuccess ? Ok(new { userCount = userCount.Value }) : HandleFailure(userCount);
     }
 
     [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]

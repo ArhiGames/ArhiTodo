@@ -35,9 +35,9 @@ const AdminUserManagementComp = () => {
 
                 return res.json();
             })
-            .then((foundUsers: UserGetDto[]) => {
+            .then((accounts: UserGetDto[]) => {
                 const newUsers = [...users];
-                for (const foundUser of foundUsers) {
+                for (const foundUser of accounts) {
                     if (!newUsers.some((user: UserGetDto) => user.userId === foundUser.userId)) {
                         newUsers.push(foundUser);
                     }
@@ -51,7 +51,7 @@ const AdminUserManagementComp = () => {
 
     async function onLoadMoreButtonPressed() {
         const nextPage = (Math.floor(users.length / 5) - 1) + Math.floor(usersCount / 5);
-        await loadUsers(nextPage - 1);
+        await loadUsers(nextPage);
     }
 
     useEffect(() => {

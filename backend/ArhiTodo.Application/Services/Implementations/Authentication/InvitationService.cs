@@ -31,13 +31,14 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
 
         string invitationKey = Convert.ToHexString(secureInvitationLinkToken);
 
-        InvitationLink invitationLink = new(invitationKey,
+        Result<InvitationLink> createInvitationLinkResult = InvitationLink.Create(invitationKey,
             generateInvitationDto.InvitationLinkName,
             generateInvitationDto.MaxUses,
             expireDate,
             currentUser.UserId);
+        if (!createInvitationLinkResult.IsSuccess) return createInvitationLinkResult;
         
-        InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(invitationLink);
+        InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(createInvitationLinkResult.Value!);
         return generatedInvitationLink is null ? Errors.Unknown : generatedInvitationLink;
     }
 

@@ -16,7 +16,7 @@ public class InvitationLink
     public DateTimeOffset ExpiresDate { get; private set; }
     
     // 0 => infinite
-    public int MaxUses { get; private set; }
+    public int MaxUses { get; init; }
 
     public int Uses { get; private set; }
     
@@ -28,13 +28,32 @@ public class InvitationLink
 
     private InvitationLink() { }
     
-    public InvitationLink(string invitationKey, string invitationLinkName, int maxUses, DateTimeOffset expiresDate, Guid createdByUserId)
+    private InvitationLink(string invitationKey, string invitationLinkName, int maxUses, DateTimeOffset expiresDate, Guid createdByUserId)
     {
         InvitationKey = invitationKey;
         InvitationLinkName = invitationLinkName;
         MaxUses = maxUses;
         ExpiresDate = expiresDate;
         CreatedByUserId = createdByUserId;
+    }
+    
+    private static Result ValidateInvitationLinkName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 1 || name.Length > 32)
+        {
+            return new Error("InvalidInvitationName", ErrorType.BadRequest, "The invitation link name must contain between 1-32 characters!");
+        }
+
+        return Result.Success();
+    }
+
+    public static Result<InvitationLink> Create(string invitationKey, string invitationLinkName, int maxUses,
+        DateTimeOffset expiresDate, Guid createdByUserId)
+    {
+        Result validateInvitationLinkNameResult = ValidateInvitationLinkName(invitationLinkName);
+        return validateInvitationLinkNameResult.IsSuccess
+            ? new InvitationLink(invitationKey, invitationLinkName, maxUses, expiresDate, createdByUserId)
+            : validateInvitationLinkNameResult.Error!;
     }
 
     public Result Use()

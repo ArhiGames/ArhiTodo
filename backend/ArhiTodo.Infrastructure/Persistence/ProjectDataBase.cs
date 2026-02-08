@@ -1,4 +1,5 @@
 using System.Reflection;
+using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Services.Auth;
@@ -37,14 +38,14 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
             if (adminUser != null) return;
             
             string hashedPassword = passwordHashService.Hash("admin");
-            User appUser = new("admin", Email.Create("admin@admin.admin").Value!, hashedPassword);
+            Result<User> appUser = User.Create("admin", Email.Create("admin@admin.admin").Value!, hashedPassword);
 
             foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
             {
-                appUser.AddUserClaim(userClaimType, "true");
+                appUser.Value!.AddUserClaim(userClaimType, "true");
             }
             
-            context.Set<User>().Add(appUser);
+            context.Set<User>().Add(appUser.Value!);
             context.SaveChanges();
         });
     }

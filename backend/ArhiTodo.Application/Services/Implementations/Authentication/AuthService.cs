@@ -32,9 +32,11 @@ public class AuthService(
         
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
-        User user = new(createAccountDto.Username, email.Value!, hashedPassword,
-            invitationLink.InvitationKey);
-        User? createdUser = await accountRepository.CreateUserAsync(invitationLink, user);
+        Result<User> createUserResult = User.Create(createAccountDto.Username, email.Value!, 
+            hashedPassword, invitationLink.InvitationKey);
+        if (!createUserResult.IsSuccess) return createUserResult;
+        
+        User? createdUser = await accountRepository.CreateUserAsync(invitationLink, createUserResult.Value!);
 
         return createdUser == null ? Errors.Unknown : Result.Success();
     }

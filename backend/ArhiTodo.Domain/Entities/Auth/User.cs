@@ -26,14 +26,32 @@ public class User
     
     private User() { }
 
-    public User(string userName, Email email, string hashedPassword, string? joinedViaInvitationKey = null)
+    private User(string userName, Email email, string hashedPassword, string? joinedViaInvitationKey = null)
     {
         UserName = userName;
         Email = email;
         HashedPassword = hashedPassword;
         JoinedViaInvitationKey = joinedViaInvitationKey;
     }
+    
+    private static Result ValidateUserName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name) || name.Length < 3 || name.Length > 20)
+        {
+            return new Error("InvalidUserName", ErrorType.BadRequest, "The username must contain between 3-20 characters!");
+        }
 
+        return Result.Success();
+    }
+
+    public static Result<User> Create(string userName, Email email, string hashedPassword, string? joinedViaInvitationKey = null)
+    {
+        Result validateUserNameResult = ValidateUserName(userName);
+        return validateUserNameResult.IsSuccess
+            ? new User(userName, email, hashedPassword, joinedViaInvitationKey)
+            : validateUserNameResult.Error!;
+    }
+ 
     public void AddUserClaim(UserClaimTypes userClaimTypes, string value)
     {
         UserClaim userClaim = new(UserId, userClaimTypes, value);

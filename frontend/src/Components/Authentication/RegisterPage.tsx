@@ -15,7 +15,7 @@ const RegisterPage = () => {
     const [confirmedPassword, setConfirmedPassword] = useState<string>("");
     const [error, setError] = useState<Error | null>(null);
 
-    const isValidInput = (password.length >= 8 && password === confirmedPassword);
+    const isValidInput = (userName.length >= 3 && userName.length <= 20) && (password.length >= 8 && password === confirmedPassword);
 
     const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
@@ -67,7 +67,8 @@ const RegisterPage = () => {
                 <form onSubmit={onFormSubmit}>
                     <label>Username</label>
                     <input value={userName} onChange={onUserNameChanged}
-                           required type="text" placeholder="Enter your username..."/>
+                           minLength={3} maxLength={20} required
+                           type="text" placeholder="Enter your username..."/>
                     <label>Email</label>
                     <input value={email} onChange={onEmailChanged}
                            required type="text" placeholder="Enter your email..."/>
