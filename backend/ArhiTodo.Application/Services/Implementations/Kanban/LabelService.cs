@@ -15,7 +15,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 {
     public async Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, false);
+        Board? board = await boardRepository.GetAsync(boardId, false);
         if (board is null) return Errors.NotFound;
         
         Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
@@ -30,7 +30,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, false);
+        Board? board = await boardRepository.GetAsync(boardId, false);
         if (board is null) return Errors.NotFound;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelUpdateDto.LabelId);
@@ -50,7 +50,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<bool> DeleteLabel(int boardId, int labelId)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, false);
+        Board? board = await boardRepository.GetAsync(boardId, false);
         if (board == null) return false;
         
         Result deleteLabelResult = board.DeleteLabel(labelId);
@@ -65,13 +65,13 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<List<LabelGetDto>?> GetEveryLabel(int boardId)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, false);
+        Board? board = await boardRepository.GetAsync(boardId, false);
         return board?.Labels.Select(l => l.ToGetDto()).ToList();
     }
 
     public async Task<bool> AddLabelToCard(int boardId, int cardId, int labelId)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, false);
+        Board? board = await boardRepository.GetAsync(boardId, false);
         if (board == null) return false;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelId);

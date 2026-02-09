@@ -14,14 +14,14 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
 
         builder.HasOne(b => b.Owner)
             .WithMany()
-            .HasForeignKey(b => b.OwnedByUserId)
+            .HasForeignKey(b => b.OwnerId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(b => b.BoardName)
             .IsRequired()
             .HasMaxLength(32);
 
-        builder.HasOne<Project>()
+        builder.HasOne(b => b.Project)
             .WithMany(p => p.Boards)
             .HasForeignKey(b => b.ProjectId)
             .OnDelete(DeleteBehavior.Cascade);

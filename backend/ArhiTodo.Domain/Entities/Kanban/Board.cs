@@ -7,11 +7,12 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 public class Board
 {
     public int ProjectId { get; private set; }
+    public Project Project { get; } = null!;
     
     public int BoardId { get; init; }
     public string BoardName { get; private set; } = string.Empty;
     
-    public Guid OwnedByUserId { get; private set; }
+    public Guid OwnerId { get; private set; }
     public User Owner { get; } = null!;
 
     private readonly List<CardList> _cardLists = [];
@@ -29,7 +30,7 @@ public class Board
     {
         ProjectId = projectId;
         BoardName = name;
-        OwnedByUserId = createdByUserId;
+        OwnerId = createdByUserId;
     }
 
     private static Result ValidateBoardName(string name)
@@ -45,9 +46,12 @@ public class Board
     public static Result<Board> Create(int projectId, string name, Guid createdByUserId)
     {
         Result validateBoardNameResult = ValidateBoardName(name);
-        return validateBoardNameResult.IsSuccess
-            ? new Board(projectId, name, createdByUserId)
-            : validateBoardNameResult.Error!;
+        if (!validateBoardNameResult.IsSuccess) return validateBoardNameResult.Error!;
+        
+        Board board = new(projectId, name, createdByUserId);
+        board.InitializeCreatorPermissions(createdByUserId);
+        return board;
+
     }
 
     public Result ChangeName(string boardName)
@@ -65,26 +69,39 @@ public class Board
         foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
         {
             if (boardClaim == BoardClaimTypes.ViewBoard) continue; // Handled by the AddMember method
-            AddUserClaim(boardClaim, "true", userId);
+            AddOrUpdateUserClaim(boardClaim, "true", userId);
+        }
+    }
+    
+    public void AddOrUpdateUserClaim(BoardClaimTypes boardClaimType, string newValue, Guid userId)
+    {
+        BoardUserClaim? foundBoardUserClaim = _boardUserClaims.Find(bc => bc.UserId == userId && bc.Type == boardClaimType);
+        if (foundBoardUserClaim is null)
+        {
+            BoardUserClaim boardUserClaim = new(boardClaimType, newValue, BoardId, userId);
+            _boardUserClaims.Add(boardUserClaim);
+        }
+        else
+        {
+            foundBoardUserClaim.UpdateValue(newValue);
         }
     }
 
-    public void AddUserClaim(BoardClaimTypes boardClaimType, string value, Guid userId)
+    public bool HasClaim(BoardClaimTypes boardClaimType, string value, Guid userId)
     {
-        BoardUserClaim boardUserClaim = new(boardClaimType, value, BoardId, userId);
-        _boardUserClaims.Add(boardUserClaim);
-    }
-    
-    public void UpdateUserClaim(BoardClaimTypes boardClaimType, string newValue)
-    {
-        BoardUserClaim? boardUserClaim = _boardUserClaims.Find(bc => bc.Type == boardClaimType);
-        boardUserClaim?.UpdateValue(newValue);
+        return _boardUserClaims.Any(buc => buc.Type == boardClaimType && buc.Value == value && buc.UserId == userId);
     }
 
-    public void AddMember(Guid userId)
+    public Result AddMember(Guid userId)
     {
+        if (IsMember(userId))
+        {
+            return new Error("AlreadyMember", ErrorType.Conflict,
+                "The user with the specified id is already a member of the board!");
+        }
         BoardUserClaim boardUserClaim = new(BoardClaimTypes.ViewBoard, "true", BoardId, userId);
         _boardUserClaims.Add(boardUserClaim);
+        return Result.Success();
     }
 
     public bool RemoveMember(Guid userId)
@@ -92,6 +109,18 @@ public class Board
         BoardUserClaim? foundBoardUserClaim = _boardUserClaims.FirstOrDefault(bc => bc.UserId == userId
             && bc.Type == BoardClaimTypes.ViewBoard);
         return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
+    }
+
+    public bool IsMember(Guid userId)
+    {
+        return _boardUserClaims.Any(buc =>
+            buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true");
+    } 
+
+    public List<Guid> GetMemberIds()
+    {
+        return _boardUserClaims.Where(buc => buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true")
+            .Select(buc => buc.UserId).ToList();
     }
 
     public void AddCardlist(CardList cardList)

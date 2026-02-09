@@ -11,7 +11,7 @@ public static class BoardMapper
         {
             BoardId = board.BoardId,
             BoardName = board.BoardName,
-            OwnedByUserId = board.OwnedByUserId,
+            OwnedByUserId = board.OwnerId,
             CardLists = board.CardLists.Select(cl => cl.ToGetDto()).ToList()
         };
     }

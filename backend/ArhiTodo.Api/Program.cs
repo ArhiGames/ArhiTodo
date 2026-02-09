@@ -92,6 +92,10 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.RequireClaim(nameof(UserClaimTypes.CreateProjects), "true");
     })
+    .AddPolicy(nameof(UserClaimTypes.AccessAdminDashboard), policy =>
+    {
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+    })
     .AddPolicy(nameof(UserClaimTypes.ManageUsers), policy =>
     {
         policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
@@ -111,6 +115,14 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
         policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.ModifyOthersProjects), policy =>
+    {
+        policy.RequireClaim(nameof(UserClaimTypes.ModifyOthersProjects), "true");
+    })
+    .AddPolicy(nameof(UserClaimTypes.DeleteOthersProjects), policy =>
+    {
+        policy.RequireClaim(nameof(UserClaimTypes.DeleteOthersProjects), "true");
     });
 
 builder.Services.AddControllers();

@@ -82,15 +82,25 @@ public class Project
         return _projectManagers.Remove(projectManager) ? Result.Success() : Errors.Unknown;
     }
 
-    public Result AddBoard(Board board, Guid userId)
+    public bool IsProjectMember(Guid userId)
     {
-        if (!_projectManagers.Exists(pm => pm.UserId == userId) && userId != OwnerId)
-        {
-            return new Error("Insufficient rights", ErrorType.Forbidden, 
-                "The user is neither a project manager nor the project owner!");
-        }
-        
+        return OwnerId == userId || _projectManagers.Any(pm => pm.UserId == userId);
+    }
+
+    public Result AddBoard(Board board)
+    {
         _boards.Add(board);
         return Result.Success();
+    }
+
+    public Result RemoveBoard(int boardId)
+    {
+        Board? boardToRemove = _boards.FirstOrDefault(b => b.BoardId == boardId);
+        if (boardToRemove is null)
+        {
+            return new Error("RemoveBoard", ErrorType.Conflict, "There is no board with the specified id to remove!");
+        }
+
+        return _boards.Remove(boardToRemove) ? Result.Success() : Errors.Unknown;
     }
 }    

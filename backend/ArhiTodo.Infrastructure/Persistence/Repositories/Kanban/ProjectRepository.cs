@@ -35,12 +35,13 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         Project? project = await database.Projects
             .Include(p => p.Owner)
             .Include(p => p.ProjectManagers)
-            .FirstOrDefaultAsync(p => p.OwnerId == userId ||
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId &&
+                                      (p.OwnerId == userId ||
                                       p.ProjectManagers.Any(pm => pm.UserId == userId) ||
                                       p.Boards.Any(b => b.BoardUserClaims.Any(buc =>
                                           buc.UserId == userId &&
                                           buc.Type == BoardClaimTypes.ViewBoard &&
-                                          buc.Value == "true")));
+                                          buc.Value == "true"))));
         return project;
     }
 

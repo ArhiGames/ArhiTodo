@@ -17,25 +17,23 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpPut("board/{boardId:int}/permissions/{userId:guid}")]
     public async Task<IActionResult> UpdateClaims(int boardId, Guid userId, [FromBody] List<ClaimPostDto> claimPostDto)
     {
-        List<ClaimGetDto>? claims = await boardService.UpdateBoardUserClaim(boardId, userId, claimPostDto);
-        if (claims == null) return NotFound();
-        return Ok(claims);
+        Result<List<ClaimGetDto>> claims = await boardService.UpdateBoardUserClaim(boardId, userId, claimPostDto);
+        return claims.IsSuccess ? Ok(claims.Value) : HandleFailure(claims);
     }
 
     [HttpPut("board/{boardId:int}/members")]
     public async Task<IActionResult> UpdateMemberStatus(int boardId,
         [FromBody] List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
-        List<UserGetDto>? userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
-        if (userGetDtos == null) return NotFound();
-        return Ok(userGetDtos);
+        Result<List<UserGetDto>> userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
+        return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
     }
 
     [HttpGet("board/{boardId:int}/members")]
     public async Task<IActionResult> GetBoardMembers(int boardId)
     {
-        List<UserGetDto> userGetDtos = await boardService.GetBoardMembers(boardId);
-        return Ok(userGetDtos);
+        Result<List<UserGetDto>> userGetDtos = await boardService.GetBoardMembers(boardId);
+        return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
     }
     
     [HttpPost("project/{projectId:int}/board/")]
@@ -55,25 +53,24 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     [HttpDelete("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {
-        bool removed = await boardService.DeleteBoard(projectId, boardId);
-        if (!removed) return NotFound();
-        return NoContent();
+        Result deleteBoardResult = await boardService.DeleteBoard(projectId, boardId);
+        return deleteBoardResult.IsSuccess ? NoContent() : HandleFailure(deleteBoardResult);
     }
 
     [HttpGet("project/{projectId:int}/board/")]
     public async Task<IActionResult> GetBoards(int projectId)
     {
-        List<BoardGetDto> boards = await boardService.GetEveryBoard(projectId);
-        return Ok(boards);
+        Result<List<BoardGetDto>> boards = await boardService.GetEveryBoard(projectId);
+        return boards.IsSuccess ? Ok(boards.Value) : HandleFailure(boards);
     }
 
     [HttpGet("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> GetBoard(int projectId, int boardId)
     {
-        BoardGetDto? boardGetDto = await boardService.GetBoard(boardId);
-        if (boardGetDto == null) return NotFound();
+        Result<BoardGetDto> boardGetDto = await boardService.GetBoard(boardId);
+        if (!boardGetDto.IsSuccess) return HandleFailure(boardGetDto);
         
         List<LabelGetDto>? labels = await labelService.GetEveryLabel(boardId);
-        return Ok(new { board = boardGetDto, labels });
+        return Ok(new { board = boardGetDto.Value, labels });
     }
 }

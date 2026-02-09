@@ -70,7 +70,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         if (project is null) return Errors.NotFound;
         
         bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (project.OwnerId != currentUser.UserId && project.ProjectManagers.All(pm => pm.UserId != currentUser.UserId) && !mayManageProjectsGlobally)
+        if (!project.IsProjectMember(currentUser.UserId) && !mayManageProjectsGlobally)
         {
             return new Error("GetProjectManagers", ErrorType.Forbidden, 
                 "Only the project owner and project managers can retrieve the project managers!");
@@ -112,7 +112,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
         if (!mayManageProjectsGlobally)
         {
-            bool isProjectManager = project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId);
+            bool isProjectManager = project.IsProjectMember(currentUser.UserId);
             if (project.OwnerId != currentUser.UserId && !isProjectManager)
             {
                 return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only project managers can update the project!");

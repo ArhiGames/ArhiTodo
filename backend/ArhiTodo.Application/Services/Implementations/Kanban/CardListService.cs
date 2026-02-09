@@ -15,7 +15,7 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 {
     public async Task<Result<CardListGetDto>> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, true, false);
+        Board? board = await boardRepository.GetAsync(boardId, false, IBoardRepository.BoardIncludeData.CardLists);
         if (board is null) return Errors.NotFound;
 
         Result<CardList> createCardlistResult = CardList.Create(boardId, cardListCreateDto.CardListName);
@@ -31,7 +31,7 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 
     public async Task<Result<CardListGetDto>> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, true, false);
+        Board? board = await boardRepository.GetAsync(boardId, false, IBoardRepository.BoardIncludeData.CardLists);
         if (board is null) return Errors.NotFound;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListUpdateDto.CardListId);
@@ -49,31 +49,33 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 
     public async Task<bool> DeleteCards(int boardId, int cardListId)
     {
-        Board? board = await boardRepository.GetAsync(boardId);
+        return false;
+        /*Board? board = await boardRepository.GetAsync(boardId);
         if (board == null) return false;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
         if (cardList == null) return false;
-        
+
         cardList.ClearCards();
         await unitOfWork.SaveChangesAsync();
-        
+
         cardListNotificationService.DeleteCardsFromCardList(boardId, cardListId);
-        return true;
+        return true;*/
     }
 
     public async Task<bool> DeleteCardList(int boardId, int cardListId)
     {
-        Board? board = await boardRepository.GetAsync(boardId);
+        return false;
+        /*Board? board = await boardRepository.GetAsync(boardId);
         if (board == null) return false;
 
         Result removeCardlistResult = board.RemoveCardlist(cardListId);
         await unitOfWork.SaveChangesAsync();
-        
+
         if (removeCardlistResult.IsSuccess)
         {
             cardListNotificationService.DeleteCardList(boardId, cardListId);
         }
-        return removeCardlistResult.IsSuccess;
+        return removeCardlistResult.IsSuccess;*/
     }
 }

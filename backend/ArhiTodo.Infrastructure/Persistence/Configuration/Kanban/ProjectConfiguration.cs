@@ -21,7 +21,14 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .IsRequired()
             .HasMaxLength(32);
 
-        builder.HasMany(p => p.Boards);
-        builder.HasMany(p => p.ProjectManagers);
+        builder.HasMany(p => p.Boards)
+            .WithOne(b => b.Project)
+            .HasForeignKey(b => b.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(p => p.ProjectManagers)
+            .WithOne(pm => pm.Project)
+            .HasForeignKey(pm => pm.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -21,7 +21,7 @@ const BoardUserSelectorEditUserClaimsComp = (props: Props) => {
             <div className="board-user-selector-claims">
                 {defaultBoardClaims.map((defaultClaim: DefaultClaim) => {
                     return <BoardUserSelectorToggleComp updatedClaims={props.updatedClaims} setUpdatedClaims={props.setUpdatedClaims}
-                                                        defaultClaim={defaultClaim}
+                                                        defaultClaim={defaultClaim} key={defaultClaim.claimType}
                                                         claim={props.currentViewingUser.boardUserClaims.find(buc => buc.claimType === defaultClaim.claimType)}/>;
                 })}
             </div>
