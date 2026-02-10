@@ -1,4 +1,4 @@
-﻿using ArhiTodo.Application.DTOs.Label;
+﻿using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Application.Services.Interfaces.Realtime;
 

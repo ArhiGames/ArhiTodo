@@ -1,4 +1,4 @@
-﻿namespace ArhiTodo.Application.DTOs.Label;
+﻿namespace ArhiTodo.Domain.Entities.DTOs;
 
 public class LabelGetDto
 {

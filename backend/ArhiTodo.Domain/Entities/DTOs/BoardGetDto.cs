@@ -1,6 +1,4 @@
-﻿using ArhiTodo.Application.DTOs.CardList;
-
-namespace ArhiTodo.Application.DTOs.Board;
+﻿namespace ArhiTodo.Domain.Entities.DTOs;
 
 public class BoardGetDto
 {
@@ -11,4 +9,5 @@ public class BoardGetDto
     public required Guid OwnedByUserId { get; set; }
     
     public List<CardListGetDto> CardLists { get; set; } = [];
+    public List<LabelGetDto> Labels { get; set; } = [];
 }

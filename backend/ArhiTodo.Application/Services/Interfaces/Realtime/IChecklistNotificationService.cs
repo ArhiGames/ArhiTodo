@@ -1,5 +1,4 @@
-﻿using ArhiTodo.Application.DTOs.Checklist;
-using ArhiTodo.Application.DTOs.ChecklistItem;
+﻿using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Application.Services.Interfaces.Realtime;
 

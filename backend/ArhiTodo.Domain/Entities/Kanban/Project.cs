@@ -86,21 +86,4 @@ public class Project
     {
         return OwnerId == userId || _projectManagers.Any(pm => pm.UserId == userId);
     }
-
-    public Result AddBoard(Board board)
-    {
-        _boards.Add(board);
-        return Result.Success();
-    }
-
-    public Result RemoveBoard(int boardId)
-    {
-        Board? boardToRemove = _boards.FirstOrDefault(b => b.BoardId == boardId);
-        if (boardToRemove is null)
-        {
-            return new Error("RemoveBoard", ErrorType.Conflict, "There is no board with the specified id to remove!");
-        }
-
-        return _boards.Remove(boardToRemove) ? Result.Success() : Errors.Unknown;
-    }
 }    

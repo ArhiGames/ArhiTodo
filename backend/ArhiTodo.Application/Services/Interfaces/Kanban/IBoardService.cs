@@ -2,6 +2,7 @@
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 

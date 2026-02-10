@@ -4,6 +4,7 @@ using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -15,7 +16,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 {
     public async Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false);
+        Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
         
         Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
@@ -30,7 +31,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false);
+        Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelUpdateDto.LabelId);
@@ -50,7 +51,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<bool> DeleteLabel(int boardId, int labelId)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false);
+        Board? board = await boardRepository.GetAsync(boardId, true);
         if (board == null) return false;
         
         Result deleteLabelResult = board.DeleteLabel(labelId);
@@ -63,15 +64,9 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         return deleteLabelResult.IsSuccess;
     }
 
-    public async Task<List<LabelGetDto>?> GetEveryLabel(int boardId)
-    {
-        Board? board = await boardRepository.GetAsync(boardId, false);
-        return board?.Labels.Select(l => l.ToGetDto()).ToList();
-    }
-
     public async Task<bool> AddLabelToCard(int boardId, int cardId, int labelId)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false);
+        Board? board = await boardRepository.GetAsync(boardId);
         if (board == null) return false;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelId);

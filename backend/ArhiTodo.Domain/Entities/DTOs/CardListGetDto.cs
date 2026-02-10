@@ -1,6 +1,4 @@
-﻿using ArhiTodo.Application.DTOs.Card;
-
-namespace ArhiTodo.Application.DTOs.CardList;
+﻿namespace ArhiTodo.Domain.Entities.DTOs;
 
 public class CardListGetDto
 {

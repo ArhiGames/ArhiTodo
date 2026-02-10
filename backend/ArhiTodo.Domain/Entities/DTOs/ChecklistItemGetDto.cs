@@ -1,4 +1,4 @@
-﻿namespace ArhiTodo.Application.DTOs.ChecklistItem;
+﻿namespace ArhiTodo.Domain.Entities.DTOs;
 
 public class ChecklistItemGetDto
 {

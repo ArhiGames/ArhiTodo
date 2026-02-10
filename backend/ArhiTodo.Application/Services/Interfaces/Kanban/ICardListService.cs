@@ -1,5 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 

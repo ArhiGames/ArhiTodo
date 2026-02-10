@@ -1,5 +1,4 @@
 import type { BoardGetDto } from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type { LabelGetDto } from "../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 
 export type InitProjectPayload = {
     projectId: number;
@@ -21,7 +20,6 @@ export type InitBoardsPayload = {
 export type InitBoardPayload = {
     boardId: number;
     boardGetDto: BoardGetDto;
-    labels: LabelGetDto[];
 }
 
 export type CreateLabelPayload = {

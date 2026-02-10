@@ -1,5 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.CardList;
-using ArhiTodo.Application.Services.Interfaces.Realtime;
+﻿using ArhiTodo.Application.Services.Interfaces.Realtime;
+using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 using Microsoft.AspNetCore.SignalR;

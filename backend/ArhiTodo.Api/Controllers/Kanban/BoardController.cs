@@ -1,9 +1,9 @@
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Board;
-using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +12,7 @@ namespace ArhiTodo.Controllers.Kanban;
 [Authorize]
 [ApiController]
 [Route("api")]
-public class BoardController(IBoardService boardService, ILabelService labelService) : ApiControllerBase
+public class BoardController(IBoardService boardService) : ApiControllerBase
 {
     [HttpPut("board/{boardId:int}/permissions/{userId:guid}")]
     public async Task<IActionResult> UpdateClaims(int boardId, Guid userId, [FromBody] List<ClaimPostDto> claimPostDto)
@@ -68,9 +68,6 @@ public class BoardController(IBoardService boardService, ILabelService labelServ
     public async Task<IActionResult> GetBoard(int projectId, int boardId)
     {
         Result<BoardGetDto> boardGetDto = await boardService.GetBoard(boardId);
-        if (!boardGetDto.IsSuccess) return HandleFailure(boardGetDto);
-        
-        List<LabelGetDto>? labels = await labelService.GetEveryLabel(boardId);
-        return Ok(new { board = boardGetDto.Value, labels });
+        return boardGetDto.IsSuccess ? Ok(boardGetDto.Value) : HandleFailure(boardGetDto);
     }
 }

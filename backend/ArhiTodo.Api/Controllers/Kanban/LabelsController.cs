@@ -1,6 +1,7 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ public class LabelsController(ILabelService labelService) : ApiControllerBase
     public async Task<IActionResult> UpdateLabel(int boardId, [FromBody] LabelUpdateDto labelUpdateDto)
     {
         Result<LabelGetDto> labelGetDto = await labelService.UpdateLabel(boardId, labelUpdateDto);
-        return labelGetDto.IsSuccess ? Ok(labelGetDto) : HandleFailure(labelGetDto);
+        return labelGetDto.IsSuccess ? Ok(labelGetDto.Value) : HandleFailure(labelGetDto);
     }
 
     [HttpDelete("board/{boardId:int}/label/{labelId:int}")]
@@ -32,12 +33,4 @@ public class LabelsController(ILabelService labelService) : ApiControllerBase
         if (!succeeded) return NotFound();
         return NoContent();
     }
-
-    [HttpGet("board/{boardId:int}/label")]
-    public async Task<IActionResult> GetLabels(int boardId)
-    {
-        List<LabelGetDto>? labels = await labelService.GetEveryLabel(boardId);
-        if (labels == null) return NotFound();
-        return Ok(labels);
-    } 
 }

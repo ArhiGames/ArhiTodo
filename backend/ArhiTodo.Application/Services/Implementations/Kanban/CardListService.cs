@@ -4,6 +4,7 @@ using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -15,7 +16,7 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 {
     public async Task<Result<CardListGetDto>> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, IBoardRepository.BoardIncludeData.CardLists);
+        Board? board = await boardRepository.GetAsync(boardId, false, true);
         if (board is null) return Errors.NotFound;
 
         Result<CardList> createCardlistResult = CardList.Create(boardId, cardListCreateDto.CardListName);
@@ -31,7 +32,7 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 
     public async Task<Result<CardListGetDto>> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
     {
-        Board? board = await boardRepository.GetAsync(boardId, false, IBoardRepository.BoardIncludeData.CardLists);
+        Board? board = await boardRepository.GetAsync(boardId, false, true);
         if (board is null) return Errors.NotFound;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListUpdateDto.CardListId);

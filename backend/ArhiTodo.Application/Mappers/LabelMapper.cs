@@ -1,4 +1,4 @@
-﻿using ArhiTodo.Application.DTOs.Label;
+﻿using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
 
 namespace ArhiTodo.Application.Mappers;

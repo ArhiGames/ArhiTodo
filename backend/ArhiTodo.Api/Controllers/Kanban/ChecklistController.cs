@@ -2,6 +2,7 @@
 using ArhiTodo.Application.DTOs.ChecklistItem;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,10 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.Board;
-using ArhiTodo.Application.DTOs.Card;
-using ArhiTodo.Application.DTOs.CardList;
-using ArhiTodo.Application.DTOs.Checklist;
-using ArhiTodo.Application.DTOs.ChecklistItem;
-using ArhiTodo.Application.DTOs.Label;
-using ArhiTodo.Application.DTOs.Project;
+﻿using ArhiTodo.Application.DTOs.Project;
+using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 

@@ -7,7 +7,6 @@ import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.t
 import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import type {Board, CardList, State} from "../../Models/States/types.ts";
-import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
@@ -16,6 +15,7 @@ import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import BoardCompHeader from "./BoardCompHeader.tsx";
 import "./Board.css"
+import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 
@@ -44,6 +44,18 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
             }
         }
 
+        const labels: LabelGetDto[] = [];
+        for (let i = 0; i < Object.values(kanbanState.labels).length; i++) {
+            const label = Object.values(kanbanState.labels)[i];
+            if (label.boardId === props.boardId) {
+                labels.push({
+                    labelId: label.labelId,
+                    labelText: label.labelText,
+                    labelColor: label.labelColor
+                })
+            }
+        }
+
         const cardLists: CardListGetDto[] = [];
         if (kanbanState.cardLists) {
             for (let i = 0; i < Object.values(kanbanState.cardLists).length; i++) {
@@ -61,8 +73,9 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         const boardGetDto: BoardGetDto = {
             boardId: props.boardId,
             boardName: boardName,
+            ownedByUserId: ownedByUserId,
             cardLists: cardLists,
-            ownedByUserId: ownedByUserId
+            labels: labels,
         }
 
         return boardGetDto;
@@ -99,10 +112,10 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
                     return res.json()
                 })
-                .then((res: { board: BoardGetDto; labels: LabelGetDto[] }) => {
+                .then((boardGetDto: BoardGetDto) => {
 
                     if (dispatch) {
-                        dispatch({ type: "INIT_BOARD", payload: { boardId: res.board.boardId, boardGetDto: res.board, labels: res.labels }});
+                        dispatch({ type: "INIT_BOARD", payload: { boardId: boardGetDto.boardId, boardGetDto: boardGetDto }});
                     }
                     setIsLoaded(true);
 

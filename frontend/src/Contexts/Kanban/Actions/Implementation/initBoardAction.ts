@@ -9,7 +9,7 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
     const cardListsDtos: CardListGetDto[] = payload.boardGetDto.cardLists;
     const cards: Record<number, Card> = {};
     const labels: Record<number, Label> = {};
-    const labelsDtos: LabelGetDto[] = payload.labels;
+    const labelsDtos: LabelGetDto[] = payload.boardGetDto.labels;
     const cardLabels: Record<number, number[]> = {}; // cardId <-> labelIds
     const checklists: Record<number, Checklist> = {};
     const checklistItems: Record<number, ChecklistItem> = {};
