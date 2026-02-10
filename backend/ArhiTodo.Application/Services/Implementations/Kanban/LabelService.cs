@@ -49,10 +49,10 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         return labelGetDto;
     }
 
-    public async Task<bool> DeleteLabel(int boardId, int labelId)
+    public async Task<Result> DeleteLabel(int boardId, int labelId)
     {
         Board? board = await boardRepository.GetAsync(boardId, true);
-        if (board == null) return false;
+        if (board == null) return Errors.NotFound;
         
         Result deleteLabelResult = board.DeleteLabel(labelId);
         await unitOfWork.SaveChangesAsync();
@@ -61,32 +61,32 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         {
             labelNotificationService.DeleteLabel(boardId, labelId);
         }
-        return deleteLabelResult.IsSuccess;
+        return deleteLabelResult;
     }
 
-    public async Task<bool> AddLabelToCard(int boardId, int cardId, int labelId)
+    public async Task<Result> AddLabelToCard(int boardId, int cardId, int labelId)
     {
         Board? board = await boardRepository.GetAsync(boardId);
-        if (board == null) return false;
+        if (board == null) return Errors.NotFound;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelId);
-        if (label == null) return false;
+        if (label == null) return Errors.NotFound;
 
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return false;
+        if (card == null) return Errors.NotFound;
 
         card.AddLabel(label);
         await unitOfWork.SaveChangesAsync();
         
         labelNotificationService.AddLabelToCard(boardId, cardId, labelId);
         
-        return true;
+        return Result.Success();
     }
 
-    public async Task<bool> RemoveLabelFromCard(int boardId, int cardId, int labelId)
+    public async Task<Result> RemoveLabelFromCard(int boardId, int cardId, int labelId)
     {
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return false;
+        if (card == null) return Errors.NotFound;
         
         Result removeLabelResult = card.RemoveLabel(labelId);
         await unitOfWork.SaveChangesAsync();
@@ -95,6 +95,6 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         {
             labelNotificationService.RemoveLabelFromCard(boardId, cardId, labelId);
         }
-        return removeLabelResult.IsSuccess;
+        return removeLabelResult;
     }
 }

@@ -15,17 +15,15 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     [HttpPost("board/{boardId:int}/card/{cardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> AddLabelToCard(int boardId, int cardId, int labelId)
     {
-        bool result = await labelService.AddLabelToCard(boardId, cardId, labelId);
-        if (!result) return NotFound();
-        return Ok();
+        Result addLabelToCardResult = await labelService.AddLabelToCard(boardId, cardId, labelId);
+        return addLabelToCardResult.IsSuccess ? Ok() : HandleFailure(addLabelToCardResult);
     }
 
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> RemoveLabelFromCard(int boardId, int cardId, int labelId)
     {
-        bool result = await labelService.RemoveLabelFromCard(boardId, cardId, labelId);
-        if (!result) return NotFound();
-        return NoContent();
+        Result removeLabelFromCardResult = await labelService.RemoveLabelFromCard(boardId, cardId, labelId);
+        return removeLabelFromCardResult.IsSuccess ? NoContent() : HandleFailure(removeLabelFromCardResult);
     }
 
     [HttpPost("board/{boardId:int}/cardlist/{cardListId:int}/card")]

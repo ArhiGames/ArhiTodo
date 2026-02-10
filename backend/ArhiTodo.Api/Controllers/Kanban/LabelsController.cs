@@ -29,8 +29,7 @@ public class LabelsController(ILabelService labelService) : ApiControllerBase
     [HttpDelete("board/{boardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> DeleteLabel(int boardId, int labelId)
     {
-        bool succeeded = await labelService.DeleteLabel(boardId, labelId);
-        if (!succeeded) return NotFound();
-        return NoContent();
+        Result deleteLabelResult = await labelService.DeleteLabel(boardId, labelId);
+        return deleteLabelResult.IsSuccess ? NoContent() : HandleFailure(deleteLabelResult);
     }
 }

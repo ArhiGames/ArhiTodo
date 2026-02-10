@@ -8,8 +8,8 @@ public interface ILabelService
 {
     Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto);
     Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto);
-    Task<bool> DeleteLabel(int boardId, int labelId);
+    Task<Result> DeleteLabel(int boardId, int labelId);
     
-    Task<bool> AddLabelToCard(int boardId, int cardId, int labelId);
-    Task<bool> RemoveLabelFromCard(int boardId, int cardId, int labelId);
+    Task<Result> AddLabelToCard(int boardId, int cardId, int labelId);
+    Task<Result> RemoveLabelFromCard(int boardId, int cardId, int labelId);
 }
