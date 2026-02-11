@@ -6,6 +6,7 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 public class Label
 {
     public int BoardId { get; private set; }
+    public Board Board { get; } = null!;
     
     public int LabelId { get; private set; }
     public int LabelColor { get; private set; }

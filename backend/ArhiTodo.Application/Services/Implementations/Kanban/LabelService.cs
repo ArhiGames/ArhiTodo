@@ -6,16 +6,20 @@ using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class LabelService(IBoardRepository boardRepository, ICardRepository cardRepository, 
-    ILabelNotificationService labelNotificationService, IUnitOfWork unitOfWork) : ILabelService
+    ILabelNotificationService labelNotificationService, IUnitOfWork unitOfWork, ICardAuthorizer cardAuthorizer, ILabelAuthorizer labelAuthorizer) : ILabelService
 {
     public async Task<Result<LabelGetDto>> CreateLabel(int boardId, LabelCreateDto labelCreateDto)
     {
+        bool hasCreateLabelPermission = await labelAuthorizer.HasCreateLabelPermission(boardId);
+        if (!hasCreateLabelPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
         
@@ -31,6 +35,9 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result<LabelGetDto>> UpdateLabel(int boardId, LabelUpdateDto labelUpdateDto)
     {
+        bool hasEditLabelPermission = await labelAuthorizer.HasEditLabelPermission(labelUpdateDto.LabelId);
+        if (!hasEditLabelPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
 
@@ -51,6 +58,9 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result> DeleteLabel(int boardId, int labelId)
     {
+        bool hasDeleteLabelPermission = await labelAuthorizer.HasDeleteLabelPermission(labelId);
+        if (!hasDeleteLabelPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board == null) return Errors.NotFound;
         
@@ -66,14 +76,17 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result> AddLabelToCard(int boardId, int cardId, int labelId)
     {
-        Board? board = await boardRepository.GetAsync(boardId);
-        if (board == null) return Errors.NotFound;
+        bool hasEditCardPermissions = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermissions) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId, true);
+        if (board is null) return Errors.NotFound;
 
         Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelId);
-        if (label == null) return Errors.NotFound;
+        if (label is null) return Errors.NotFound;
 
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
 
         card.AddLabel(label);
         await unitOfWork.SaveChangesAsync();
@@ -85,8 +98,11 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
 
     public async Task<Result> RemoveLabelFromCard(int boardId, int cardId, int labelId)
     {
+        bool hasEditCardPermissions = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermissions) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
         
         Result removeLabelResult = card.RemoveLabel(labelId);
         await unitOfWork.SaveChangesAsync();

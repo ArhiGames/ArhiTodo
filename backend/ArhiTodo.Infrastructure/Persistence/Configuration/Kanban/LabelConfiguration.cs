@@ -17,7 +17,7 @@ public class LabelConfiguration : IEntityTypeConfiguration<Label>
             .IsRequired()
             .HasMaxLength(24);
 
-        builder.HasOne<Board>()
+        builder.HasOne(l => l.Board)
             .WithMany(b => b.Labels)
             .HasForeignKey(l => l.BoardId)
             .OnDelete(DeleteBehavior.Cascade);

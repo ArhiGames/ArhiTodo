@@ -31,7 +31,8 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
             .HasForeignKey(cl => cl.BoardId);
 
         builder.HasMany(b => b.Labels)
-            .WithOne()
-            .HasForeignKey(l => l.BoardId);
+            .WithOne(l => l.Board)
+            .HasForeignKey(l => l.BoardId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -39,6 +39,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IBoardRepository, BoardRepository>();
         builder.Services.AddScoped<ICardRepository, CardRepository>();
+        builder.Services.AddScoped<ILabelAuthorizer, LabelAuthorizer>();
         builder.Services.AddScoped<IInvitationRepository, InvitationRepository>();
 
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
