@@ -6,16 +6,20 @@ using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitOfWork, 
-    ICardListNotificationService cardListNotificationService) : ICardListService
+    ICardListNotificationService cardListNotificationService, ICardListAuthorizer cardListAuthorizer) : ICardListService
 {
     public async Task<Result<CardListGetDto>> CreateCardList(int boardId, CardListCreateDto cardListCreateDto)
     {
+        bool hasCreateCardListPermission = await cardListAuthorizer.HasCreateCardListPermission(boardId);
+        if (!hasCreateCardListPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, false, true);
         if (board is null) return Errors.NotFound;
 
@@ -32,6 +36,9 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
 
     public async Task<Result<CardListGetDto>> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto)
     {
+        bool hasEditCardListPermission = await cardListAuthorizer.HasEditCardListPermission(cardListUpdateDto.CardListId);
+        if (!hasEditCardListPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, false, true);
         if (board is null) return Errors.NotFound;
 
@@ -48,27 +55,31 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         return cardListGetDto;
     }
 
-    public async Task<bool> DeleteCards(int boardId, int cardListId)
+    public async Task<Result> DeleteCards(int boardId, int cardListId)
     {
-        return false;
-        /*Board? board = await boardRepository.GetAsync(boardId);
-        if (board == null) return false;
+        bool hasDeleteCardsFromCardListPermission = await cardListAuthorizer.HasDeleteCardsFromCardListPermission(cardListId);
+        if (!hasDeleteCardsFromCardListPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId, false, true);
+        if (board is null) return Errors.NotFound;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
-        if (cardList == null) return false;
+        if (cardList is null) return Errors.NotFound;
 
         cardList.ClearCards();
         await unitOfWork.SaveChangesAsync();
 
         cardListNotificationService.DeleteCardsFromCardList(boardId, cardListId);
-        return true;*/
+        return Result.Success();
     }
 
-    public async Task<bool> DeleteCardList(int boardId, int cardListId)
+    public async Task<Result> DeleteCardList(int boardId, int cardListId)
     {
-        return false;
-        /*Board? board = await boardRepository.GetAsync(boardId);
-        if (board == null) return false;
+        bool hasDeleteCardListPermission = await cardListAuthorizer.HasDeleteCardListPermission(cardListId);
+        if (!hasDeleteCardListPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId, false, true);
+        if (board is null) return Errors.NotFound;
 
         Result removeCardlistResult = board.RemoveCardlist(cardListId);
         await unitOfWork.SaveChangesAsync();
@@ -77,6 +88,6 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         {
             cardListNotificationService.DeleteCardList(boardId, cardListId);
         }
-        return removeCardlistResult.IsSuccess;*/
+        return removeCardlistResult;
     }
 }

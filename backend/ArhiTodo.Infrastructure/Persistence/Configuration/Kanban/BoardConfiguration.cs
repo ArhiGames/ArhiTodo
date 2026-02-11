@@ -27,7 +27,7 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(b => b.CardLists)
-            .WithOne()
+            .WithOne(cl => cl.Board)
             .HasForeignKey(cl => cl.BoardId);
 
         builder.HasMany(b => b.Labels)

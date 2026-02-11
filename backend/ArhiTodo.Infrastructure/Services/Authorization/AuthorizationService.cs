@@ -1,15 +1,13 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Auth;
-using ArhiTodo.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using IAuthorizationService = ArhiTodo.Application.Services.Interfaces.Authorization.IAuthorizationService;
 
 namespace ArhiTodo.Infrastructure.Services.Authorization;
 
-public class AuthorizationService(ICurrentUser currentUser, IAccountRepository accountRepository, IAuthorizationPolicyProvider authorizationPolicyProvider,
-    ProjectDataBase database) : IAuthorizationService
+public class AuthorizationService(ICurrentUser currentUser, IAccountRepository accountRepository, IAuthorizationPolicyProvider authorizationPolicyProvider) : IAuthorizationService
 {
     public async Task<bool> CheckPolicy(string policyName)
     {
