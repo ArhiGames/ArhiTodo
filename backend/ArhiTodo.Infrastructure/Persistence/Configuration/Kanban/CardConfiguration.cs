@@ -20,6 +20,9 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.Labels);
-        builder.HasMany(c => c.Checklists);
+        builder.HasMany(c => c.Checklists)
+            .WithOne(cl => cl.Card)
+            .HasForeignKey(cl => cl.CardId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

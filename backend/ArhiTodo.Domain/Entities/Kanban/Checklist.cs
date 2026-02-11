@@ -6,6 +6,7 @@ namespace ArhiTodo.Domain.Entities.Kanban;
 public class Checklist
 {
     public int CardId { get; private set; }
+    public Card Card { get; } = null!;
     
     public int ChecklistId { get; private set; }
     public string ChecklistName { get; private set; } = string.Empty;

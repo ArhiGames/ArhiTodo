@@ -30,9 +30,8 @@ public class ChecklistController(IChecklistService checklistService) : ApiContro
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}")]
     public async Task<IActionResult> DeleteChecklistFromCard(int boardId, int cardId, int checklistId)
     {
-        bool succeeded = await checklistService.DeleteChecklist(boardId, cardId, checklistId);
-        if (!succeeded) return NotFound();
-        return NoContent();
+        Result deleteChecklistResult = await checklistService.DeleteChecklist(boardId, cardId, checklistId);
+        return deleteChecklistResult.IsSuccess ? NoContent() : HandleFailure(deleteChecklistResult);
     }
 
     [HttpPost("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/item")]
@@ -56,16 +55,14 @@ public class ChecklistController(IChecklistService checklistService) : ApiContro
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/item/{checklistItemId:int}")]
     public async Task<IActionResult> DeleteChecklistItemFromChecklist(int boardId, int cardId, int checklistId, int checklistItemId)
     {
-        bool succeeded = await checklistService.DeleteChecklistItem(boardId, cardId, checklistId, checklistItemId);
-        if (!succeeded) return NotFound();
-        return NoContent();
+        Result deleteChecklistItemResult = await checklistService.DeleteChecklistItem(boardId, cardId, checklistId, checklistItemId);
+        return deleteChecklistItemResult.IsSuccess ? NoContent() : HandleFailure(deleteChecklistItemResult);
     }
 
     [HttpPatch("board/{boardId:int}/card/{cardId:int}/checklist/item/{checklistItemId:int}/done/{taskDone:bool}")]
     public async Task<IActionResult> PatchChecklistItemDoneState(int boardId, int cardId, int checklistItemId, bool taskDone)
     {
-        ChecklistItemGetDto? checklistItemGetDto = await checklistService.PatchChecklistItemState(boardId, cardId, checklistItemId, taskDone);
-        if (checklistItemGetDto == null) return NotFound();
-        return Ok(checklistItemGetDto);
+        Result<ChecklistItemGetDto> patchChecklistItemStateResult = await checklistService.PatchChecklistItemState(boardId, cardId, checklistItemId, taskDone);
+        return patchChecklistItemStateResult.IsSuccess ? Ok(patchChecklistItemStateResult.Value) : HandleFailure(patchChecklistItemStateResult);
     }
 }

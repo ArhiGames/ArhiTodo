@@ -9,10 +9,10 @@ public interface IChecklistService
 {
     Task<Result<ChecklistGetDto>> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto);
     Task<Result<ChecklistGetDto>> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto);
-    Task<bool> DeleteChecklist(int boardId, int cardId, int checklistId);
+    Task<Result> DeleteChecklist(int boardId, int cardId, int checklistId);
     
     Task<Result<ChecklistItemGetDto>> CreateChecklistItem(int boardId, int cardId, int checklistId, ChecklistItemCreateDto checklistItemCreateDto);
-    Task<bool> DeleteChecklistItem(int boardId, int cardId, int checklistId, int checklistItemId);
+    Task<Result> DeleteChecklistItem(int boardId, int cardId, int checklistId, int checklistItemId);
     Task<Result<ChecklistItemGetDto>> UpdateChecklistItem(int boardId, int cardId, int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto);
-    Task<ChecklistItemGetDto?> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState);
+    Task<Result<ChecklistItemGetDto>> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState);
 }

@@ -7,16 +7,20 @@ using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ChecklistService(ICardRepository cardRepository, IChecklistNotificationService checklistNotificationService,
-    IUnitOfWork unitOfWork) : IChecklistService
+    IUnitOfWork unitOfWork, ICardAuthorizer cardAuthorizer) : IChecklistService
 {
     public async Task<Result<ChecklistGetDto>> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto)
     {
+        bool hasCreateChecklistPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasCreateChecklistPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card is null) return Errors.NotFound;
 
@@ -33,6 +37,9 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
 
     public async Task<Result<ChecklistGetDto>> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto)
     {
+        bool hasUpdateChecklistPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasUpdateChecklistPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card is null) return Errors.NotFound;
 
@@ -49,10 +56,13 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return checklistGetDto;
     }
 
-    public async Task<bool> DeleteChecklist(int boardId, int cardId, int checklistId)
+    public async Task<Result> DeleteChecklist(int boardId, int cardId, int checklistId)
     {
+        bool hasDeleteChecklistPermission = await cardAuthorizer.HasDeleteCardPermission(cardId);
+        if (!hasDeleteChecklistPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return false;
+        if (card == null) return Errors.NotFound;
 
         Result removeChecklistResult = card.RemoveChecklist(checklistId);
         if (removeChecklistResult.IsSuccess)
@@ -60,12 +70,15 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
             checklistNotificationService.DeleteChecklist(boardId, checklistId);
             await unitOfWork.SaveChangesAsync();
         }
-        return removeChecklistResult.IsSuccess;
+        return removeChecklistResult;
     }
 
     public async Task<Result<ChecklistItemGetDto>> CreateChecklistItem(int boardId, int cardId, int checklistId, 
         ChecklistItemCreateDto checklistItemCreateDto)
     {
+        bool hasCreateChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasCreateChecklistItemPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card is null) return Errors.NotFound;
 
@@ -82,13 +95,16 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return checklistItemGetDto;
     }
     
-    public async Task<bool> DeleteChecklistItem(int boardId, int cardId, int checklistId, int checklistItemId)
+    public async Task<Result> DeleteChecklistItem(int boardId, int cardId, int checklistId, int checklistItemId)
     {
+        bool hasDeleteChecklistItemPermission = await cardAuthorizer.HasDeleteCardPermission(cardId);
+        if (!hasDeleteChecklistItemPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return false;
+        if (card is null) return Errors.NotFound;
         
         Checklist? checklist = card.Checklists.FirstOrDefault(c => c.ChecklistId == checklistId);
-        if (checklist == null) return false;
+        if (checklist is null) return Errors.NotFound;
 
         Result removeChecklistItemResult = checklist.RemoveChecklistItem(checklistItemId);
         if (removeChecklistItemResult.IsSuccess)
@@ -96,12 +112,15 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
             await unitOfWork.SaveChangesAsync();
             checklistNotificationService.DeleteChecklistItemFromChecklist(boardId, checklistId, checklistItemId);
         }
-        return removeChecklistItemResult.IsSuccess;
+        return removeChecklistItemResult;
     }
 
     public async Task<Result<ChecklistItemGetDto>> UpdateChecklistItem(int boardId, int cardId, int checklistId, 
         ChecklistItemUpdateDto checklistItemUpdateDto)
     {
+        bool hasEditChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditChecklistItemPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card is null) return Errors.NotFound;
         
@@ -120,13 +139,16 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return checklistItemGetDto;
     }
 
-    public async Task<ChecklistItemGetDto?> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState)
+    public async Task<Result<ChecklistItemGetDto>> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState)
     {
+        bool hasEditChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditChecklistItemPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card is null) return Errors.NotFound;
 
         ChecklistItem? updateChecklistItem = card.UpdateChecklistItemState(checklistItemId, newState);
-        if (updateChecklistItem == null) return null;
+        if (updateChecklistItem is null) return Errors.NotFound;
 
         await unitOfWork.SaveChangesAsync();
         

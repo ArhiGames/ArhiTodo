@@ -47,6 +47,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
                         CardId = c.CardId,
                         CardName = c.CardName,
                         CardDescription = c.CardDescription,
+                        IsDone = c.IsDone,
                         Checklists = c.Checklists.Select(cel => new ChecklistGetDto
                         {
                             ChecklistId = cel.ChecklistId,
@@ -54,7 +55,8 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
                             ChecklistItems = cel.ChecklistItems.Select(ci => new ChecklistItemGetDto
                             {
                                 ChecklistItemId = ci.ChecklistItemId,
-                                ChecklistItemName = ci.ChecklistItemName
+                                ChecklistItemName = ci.ChecklistItemName,
+                                IsDone = ci.IsDone
                             }).ToList()
                         }).ToList(),
                         LabelIds = c.Labels.Select(l => l.LabelId).ToList()
