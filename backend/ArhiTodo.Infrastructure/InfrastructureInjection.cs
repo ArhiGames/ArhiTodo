@@ -2,12 +2,14 @@
 using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 using ArhiTodo.Domain.Services.Auth;
 using ArhiTodo.Infrastructure.Identity;
 using ArhiTodo.Infrastructure.Persistence;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+using ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Common;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
@@ -28,6 +30,7 @@ public static class InfrastructureInjection
     {
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
         builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddScoped<IBoardAuthorizer, BoardAuthorizer>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

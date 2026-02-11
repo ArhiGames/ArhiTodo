@@ -19,7 +19,7 @@ import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const { cardId } = useParams();
     const navigate = useNavigate();
     const hubState: HubContextState = useRealtimeHub();
@@ -134,7 +134,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
         return () => abortController.abort();
 
-    }, [props.projectId, props.boardId, token, dispatch, checkRefresh, navigate]);
+    }, [props.projectId, props.boardId, checkRefresh, dispatch, navigate]);
 
     useEffect(() => {
 

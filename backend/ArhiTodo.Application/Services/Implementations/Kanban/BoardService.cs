@@ -12,16 +12,20 @@ using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
-    IAuthorizationService authorizationService, IUnitOfWork unitOfWork, IAccountRepository accountRepository, ICurrentUser currentUser) : IBoardService
+    IAuthorizationService authorizationService, IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, IAccountRepository accountRepository, ICurrentUser currentUser) : IBoardService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId);
         if (board is null) return Errors.NotFound;
         
@@ -38,6 +42,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result<List<UserGetDto>>> GetBoardMembers(int boardId)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId);
         if (board is null) return Errors.NotFound;
 
@@ -61,6 +68,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     public async Task<Result<List<UserGetDto>>> UpdateBoardMemberStatus(int boardId, 
         List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
         
@@ -83,6 +93,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result<BoardGetDto>> CreateBoard(int projectId, BoardCreateDto boardCreateDto)
     {
+        bool hasCreateBoardPermission = await boardAuthorizer.HasCreateBoardPermission(projectId);
+        if (!hasCreateBoardPermission) return Errors.Forbidden;
+        
         Result<Board> createBoardResult = Board.Create(projectId, boardCreateDto.BoardName, currentUser.UserId);
         if (!createBoardResult.IsSuccess) return createBoardResult.Error!;
             
@@ -95,6 +108,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result<BoardGetDto>> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditPermission(boardUpdateDto.BoardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardUpdateDto.BoardId);
         if (board == null) return Errors.NotFound;
         
@@ -109,6 +125,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result> DeleteBoard(int projectId, int boardId)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardDeletePermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         Board? board = await boardRepository.GetAsync(boardId);
         if (board is null) return Errors.NotFound;
 
@@ -138,6 +157,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result<BoardGetDto>> GetBoard(int boardId)
     {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardViewPermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
         BoardGetDto? boardGetDto = await boardRepository.GetReadModelAsync(boardId); 
         return boardGetDto is null ? Errors.NotFound : boardGetDto;
     }
