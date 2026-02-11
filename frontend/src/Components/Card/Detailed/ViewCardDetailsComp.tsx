@@ -195,12 +195,14 @@ const ViewCardDetailsComp = () => {
     async function onCardRenamed() {
         if (inputtedCardName.length === 0 || !detailedCard || !dispatch) return;
 
+        const oldCardName: string = kanbanState.cards[detailedCard.cardId].cardName;
+
         const newCardName: string = inputtedCardName;
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: kanbanState.cards[detailedCard.cardId].cardName } });
+            dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: oldCardName } });
             return;
         }
 
@@ -215,7 +217,8 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: kanbanState.cards[detailedCard.cardId].cardName } });
+                dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: oldCardName } });
+                setInputtedCardName(oldCardName);
                 console.error(err);
             })
     }

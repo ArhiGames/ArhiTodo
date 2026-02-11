@@ -29,10 +29,12 @@ public static class InfrastructureInjection
     public static void AddInfrastructureLayer(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
         builder.Services.AddScoped<IBoardAuthorizer, BoardAuthorizer>();
         builder.Services.AddScoped<ICardListAuthorizer, CardListAuthorizer>();
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<ICardAuthorizer, CardAuthorizer>();
         
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IBoardRepository, BoardRepository>();

@@ -36,17 +36,15 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     [HttpDelete("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
     public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardId)
     {
-        bool success = await cardService.DeleteCard(projectId, boardId, cardId);
-        if (!success) return NotFound();
-        return NoContent();
+        Result deleteCardResult = await cardService.DeleteCard(projectId, boardId, cardId);
+        return deleteCardResult.IsSuccess ? NoContent() : HandleFailure(deleteCardResult);
     }
 
     [HttpPatch("board/{boardId:int}/card/{cardId:int}/done/{isDone:bool}")]
     public async Task<IActionResult> PatchCardStatus(int boardId, int cardId, bool isDone)
     {
-        CardGetDto? cardGetDto = await cardService.PatchCardStatus(boardId, cardId, isDone);
-        if (cardGetDto == null) return NotFound();
-        return Ok();
+        Result<CardGetDto> updateCardResult = await cardService.PatchCardStatus(boardId, cardId, isDone);
+        return updateCardResult.IsSuccess ? Ok() : HandleFailure(updateCardResult);
     }
 
     [HttpPatch("board/{boardId:int}/card/{cardId:int}/name")]
@@ -59,16 +57,14 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     [HttpPatch("card/{cardId:int}/description")]
     public async Task<IActionResult> PatchCardDescription(int cardId, [FromBody] PatchCardDescriptionDto patchCardDescriptionDto)
     {
-        CardGetDto? cardGetDto = await cardService.PatchCardDescription(cardId, patchCardDescriptionDto);
-        if (cardGetDto == null) return NotFound();
-        return Ok();
+        Result<CardGetDto> updateCardResult = await cardService.PatchCardDescription(cardId, patchCardDescriptionDto);
+        return updateCardResult.IsSuccess ? Ok() : HandleFailure(updateCardResult);
     }
 
     [HttpGet("card/{cardId:int}")]
     public async Task<IActionResult> GetDetailedCard(int cardId)
     {
-        CardGetDto? card = await cardService.GetCard(cardId);
-        if (card == null) return NotFound();
-        return Ok(card);
+        Result<CardGetDto> getCardResult = await cardService.GetCard(cardId);
+        return getCardResult.IsSuccess ? Ok(getCardResult.Value) : HandleFailure(getCardResult);
     }
 }

@@ -6,16 +6,20 @@ using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class CardService(ICardRepository cardRepository, ICardNotificationService cardNotificationService,
-    IUnitOfWork unitOfWork) : ICardService
+    IUnitOfWork unitOfWork, ICardAuthorizer cardAuthorizer) : ICardService
 {
     public async Task<Result<CardGetDto>> CreateCard(int boardId, int cardListId, CardCreateDto cardCreateDto)
     {
+        bool hasCreateCardPermission = await cardAuthorizer.HasCreateCardPermission(cardListId);
+        if (!hasCreateCardPermission) return Errors.Forbidden;
+        
         Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName);
         if (!createCardResult.IsSuccess) return createCardResult.Error!;
         
@@ -27,18 +31,24 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return cardGetDto;
     }
 
-    public async Task<bool> DeleteCard(int projectId, int boardId, int cardId)
+    public async Task<Result> DeleteCard(int projectId, int boardId, int cardId)
     {
+        bool hasDeleteCardPermission = await cardAuthorizer.HasDeleteCardPermission(cardId);
+        if (!hasDeleteCardPermission) return Errors.Forbidden;
+        
         bool succeeded = await cardRepository.DeleteAsync(cardId);
         if (succeeded)
         {
             cardNotificationService.DeleteCard(boardId, cardId);
         }
-        return succeeded;
+        return succeeded ? Result.Success() : Errors.Unknown;
     }
     
     public async Task<Result<CardGetDto>> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto)
     {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card == null) return Errors.NotFound;
             
@@ -51,10 +61,13 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return cardGetDto;
     }
 
-    public async Task<CardGetDto?> PatchCardStatus(int boardId, int cardId, bool isDone)
+    public async Task<Result<CardGetDto>> PatchCardStatus(int boardId, int cardId, bool isDone)
     {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card == null) return Errors.NotFound;
 
         card.UpdateCardState(isDone);
         await unitOfWork.SaveChangesAsync();
@@ -64,10 +77,13 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return cardGetDto;
     }
 
-    public async Task<CardGetDto?> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
+    public async Task<Result<CardGetDto>> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto)
     {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return null;
+        if (card == null) return Errors.NotFound;
 
         card.ChangeCardDescription(patchCardDescriptionDto.NewCardDescription);
         await unitOfWork.SaveChangesAsync();
@@ -75,9 +91,14 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return card.ToGetDto();
     }
 
-    public async Task<CardGetDto?> GetCard(int cardId)
+    public async Task<Result<CardGetDto>> GetCard(int cardId)
     {
+        bool hasCardViewPermission = await cardAuthorizer.HasViewCardPermission(cardId);
+        if (!hasCardViewPermission) return Errors.Forbidden;
+        
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        return card?.ToGetDto();
+        if (card is null) return Errors.NotFound;
+        
+        return card.ToGetDto();
     }
 }
