@@ -11,6 +11,11 @@ export type UpdateProjectPayload = {
     projectName: string;
 }
 
+export type SetProjectPermissionsPayload = {
+    projectId: number;
+    isManager: boolean;
+}
+
 export type InitBoardsPayload = {
     boardId: number;
     boardName: string;
@@ -142,6 +147,7 @@ export type Action =
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
     { type: "UPDATE_PROJECT", payload: UpdateProjectPayload } |
     { type: "DELETE_PROJECT", payload: { projectId: number } } |
+    { type: "SET_PROJECT_PERMISSION", payload: SetProjectPermissionsPayload } |
 
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |

@@ -79,6 +79,15 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         return await GetProjectManagers(project);
     }
 
+    public async Task<Result<ProjectPermission>> GetUserPermission(int projectId)
+    {
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project is null) return Errors.NotFound;
+
+        bool isProjectManager = project.IsProjectMember(currentUser.UserId);
+        return isProjectManager ? ProjectPermission.Manager : ProjectPermission.None;
+    }
+
     private async Task<List<UserGetDto>> GetProjectManagers(Project project)
     {
         List<Guid> userIds = project.ProjectManagers.Select(pm => pm.UserId).ToList();

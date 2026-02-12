@@ -4,6 +4,11 @@ export type Project = {
     ownedByUserId: string;
 }
 
+export type ProjectPermission = {
+    projectId: number;
+    isManager: boolean;
+}
+
 export type Board = {
     projectId: number;
     boardId: number;
@@ -46,6 +51,7 @@ export type ChecklistItem = {
 
 export interface State {
     projects: Record<number, Project>;
+    projectPermission: Record<number, ProjectPermission>;
     boards: Record<number, Board>;
     cardLists: Record<number, CardList>;
     cards: Record<number, Card>;

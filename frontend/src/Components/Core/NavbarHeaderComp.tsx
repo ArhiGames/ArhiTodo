@@ -9,7 +9,7 @@ import "./Navbar.css"
 
 const NavbarHeaderComp = () => {
 
-    const { appUser } = useAuth();
+    const { jwtPayload, appUser } = useAuth();
     const kanbanState = useKanbanState();
     const location = useLocation();
     const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
@@ -17,6 +17,13 @@ const NavbarHeaderComp = () => {
 
     const projectId = match?.params.projectId;
     const project: Project | null = kanbanState.projects[Number(projectId)];
+
+    function mayEditProject(): boolean {
+        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const isProjectManager = kanbanState.projectPermission[Number(projectId)]?.isManager;
+
+        return !!(mayModifyOthersProjectsGlobally || isProjectManager);
+    }
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -35,7 +42,10 @@ const NavbarHeaderComp = () => {
                     <img className="icon" style={{ height: "32px", marginRight: "1rem" }} src="/back-arrow.svg" alt="Back"/>
                 </Link>
                 <p>{project.projectName}</p>
-                <img className="icon clickable" onClick={() => setIsEditingProject(true)} style={{ height: "20px" }} src="/edit-icon.svg" alt="Edit"/>
+                { mayEditProject() && (
+                    <img className="icon clickable" onClick={() => setIsEditingProject(true)}
+                         style={{ height: "20px" }} src="/edit-icon.svg" alt="Edit"/>
+                )}
             </div>
         )
 
@@ -45,7 +55,7 @@ const NavbarHeaderComp = () => {
         <nav className="navbar-header">
             { getNavigationJsx() }
             { appUser && <LoggedInUserCardComp appUser={appUser}/> }
-            { isEditingProject && project && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
+            { isEditingProject && project && mayEditProject() && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
         </nav>
     )
 }

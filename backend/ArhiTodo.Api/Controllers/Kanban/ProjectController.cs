@@ -63,7 +63,20 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
         Result<ProjectGetDto> projectGetDto = await projectService.GetProject(projectId);
         return projectGetDto.IsSuccess ? Ok(projectGetDto.Value) : HandleFailure(projectGetDto);
     }
-
+    
+    [HttpGet("{projectId:int}/permissions")]
+    public async Task<IActionResult> GetProjectPermissions(int projectId)
+    {
+        Result<ProjectPermission> projectPermissionResult = await projectService.GetUserPermission(projectId);
+        if (!projectPermissionResult.IsSuccess) return HandleFailure(projectPermissionResult);
+        return projectPermissionResult.Value switch
+        {
+            ProjectPermission.None => Ok(),
+            ProjectPermission.Manager => Ok(new { isManager = true }),
+            _ => throw new ArgumentOutOfRangeException(nameof(projectPermissionResult.Value))
+        };
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {

@@ -43,6 +43,8 @@ import initProjectAction from "../Contexts/Kanban/Actions/Implementation/Project
 import initProjectsAction from "../Contexts/Kanban/Actions/Implementation/Projects/initProjectsAction.ts";
 import updateProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/updateProjectAction.ts";
 import deleteProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/deleteProjectAction.ts";
+import setProjectPermissionAction
+    from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -54,6 +56,8 @@ function rootReducer(state: State, action: Action): State {
             return updateProjectAction(state, action.payload);
         case "DELETE_PROJECT":
             return deleteProjectAction(state, action.payload.projectId);
+        case "SET_PROJECT_PERMISSION":
+            return setProjectPermissionAction(state, action.payload);
 
         case "INIT_BOARDS":
             return initBoardsAction(state, action.payload);

@@ -66,7 +66,7 @@ const ProjectViewComp = () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
 
-            fetch(`${API_BASE_URL}/project/${projectId}`, {
+            await fetch(`${API_BASE_URL}/project/${projectId}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
             })
@@ -82,8 +82,25 @@ const ProjectViewComp = () => {
                         dispatch({type: "INIT_PROJECT", payload: projectGetDto});
                     }
                 })
-                .catch(console.error)
                 .finally(() => setHasLoadedProject(true))
+
+            fetch(`${API_BASE_URL}/project/${projectId}/permissions`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch project permissions");
+                    }
+
+                    return res.json();
+                })
+                .then((projectPermission: { isManager: boolean }) => {
+                    if (dispatch) {
+                        dispatch({type: "SET_PROJECT_PERMISSION", payload: { projectId: Number(projectId), isManager: projectPermission.isManager }});
+                    }
+                })
+                .catch(console.error);
 
             fetch(`${API_BASE_URL}/project/${projectId}/board`,
                 {
