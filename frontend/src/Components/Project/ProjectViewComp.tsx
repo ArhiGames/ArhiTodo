@@ -21,10 +21,10 @@ import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders
 
 const ProjectViewComp = () => {
 
-    const { token, checkRefresh } = useAuth();
+    const { jwtPayload, token, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const hubState: HubContextState = useRealtimeHub();
-    const state: State = useKanbanState();
+    const kanbanState: State = useKanbanState();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
 
@@ -35,9 +35,9 @@ const ProjectViewComp = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function loadDefaultBoard() {
 
-        if (!boardId && Object.keys(state.boards).length > 0) {
+        if (!boardId && Object.keys(kanbanState.boards).length > 0) {
             let firstId: number = -1;
-            for (const board of Object.values(state.boards)) {
+            for (const board of Object.values(kanbanState.boards)) {
                 if (board.projectId === Number(projectId)) {
                     firstId = board.boardId;
                     break;
@@ -51,12 +51,18 @@ const ProjectViewComp = () => {
 
     }
 
+    function hasCreateBoardPermission(): boolean {
+        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const isProjectManager = kanbanState.projectPermission[Number(projectId)]?.isManager;
+        return hasPermissionGlobally || isProjectManager;
+    }
+
     useEffect(() => {
         if (!hasLoadedProject) return;
-        if (!state.projects[Number(projectId)]) {
+        if (!kanbanState.projects[Number(projectId)]) {
             navigate("/");
         }
-    }, [navigate, projectId, state.projects, hasLoadedProject]);
+    }, [navigate, projectId, kanbanState.projects, hasLoadedProject]);
 
     useEffect(() => {
 
@@ -179,7 +185,7 @@ const ProjectViewComp = () => {
         if (hasLoadedBoards) {
             loadDefaultBoard();
         }
-    }, [hasLoadedBoards, loadDefaultBoard, state.boards]);
+    }, [hasLoadedBoards, loadDefaultBoard, kanbanState.boards]);
 
     useEffect(() => {
         if (boardId) {
@@ -190,13 +196,13 @@ const ProjectViewComp = () => {
     return (
         <div className="project-view">
             <div className="board-selectors">
-                {Object.values(state.boards).map((board: Board) => {
+                {Object.values(kanbanState.boards).map((board: Board) => {
                     return (
                         board.projectId === Number(projectId) ?
                             <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={Number(projectId)} board={board}/> : null
                     )
                 })}
-                <CreateNewBoardHeaderComp/>
+                { hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
             </div>
             { activeBoardId && hasLoadedBoards ? <BoardComp projectId={Number(projectId)} boardId={activeBoardId}/> : <NoBoardComp/> }
 

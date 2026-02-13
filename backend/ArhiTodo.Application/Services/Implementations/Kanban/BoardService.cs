@@ -19,7 +19,8 @@ using ArhiTodo.Domain.Repositories.Kanban;
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
-    IAuthorizationService authorizationService, IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, IAccountRepository accountRepository, ICurrentUser currentUser) : IBoardService
+    IAuthorizationService authorizationService, IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, 
+    IAccountRepository accountRepository, ICurrentUser currentUser) : IBoardService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
@@ -162,5 +163,16 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         
         BoardGetDto? boardGetDto = await boardRepository.GetReadModelAsync(boardId); 
         return boardGetDto is null ? Errors.NotFound : boardGetDto;
+    }
+
+    public async Task<Result<List<ClaimGetDto>>> GetUserBoardClaims(int boardId)
+    {
+        bool hasBoardViewPermission = await boardAuthorizer.HasBoardViewPermission(boardId);
+        if (!hasBoardViewPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board is null) return Errors.NotFound;
+
+        return board.BoardUserClaims.Where(buc => buc.UserId == currentUser.UserId).Select(buc => buc.ToGetDto()).ToList();
     }
 }

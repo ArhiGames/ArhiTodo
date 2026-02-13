@@ -70,4 +70,11 @@ public class BoardController(IBoardService boardService) : ApiControllerBase
         Result<BoardGetDto> boardGetDto = await boardService.GetBoard(boardId);
         return boardGetDto.IsSuccess ? Ok(boardGetDto.Value) : HandleFailure(boardGetDto);
     }
+
+    [HttpGet("project/{projectId:int}/board/{boardId:int}/permissions")]
+    public async Task<IActionResult> GetBoardUserPermissions(int projectId, int boardId)
+    {
+        Result<List<ClaimGetDto>> boardUserClaimsResult = await boardService.GetUserBoardClaims(boardId);
+        return boardUserClaimsResult.IsSuccess ? Ok(boardUserClaimsResult.Value) : HandleFailure(boardUserClaimsResult);
+    }
 }

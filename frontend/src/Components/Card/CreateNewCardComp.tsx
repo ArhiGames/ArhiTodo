@@ -113,7 +113,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number })
                         <button className={`button ${ cardName.length > 0 ? "valid-submit-button" : "standard-button" }`} type="submit">
                             Submit
                         </button>
-                        <button type="reset">X</button>
+                        <button type="reset">&times;</button>
                     </span>
                 </form>
             ) : (

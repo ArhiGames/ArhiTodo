@@ -32,7 +32,6 @@
 }
 
 .card-detail-checklist-img-container {
-    background-color: var(--std-button);
     border-radius: 10px;
     display: grid;
     place-items: center;
@@ -40,7 +39,6 @@
 }
 
 .card-detail-checklist-img-container:hover {
-    background-color: var(--std-button-highlight);
     transform: translateY(-2px);
     cursor: pointer;
 }

@@ -1,4 +1,5 @@
 import type { BoardGetDto } from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
+import type {Claim} from "../../../Models/Claim.ts";
 
 export type InitProjectPayload = {
     projectId: number;
@@ -60,6 +61,11 @@ export type CreateBoardPayload = {
 export type CreateBoardSucceededPayload = {
     predictedBoardId: number;
     actualBoardId: number;
+}
+
+export type SetBoardPermissionsPayload = {
+    boardId: number;
+    boardUserClaims: Claim[];
 }
 
 export type UpdateBoardPayload = {
@@ -151,6 +157,7 @@ export type Action =
 
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
+    { type: "SET_BOARD_PERMISSION", payload: SetBoardPermissionsPayload } |
 
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |

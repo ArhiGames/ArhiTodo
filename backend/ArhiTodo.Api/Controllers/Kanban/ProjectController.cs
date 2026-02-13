@@ -71,7 +71,7 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
         if (!projectPermissionResult.IsSuccess) return HandleFailure(projectPermissionResult);
         return projectPermissionResult.Value switch
         {
-            ProjectPermission.None => Ok(),
+            ProjectPermission.None => Ok(new { isManager = false }),
             ProjectPermission.Manager => Ok(new { isManager = true }),
             _ => throw new ArgumentOutOfRangeException(nameof(projectPermissionResult.Value))
         };

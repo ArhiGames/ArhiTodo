@@ -4,6 +4,7 @@ export const InitialState: State = {
     projects: {},
     projectPermission: {},
     boards: {},
+    boardUserClaims: {},
     cardLists: {},
     cards: {},
     labels: {},

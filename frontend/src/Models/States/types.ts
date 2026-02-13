@@ -1,3 +1,5 @@
+import type {Claim} from "../Claim.ts";
+
 export type Project = {
     projectId: number;
     projectName: string;
@@ -53,6 +55,7 @@ export interface State {
     projects: Record<number, Project>;
     projectPermission: Record<number, ProjectPermission>;
     boards: Record<number, Board>;
+    boardUserClaims: Record<number, Claim[]>;
     cardLists: Record<number, CardList>;
     cards: Record<number, Card>;
     labels: Record<number, Label>;

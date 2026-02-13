@@ -45,6 +45,7 @@ import updateProjectAction from "../Contexts/Kanban/Actions/Implementation/Proje
 import deleteProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/deleteProjectAction.ts";
 import setProjectPermissionAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
+import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/setBoardPermissionsAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -63,6 +64,8 @@ function rootReducer(state: State, action: Action): State {
             return initBoardsAction(state, action.payload);
         case "INIT_BOARD":
             return initBoardAction(state, action.payload);
+        case "SET_BOARD_PERMISSION":
+            return setBoardPermissionsAction(state, action.payload);
 
         case "CREATE_LABEL_OPTIMISTIC":
             return createLabelAction(state, action.payload);

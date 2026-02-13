@@ -16,6 +16,7 @@ import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import BoardCompHeader from "./BoardCompHeader.tsx";
 import "./Board.css"
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
+import type {Claim} from "../../Models/Claim.ts";
 
 const BoardComp = (props: { projectId: number, boardId: number }) => {
 
@@ -99,10 +100,10 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
 
-            fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
+            await fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${refreshedToken}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal
                 })
                 .then(res => {
@@ -127,7 +128,25 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
                     navigate(`/projects/${props.projectId}/board/`);
                     console.error(err);
+                });
+
+            await fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}/permissions`, {
+                method: 'GET',
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Could not fetch board permissions!");
+                    }
+
+                    return res.json();
                 })
+                .then((boardUserClaims: Claim[]) => {
+                    if (dispatch) {
+                        dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: props.boardId, boardUserClaims: boardUserClaims } });
+                    }
+                })
+                .catch(console.error);
         }
 
         run();

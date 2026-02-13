@@ -19,4 +19,5 @@ public interface IBoardService
     
     Task<Result<List<BoardGetDto>>> GetEveryBoard(int projectId);
     Task<Result<BoardGetDto>> GetBoard(int boardId);
+    Task<Result<List<ClaimGetDto>>> GetUserBoardClaims(int boardId);
 }
