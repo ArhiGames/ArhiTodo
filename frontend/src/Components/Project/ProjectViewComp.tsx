@@ -176,8 +176,10 @@ const ProjectViewComp = () => {
     }, [dispatch, token, projectId]);
 
     useEffect(() => {
-        loadDefaultBoard();
-    }, [loadDefaultBoard, state.boards]);
+        if (hasLoadedBoards) {
+            loadDefaultBoard();
+        }
+    }, [hasLoadedBoards, loadDefaultBoard, state.boards]);
 
     useEffect(() => {
         if (boardId) {
