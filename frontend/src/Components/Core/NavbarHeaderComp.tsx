@@ -21,8 +21,7 @@ const NavbarHeaderComp = () => {
     function mayEditProject(): boolean {
         const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
         const isProjectManager = kanbanState.projectPermission[Number(projectId)]?.isManager;
-
-        return !!(mayModifyOthersProjectsGlobally || isProjectManager);
+        return mayModifyOthersProjectsGlobally || isProjectManager;
     }
 
     useEffect(() => {

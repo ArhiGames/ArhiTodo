@@ -79,13 +79,11 @@ const LabelSelector = ( props: Props ) => {
     }, [isCreating, currentlyEditingLabelId]);
 
     useEffect(() => {
-
         if (!currentlyEditingLabelId) return;
         if (!kanbanState.labels[currentlyEditingLabelId]) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             cancelAction();
         }
-
     }, [currentlyEditingLabelId, kanbanState.labels]);
 
     function onLabelEdit(labelId: number) {
@@ -271,7 +269,7 @@ const LabelSelector = ( props: Props ) => {
                             <div style={{ display: "flex", width: "100%", gap: "0.2rem" }}>
                                 <button onClick={createEditLabel}
                                         className={`button ${(labelName.length > 0 || currentlyEditingLabelId !== null) ? "valid-submit-button" : "standard-button"}`}>
-                                    { isCreating ? "Create" : currentlyEditingLabelId !== null ? "Edit" : "buggy software..." }
+                                    { isCreating ? "Create" : currentlyEditingLabelId !== null ? "Edit" : "" }
                                 </button>
                                 <button onClick={cancelAction}
                                         className="button standard-button">Cancel</button>

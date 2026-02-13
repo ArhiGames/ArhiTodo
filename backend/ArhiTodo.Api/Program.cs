@@ -119,10 +119,6 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy(nameof(UserClaimTypes.ModifyOthersProjects), policy =>
     {
         policy.RequireClaim(nameof(UserClaimTypes.ModifyOthersProjects), "true");
-    })
-    .AddPolicy(nameof(UserClaimTypes.DeleteOthersProjects), policy =>
-    {
-        policy.RequireClaim(nameof(UserClaimTypes.DeleteOthersProjects), "true");
     });
 
 builder.Services.AddControllers();

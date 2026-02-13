@@ -46,6 +46,6 @@ public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService aut
     public async Task<bool> HasDeleteLabelPermission(int labelId)
     {
         return await HasLabelPermission(labelId, BoardClaimTypes.ManageLabels,
-            nameof(UserClaimTypes.DeleteOthersProjects));
+            nameof(UserClaimTypes.ModifyOthersProjects));
     }
 }

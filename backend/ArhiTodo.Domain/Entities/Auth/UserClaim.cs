@@ -4,7 +4,6 @@ public enum UserClaimTypes
 {
     CreateProjects,
     ModifyOthersProjects,
-    DeleteOthersProjects,
     AccessAdminDashboard,
     ManageUsers,
     DeleteUsers,

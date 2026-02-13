@@ -104,7 +104,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     }
 
     function mayDeleteBoard(): boolean {
-        const hasGlobalPermission = jwtPayload?.DeleteOthersProjects === "true";
+        const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
         const isProjectManager = kanbanState.projectPermission[props.projectId]?.isManager;
         const isOwner = kanbanState.boards[props.board.boardId].ownedByUserId === appUser?.id;
         return hasGlobalPermission || isProjectManager || isOwner;

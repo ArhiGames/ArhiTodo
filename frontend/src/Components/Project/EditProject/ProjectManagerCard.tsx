@@ -10,7 +10,8 @@ interface Props {
     project: Project;
     projectManager: UserGetDto;
     projectManagers: UserGetDto[];
-    setProjectManagers: Dispatch<SetStateAction<UserGetDto[]>>
+    setProjectManagers: Dispatch<SetStateAction<UserGetDto[]>>;
+    editable: boolean;
 }
 
 const ProjectManagerCard = (props: Props) => {
@@ -51,11 +52,18 @@ const ProjectManagerCard = (props: Props) => {
                 </div>
                 <p style={{ opacity: "75%" }}>{props.projectManager.email}</p>
             </div>
-            <button onClick={() => setIsDeleting(true)} className="button standard-button">Remove</button>
-            { isDeleting && <ConfirmationModal title="Confirm your action!"
-                                               actionDescription="If you confirm this action, this user will be removed as the project manager for this project. You can make them the project manager again at any time."
-                                               onClosed={() => setIsDeleting(false)}
-                                               onConfirmed={onDeleteProjectManagerConfirmed}/> }
+            {
+                props.editable && (
+                    <>
+                        <button onClick={() => setIsDeleting(true)} className="button standard-button">Remove</button>
+                        { isDeleting && <ConfirmationModal title="Confirm your action!"
+                                                           actionDescription="If you confirm this action, this user will be removed as the project manager for this project. You can make them the project manager again at any time."
+                                                           onClosed={() => setIsDeleting(false)}
+                                                           onConfirmed={onDeleteProjectManagerConfirmed}/> }
+                    </>
+                )
+            }
+
         </div>
     )
 

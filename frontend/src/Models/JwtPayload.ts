@@ -1,7 +1,6 @@
 export type JwtPayload = {
     AccessAdminDashboard: "true",
     CreateProjects: "true",
-    DeleteOthersProjects: "true",
     DeleteUsers: "true",
     InviteOtherUsers: "true",
     ManageUsers: "true",

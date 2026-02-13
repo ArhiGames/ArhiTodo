@@ -142,7 +142,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
         
-        bool mayDeleteProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.DeleteOthersProjects));
+        bool mayDeleteProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
         if (project.OwnerId != currentUser.UserId && !mayDeleteProjectsGlobally)
         {
             return new Error("DeleteProject", ErrorType.Forbidden, "Only the project owner can delete projects!");

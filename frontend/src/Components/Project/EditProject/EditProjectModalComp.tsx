@@ -1,7 +1,7 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import type {Project} from "../../../Models/States/types.ts";
 import {useState} from "react";
-import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import type {ProjectGetDto} from "../../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
@@ -17,8 +17,9 @@ interface Props {
 
 const EditProjectModalComp = (props: Props) => {
 
-    const { checkRefresh } = useAuth();
+    const { jwtPayload, appUser, checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
+    const kanbanState = useKanbanState();
 
     const [projectName, setProjectName] = useState<string>(props.project.projectName);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
@@ -85,16 +86,27 @@ const EditProjectModalComp = (props: Props) => {
         props.onClose();
     }
 
+    function mayDeleteProject(): boolean {
+        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const isProjectOwner = kanbanState.projects[props.project.projectId]?.ownedByUserId === appUser?.id;
+        return mayModifyOthersProjectsGlobally || isProjectOwner;
+    }
+    mayDeleteProject();
+
     return (
         <>
             <Modal modalSize="modal-large" onClosed={props.onClose} header={
                 <input className="classic-input" style={{ width: "100%", marginRight: "1rem" }} onBlur={handleProjectNameInputBlurred}
                        value={projectName} maxLength={32} onChange={(e) => setProjectName(e.target.value)}/>
             } footer={
-                <button onClick={() => setIsTryingToDelete(true)} className="button standard-button iconized-button">
-                    <img className="icon" height="32px" src="/trashcan-icon.svg" alt="Delete"/>
-                    <p>Remove</p>
-                </button>
+                <>
+                    { mayDeleteProject() && (
+                        <button onClick={() => setIsTryingToDelete(true)} className="button standard-button iconized-button">
+                            <img className="icon" height="32px" src="/trashcan-icon.svg" alt="Delete"/>
+                            <p>Remove</p>
+                        </button>
+                    )}
+                </>
             }>
                 <div className="edit-project-modal">
                     <EditProjectProjectManagersComp project={props.project}/>

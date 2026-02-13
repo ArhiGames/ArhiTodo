@@ -5,6 +5,7 @@ import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import ProjectManagerCard from "./ProjectManagerCard.tsx";
 import ProjectManagerAddComp from "./ProjectManagerAddComp.tsx";
+import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 
 interface Props {
     project: Project;
@@ -12,7 +13,8 @@ interface Props {
 
 const EditProjectProjectManagersComp = (props: Props) => {
 
-    const { checkRefresh } = useAuth();
+    const { jwtPayload, appUser, checkRefresh } = useAuth();
+    const kanbanState = useKanbanState();
 
     const [projectManagers, setProjectManagers] = useState<UserGetDto[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
@@ -46,11 +48,17 @@ const EditProjectProjectManagersComp = (props: Props) => {
 
     }, [checkRefresh, props.project]);
 
+    function mayEditProjectManagers() {
+        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const isProjectOwner = kanbanState.projects[props.project.projectId]?.ownedByUserId === appUser?.id;
+        return hasPermissionGlobally || isProjectOwner;
+    }
+
     return (
         <section>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <h3>Managers</h3>
-                { loaded && <ProjectManagerAddComp projectManagers={projectManagers} setProjectManagers={setProjectManagers}/> }
+                { loaded && mayEditProjectManagers() && <ProjectManagerAddComp projectManagers={projectManagers} setProjectManagers={setProjectManagers}/> }
             </div>
             <p>Project managers have full access to all project settings, boards, etc. However, project managers cannot delete the project</p>
             <div className="edit-project-modal-managers">
@@ -58,7 +66,8 @@ const EditProjectProjectManagersComp = (props: Props) => {
                         <>
                             {projectManagers.map((projectManager: UserGetDto) => {
                                 return <ProjectManagerCard project={props.project} projectManager={projectManager} key={projectManager.userId}
-                                                           projectManagers={projectManagers} setProjectManagers={setProjectManagers}/>
+                                                           projectManagers={projectManagers} setProjectManagers={setProjectManagers}
+                                                           editable={mayEditProjectManagers()} />
                             })}
 
                         </>

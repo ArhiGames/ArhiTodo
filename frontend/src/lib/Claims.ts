@@ -13,12 +13,7 @@ export const defaultGlobalClaims: DefaultClaim[] = [
     {
         claimType: "ModifyOthersProjects",
         claimName: "Modify projects",
-        claimDescription: "If enabled the user can just access other's projects & edit them without special permissions including all boards etc."
-    },
-    {
-        claimType: "DeleteOthersProjects",
-        claimName: "Delete projects",
-        claimDescription: "If enabled the user can just delete other's projects without special permissions including all boards etc."
+        claimDescription: "If enabled the user can edit everything from every single project existing. The user is also allowed to delete the project"
     },
     {
         claimType: "AccessAdminDashboard",
