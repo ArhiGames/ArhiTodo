@@ -8,9 +8,11 @@ interface Props {
     onLabelSelected: (labelId: number) => void;
     onLabelUnselected: (labelId: number) => void;
     onEditPressed: (labelId: number) => void;
+    editable: boolean;
+    selectable: boolean;
 }
 
-const EditableLabel = ( props: Props) => {
+const EditableLabel = ( props: Props ) => {
 
     const color: Rgb = toRgb(props.label.labelColor);
 
@@ -20,6 +22,8 @@ const EditableLabel = ( props: Props) => {
     }
 
     function onEditableLabelDivPressed() {
+        if (!props.selectable) return;
+
         if (props.isSelected) {
             props.onLabelUnselected(props.label.labelId);
         } else {
@@ -33,7 +37,7 @@ const EditableLabel = ( props: Props) => {
                 <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{props.label.labelText}</button>
                 { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✓</span> }
             </div>
-            <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/>
+            { props.editable && <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/> }
         </div>
     )
 

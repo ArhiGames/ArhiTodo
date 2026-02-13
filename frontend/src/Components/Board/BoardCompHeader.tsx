@@ -74,7 +74,8 @@ const BoardCompHeader = (props: Props) => {
                                                 actionTitle="Filter labels"
                                                 boardId={Number(boardId)} projectId={Number(projectId)}
                                                 selectedLabels={props.currentFilteringLabels}
-                                                onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}/>
+                                                onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}
+                                                selectable/>
             }
         </div>
     )

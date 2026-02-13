@@ -17,6 +17,7 @@ interface Props {
     actionTitle: string;
     projectId: number;
     boardId: number;
+    selectable: boolean;
 }
 
 const LabelSelector = ( props: Props ) => {
@@ -68,7 +69,8 @@ const LabelSelector = ( props: Props ) => {
                                             <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
                                                            isSelected={ props.selectedLabels.includes(label.labelId) }
                                                            onLabelSelected={(labelId: number) => props.onLabelSelected(labelId)}
-                                                           onLabelUnselected={(labelId: number) => props.onLabelUnselected(labelId)}/>
+                                                           onLabelUnselected={(labelId: number) => props.onLabelUnselected(labelId)}
+                                                           selectable={props.selectable} editable={mayEditLabel()}/>
                                         ) )
                                     })
                                 }
