@@ -430,7 +430,7 @@ const ViewCardDetailsComp = () => {
                         <p className="category-paragraph">Label description</p>
                         { cardDescriptionJsx() }
                     </div>
-                    { detailedCard && <CardDetailChecklistsComp cardId={Number(cardId)}/> }
+                    { detailedCard && <CardDetailChecklistsComp/> }
                 </div>
             </div>
         </Modal>

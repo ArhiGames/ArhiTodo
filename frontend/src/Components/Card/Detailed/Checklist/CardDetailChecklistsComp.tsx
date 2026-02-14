@@ -8,17 +8,15 @@ import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import type {Checklist} from "../../../../Models/States/types.ts";
 import {useParams} from "react-router-dom";
+import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 
-interface Props {
-    cardId: number;
-}
-
-const CardDetailChecklistsComp = ( props: Props ) => {
+const CardDetailChecklistsComp = () => {
 
     const { checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
-    const { boardId } = useParams();
+    const { boardId, cardId } = useParams();
+    const permissions = usePermissions();
 
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
@@ -39,12 +37,12 @@ const CardDetailChecklistsComp = ( props: Props ) => {
                 type: "CREATE_CHECKLIST_OPTIMISTIC", payload: {
                     checklistId: predictedChecklistId,
                     checklistName: inputtedChecklistName,
-                    cardId: props.cardId,
+                    cardId: Number(cardId),
                 }
             })
         }
 
-        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.cardId}/checklist`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}/checklist`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ checklistName: inputtedChecklistName })
@@ -86,29 +84,35 @@ const CardDetailChecklistsComp = ( props: Props ) => {
         <div className="card-detail-checklists-div">
             <div className="card-details-checklist-header">
                 <p>Checklists</p>
-                <button ref={addChecklistButtonRef} onClick={() => setIsAddingChecklist(true)} className="button standard-button">+</button>
                 {
-                    isAddingChecklist && (
-                        <Popover close={() => setIsAddingChecklist(false)} element={addChecklistButtonRef} closeIfClickedOutside>
-                            <form className="card-detail-add-checklist-form" onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
-                                <input ref={addChecklistNameInputRef} placeholder="Checklist name..." className="classic-input"
-                                       value={inputtedChecklistName}
-                                       maxLength={32} minLength={1} required
-                                       onChange={(e) => setInputtedChecklistName(e.target.value)}/>
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    <button className={`button ${inputtedChecklistName.length > 0 ? "valid-submit-button" : "standard-button"}`}
-                                            type="submit">Create</button>
-                                    <button className="button standard-button" type="reset">Cancel</button>
-                                </div>
-                            </form>
-                        </Popover>
+                    permissions.hasManageCardsPermission() && (
+                        <>
+                            <button ref={addChecklistButtonRef} onClick={() => setIsAddingChecklist(true)} className="button standard-button">+</button>
+                            {
+                                isAddingChecklist && (
+                                    <Popover close={() => setIsAddingChecklist(false)} element={addChecklistButtonRef} closeIfClickedOutside>
+                                        <form className="card-detail-add-checklist-form" onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
+                                            <input ref={addChecklistNameInputRef} placeholder="Checklist name..." className="classic-input"
+                                                   value={inputtedChecklistName}
+                                                   maxLength={32} minLength={1} required
+                                                   onChange={(e) => setInputtedChecklistName(e.target.value)}/>
+                                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                                                <button className={`button ${inputtedChecklistName.length > 0 ? "valid-submit-button" : "standard-button"}`}
+                                                        type="submit">Create</button>
+                                                <button className="button standard-button" type="reset">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </Popover>
+                                )
+                            }
+                        </>
                     )
                 }
             </div>
             {
                 Object.values(kanbanState.checklists).map((checklist: Checklist) => {
-                    if (checklist.cardId !== props.cardId) return null;
-                    return <CardDetailChecklistComp key={checklist.checklistId} cardId={props.cardId} checklistId={checklist.checklistId}/>
+                    if (checklist.cardId !== Number(cardId)) return null;
+                    return <CardDetailChecklistComp key={checklist.checklistId} checklistId={checklist.checklistId}/>
                 })
             }
         </div>
