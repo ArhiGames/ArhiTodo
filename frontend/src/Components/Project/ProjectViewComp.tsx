@@ -19,6 +19,7 @@ import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.
 import {useNavigate, useParams} from "react-router-dom";
 import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders/ProjectConnectionBuilder.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import type {Claim} from "../../Models/Claim.ts";
 
 const ProjectViewComp = () => {
 
@@ -51,6 +52,37 @@ const ProjectViewComp = () => {
             }
         }
 
+    }
+
+    async function loadBoards() {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/project/${projectId}/board`,
+            {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch boards");
+                }
+
+                return res.json();
+            })
+            .then((fetchedBoards: Board[]) => {
+                if (dispatch) {
+                    dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});}
+
+            })
+            .catch(err => {
+                if (err.name === "AbortError") {
+                    return;
+                }
+
+                console.error(err);
+            })
+            .finally(() => setHasLoadedBoards(true));
     }
 
     useEffect(() => {
@@ -104,32 +136,7 @@ const ProjectViewComp = () => {
                 })
                 .catch(console.error);
 
-            fetch(`${API_BASE_URL}/project/${projectId}/board`,
-                {
-                    method: "GET",
-                    headers: { "Authorization": `Bearer ${refreshedToken}` },
-                    signal: abortController.signal
-                })
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error("Failed to fetch boards");
-                    }
-
-                    return res.json();
-                })
-                .then((fetchedBoards: Board[]) => {
-                    if (dispatch) {
-                        dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});}
-
-                })
-                .catch(err => {
-                    if (err.name === "AbortError") {
-                        return;
-                    }
-
-                    console.error(err);
-                })
-                .finally(() => setHasLoadedBoards(true));
+                await loadBoards();
         }
 
         run();
@@ -153,6 +160,11 @@ const ProjectViewComp = () => {
         buildCardConnection(connection, dispatch);
         buildChecklistConnection(connection, dispatch);
         buildLabelConnection(connection, dispatch);
+
+        connection.on("UpdateUserBoardPermissions", (boardId: number, claims: Claim[]) => {
+            loadBoards();
+            dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: boardId, boardUserClaims: claims } })
+        });
 
         const startConnection = async () => {
 

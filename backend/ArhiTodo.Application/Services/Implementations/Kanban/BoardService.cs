@@ -38,6 +38,10 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         }
 
         await unitOfWork.SaveChangesAsync();
+
+        List<ClaimGetDto> boardUserClaims = board.BoardUserClaims.Where(buc => buc.UserId == userId).Select(buc => buc.ToGetDto()).ToList();
+        boardNotificationService.UpdateUserBoardPermissions(userId, boardId, boardUserClaims);
+        
         return board.BoardUserClaims.Where(bc => bc.UserId == userId).Select(bc => bc.ToGetDto()).ToList();
     }
 
@@ -89,6 +93,14 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         }
 
         await unitOfWork.SaveChangesAsync();
+
+        foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
+        {
+            List<ClaimGetDto> boardUserClaims = board.BoardUserClaims
+                .Where(buc => buc.UserId == boardMemberStatusUpdateDto.UserId).Select(buc => buc.ToGetDto()).ToList();
+            boardNotificationService.UpdateUserBoardPermissions(boardMemberStatusUpdateDto.UserId, boardId, boardUserClaims);
+        }
+        
         return await GetBoardMembers(boardId);
     }
 

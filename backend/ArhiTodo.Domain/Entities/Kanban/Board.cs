@@ -63,7 +63,7 @@ public class Board
         return Result.Success();
     }
 
-    public void InitializeCreatorPermissions(Guid userId)
+    private void InitializeCreatorPermissions(Guid userId)
     {
         AddMember(userId);
         foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
@@ -106,12 +106,11 @@ public class Board
 
     public bool RemoveMember(Guid userId)
     {
-        BoardUserClaim? foundBoardUserClaim = _boardUserClaims.FirstOrDefault(bc => bc.UserId == userId
-            && bc.Type == BoardClaimTypes.ViewBoard);
-        return foundBoardUserClaim != null && _boardUserClaims.Remove(foundBoardUserClaim);
+        int removedClaims = _boardUserClaims.RemoveAll(bc => bc.UserId == userId);
+        return removedClaims > 0;
     }
 
-    public bool IsMember(Guid userId)
+    private bool IsMember(Guid userId)
     {
         return _boardUserClaims.Any(buc =>
             buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true");

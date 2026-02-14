@@ -1,4 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.Project;
+using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Domain.Entities.DTOs;
 
 namespace ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
@@ -11,6 +12,7 @@ public interface IBoardClient
     Task CreateBoard(int projectId, BoardGetDto board);
     Task UpdateBoard(int projectId, BoardGetDto board);
     Task DeleteBoard(int boardId);
+    Task UpdateUserBoardPermissions(int boardId, List<ClaimGetDto> claimGetDtos);
 
     Task CreateCardList(int boardId, CardListGetDto cardList);
     Task UpdateCardList(int boardId, CardListGetDto cardList);
