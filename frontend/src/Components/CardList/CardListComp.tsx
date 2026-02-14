@@ -10,22 +10,25 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
+import {useParams} from "react-router-dom";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
-const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filteringLabels: number[] }) => {
+const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number[] }) => {
 
     const { checkRefresh } = useAuth();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
-    const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
+    const { boardId } = useParams();
+    const permission = usePermissions();
 
+    const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
 
     const editingNameInputRef = useRef<HTMLInputElement | null>(null);
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
     const [inputtedName, setInputtedName] = useState<string>(props.cardList.cardListName);
-    const editIconRef = useRef<HTMLImageElement | null>(null);
-
     const [isEditing, setIsEditing] = useState<boolean>(false);
+    const editIconRef = useRef<HTMLImageElement | null>(null);
 
     function getLabelsForCard(toGetCardId: number) {
         const labels: number[] = [];
@@ -104,7 +107,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/cardlist`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ cardListId: props.cardList.cardListId, cardListName: inputtedName })
@@ -127,9 +130,10 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                 }
                 console.error(err);
             })
-    }, [checkRefresh, dispatch, inputtedName, props.boardId, props.cardList.cardListId, props.cardList.cardListName])
+    }, [checkRefresh, dispatch, inputtedName, boardId, props.cardList.cardListId, props.cardList.cardListName])
 
     function onTryEditCardListNameClicked() {
+        if (!permission.hasManageCardListsPermission()) return;
         setIsEditingName(true);
         setInputtedName(props.cardList.cardListName);
     }
@@ -170,14 +174,16 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                         ) : (
                             <>
                                 <h3 onClick={onTryEditCardListNameClicked}>{props.cardList.cardListName}</h3>
-                                <div className="cardlist-actions">
-                                    <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
-                                         onClick={() => setIsEditing(true)}/>
-                                    { isEditing && <CardListEditPopover boardId={props.boardId} cardListId={props.cardList.cardListId}
-                                                                        editIconRef={editIconRef} onClose={() => setIsEditing(false)}/> }
-                                </div>
+                                { (permission.hasManageCardsPermission() || permission.hasManageCardListsPermission()) && (
+                                    <div className="cardlist-actions">
+                                        <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
+                                             onClick={() => setIsEditing(true)}/>
+                                        { isEditing && <CardListEditPopover cardListId={props.cardList.cardListId}
+                                                                            editIconRef={editIconRef} onClose={() => setIsEditing(false)}/>
+                                        }
+                                    </div>
+                                )}
                             </>
-
                         )
                     }
                 </div>
@@ -195,7 +201,7 @@ const CardListComp = (props: { boardId: number, cardList: CardListGetDto, filter
                         return <CardComp card={card} key={card.cardId}/>
                     })}
                 </div>
-                <CreateNewCardComp cardList={props.cardList} boardId={props.boardId}/>
+                { permission.hasManageCardsPermission() && <CreateNewCardComp cardList={props.cardList}/> }
             </div>
         </div>
     )

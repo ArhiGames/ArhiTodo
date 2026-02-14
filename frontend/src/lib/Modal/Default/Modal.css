@@ -46,7 +46,7 @@
     color: var(--text-color);
 }
 
-.modal-header button {
+.modal-header .modal-close-button {
     color: var(--text-color);
     background-color: transparent;
     width: 45px;
@@ -58,7 +58,7 @@
     transition: background-color 0.3s, transform 0.3s;
 }
 
-.modal-header button:hover {
+.modal-header .modal-close-button:hover {
     transform: translateY(-2px);
     cursor: pointer;
 }

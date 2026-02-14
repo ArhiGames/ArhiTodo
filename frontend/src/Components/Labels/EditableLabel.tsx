@@ -1,6 +1,7 @@
 import type { Label } from "../../Models/States/types.ts";
 import "./EditableLabel.css"
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     label: Label;
@@ -8,11 +9,12 @@ interface Props {
     onLabelSelected: (labelId: number) => void;
     onLabelUnselected: (labelId: number) => void;
     onEditPressed: (labelId: number) => void;
-    editable: boolean;
     selectable: boolean;
 }
 
 const EditableLabel = ( props: Props ) => {
+
+    const permissions = usePermissions();
 
     const color: Rgb = toRgb(props.label.labelColor);
 
@@ -37,7 +39,7 @@ const EditableLabel = ( props: Props ) => {
                 <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{props.label.labelText}</button>
                 { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✓</span> }
             </div>
-            { props.editable && <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/> }
+            { permissions.hasManageLabelsPermission() && <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/> }
         </div>
     )
 

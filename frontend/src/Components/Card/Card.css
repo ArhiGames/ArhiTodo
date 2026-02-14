@@ -25,7 +25,9 @@
     justify-content: center;
     user-select: none;
     border-radius: 50%;
+    border: none;
     background-color: var(--bg-xx-light);
+    color: var(--text-color);
     font-weight: bold;
     font-size: smaller;
     transform: translateX(-3rem);
@@ -45,6 +47,11 @@
 .card-checkmark:hover {
     filter: brightness(1.25);
     cursor: pointer;
+}
+
+.card-checkmark:disabled {
+    filter: none !important;
+    cursor: not-allowed;
 }
 
 .card-checklist-hint {

@@ -8,6 +8,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import "./Card.css"
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 const CardComp = (props: { card: CardGetDto }) => {
 
@@ -16,6 +17,8 @@ const CardComp = (props: { card: CardGetDto }) => {
     const dispatch = useKanbanDispatch();
     const { checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
+    const permissions = usePermissions();
+
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
     function getLabelByLabelId(labelId: number) {
@@ -38,7 +41,7 @@ const CardComp = (props: { card: CardGetDto }) => {
         )
     }
 
-    async function onStateChange(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    async function onStateChange(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
         if (!dispatch) return;
 
@@ -96,10 +99,10 @@ const CardComp = (props: { card: CardGetDto }) => {
                 </div>
             ) }
             <div style={{ display: "flex", alignItems: "center" }}>
-                <div onClick={onStateChange}
-                     className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</div>
+                <button onClick={onStateChange} disabled={!(permissions.hasManageCardsPermission())}
+                     className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</button>
                 <p className="card-name">{props.card.cardName}</p>
-                <div style={{ opacity: "0" }} className={`card-checkmark ${ (props.card.isDone || isHovering) ? "hidden" : "visible" }`}/>
+                <button style={{ opacity: "0" }} className={`card-checkmark ${ (props.card.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
             { (props.card.checklists !== undefined && props.card.checklists.length > 0) && (
                 <div className="card-checklist-hint">

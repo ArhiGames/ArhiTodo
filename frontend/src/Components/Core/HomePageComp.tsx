@@ -1,17 +1,19 @@
 import {useEffect} from "react";
 import ProjectCardComp from "../Project/ProjectCardComp.tsx";
-import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Project} from "../../Models/States/types.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
 
 const HomePageComp = () => {
 
-    const { token, jwtPayload, checkRefresh } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const permissions = usePermissions();
 
     useEffect(() => {
 
@@ -60,7 +62,7 @@ const HomePageComp = () => {
                     <ProjectCardComp key={project.projectId} project={project}/>
                 )
             })}
-            { jwtPayload?.CreateProjects === "true" && <CreateNewProjectCardComp/> }
+            { permissions.hasCreateProjectPermission() && <CreateNewProjectCardComp/> }
         </div>
     )
 }

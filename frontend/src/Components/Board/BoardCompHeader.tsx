@@ -3,8 +3,8 @@ import type {Label} from "../../Models/States/types.ts";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {type Dispatch, type SetStateAction, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import {useParams} from "react-router-dom";
 import BoardUserSelector from "./UserSelector/BoardUserSelector.tsx";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     currentFilteringLabels: number[];
@@ -14,7 +14,7 @@ interface Props {
 const BoardCompHeader = (props: Props) => {
 
     const kanbanState = useKanbanState();
-    const { projectId, boardId } = useParams();
+    const permissions = usePermissions();
 
     const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
@@ -49,12 +49,18 @@ const BoardCompHeader = (props: Props) => {
 
     return (
         <div className="current-board-header">
-            <img src="/settings-icon.svg" alt="Settings" style={{ height: "36px" }} ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)}
-                 className="icon clickable"/>
-            { isEditingMembers && (
-                <BoardUserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>
+            { permissions.hasManageBoardUsersPermission() && (
+                <>
+                    <img src="/settings-icon.svg" alt="Settings" style={{ height: "36px", marginRight: "1rem" }}
+                         ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)}
+                         className="icon clickable"/>
+                    { isEditingMembers && (
+                        <BoardUserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>
+                    )}
+                </>
             )}
-            <p style={{ marginLeft: "1rem" }}>Labels: </p>
+
+            <p>Labels: </p>
             {
                 props.currentFilteringLabels.length > 0 ? (
                     <div className="board-labels">
@@ -72,7 +78,6 @@ const BoardCompHeader = (props: Props) => {
 
             { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} onClose={() => setIsEditingLabels(false)}
                                                 actionTitle="Filter labels"
-                                                boardId={Number(boardId)} projectId={Number(projectId)}
                                                 selectedLabels={props.currentFilteringLabels}
                                                 onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}
                                                 selectable/>

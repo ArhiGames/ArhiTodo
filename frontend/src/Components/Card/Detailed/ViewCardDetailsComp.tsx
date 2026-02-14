@@ -11,6 +11,7 @@ import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal
 import {API_BASE_URL} from "../../../config/api.ts";
 import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
 import "./DetailedCard.css"
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 
 const ViewCardDetailsComp = () => {
 
@@ -19,8 +20,9 @@ const ViewCardDetailsComp = () => {
     const { projectId, boardId, cardId } = useParams();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const permissions = usePermissions();
 
-    const editLabelsButtonRef = useRef<HTMLButtonElement>(null);
+    const currentEditLabelRef = useRef<HTMLElement>(null);
     const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
 
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
@@ -166,6 +168,7 @@ const ViewCardDetailsComp = () => {
 
     async function onStateChanged() {
 
+        if (!permissions.hasManageCardsPermission()) return;
         if (!dispatch || !detailedCard) return;
 
         const newState: boolean = !kanbanState.cards[detailedCard.cardId].isDone;
@@ -304,6 +307,16 @@ const ViewCardDetailsComp = () => {
         return null;
     }
 
+    function onEditCardDescriptionPressed() {
+        if (!permissions.hasManageCardsPermission()) return;
+        setIsEditingDescription(true);
+    }
+
+    function onLabelSelectedClicked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
+        currentEditLabelRef.current = e.currentTarget;
+        setIsEditingLabels(!isEditingLabels);
+    }
+
     function cardLabelsJsx() {
         return (
             <>
@@ -316,21 +329,22 @@ const ViewCardDetailsComp = () => {
                             return (
                                 <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
                                      key={label.labelId} className="detailed-card-label"
-                                     onClick={() => setIsEditingLabels(!isEditingLabels)}>
+                                     onClick={onLabelSelectedClicked}>
                                     {label.labelText}
                                 </div>
                             )
                         }))
                 }
-                <button ref={editLabelsButtonRef} onClick={() => setIsEditingLabels(!isEditingLabels)}
-                        className="button standard-button">+</button>
+                { permissions.hasManageCardsPermission() && <button onClick={onLabelSelectedClicked}
+                                                     className="button standard-button">+</button> }
                 {
-                    isEditingLabels && <LabelSelector element={editLabelsButtonRef} projectId={Number(projectId)} boardId={Number(boardId)}
+                    isEditingLabels && <LabelSelector element={currentEditLabelRef}
                                                       actionTitle="Edit card labels"
                                                       onClose={() => setIsEditingLabels(false)}
                                                       onLabelSelected={onLabelSelected}
                                                       onLabelUnselected={onLabelUnselected}
-                                                      selectedLabels={getPureLabelIds()}/>
+                                                      selectedLabels={getPureLabelIds()}
+                                                      selectable={permissions.hasManageCardsPermission()}/>
                 }
             </>
         )
@@ -354,7 +368,7 @@ const ViewCardDetailsComp = () => {
                             </div>
                         </>
                     ) : (
-                        <p onClick={() => setIsEditingDescription(true)}
+                        <p onClick={onEditCardDescriptionPressed}
                            className="card-detailed-description">{ cardDescription.length > 0 ?
                             cardDescription.split('\n').map((line, idx) => (
                                 <Fragment key={idx}>
@@ -374,29 +388,35 @@ const ViewCardDetailsComp = () => {
                    <>
                        {
                            detailedCard && (
-                               <div onClick={onStateChanged}
+                               <button disabled={!(permissions.hasManageCardsPermission())} onClick={onStateChanged}
                                     className="card-checkmark visible">
                                    { kanbanState.cards[detailedCard.cardId].isDone ? "✓" : "" }
-                               </div>
+                               </button>
                            )
                        }
-                       <input className="card-detail-name" value={inputtedCardName}
-                              onChange={(e) => setInputtedCardName(e.target.value)}
-                              onBlur={onCardRenamed}
-                              minLength={1} maxLength={256}/>
+                       { permissions.hasManageCardsPermission() ?
+                           (<input className="card-detail-name" value={inputtedCardName}
+                                   onChange={(e) => setInputtedCardName(e.target.value)}
+                                   onBlur={onCardRenamed} minLength={1} maxLength={256}/>) : (
+                                <p>{inputtedCardName}</p>
+                           )
+                       }
                    </>
                }
                footer={
                    <div className="card-details-footer">
                        <div style={{ display: "flex", gap: "0.5rem" }}>
                            <button onClick={shareCardClicked} className="button standard-button">{ isSharing ? "Copied!" : "Share" }</button>
-                           <button className="button standard-button button-with-icon" onClick={() => setIsDeletingCard(true)}>
-                               <img src="/trashcan-icon.svg" alt="" className="icon" height="24px"/>
-                               <p>Delete</p>
-                           </button>
-                           { isDeletingCard && <ConfirmationModal title="Card deletion"
-                                                                  actionDescription="If you confirm this action, this card will be deleted permanently."
-                                                                  onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                           { permissions.hasManageCardsPermission() && (
+                               <>
+                                   <button className="button standard-button button-with-icon" onClick={() => setIsDeletingCard(true)}>
+                                       <img src="/trashcan-icon.svg" alt="" className="icon" height="24px"/>
+                                       <p>Delete</p>
+                                   </button>
+                                   { isDeletingCard && <ConfirmationModal title="Card deletion"
+                                                                          actionDescription="If you confirm this action, this card will be deleted permanently."
+                                                                          onConfirmed={onDeleteCardConfirmed} onClosed={() => setIsDeletingCard(false)} /> }
+                               </>)}
                        </div>
                    </div>
             }>

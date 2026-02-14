@@ -18,13 +18,15 @@ import {buildLabelConnection} from "../../Contexts/Realtime/ConnectionBuilders/L
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders/ProjectConnectionBuilder.ts";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 const ProjectViewComp = () => {
 
-    const { jwtPayload, token, checkRefresh } = useAuth();
+    const { token, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const hubState: HubContextState = useRealtimeHub();
     const kanbanState: State = useKanbanState();
+    const permissions = usePermissions();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
 
@@ -49,12 +51,6 @@ const ProjectViewComp = () => {
             }
         }
 
-    }
-
-    function hasCreateBoardPermission(): boolean {
-        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[Number(projectId)]?.isManager;
-        return hasPermissionGlobally || isProjectManager;
     }
 
     useEffect(() => {
@@ -202,9 +198,9 @@ const ProjectViewComp = () => {
                             <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={Number(projectId)} board={board}/> : null
                     )
                 })}
-                { hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
+                { permissions.hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
             </div>
-            { activeBoardId && hasLoadedBoards ? <BoardComp projectId={Number(projectId)} boardId={activeBoardId}/> : <NoBoardComp/> }
+            { activeBoardId && hasLoadedBoards ? <BoardComp/> : <NoBoardComp/> }
 
         </div>
     )

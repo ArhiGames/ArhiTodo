@@ -6,23 +6,19 @@ import type {Project} from "../../Models/States/types.ts";
 import {useEffect, useState} from "react";
 import EditProjectModalComp from "../Project/EditProject/EditProjectModalComp.tsx";
 import "./Navbar.css"
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 const NavbarHeaderComp = () => {
 
-    const { jwtPayload, appUser } = useAuth();
+    const { appUser } = useAuth();
     const kanbanState = useKanbanState();
     const location = useLocation();
+    const permissions = usePermissions();
     const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
     const [isEditingProject, setIsEditingProject] = useState<boolean>(false);
 
     const projectId = match?.params.projectId;
     const project: Project | null = kanbanState.projects[Number(projectId)];
-
-    function mayEditProject(): boolean {
-        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[Number(projectId)]?.isManager;
-        return mayModifyOthersProjectsGlobally || isProjectManager;
-    }
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -41,7 +37,7 @@ const NavbarHeaderComp = () => {
                     <img className="icon" style={{ height: "32px", marginRight: "1rem" }} src="/back-arrow.svg" alt="Back"/>
                 </Link>
                 <p>{project.projectName}</p>
-                { mayEditProject() && (
+                { permissions.hasEditProjectPermission() && (
                     <img className="icon clickable" onClick={() => setIsEditingProject(true)}
                          style={{ height: "20px" }} src="/edit-icon.svg" alt="Edit"/>
                 )}
@@ -54,7 +50,7 @@ const NavbarHeaderComp = () => {
         <nav className="navbar-header">
             { getNavigationJsx() }
             { appUser && <LoggedInUserCardComp appUser={appUser}/> }
-            { isEditingProject && project && mayEditProject() && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
+            { isEditingProject && project && permissions.hasEditProjectPermission() && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
         </nav>
     )
 }

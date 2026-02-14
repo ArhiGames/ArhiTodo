@@ -4,17 +4,18 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import { createPortal } from "react-dom";
 import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./BoardHeader.css"
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
 
-    const { appUser, jwtPayload, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
-    const kanbanState = useKanbanState();
+    const permissions = usePermissions();
 
     const containerDivRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -95,34 +96,20 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
             });
     }
 
-    function mayEditBoard(): boolean {
-        const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[props.projectId]?.isManager;
-        const hasBoardPermission = kanbanState.boardUserClaims[props.board.boardId]
-            ?.some(buc => buc.claimType === "ManageBoard" && buc.claimValue === "true");
-        return hasGlobalPermission || isProjectManager || hasBoardPermission;
-    }
-
-    function mayDeleteBoard(): boolean {
-        const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[props.projectId]?.isManager;
-        const isOwner = kanbanState.boards[props.board.boardId].ownedByUserId === appUser?.id;
-        return hasGlobalPermission || isProjectManager || isOwner;
-    }
-
     return (
         <>
             <div ref={containerDivRef}>
                 <Link className={`board-header ${props.isSelected ? " selected-board-header" : ""}`} to={`/projects/${props.projectId}/board/${props.board.boardId}`}>
                     <p>{props.board.boardName}</p>
-                    { (mayEditBoard() || mayDeleteBoard()) && <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }
+                    { (permissions.hasEditBoardPermission() || permissions.hasDeleteBoardPermission())
+                        && <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }
                 </Link>
                 {
                     isEditing && (
                         <Popover element={containerDivRef} close={() => setIsEditing(false)}>
                             <div className="edit-board-popup">
                                 <form onSubmit={onEditBoardNameSubmit}>
-                                    { mayEditBoard() && (
+                                    { permissions.hasEditBoardPermission() && (
                                         <>
                                             <label>Title</label>
                                             <input ref={inputRef} className="classic-input" placeholder={props.board.boardName} maxLength={35} required
@@ -130,8 +117,8 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                                         </>
                                     )}
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
-                                        { mayEditBoard() && <button type="submit" className={`button ${newName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Change</button> }
-                                        { mayDeleteBoard() && (
+                                        { permissions.hasEditBoardPermission() && <button type="submit" className={`button ${newName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Change</button> }
+                                        { permissions.hasDeleteBoardPermission() && (
                                             <button onClick={tryDeleteBoard} type="button" className="button standard-button button-with-icon">
                                                 <img src="/trashcan-icon.svg" alt="" className="icon" style={{ height: "24px" }}></img>
                                                 <p>Delete</p>
@@ -145,7 +132,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                 }
             </div>
             {
-                isTryingToDelete && mayDeleteBoard() && (
+                isTryingToDelete && permissions.hasDeleteBoardPermission() && (
                     createPortal(
                         <ConfirmationModal title={`Delete board: ${props.board.boardName}`}
                             actionDescription="If you confirm this action, the board will be irrevocably deleted."

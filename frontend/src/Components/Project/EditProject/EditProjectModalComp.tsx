@@ -1,7 +1,7 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import type {Project} from "../../../Models/States/types.ts";
 import {useState} from "react";
-import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import type {ProjectGetDto} from "../../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
@@ -9,6 +9,7 @@ import {createPortal} from "react-dom";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import "./EditProject.css"
 import EditProjectProjectManagersComp from "./EditProjectProjectManagersComp.tsx";
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     onClose: () => void;
@@ -17,9 +18,9 @@ interface Props {
 
 const EditProjectModalComp = (props: Props) => {
 
-    const { jwtPayload, appUser, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
-    const kanbanState = useKanbanState();
+    const permissions = usePermissions();
 
     const [projectName, setProjectName] = useState<string>(props.project.projectName);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
@@ -86,13 +87,6 @@ const EditProjectModalComp = (props: Props) => {
         props.onClose();
     }
 
-    function mayDeleteProject(): boolean {
-        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectOwner = kanbanState.projects[props.project.projectId]?.ownedByUserId === appUser?.id;
-        return mayModifyOthersProjectsGlobally || isProjectOwner;
-    }
-    mayDeleteProject();
-
     return (
         <>
             <Modal modalSize="modal-large" onClosed={props.onClose} header={
@@ -100,7 +94,7 @@ const EditProjectModalComp = (props: Props) => {
                        value={projectName} maxLength={32} onChange={(e) => setProjectName(e.target.value)}/>
             } footer={
                 <>
-                    { mayDeleteProject() && (
+                    { permissions.hasDeleteProjectPermission() && (
                         <button onClick={() => setIsTryingToDelete(true)} className="button standard-button iconized-button">
                             <img className="icon" height="32px" src="/trashcan-icon.svg" alt="Delete"/>
                             <p>Remove</p>

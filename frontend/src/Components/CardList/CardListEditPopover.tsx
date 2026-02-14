@@ -5,9 +5,10 @@ import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.ts
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useParams} from "react-router-dom";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
-    boardId: number;
     cardListId: number;
     editIconRef: RefObject<HTMLImageElement | null>;
     onClose: () => void;
@@ -15,12 +16,14 @@ interface Props {
 
 const CardListEditPopover = (props: Props) => {
 
-    const [isTryingToDeleteAllCards, setIsTryingToDeleteAllCards] = useState<boolean>(false);
-    const [isTryingToDeleteCardList, setIsTryingToDeleteCardList] = useState<boolean>(false);
-
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
+    const { boardId } = useParams();
+    const permissions = usePermissions();
+
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isTryingToDeleteAllCards, setIsTryingToDeleteAllCards] = useState<boolean>(false);
+    const [isTryingToDeleteCardList, setIsTryingToDeleteCardList] = useState<boolean>(false);
 
     async function onDeleteAllCardsConfirmed() {
 
@@ -33,7 +36,7 @@ const CardListEditPopover = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/cardlist/${props.cardListId}/cards`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}/cards`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -65,7 +68,7 @@ const CardListEditPopover = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/cardlist/${props.cardListId}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -107,16 +110,20 @@ const CardListEditPopover = (props: Props) => {
     return (
         <Popover element={props.editIconRef} close={props.onClose}>
             <div className="cardlist-popover-actions">
-                <button className="button standard-button iconized-button"
+                { permissions.hasManageCardsPermission() && (
+                    <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteAllCards(true)}>
-                    <img src="/trashcan-icon.svg" alt="" height="20px"/>
-                    <p>Delete all cards from list</p>
-                </button>
-                <button className="button standard-button iconized-button"
+                        <img src="/trashcan-icon.svg" alt="" height="20px"/>
+                        <p>Delete all cards from list</p>
+                    </button>
+                )}
+                { permissions.hasManageCardListsPermission() && (
+                    <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteCardList(true)}>
-                    <img src="/trashcan-icon.svg" alt="" height="20px"/>
-                    <p>Delete</p>
-                </button>
+                        <img src="/trashcan-icon.svg" alt="" height="20px"/>
+                        <p>Delete</p>
+                    </button>
+                )}
             </div>
         </Popover>
     )

@@ -17,7 +17,6 @@ const CreateNewCardListComp = () => {
     const { checkRefresh } = useAuth();
 
     function onStartCreatingNewCardClicked() {
-
         setIsCreating(true);
         setTimeout(() => {
 
@@ -27,10 +26,8 @@ const CreateNewCardListComp = () => {
     }
 
     function closeForm() {
-
         setIsCreating(false);
         setCardListName("");
-
     }
 
     async function onCardlistSubmit(e: FormEvent<HTMLFormElement>) {

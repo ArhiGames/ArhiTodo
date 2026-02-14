@@ -4,15 +4,18 @@ import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useParams} from "react-router-dom";
 
-const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number }) => {
+const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
+
+    const dispatch = useKanbanDispatch();
+    const { checkRefresh } = useAuth();
+    const { boardId } = useParams();
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [cardName, setCardName] = useState<string>("");
     const formRef = useRef<HTMLFormElement>(null);
     const cardRef = useRef<HTMLInputElement>(null);
-    const dispatch = useKanbanDispatch();
-    const { checkRefresh } = useAuth();
 
     function handleClicked() {
 
@@ -45,7 +48,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto, boardId: number })
                 return;
             }
 
-            fetch(`${API_BASE_URL}/board/${props.boardId}/cardlist/${props.cardList.cardListId}/card`,
+            fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardList.cardListId}/card`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },

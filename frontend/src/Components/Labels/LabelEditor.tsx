@@ -4,9 +4,9 @@ import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts"
 import {type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, useRef, useState} from "react";
 import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
+import {useParams} from "react-router-dom";
 
 interface Props {
-    boardId: number;
     currentlyEditingLabelId: number | null;
     setCurrentlyEditingLabelId: Dispatch<SetStateAction<number | null>>;
     isCreating: boolean;
@@ -19,6 +19,7 @@ const LabelEditor = (props: Props) => {
     const { checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const { boardId } = useParams();
 
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
     const [labelName, setLabelName] = useState<string>("");
@@ -75,7 +76,7 @@ const LabelEditor = (props: Props) => {
 
         const predictedId = Date.now() * -1;
 
-        dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: props.boardId, labelId: predictedId,
+        dispatch({type: "CREATE_LABEL_OPTIMISTIC", payload: { boardId: Number(boardId), labelId: predictedId,
                 labelText: labelName, labelColor: toInteger(currentSelectedColor) }});
 
         const refreshedToken: string | null = await checkRefresh();
@@ -84,7 +85,7 @@ const LabelEditor = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/label`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
@@ -129,7 +130,7 @@ const LabelEditor = (props: Props) => {
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/label`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/label`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({
@@ -171,7 +172,7 @@ const LabelEditor = (props: Props) => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/board/${props.boardId}/label/${props.currentlyEditingLabelId}`,
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/label/${props.currentlyEditingLabelId}`,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }

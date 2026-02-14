@@ -17,15 +17,17 @@ import BoardCompHeader from "./BoardCompHeader.tsx";
 import "./Board.css"
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import type {Claim} from "../../Models/Claim.ts";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
-const BoardComp = (props: { projectId: number, boardId: number }) => {
+const BoardComp = () => {
 
     const { checkRefresh } = useAuth();
-    const { cardId } = useParams();
+    const { projectId, boardId, cardId } = useParams();
     const navigate = useNavigate();
     const hubState: HubContextState = useRealtimeHub();
     const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
     const kanbanState: State = useKanbanState();
+    const permissions = usePermissions();
 
     const board: BoardGetDto = getUnnormalizedKanbanState();
 
@@ -38,7 +40,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         let ownedByUserId: string = "";
         for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
             const board: Board = Object.values(kanbanState.boards)[i];
-            if (board.boardId === props.boardId) {
+            if (board.boardId === Number(boardId)) {
                 boardName = board.boardName;
                 ownedByUserId = board.ownedByUserId;
                 break;
@@ -48,7 +50,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         const labels: LabelGetDto[] = [];
         for (let i = 0; i < Object.values(kanbanState.labels).length; i++) {
             const label = Object.values(kanbanState.labels)[i];
-            if (label.boardId === props.boardId) {
+            if (label.boardId === Number(boardId)) {
                 labels.push({
                     labelId: label.labelId,
                     labelText: label.labelText,
@@ -61,7 +63,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         if (kanbanState.cardLists) {
             for (let i = 0; i < Object.values(kanbanState.cardLists).length; i++) {
                 const list: CardList = Object.values(kanbanState.cardLists)[i];
-                if (list.boardId === props.boardId) {
+                if (list.boardId === Number(boardId)) {
                     cardLists.push({
                         cardListId: list.cardListId,
                         cardListName: list.cardListName,
@@ -72,7 +74,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
         }
 
         const boardGetDto: BoardGetDto = {
-            boardId: props.boardId,
+            boardId: Number(boardId),
             boardName: boardName,
             ownedByUserId: ownedByUserId,
             cardLists: cardLists,
@@ -83,14 +85,14 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
     }
 
     useEffect(() => {
-        if (!kanbanState.boards[props.boardId]) {
-            navigate(`/projects/${props.projectId}/board/`);
+        if (!kanbanState.boards[Number(boardId)]) {
+            navigate(`/projects/${Number(projectId)}/board/`);
         }
-    }, [props.boardId, kanbanState.boards, props.projectId, navigate]);
+    }, [boardId, kanbanState.boards, projectId, navigate]);
 
     useEffect(() => {
 
-        if (props.boardId == null) return;
+        if (boardId == null) return;
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentFilteringLabels([]);
@@ -100,7 +102,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken || abortController.signal.aborted) return;
 
-            await fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}`,
+            await fetch(`${API_BASE_URL}/project/${Number(projectId)}/board/${Number(boardId)}`,
                 {
                     method: 'GET',
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
@@ -108,7 +110,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
                 })
                 .then(res => {
                     if (!res.ok) {
-                        throw new Error(`Could not fetch /api/cards/project/${props.projectId}/board/${props.boardId}: ${res.type}`)
+                        throw new Error(`Could not fetch /api/cards/project/${Number(projectId)}/board/${Number(boardId)}: ${res.type}`)
                     }
 
                     return res.json()
@@ -126,11 +128,11 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
                         return;
                     }
 
-                    navigate(`/projects/${props.projectId}/board/`);
+                    navigate(`/projects/${Number(projectId)}/board/`);
                     console.error(err);
                 });
 
-            await fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.boardId}/permissions`, {
+            await fetch(`${API_BASE_URL}/project/${Number(projectId)}/board/${Number(boardId)}/permissions`, {
                 method: 'GET',
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             })
@@ -143,7 +145,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
                 })
                 .then((boardUserClaims: Claim[]) => {
                     if (dispatch) {
-                        dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: props.boardId, boardUserClaims: boardUserClaims } });
+                        dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: Number(boardId), boardUserClaims: boardUserClaims } });
                     }
                 })
                 .catch(console.error);
@@ -153,7 +155,7 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
         return () => abortController.abort();
 
-    }, [props.projectId, props.boardId, checkRefresh, dispatch, navigate]);
+    }, [projectId, boardId, checkRefresh, dispatch, navigate]);
 
     useEffect(() => {
 
@@ -161,11 +163,11 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
 
         if (hubState.hubConnection.state !== "Connected") return;
 
-        hubState.hubConnection.invoke("JoinBoardGroup", props.boardId)
-            .then(() => console.log(`Joined board group with id: ${props.boardId}`))
+        hubState.hubConnection.invoke("JoinBoardGroup", Number(boardId))
+            .then(() => console.log(`Joined board group with id: ${Number(boardId)}`))
             .catch(console.error);
 
-    }, [dispatch, hubState.hubConnection, props.boardId]);
+    }, [dispatch, hubState.hubConnection, boardId]);
 
     return (
         <div className="board-body">
@@ -180,11 +182,11 @@ const BoardComp = (props: { projectId: number, boardId: number }) => {
                                         { (board.cardLists && board.cardLists.length > 0) && (
                                             board.cardLists.map((cardList: CardListGetDto) => {
                                                 return (
-                                                    <CardListComp boardId={props.boardId!} cardList={cardList}
+                                                    <CardListComp cardList={cardList}
                                                                   filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
                                                 );
                                             }))}
-                                        <CreateNewCardListComp/>
+                                        { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
                                     </>
                                 ) : (
                                     <p>Loading...</p>
