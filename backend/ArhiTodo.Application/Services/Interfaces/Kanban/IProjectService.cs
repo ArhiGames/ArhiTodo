@@ -7,7 +7,6 @@ namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 public interface IProjectService
 {
     Task<Result<List<UserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos);
-    Task<Result> RemoveProjectManager(int projectId, Guid projectManagerId);
     Task<Result<List<UserGetDto>>> GetProjectManagers(int projectId);
     Task<Result<ProjectPermission>> GetUserPermission(int projectId);
         

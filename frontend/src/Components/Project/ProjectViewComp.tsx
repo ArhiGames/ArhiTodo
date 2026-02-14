@@ -136,7 +136,7 @@ const ProjectViewComp = () => {
                 })
                 .catch(console.error);
 
-                await loadBoards();
+            await loadBoards();
         }
 
         run();
@@ -161,6 +161,10 @@ const ProjectViewComp = () => {
         buildChecklistConnection(connection, dispatch);
         buildLabelConnection(connection, dispatch);
 
+        connection.on("UpdateProjectManager", (projectId: number, isManager: boolean) => {
+            loadBoards();
+            dispatch({ type: "SET_PROJECT_PERMISSION", payload: { projectId: Number(projectId), isManager: isManager } });
+        })
         connection.on("UpdateUserBoardPermissions", (boardId: number, claims: Claim[]) => {
             loadBoards();
             dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: boardId, boardUserClaims: claims } })

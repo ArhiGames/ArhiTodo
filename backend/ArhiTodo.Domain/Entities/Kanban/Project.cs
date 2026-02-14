@@ -53,14 +53,14 @@ public class Project
         return Result.Success();
     }
 
-    public Result AddProjectManager(ProjectManager user)
+    public Result AddProjectManager(Guid userId)
     {
-        if (_projectManagers.Exists(pm => pm.UserId == user.UserId))
+        if (_projectManagers.Exists(pm => pm.UserId == userId))
         {
             return new Error("AlreadyExistingProjectManager", ErrorType.Conflict,
                 "The user with the specified id is already a project manager");
         }
-        _projectManagers.Add(user);
+        _projectManagers.Add(new ProjectManager(ProjectId, userId));
         return Result.Success();
     }
 

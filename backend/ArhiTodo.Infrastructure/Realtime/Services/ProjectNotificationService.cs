@@ -17,4 +17,9 @@ public class ProjectNotificationService(IHubContext<BoardHub, IBoardClient> hubC
     {
         hubContext.Clients.Group($"grp-project-{projectId}").DeleteProject(projectId);
     }
+
+    public void UpdateProjectManagerState(Guid userId, int projectId, bool isManager)
+    {
+        hubContext.Clients.User(userId.ToString()).UpdateProjectManager(projectId, isManager);
+    }
 }

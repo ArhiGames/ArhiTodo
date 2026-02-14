@@ -28,9 +28,10 @@ const ProjectManagerCard = (props: Props) => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/project/${props.project.projectId}/managers/${props.projectManager.userId}`, {
-            method: "DELETE",
+        fetch(`${API_BASE_URL}/project/${props.project.projectId}/managers/`, {
+            method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            body: JSON.stringify([ { userId: props.projectManager.userId, newManagerState: false } ]),
         })
             .then(res => {
                 if (!res.ok) {

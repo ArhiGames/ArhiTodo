@@ -6,4 +6,5 @@ public interface IProjectNotificationService
 {
     void UpdateProject(ProjectGetDto projectGetDto);
     void DeleteProject(int projectId);
+    void UpdateProjectManagerState(Guid userId, int projectId, bool isManager);
 }

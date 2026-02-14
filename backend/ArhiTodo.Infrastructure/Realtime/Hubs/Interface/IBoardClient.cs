@@ -8,6 +8,7 @@ public interface IBoardClient
 {
     Task UpdateProject(ProjectGetDto projectGetDto);
     Task DeleteProject(int projectId);
+    Task UpdateProjectManager(int projectId, bool isManager);
     
     Task CreateBoard(int projectId, BoardGetDto board);
     Task UpdateBoard(int projectId, BoardGetDto board);

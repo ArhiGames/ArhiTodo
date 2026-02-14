@@ -33,35 +33,24 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         {
             if (projectManagerStatusUpdateDto.NewManagerState)
             {
-                project.AddProjectManager(new ProjectManager(projectId, projectManagerStatusUpdateDto.UserId));
+                Result addProjectManagerResult = project.AddProjectManager(projectManagerStatusUpdateDto.UserId);
+                if (!addProjectManagerResult.IsSuccess) return addProjectManagerResult.Error!;
             }
             else
             {
-                project.RemoveProjectManager(projectManagerStatusUpdateDto.UserId);
+                Result removeProjectManagerResult = project.RemoveProjectManager(projectManagerStatusUpdateDto.UserId);
+                if (!removeProjectManagerResult.IsSuccess) return removeProjectManagerResult.Error!;
             }
         }
 
         await unitOfWork.SaveChangesAsync();
-        return await GetProjectManagers(project);
-    }
 
-    public async Task<Result> RemoveProjectManager(int projectId, Guid projectManagerId)
-    {
-        Project? project = await projectRepository.GetAsync(projectId);
-        if (project is null) return Errors.NotFound;
-        
-        bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (project.OwnerId != currentUser.UserId && !mayManageProjectsGlobally)
+        foreach (ProjectManagerStatusUpdateDto projectManagerStatusUpdateDto in projectManagerStatusUpdateDtos)
         {
-            return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only the project owner can edit the project managers!");
+            projectNotificationService.UpdateProjectManagerState(projectManagerStatusUpdateDto.UserId, projectId, projectManagerStatusUpdateDto.NewManagerState);
         }
         
-        Result removeProjectManagerResult = project.RemoveProjectManager(projectManagerId);
-        if (removeProjectManagerResult.IsSuccess)
-        {
-            await unitOfWork.SaveChangesAsync();
-        }
-        return removeProjectManagerResult;
+        return await GetProjectManagers(project);
     }
 
     public async Task<Result<List<UserGetDto>>> GetProjectManagers(int projectId)
@@ -107,7 +96,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         if (!project.IsSuccess) return project.Error!;
 
         Project createdProject = await projectRepository.CreateAsync(project.Value!);
-        createdProject.AddProjectManager(new ProjectManager(createdProject.ProjectId, foundUser.UserId));
+        createdProject.AddProjectManager(foundUser.UserId);
         await unitOfWork.SaveChangesAsync();
         
         return createdProject.ToGetDto();

@@ -21,13 +21,6 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
         return projectManagers.IsSuccess ? Ok(projectManagers.Value) : HandleFailure(projectManagers);
     }
 
-    [HttpDelete("{projectId:int}/managers/{userId:guid}")]
-    public async Task<IActionResult> RemoveManager(int projectId, Guid userId)
-    {
-        Result removeProjectManagerResult = await projectService.RemoveProjectManager(projectId, userId);
-        return removeProjectManagerResult.IsSuccess ? NoContent() : HandleFailure(removeProjectManagerResult);
-    }
-
     [HttpGet("{projectId:int}/managers")]
     public async Task<IActionResult> GetProjectManagers(int projectId)
     {
