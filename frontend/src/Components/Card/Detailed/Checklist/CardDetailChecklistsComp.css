@@ -31,23 +31,6 @@
     width: 100%;
 }
 
-.card-detail-checklist-img-container {
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.card-detail-checklist-img-container:hover {
-    transform: translateY(-2px);
-    cursor: pointer;
-}
-
-.card-detail-checklist-img-container img {
-    padding: 0.25rem;
-    filter: invert(1);
-}
-
 .card-detail-progress-container {
     display: flex;
     gap: 0.5rem;

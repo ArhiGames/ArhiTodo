@@ -108,7 +108,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
 
     }
 
-    function onShowCompletedButtonPressed(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    function onShowCompletedButtonPressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
         e.stopPropagation();
         props.setShowingCompletedTasks((prev: boolean) => !prev);
     }
@@ -148,12 +148,13 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
                     <>
                         <p>{checklist.checklistName}</p>
                         <div className="card-detail-checklist-header-actions">
-                            <button onClick={onShowCompletedButtonPressed} className="button standard-button">
-                                { props.showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
+                            <img onClick={onShowCompletedButtonPressed} className="icon" height="38px"
+                                 alt={props.showingCompletedTasks ? "Hide completed" : "Show completed"}
+                                 src={props.showingCompletedTasks ? "/public/crossed-eye.svg" : "/public/eye.svg" }/>
                             { permissions.hasManageCardsPermission() && (
                                 <>
                                     <div className="card-detail-checklist-img-container">
-                                        <img src="/trashcan-icon.svg" alt="Remove" height="32px"
+                                        <img src="/trashcan-icon.svg" alt="Remove" height="32px" className="icon"
                                             onClick={onTryDeleteChecklistButtonPressed}/>
                                         {
                                             isDeletingChecklist && (
