@@ -63,7 +63,7 @@ const PermissionProvider = ({ children }: Props) => {
 
         const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
         const isProjectManager = kanbanState.projectPermission[Number(match?.params.projectId)]?.isManager;
-        const isOwner = kanbanState.boards[Number(match?.params.boardId)].ownedByUserId === appUser?.id;
+        const isOwner = kanbanState.boards[Number(match?.params.boardId)]?.ownedByUserId === appUser?.id;
         return hasGlobalPermission || isProjectManager || isOwner;
     }
 
