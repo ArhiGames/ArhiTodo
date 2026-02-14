@@ -8,6 +8,7 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 import {useParams} from "react-router-dom";
 import CardDetailChecklistHeaderComp from "./CardDetailChecklistHeaderComp.tsx";
+import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     checklistId: number;
@@ -19,6 +20,7 @@ const CardDetailChecklistComp = (props: Props) => {
     const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
     const { boardId, cardId } = useParams();
+    const permissions = usePermissions();
 
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
     const checklistItems: ChecklistItem[] = [];
@@ -133,7 +135,8 @@ const CardDetailChecklistComp = (props: Props) => {
                                                         checklistItem={checklistItem}/>
                 })}
             </div>
-            <div className="card-detail-checklistitem-add">
+            { permissions.hasManageCardsPermission() && (
+                <div className="card-detail-checklistitem-add">
                 {
                     isAddingTask ? (
                         <form onSubmit={onAddTaskButtonPressed} onReset={cancelTaskAddition}>
@@ -151,8 +154,8 @@ const CardDetailChecklistComp = (props: Props) => {
                         <button onClick={() => setIsAddingTask(true)} className="card-detail-add-task-button">Add task</button>
                     )
                 }
-            </div>
-
+                </div>
+            )}
         </div>
     )
 

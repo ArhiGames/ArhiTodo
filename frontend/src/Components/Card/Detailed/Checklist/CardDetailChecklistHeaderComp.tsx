@@ -7,6 +7,7 @@ import type {ChecklistGetDto} from "../../../../Models/BackendDtos/Kanban/Checkl
 import {createPortal} from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import * as React from "react";
+import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     checklistId: number;
@@ -21,6 +22,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
     const { checkRefresh } = useAuth();
     const checklist = kanbanState.checklists[props.checklistId];
     const { boardId, cardId } = useParams();
+    const permissions = usePermissions();
 
     const [isDeletingChecklist, setIsDeletingChecklist] = useState<boolean>(false);
 
@@ -116,6 +118,11 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
         setIsDeletingChecklist(true);
     }
 
+    function tryEditChecklistPressed() {
+        if (!permissions.hasManageCardsPermission()) return;
+        setIsEditingChecklist(true);
+    }
+
     useEffect(() => {
         if (isEditingChecklist) {
             checklistNameInputRef.current?.focus();
@@ -123,7 +130,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
     }, [isEditingChecklist]);
 
     return (
-        <div onClick={() => setIsEditingChecklist(true)} className="card-detail-checklist-header">
+        <div onClick={tryEditChecklistPressed} className="card-detail-checklist-header">
             {
                 isEditingChecklist ? (
                     <div className="card-detail-checklist-editing">
@@ -143,19 +150,23 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
                         <div className="card-detail-checklist-header-actions">
                             <button onClick={onShowCompletedButtonPressed} className="button standard-button">
                                 { props.showingCompletedTasks ? "Hide completed" : "Show completed" }</button>
-                            <div className="card-detail-checklist-img-container">
-                                <img src="/trashcan-icon.svg" alt="Remove" height="32px"
-                                     onClick={onTryDeleteChecklistButtonPressed}/>
-                            </div>
-                            {
-                                isDeletingChecklist && (
-                                    createPortal(
-                                        <ConfirmationModal title="Confirm your action!"
-                                                           actionDescription="If you confirm this action, the checklist will be irrevocably deleted."
-                                                           onClosed={() => setIsDeletingChecklist(false)}
-                                                           onConfirmed={deleteChecklist}/>, document.body)
-                                )
-                            }
+                            { permissions.hasManageCardsPermission() && (
+                                <>
+                                    <div className="card-detail-checklist-img-container">
+                                        <img src="/trashcan-icon.svg" alt="Remove" height="32px"
+                                            onClick={onTryDeleteChecklistButtonPressed}/>
+                                        {
+                                            isDeletingChecklist && (
+                                                createPortal(
+                                                    <ConfirmationModal title="Confirm your action!"
+                                                                       actionDescription="If you confirm this action, the checklist will be irrevocably deleted."
+                                                                       onClosed={() => setIsDeletingChecklist(false)}
+                                                                       onConfirmed={deleteChecklist}/>, document.body)
+                                            )
+                                        }
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </>
                 )

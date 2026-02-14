@@ -5,6 +5,7 @@ import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
+import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     checklistId: number;
@@ -17,6 +18,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
     const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
     const { boardId, cardId } = useParams();
+    const permission = usePermissions();
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const checklistItemInputRef = useRef<HTMLInputElement | null>(null);
@@ -188,6 +190,11 @@ const CardDetailChecklistItemComp = (props: Props) => {
         setChecklistItemInput(props.checklistItem.checklistItemName);
     }
 
+    function tryEditChecklistItemPressed() {
+        if (!permission.hasManageCardsPermission()) return;
+        setIsEditing(true);
+    }
+
     useEffect(() => {
 
         if (isEditing) {
@@ -212,7 +219,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
     }, [isEditing]);
 
     return (
-        <div className="card-detail-checklist-item" onClick={() => setIsEditing(true)}>
+        <div className="card-detail-checklist-item" onClick={tryEditChecklistItemPressed}>
             {
                 isEditing ? (
                     <form ref={checklistItemForm} className="card-detail-checklist-item-info-wrapper"
@@ -235,13 +242,15 @@ const CardDetailChecklistItemComp = (props: Props) => {
                     <>
                         <div className="card-detail-checklist-item-info">
                             <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
-                                handleCheckboxClick(props.checklistItem.checklistItemId, checked)}/>
+                                handleCheckboxClick(props.checklistItem.checklistItemId, checked)} disabled={!permission.hasManageCardsPermission()}/>
                             <p className={props.checklistItem.isDone ? "checklist-item-name-done" : "checklist-item-name"}>{props.checklistItem.checklistItemName}</p>
                         </div>
-                        <div className="card-detail-checklist-item-action">
-                            <img height="32px" src="/trashcan-icon.svg" alt="Remove"
-                                 onClick={() => handleChecklistItemRemovePressed(props.checklistItem.checklistItemId)}></img>
-                        </div>
+                        { permission.hasManageCardsPermission() && (
+                            <div className="card-detail-checklist-item-action">
+                                <img height="32px" src="/trashcan-icon.svg" alt="Remove"
+                                     onClick={() => handleChecklistItemRemovePressed(props.checklistItem.checklistItemId)}></img>
+                            </div>
+                        )}
                     </>
                 )
             }
