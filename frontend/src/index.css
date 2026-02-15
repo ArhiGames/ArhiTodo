@@ -174,3 +174,18 @@ body {
 .error-text {
     font-size: larger;
 }
+
+.drag-handle {
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    padding: 0.25rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.drag-handle:hover {
+    background-color: var(--bg-xx-light);
+    color: var(--text-color);
+    border: none;
+}

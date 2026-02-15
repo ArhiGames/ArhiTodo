@@ -12,6 +12,7 @@ import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {useDraggable} from "@dnd-kit/react";
 
 const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number[] }) => {
 
@@ -20,6 +21,10 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
     const permission = usePermissions();
+
+    const { ref, handleRef } = useDraggable({
+        id: `cardlist-${props.cardList.cardListId}`
+    });
 
     const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -163,10 +168,15 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
 
     }, [isEditingName, onChecklistNameChangeCommited]);
 
+    const combinedHandleRef = useCallback((node: HTMLDivElement | null) => {
+            handleRef(node);
+            cardListHeaderRef.current = node;
+        }, [handleRef]);
+
     return (
-        <div className="cardlist">
+        <div className="cardlist" ref={ref}>
             <div className="cardlist-background">
-                <div ref={cardListHeaderRef} className="cardlist-header">
+                <div ref={combinedHandleRef} className="cardlist-header">
                     {
                         isEditingName ? (
                             <input ref={editingNameInputRef} className="classic-input small" onBlur={onChecklistNameChangeCommited} maxLength={25}

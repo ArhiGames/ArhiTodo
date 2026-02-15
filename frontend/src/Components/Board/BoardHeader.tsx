@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Board } from "../../Models/States/types.ts";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import {type FormEvent, useCallback, useEffect, useRef, useState} from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
@@ -10,6 +10,8 @@ import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.ts
 import {API_BASE_URL} from "../../config/api.ts";
 import "./BoardHeader.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {useDraggable} from "@dnd-kit/react";
+import {RestrictToHorizontalAxis} from '@dnd-kit/abstract/modifiers';
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
 
@@ -18,6 +20,11 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const permissions = usePermissions();
 
     const containerDivRef = useRef<HTMLDivElement>(null);
+    const { ref, handleRef } = useDraggable({
+        id: `board-${props.board.boardId}`,
+        modifiers: [RestrictToHorizontalAxis]
+    })
+
     const inputRef = useRef<HTMLInputElement>(null);
 
     const [newName, setNewName] = useState<string>("");
@@ -96,10 +103,19 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
             });
     }
 
+    const combinedRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            ref(node);
+            containerDivRef.current = node;
+        },
+        [ref]
+    );
+
     return (
         <>
-            <div ref={containerDivRef}>
-                <Link className={`board-header ${props.isSelected ? " selected-board-header" : ""}`} to={`/projects/${props.projectId}/board/${props.board.boardId}`}>
+            <div ref={combinedRef}>
+                <Link draggable="false" className={`board-header ${props.isSelected ? " selected-board-header" : ""}`} to={`/projects/${props.projectId}/board/${props.board.boardId}`}>
+                    <button className="drag-handle" ref={handleRef}>::</button>
                     <p>{props.board.boardName}</p>
                     { (permissions.hasEditBoardPermission() || permissions.hasDeleteBoardPermission())
                         && <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }

@@ -10,9 +10,9 @@
     text-decoration: none;
     color: var(--text-color);
     border-radius: 15px 15px 0 0;
-    padding: 1rem;
+    padding: 0.85rem;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.35rem;
 
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -47,4 +47,5 @@
     border: none;
     font-size: medium;
     opacity: 60%;
+    height: 100%;
 }

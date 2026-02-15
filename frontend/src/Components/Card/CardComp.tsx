@@ -9,6 +9,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {useDraggable} from "@dnd-kit/react";
 
 const CardComp = (props: { card: CardGetDto }) => {
 
@@ -18,6 +19,10 @@ const CardComp = (props: { card: CardGetDto }) => {
     const { checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const permissions = usePermissions();
+
+    const { ref } = useDraggable({
+        id: `card-${props.card.cardId}`
+    })
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -90,7 +95,8 @@ const CardComp = (props: { card: CardGetDto }) => {
     }
 
     return (
-        <div onClick={openCard} className="card" onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
+        <div ref={ref} onClick={openCard} className="card"
+             onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
             { props.card.labelIds.length > 0 && (
                 <div className="card-labels-div">
                     { props.card.labelIds.map((labelId: number) => {
