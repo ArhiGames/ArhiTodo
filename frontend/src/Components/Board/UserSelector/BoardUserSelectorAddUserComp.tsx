@@ -2,6 +2,7 @@ import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import type {Dispatch, SetStateAction} from "react";
 import {useParams} from "react-router-dom";
 import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 
 interface Props {
     user: UserGetDto;
@@ -11,14 +12,17 @@ interface Props {
 
 const BoardUserSelectorAddUserComp = (props: Props) => {
 
+    const { appUser } = useAuth();
     const { projectId, boardId } = useParams();
     const kanbanState = useKanbanState();
 
     const isProjectOwner: boolean = kanbanState.projects[Number(projectId)].ownedByUserId === props.user.userId;
     const isBoardOwner: boolean = kanbanState.boards[Number(boardId)].ownedByUserId === props.user.userId;
+    const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
 
     function handleClicked() {
+        if (isBoardOwner || isSelf) return;
         if (isSelected) {
             props.setSelectedUsers(props.selectedUsers.filter((selectedUser: UserGetDto) => selectedUser.userId !== props.user.userId));
         } else {

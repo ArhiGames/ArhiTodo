@@ -16,12 +16,13 @@ interface Props {
 
 const ProjectManagerCard = (props: Props) => {
 
-    const { checkRefresh } = useAuth();
+    const { appUser, checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-    const isOwner = kanbanState.projects[props.project.projectId]?.ownedByUserId === props.projectManager.userId;
+    const isOwner: boolean = kanbanState.projects[props.project.projectId]?.ownedByUserId === props.projectManager.userId;
+    const isSelf: boolean = appUser?.id === props.projectManager.userId;
 
     async function onDeleteProjectManagerConfirmed() {
 
@@ -54,7 +55,7 @@ const ProjectManagerCard = (props: Props) => {
                 <p style={{ opacity: "75%" }}>{props.projectManager.email}</p>
             </div>
             {
-                props.editable && (
+                props.editable && !isOwner && !isSelf && (
                     <>
                         <button onClick={() => setIsDeleting(true)} className="button standard-button">Remove</button>
                         { isDeleting && <ConfirmationModal title="Confirm your action!"

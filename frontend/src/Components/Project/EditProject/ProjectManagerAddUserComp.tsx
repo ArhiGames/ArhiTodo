@@ -2,6 +2,7 @@ import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import {type Dispatch, type SetStateAction} from "react";
 import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {matchPath} from "react-router-dom";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 
 interface Props {
     user: UserGetDto;
@@ -11,13 +12,16 @@ interface Props {
 
 const ProjectManagerAddUserComp = (props: Props) => {
 
+    const { appUser } = useAuth();
     const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
     const kanbanState = useKanbanState();
 
     const isProjectOwner: boolean = kanbanState.projects[Number(match?.params.projectId)]?.ownedByUserId === props.user.userId;
+    const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
 
     function onUserCompClicked() {
+        if (isProjectOwner || isSelf) return;
         if (isSelected) {
             props.setSelectedUsers(props.selectedUsers.filter((user: UserGetDto) => user.userId !== props.user.userId));
         } else {
