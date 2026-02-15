@@ -10,6 +10,7 @@ public static class LabelMapper
         return new LabelGetDto
         {
             LabelId = label.LabelId,
+            Position = label.Position,
             LabelText = label.LabelText,
             LabelColor = label.LabelColor
         };

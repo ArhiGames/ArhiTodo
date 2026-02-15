@@ -3,6 +3,8 @@
 public class BoardGetDto
 {
     public int BoardId { get; set; }
+    
+    public required float Position { get; set; }
         
     public required string BoardName { get; set; }
 

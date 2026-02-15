@@ -9,6 +9,7 @@ public class Checklist
     public Card Card { get; } = null!;
     
     public int ChecklistId { get; private set; }
+    public float Position { get; private set; }
     public string ChecklistName { get; private set; } = string.Empty;
 
     private readonly List<ChecklistItem> _checklistItems = [];

@@ -10,6 +10,7 @@ public static class CardListMapper
         return new CardListGetDto
         {
             CardListId = cardList.CardListId,
+            Position = cardList.Position,
             CardListName = cardList.CardListName,
             Cards = cardList.Cards.Select(c => c.ToGetDto()).ToList()
         };

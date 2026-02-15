@@ -10,6 +10,7 @@ public static class BoardMapper
         return new BoardGetDto
         {
             BoardId = board.BoardId,
+            Position = board.Position,
             BoardName = board.BoardName,
             OwnedByUserId = board.OwnerId,
             CardLists = board.CardLists.Select(cl => cl.ToGetDto()).ToList()

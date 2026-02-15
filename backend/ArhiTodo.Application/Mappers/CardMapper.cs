@@ -10,6 +10,7 @@ public static class CardMapper
         return new CardGetDto
         {
             CardId = card.CardId,
+            Position = card.Position,
             IsDone = card.IsDone,
             CardName = card.CardName,
             CardDescription = card.CardDescription,

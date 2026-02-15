@@ -33,28 +33,34 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     public async Task<BoardGetDto?> GetReadModelAsync(int boardId)
     {
         BoardGetDto? boardGetDto = await database.Boards
+            .Where(b => b.BoardId == boardId)
             .Select(b => new BoardGetDto
             {
                 BoardId = b.BoardId,
+                Position = b.Position,
                 BoardName = b.BoardName,
                 OwnedByUserId = b.OwnerId,
                 CardLists = b.CardLists.Select(cl => new CardListGetDto
                 {
                     CardListId = cl.CardListId,
+                    Position = cl.Position,
                     CardListName = cl.CardListName,
                     Cards = cl.Cards.Select(c => new CardGetDto
                     {
                         CardId = c.CardId,
+                        Position = c.Position,
                         CardName = c.CardName,
                         CardDescription = c.CardDescription,
                         IsDone = c.IsDone,
                         Checklists = c.Checklists.Select(cel => new ChecklistGetDto
                         {
                             ChecklistId = cel.ChecklistId,
+                            Position = cel.Position,
                             ChecklistName = cel.ChecklistName,
                             ChecklistItems = cel.ChecklistItems.Select(ci => new ChecklistItemGetDto
                             {
                                 ChecklistItemId = ci.ChecklistItemId,
+                                Position = ci.Position,
                                 ChecklistItemName = ci.ChecklistItemName,
                                 IsDone = ci.IsDone
                             }).ToList()
@@ -65,6 +71,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
                 Labels = b.Labels.Select(l => new LabelGetDto
                 {
                     LabelId = l.LabelId,
+                    Position = l.Position,
                     LabelText = l.LabelText,
                     LabelColor = l.LabelColor
                 }).ToList()

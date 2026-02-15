@@ -10,6 +10,7 @@ public class Board
     public Project Project { get; } = null!;
     
     public int BoardId { get; init; }
+    public float Position { get; private set; }
     public string BoardName { get; private set; } = string.Empty;
     
     public Guid OwnerId { get; private set; }

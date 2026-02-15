@@ -9,6 +9,7 @@ public class Label
     public Board Board { get; } = null!;
     
     public int LabelId { get; private set; }
+    public float Position { get; private set; }
     public int LabelColor { get; private set; }
     public string LabelText { get; private set; } = string.Empty;
 

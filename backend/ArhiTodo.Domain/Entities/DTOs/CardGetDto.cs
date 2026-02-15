@@ -4,6 +4,8 @@ public class CardGetDto
 {
     public int CardId { get; set; }
     
+    public required float Position { get; set; }
+    
     public bool IsDone { get; set; }
     
     public required string CardName { get; set; }

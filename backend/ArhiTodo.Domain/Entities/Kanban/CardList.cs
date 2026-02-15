@@ -9,6 +9,7 @@ public class CardList
     public Board Board { get; } = null!;
     
     public int CardListId { get; private set; }
+    public float Position { get; private set; }
     public string CardListName { get; private set; } = string.Empty;
 
     private readonly List<Card> _cards = [];

@@ -9,6 +9,7 @@ public class Card
     public CardList CardList { get; } = null!;
     
     public int CardId { get; init; }
+    public float Position { get; private set; }
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }

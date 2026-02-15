@@ -10,6 +10,7 @@ public static class ChecklistMapper
         return new ChecklistGetDto
         {
             ChecklistId = checklist.ChecklistId,
+            Position = checklist.Position,
             ChecklistName = checklist.ChecklistName,
             ChecklistItems = checklist.ChecklistItems.Select(ci => ci.ToGetDto()).ToList()
         };
