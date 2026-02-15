@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authentication;
 
 public class AccountRepository(ProjectDataBase database) : IAccountRepository
 {
@@ -40,7 +40,7 @@ public class AccountRepository(ProjectDataBase database) : IAccountRepository
     public async Task<bool> DeleteUserAsync(Guid userId)
     {
         int changedRows = await database.Users
-            .Where(u => u.UserId == userId)
+            .Where(u => u.UserId == userId && u.UserName != "admin")
             .ExecuteDeleteAsync();
         return changedRows == 1;
     }

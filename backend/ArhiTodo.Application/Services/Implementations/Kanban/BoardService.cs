@@ -34,7 +34,8 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         {
             bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaimTypes boardClaimType);
             if (!succeeded) return new Error("InvalidClaimType", ErrorType.BadRequest, "Invalid board claim type!");
-            board.AddOrUpdateUserClaim(boardClaimType, claimPostDto.ClaimValue, userId);
+            Result addOrUpdateUserClaimResult = board.AddOrUpdateUserClaim(boardClaimType, claimPostDto.ClaimValue, userId);
+            if (!addOrUpdateUserClaimResult.IsSuccess) return addOrUpdateUserClaimResult.Error!;
         }
 
         await unitOfWork.SaveChangesAsync();
@@ -88,7 +89,8 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             }
             else
             {
-                board.RemoveMember(boardMemberStatusUpdateDto.UserId);
+                Result removeMemberResult = board.RemoveMember(boardMemberStatusUpdateDto.UserId);
+                if (!removeMemberResult.IsSuccess) return removeMemberResult.Error!;
             }
         }
 

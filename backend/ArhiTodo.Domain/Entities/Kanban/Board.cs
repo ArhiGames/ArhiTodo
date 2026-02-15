@@ -73,8 +73,14 @@ public class Board
         }
     }
     
-    public void AddOrUpdateUserClaim(BoardClaimTypes boardClaimType, string newValue, Guid userId)
+    public Result AddOrUpdateUserClaim(BoardClaimTypes boardClaimType, string newValue, Guid userId)
     {
+        if (OwnerId == userId)
+        {
+            return new Error("UpdatingOwnerClaims", ErrorType.Conflict,
+                "Cannot update the board user claims of the owner from the board!");
+        }
+        
         BoardUserClaim? foundBoardUserClaim = _boardUserClaims.Find(bc => bc.UserId == userId && bc.Type == boardClaimType);
         if (foundBoardUserClaim is null)
         {
@@ -85,11 +91,8 @@ public class Board
         {
             foundBoardUserClaim.UpdateValue(newValue);
         }
-    }
 
-    public bool HasClaim(BoardClaimTypes boardClaimType, string value, Guid userId)
-    {
-        return _boardUserClaims.Any(buc => buc.Type == boardClaimType && buc.Value == value && buc.UserId == userId);
+        return Result.Success();
     }
 
     public Result AddMember(Guid userId)
@@ -104,10 +107,16 @@ public class Board
         return Result.Success();
     }
 
-    public bool RemoveMember(Guid userId)
+    public Result RemoveMember(Guid userId)
     {
+        if (OwnerId == userId)
+        {
+            return new Error("TryingToDeleteOwner", ErrorType.Conflict,
+                "Cannot remove the owner of the board from the board member list!");
+        }
+        
         int removedClaims = _boardUserClaims.RemoveAll(bc => bc.UserId == userId);
-        return removedClaims > 0;
+        return removedClaims > 0 ? Result.Success() : Errors.Unknown;
     }
 
     private bool IsMember(Guid userId)

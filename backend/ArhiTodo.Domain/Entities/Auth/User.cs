@@ -52,10 +52,32 @@ public class User
             : validateUserNameResult.Error!;
     }
  
-    public void AddUserClaim(UserClaimTypes userClaimTypes, string value)
+    public Result AddUserClaim(UserClaimTypes userClaimTypes, string value)
     {
+        if (UserName == "admin")
+        {
+            return new Error("ChangingAdminUserClaims", ErrorType.Conflict,
+                "You cannot edit the admin user!");
+        }
+        
         UserClaim userClaim = new(UserId, userClaimTypes, value);
         _userClaims.Add(userClaim);
+        return Result.Success();
+    }
+    
+    public Result ChangeClaimValue(UserClaimTypes userClaimTypes, string value)
+    {
+        if (UserName == "admin")
+        {
+            return new Error("ChangingAdminUserClaims", ErrorType.Conflict,
+                "You cannot edit the admin user!");
+        }
+        
+        UserClaim? userClaim = _userClaims.FirstOrDefault(uc => uc.Type == userClaimTypes);
+        if (userClaim is null) return Errors.NotFound;
+        
+        userClaim.ChangeClaimValue(value);
+        return Result.Success();
     }
 
     public Result AddUserSession(UserSession userSession)

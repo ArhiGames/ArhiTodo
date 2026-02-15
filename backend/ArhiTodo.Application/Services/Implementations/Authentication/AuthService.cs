@@ -28,7 +28,7 @@ public class AuthService(
 
         InvitationLink? invitationLink =
             await invitationRepository.GetUsableInvitationLink(createAccountDto.InvitationKey);
-        if (invitationLink == null) return Errors.InvalidInvitationLink;
+        if (invitationLink is null) return Errors.InvalidInvitationLink;
         
         string hashedPassword = passwordHashService.Hash(createAccountDto.Password);
 
@@ -38,13 +38,13 @@ public class AuthService(
         
         User? createdUser = await accountRepository.CreateUserAsync(invitationLink, createUserResult.Value!);
 
-        return createdUser == null ? Errors.Unknown : Result.Success();
+        return createdUser is null ? Errors.Unknown : Result.Success();
     }
     
     public async Task<Result<LoginGetDto>> Login(LoginDto loginDto, string userAgent)
     {
         User? user = await accountRepository.GetUserByUsernameAsync(loginDto.Username, true);
-        if (user == null) return Errors.NotFound;
+        if (user is null) return Errors.NotFound;
 
         bool passwordCorrect = passwordHashService.Verify(loginDto.Password, user.HashedPassword);
         if (!passwordCorrect) return Errors.Unauthenticated;
@@ -64,7 +64,7 @@ public class AuthService(
         if (!passwordAuthorizerResult.IsSuccess) return passwordAuthorizerResult;
 
         User? foundUser = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
-        if (foundUser == null) return Errors.Unauthenticated;
+        if (foundUser is null) return Errors.Unauthenticated;
 
         bool isCorrectPassword = passwordHashService.Verify(updatePasswordDto.OldPassword, foundUser.HashedPassword);
         if (!isCorrectPassword) return Errors.Unauthenticated;
@@ -105,7 +105,7 @@ public class AuthService(
     public async Task<Result> Logout(string userAgent)
     {
         User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId, true);
-        if (user == null) return Errors.Unauthenticated;
+        if (user is null) return Errors.Unauthenticated;
 
         Result removeUserSessionResult = user.RemoveUserSession(userAgent);
         await unitOfWork.SaveChangesAsync();
@@ -116,7 +116,7 @@ public class AuthService(
     public async Task<Result> LogoutEveryDevice(Guid userId)
     {
         User? user = await accountRepository.GetUserByGuidAsync(userId, true);
-        if (user == null) return Errors.Unauthenticated;
+        if (user is null) return Errors.Unauthenticated;
         
         user.ClearUserSessions();
         await unitOfWork.SaveChangesAsync();

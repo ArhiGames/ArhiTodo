@@ -15,13 +15,13 @@ namespace ArhiTodo.Application.Services.Implementations.Authentication;
 public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepository, IAuthorizationService authorizationService, 
     IBoardRepository boardRepository) : IUserService
 {
-    public async Task<List<ClaimGetDto>?> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
+    public async Task<Result<List<ClaimGetDto>>> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
     {
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ManageUsers));
-        if (!authorized) return null;
+        if (!authorized) return Errors.Forbidden;
         
         User? user = await accountRepository.GetUserByGuidAsync(userId);
-        if (user is null) return null;
+        if (user is null) return Errors.NotFound;
 
         foreach (ClaimPostDto claimPostDto in claimPostDtos)
         {
@@ -31,11 +31,13 @@ public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepos
             UserClaim? existingClaim = user.UserClaims.FirstOrDefault(uc => uc.Type == userClaimType);
             if (existingClaim is null)
             {
-                user.AddUserClaim(userClaimType, claimPostDto.ClaimValue);
+                Result addUserClaimResult = user.AddUserClaim(userClaimType, claimPostDto.ClaimValue);
+                if (!addUserClaimResult.IsSuccess) return addUserClaimResult.Error!;
             }
             else
             {
-                existingClaim.ChangeClaimValue(claimPostDto.ClaimValue);
+                Result changeUserClaimResult = user.ChangeClaimValue(userClaimType, claimPostDto.ClaimValue);
+                if (!changeUserClaimResult.IsSuccess) return changeUserClaimResult.Error!;
             }
         }
 

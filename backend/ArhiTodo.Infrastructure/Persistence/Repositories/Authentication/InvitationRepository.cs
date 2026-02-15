@@ -3,7 +3,7 @@ using ArhiTodo.Domain.Repositories.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authentication;
 
 public class InvitationRepository(ProjectDataBase database) : IInvitationRepository
 {

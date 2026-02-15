@@ -8,7 +8,7 @@ using ArhiTodo.Domain.Repositories.Kanban;
 using ArhiTodo.Domain.Services.Auth;
 using ArhiTodo.Infrastructure.Identity;
 using ArhiTodo.Infrastructure.Persistence;
-using ArhiTodo.Infrastructure.Persistence.Repositories.Auth;
+using ArhiTodo.Infrastructure.Persistence.Repositories.Authentication;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Common;
 using ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
