@@ -20,6 +20,12 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
 {
     public async Task<Result<List<UserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
+        if (projectManagerStatusUpdateDtos.Any(pm => pm.UserId == currentUser.UserId))
+        {
+            return new Error("SelfEditing", ErrorType.Forbidden,
+                "You cannot edit your own claims!");
+        }
+        
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
 

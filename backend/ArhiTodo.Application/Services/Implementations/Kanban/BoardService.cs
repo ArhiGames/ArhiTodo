@@ -24,6 +24,12 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
+        if (userId == currentUser.UserId)
+        {
+            return new Error("SelfEditing", ErrorType.Forbidden,
+                "You cannot edit your own claims!");
+        }
+        
         bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
         if (!hasBoardManageUsersPermission) return Errors.Forbidden;
         
@@ -34,6 +40,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         {
             bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaimTypes boardClaimType);
             if (!succeeded) return new Error("InvalidClaimType", ErrorType.BadRequest, "Invalid board claim type!");
+            
             Result addOrUpdateUserClaimResult = board.AddOrUpdateUserClaim(boardClaimType, claimPostDto.ClaimValue, userId);
             if (!addOrUpdateUserClaimResult.IsSuccess) return addOrUpdateUserClaimResult.Error!;
         }
@@ -74,6 +81,12 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     public async Task<Result<List<UserGetDto>>> UpdateBoardMemberStatus(int boardId, 
         List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
+        if (boardMemberStatusUpdateDtos.Any(buc => buc.UserId == currentUser.UserId))
+        {
+            return new Error("SelfEditing", ErrorType.Forbidden,
+                "You cannot edit your own claims!");
+        }
+        
         bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
         if (!hasBoardManageUsersPermission) return Errors.Forbidden;
         

@@ -13,13 +13,19 @@ using ArhiTodo.Domain.Repositories.Kanban;
 namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
 public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepository, IAuthorizationService authorizationService, 
-    IBoardRepository boardRepository) : IUserService
+    IBoardRepository boardRepository, ICurrentUser currentUser) : IUserService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
     {
+        if (currentUser.UserId == userId)
+        {
+            return new Error("SelfEditing", ErrorType.Forbidden,
+                "You cannot edit your own claims!");
+        }
+        
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ManageUsers));
         if (!authorized) return Errors.Forbidden;
-        
+            
         User? user = await accountRepository.GetUserByGuidAsync(userId);
         if (user is null) return Errors.NotFound;
 

@@ -15,5 +15,5 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
         httpContextAccessor.
             HttpContext?
             .User
-            .FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new ApplicationException("UserContext unavailabel"));
+            .FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new ApplicationException("UserContext unavailable"));
 }
