@@ -168,22 +168,17 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
 
     }, [isEditingName, onChecklistNameChangeCommited]);
 
-    const combinedHandleRef = useCallback((node: HTMLDivElement | null) => {
-            handleRef(node);
-            cardListHeaderRef.current = node;
-        }, [handleRef]);
-
     return (
         <div className="cardlist" ref={ref}>
             <div className="cardlist-background">
-                <div ref={combinedHandleRef} className="cardlist-header">
+                <div ref={cardListHeaderRef} className="cardlist-header">
                     {
                         isEditingName ? (
                             <input ref={editingNameInputRef} className="classic-input small" onBlur={onChecklistNameChangeCommited} maxLength={25}
                                    value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
                         ) : (
                             <>
-                                <h3 onClick={onTryEditCardListNameClicked}>{props.cardList.cardListName}</h3>
+                                <h3 ref={handleRef} onClick={onTryEditCardListNameClicked}>{props.cardList.cardListName}</h3>
                                 { (permission.hasManageCardsPermission() || permission.hasManageCardListsPermission()) && (
                                     <div className="cardlist-actions">
                                         <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"

@@ -1,9 +1,9 @@
 import type { Action } from "../Contexts/Kanban/Actions/Action.ts";
 import createBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/createBoardAction.ts";
 import type { State } from "../Models/States/types.ts";
-import initBoardsAction from "../Contexts/Kanban/Actions/Implementation/initBoardsAction.ts";
+import initBoardsAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardsAction.ts";
 import deleteBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/deleteBoardAction.ts";
-import initBoardAction from "../Contexts/Kanban/Actions/Implementation/initBoardAction.ts";
+import initBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardAction.ts";
 import createCardlistAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/createCardlistAction.ts";
 import createBoardSucceededAction from "../Contexts/Kanban/Actions/Implementation/Boards/createBoardSucceededAction.ts";
 import createCardlistSucceededAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/createCardlistSucceededAction.ts";
@@ -45,7 +45,7 @@ import updateProjectAction from "../Contexts/Kanban/Actions/Implementation/Proje
 import deleteProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/deleteProjectAction.ts";
 import setProjectPermissionAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
-import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/setBoardPermissionsAction.ts";
+import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/Boards/setBoardPermissionsAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {

@@ -1,23 +1,19 @@
 import type { State } from "../../../../../Models/States/types.ts";
+import cleanCardAction from "../cleanCardAction.ts";
 
 const deleteCardAction = (state: State, failedCardId: number) => {
-
-    const cardLabels: Record<number, number[]> = {}; // cardId <-> labelIds
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [failedCardId]: _, ...restCards } = state.cards;
 
-    for (const cardId of Object.keys(state.cardLabels)) {
-        const numCardId: number = Number(cardId);
-        if (numCardId !== failedCardId) {
-            cardLabels[numCardId] = state.cardLabels[numCardId];
-        }
-    }
+    const { newCardLabels, newChecklists, newChecklistItems } = cleanCardAction(state, [failedCardId]);
 
     return {
         ...state,
         cards: restCards,
-        cardLabels: cardLabels,
+        cardLabels: newCardLabels,
+        checklists: newChecklists,
+        newChecklistItems: newChecklistItems
     }
 
 }
