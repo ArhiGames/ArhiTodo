@@ -1,5 +1,6 @@
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
@@ -9,7 +10,7 @@ public class Card
     public CardList CardList { get; } = null!;
     
     public int CardId { get; init; }
-    public float Position { get; private set; }
+    public string Position { get; private set; } = string.Empty;
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
@@ -22,10 +23,11 @@ public class Card
 
     private Card() { }
 
-    private Card(int cardListId, string cardName)
+    private Card(int cardListId, string cardName, string prevLocation)
     {
         CardListId = cardListId;
         CardName = cardName;
+        Position = prevLocation;
     }
 
     private static Result ValidateCardName(string name)
@@ -38,12 +40,20 @@ public class Card
         return Result.Success();
     }
 
-    public static Result<Card> Create(int cardListId, string cardName)
+    public static Result<Card> Create(int cardListId, string cardName, string prevLocation)
     {
         Result validateCardNameResult = ValidateCardName(cardName);
-        return validateCardNameResult.IsSuccess ? new Card(cardListId, cardName) : validateCardNameResult.Error!;
+        return validateCardNameResult.IsSuccess ? new Card(cardListId, cardName, 
+            LexicalOrderHelper.GetBetween(prevLocation, null)) : validateCardNameResult.Error!;
     }
 
+    public Result MoveCard(string? prevLocation, string? nextLocation)
+    {
+        string newLocation = LexicalOrderHelper.GetBetween(prevLocation, nextLocation);
+        Position = newLocation;
+        return Result.Success();
+    }
+    
     public Result RenameCard(string cardName)
     {
         Result validateCardNameResult = ValidateCardName(cardName);

@@ -19,8 +19,11 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
     {
         bool hasCreateCardPermission = await cardAuthorizer.HasCreateCardPermission(cardListId);
         if (!hasCreateCardPermission) return Errors.Forbidden;
+
+        int cardCount = await cardRepository.GetCardsCount(cardListId);
+        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(cardListId, cardCount);
         
-        Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName);
+        Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName, prevLocation!);
         if (!createCardResult.IsSuccess) return createCardResult.Error!;
         
         Card? card = await cardRepository.CreateAsync(createCardResult.Value!);
@@ -43,7 +46,23 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         }
         return succeeded ? Result.Success() : Errors.Unknown;
     }
-    
+
+    public async Task<Result> MoveCard(int boardId, int cardListId, int cardId, MoveCardPatchDto moveCardPatchDto)
+    {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+        
+        Card? card = await cardRepository.GetDetailedCard(cardId);
+        if (card == null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(moveCardPatchDto.CardListId, moveCardPatchDto.Location);
+
+        Result moveCardResult = card.MoveCard(prevLocation, nextLocation);
+        await unitOfWork.SaveChangesAsync();
+
+        return moveCardResult;
+    }
+
     public async Task<Result<CardGetDto>> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto)
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);

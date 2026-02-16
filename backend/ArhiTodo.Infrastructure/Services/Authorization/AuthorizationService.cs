@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using IAuthorizationService = ArhiTodo.Application.Services.Interfaces.Authorization.IAuthorizationService;

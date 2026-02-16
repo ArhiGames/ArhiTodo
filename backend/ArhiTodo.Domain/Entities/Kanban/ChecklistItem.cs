@@ -9,7 +9,7 @@ public class ChecklistItem
     public Checklist Checklist { get; } = null!;
     
     public int ChecklistItemId { get; private set; }
-    public float Position { get; private set; }
+    public string Position { get; private set; } = string.Empty;
     public string ChecklistItemName { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
 

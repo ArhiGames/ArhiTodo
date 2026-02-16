@@ -5,7 +5,7 @@ using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authentication;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Services.Auth;
 using ArhiTodo.Domain.ValueObjects;

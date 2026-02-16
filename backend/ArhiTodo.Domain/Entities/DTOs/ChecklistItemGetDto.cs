@@ -4,7 +4,7 @@ public class ChecklistItemGetDto
 {
     public int ChecklistItemId { get; set; }
     
-    public required float Position { get; set; }
+    public required string Position { get; set; }
 
     public required string ChecklistItemName { get; set; }
     

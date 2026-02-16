@@ -1,7 +1,7 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
-using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authentication;
 using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;

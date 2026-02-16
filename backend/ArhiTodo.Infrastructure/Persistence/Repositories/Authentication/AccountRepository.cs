@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
-using ArhiTodo.Domain.Repositories.Auth;
+using ArhiTodo.Domain.Repositories.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;

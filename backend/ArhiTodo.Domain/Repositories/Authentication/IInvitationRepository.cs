@@ -1,6 +1,6 @@
 ﻿using ArhiTodo.Domain.Entities.Auth;
 
-namespace ArhiTodo.Domain.Repositories.Auth;
+namespace ArhiTodo.Domain.Repositories.Authentication;
 
 public interface IInvitationRepository
 {
