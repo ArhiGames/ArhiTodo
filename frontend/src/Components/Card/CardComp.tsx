@@ -90,9 +90,9 @@ const CardComp = (props: { cardId: number }) => {
         const labelIds: number[] | undefined = kanbanState.cardLabels.get(props.cardId);
         if (!labelIds) return null;
 
-        for (const labelId of labelIds) {
+        return labelIds.map((labelId: number) => {
             const label: Label | undefined = kanbanState.labels.get(labelId);
-            if (!label) continue;
+            if (!label) return null;
 
             const color: Rgb = toRgb(label.labelColor);
             return (
@@ -100,15 +100,17 @@ const CardComp = (props: { cardId: number }) => {
                     <p>{label.labelText}</p>
                 </div>
             )
-        }
-
-        return null;
+        })
     }
 
     return (
         <div ref={ref} onClick={openCard} className="card"
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
-            { getCardLabelsJsx() }
+            { kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
+                <div className="card-labels-div">
+                    { getCardLabelsJsx() }
+                </div>
+            ) }
             <div style={{ display: "flex", alignItems: "center" }}>
                 <button onClick={onStateChange} disabled={!(permissions.hasManageCardsPermission())}
                      className={`card-checkmark ${ (card?.isDone || isHovering) ? "visible" : "hidden" }`}>{ card?.isDone ? "✓" : "" }</button>

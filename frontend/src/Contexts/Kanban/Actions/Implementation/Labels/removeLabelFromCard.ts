@@ -9,8 +9,9 @@ const removeLabelFromCard = (state: State, payload: ChangeLabelCardRelationPaylo
     if (!labelIds) return state;
 
     const labelToRemoveIndex: number = labelIds.findIndex((id: number) => id === payload.labelId);
-    labelIds = labelIds.splice(labelToRemoveIndex, 1);
+    if (labelToRemoveIndex === -1) return state;
 
+    labelIds = labelIds.splice(labelToRemoveIndex, 1);
     newCardLabels.set(payload.cardId, labelIds);
 
     return {
