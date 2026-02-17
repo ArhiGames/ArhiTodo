@@ -7,9 +7,9 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useDraggable} from "@dnd-kit/react";
+import {useSortable} from "@dnd-kit/react/sortable";
 
-const CardComp = (props: { cardId: number }) => {
+const CardComp = (props: { cardId: number, dndIndex: number }) => {
 
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
@@ -20,9 +20,13 @@ const CardComp = (props: { cardId: number }) => {
 
     const card: Card | undefined = kanbanState.cards.get(props.cardId);
 
-    const { ref } = useDraggable({
-        id: `card-${props.cardId}`
-    })
+    const { ref } = useSortable({
+        id: props.cardId,
+        type: "card",
+        accept: ["card"],
+        index: props.dndIndex,
+        group: "cardlist"
+    });
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
 

@@ -1,7 +1,7 @@
 import CardComp from "../Card/CardComp.tsx";
 import type {Card, CardList, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
+import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
@@ -10,9 +10,10 @@ import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useDraggable} from "@dnd-kit/react";
+import {useSortable} from "@dnd-kit/react/sortable";
+import {CollisionPriority} from "@dnd-kit/abstract";
 
-const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
+const CardListComp = (props: { cardListId: number, filteringLabels: number[], dndIndex: number }) => {
 
     const { checkRefresh } = useAuth();
     const kanbanState: State = useKanbanState();
@@ -20,8 +21,12 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const { boardId } = useParams();
     const permission = usePermissions();
 
-    const { ref, handleRef } = useDraggable({
-        id: `cardlist-${props.cardListId}`
+    const { ref, handleRef } = useSortable({
+        id: props.cardListId,
+        type: "cardlist",
+        accept: ["card", "cardlist"],
+        collisionPriority: CollisionPriority.Low,
+        index: props.dndIndex
     });
 
     const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
@@ -106,6 +111,25 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
     }, [isEditingName, onChecklistNameChangeCommited]);
 
+    function getCardsFilteredCards() {
+        const cardIds: number[] = [];
+        Array.from(kanbanState.cards.values()).forEach((card: Card) => {
+            if (card.cardListId !== props.cardListId) return;
+
+            const labelIds: number[] | undefined = kanbanState.cardLabels.get(card.cardId);
+            if (!labelIds) return;
+
+            for (const filteringLabelId of props.filteringLabels) {
+                if (labelIds.some((labelId: number) => labelId === filteringLabelId)) {
+                    return;
+                }
+            }
+
+            cardIds.push(card.cardId);
+        });
+        return cardIds;
+    }
+
     return (
         <div className="cardlist" ref={ref}>
             <div className="cardlist-background">
@@ -131,22 +155,8 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                     }
                 </div>
                 <div className="cards scroller">
-                    {Array.from(kanbanState.cards.values()).map((card: Card) => {
-                        if (card.cardListId !== props.cardListId) return null;
-
-                        const labelIds: number[] | undefined = kanbanState.cardLabels.get(card.cardId);
-                        if (!labelIds) return <CardComp cardId={card.cardId} key={card.cardId}/>;
-
-                        let contains: boolean = props.filteringLabels.length === 0;
-                        for (const filteringLabelId of props.filteringLabels) {
-                            if (labelIds.some((labelId: number) => labelId === filteringLabelId)) {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (!contains) return null;
-
-                        return <CardComp cardId={card.cardId} key={card.cardId}/>
+                    {getCardsFilteredCards().map((cardId: number, index: number) => {
+                        return <CardComp dndIndex={index} cardId={cardId} key={cardId}/>
                     })}
                 </div>
                 { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }

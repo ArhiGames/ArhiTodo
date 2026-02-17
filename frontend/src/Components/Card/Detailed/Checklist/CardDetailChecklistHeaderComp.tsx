@@ -151,7 +151,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
                         <div className="card-detail-checklist-header-actions">
                             <img onClick={onShowCompletedButtonPressed} className="icon" height="38px"
                                  alt={props.showingCompletedTasks ? "Hide completed" : "Show completed"}
-                                 src={props.showingCompletedTasks ? "/public/crossed-eye.svg" : "/public/eye.svg" }/>
+                                 src={props.showingCompletedTasks ? "/crossed-eye.svg" : "/eye.svg" }/>
                             { permissions.hasManageCardsPermission() && (
                                 <>
                                     <div className="card-detail-checklist-img-container">

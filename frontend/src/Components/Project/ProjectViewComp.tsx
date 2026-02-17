@@ -208,11 +208,11 @@ const ProjectViewComp = () => {
     return (
         <div className="project-view">
             <div className="board-selectors">
-                {Array.from(kanbanState.boards.values()).map((board: Board) => {
-                    return (
-                        board.projectId === Number(projectId) ?
-                            <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={Number(projectId)} board={board}/> : null
-                    )
+                {Array.from(kanbanState.boards.values())
+                    .filter(b => b.projectId === Number(projectId))
+                    .map((board: Board, index: number) => {
+                    return <BoardHeader isSelected={board.boardId === Number(boardId)} dndIndex={index}
+                                        key={board.boardId} projectId={Number(projectId)} board={board}/>
                 })}
                 { permissions.hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
             </div>

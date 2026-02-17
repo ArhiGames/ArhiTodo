@@ -16,17 +16,11 @@ import RegisterPage from "./Components/Authentication/RegisterPage.tsx";
 import KanbanProvider from "./Contexts/Kanban/KanbanProvider.tsx";
 import HubProvider from "./Contexts/Realtime/HubProvider.tsx";
 import PermissionProvider from "./Contexts/Authorization/PermissionProvider.tsx";
-import {useKanbanState} from "./Contexts/Kanban/Hooks.ts";
-import {useEffect} from "react";
+import DragDropProviderComp from "./Dnd/DragDropProviderComp.tsx";
 
 function AppContent() {
 
     const location = useLocation();
-    const kanbanState = useKanbanState();
-
-    useEffect(() => {
-        console.log(kanbanState);
-    }, [kanbanState]);
 
     const hideNavbar =
         location.pathname.startsWith("/login") ||
@@ -72,7 +66,9 @@ function App() {
                 <AuthProvider>
                     <PermissionProvider>
                         <HubProvider>
-                            <AppContent/>
+                            <DragDropProviderComp>
+                                <AppContent/>
+                            </DragDropProviderComp>
                         </HubProvider>
                     </PermissionProvider>
                 </AuthProvider>

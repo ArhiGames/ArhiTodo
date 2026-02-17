@@ -125,14 +125,12 @@ const BoardComp = () => {
                         <div className="board-content scroller">
                             {
                                 <>
-                                    {
-                                        Array.from(kanbanState.cardLists.values()).map((cardList: CardList) => {
-                                            if (cardList.boardId !== Number(boardId)) return null;
-                                            return (
-                                                <CardListComp cardListId={cardList.cardListId} filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
-                                            );
-                                        })
-                                    }
+                                    {Array.from(kanbanState.cardLists.values())
+                                        .filter((cardList: CardList) => cardList.boardId === Number(boardId))
+                                        .map((cardList: CardList, index: number) => {
+                                            return <CardListComp cardListId={cardList.cardListId} dndIndex={index}
+                                                              filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>;
+                                        })}
                                     { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
                                 </>
                             }

@@ -10,19 +10,22 @@ import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.ts
 import {API_BASE_URL} from "../../config/api.ts";
 import "./BoardHeader.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useDraggable} from "@dnd-kit/react";
 import {RestrictToHorizontalAxis} from '@dnd-kit/abstract/modifiers';
+import {useSortable} from "@dnd-kit/react/sortable";
 
-const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean }) => {
+const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean, dndIndex: number }) => {
 
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
 
     const containerDivRef = useRef<HTMLDivElement>(null);
-    const { ref, handleRef } = useDraggable({
-        id: `board-${props.board.boardId}`,
-        modifiers: [RestrictToHorizontalAxis]
+    const { ref, handleRef } = useSortable({
+        id: props.board.boardId,
+        type: "board",
+        accept: "board",
+        modifiers: [RestrictToHorizontalAxis],
+        index: props.dndIndex,
     })
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -103,13 +106,10 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
             });
     }
 
-    const combinedRef = useCallback(
-        (node: HTMLDivElement | null) => {
+    const combinedRef = useCallback((node: HTMLDivElement | null) => {
             ref(node);
             containerDivRef.current = node;
-        },
-        [ref]
-    );
+        }, [ref]);
 
     return (
         <>
