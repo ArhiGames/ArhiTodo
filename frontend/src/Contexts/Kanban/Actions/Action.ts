@@ -110,6 +110,12 @@ export type UpdateCardStatePayload = {
     newState: boolean;
 }
 
+export type MoveCardPayload = {
+    cardId: number;
+    toCardListId: number;
+    toIndex: number;
+}
+
 export type CreateChecklistPayload = {
     checklistId: number;
     checklistName: string;
@@ -189,6 +195,7 @@ export type Action =
     { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
     { type: "DELETE_CARD", payload: { cardId: number } } |
+    { type: "MOVE_CARD", payload: MoveCardPayload } |
 
     { type: "CREATE_CHECKLIST_OPTIMISTIC", payload: CreateChecklistPayload } |
     { type: "CREATE_CHECKLIST_SUCCEEDED", payload: CreateChecklistSucceededPayload } |

@@ -46,6 +46,7 @@ import deleteProjectAction from "../Contexts/Kanban/Actions/Implementation/Proje
 import setProjectPermissionAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
 import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/Boards/setBoardPermissionsAction.ts";
+import moveCardAction from "../Contexts/Kanban/Actions/Implementation/Card/moveCardAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -122,6 +123,8 @@ function rootReducer(state: State, action: Action): State {
             return updateCardStateAction(state, action.payload);
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
+        case "MOVE_CARD":
+            return moveCardAction(state, action.payload);
 
         case "CREATE_CHECKLIST_OPTIMISTIC":
             return createChecklistAction(state, action.payload);
