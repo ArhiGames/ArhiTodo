@@ -24,7 +24,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[], dn
     const { ref, handleRef } = useSortable({
         id: props.cardListId,
         type: "cardlist",
-        accept: ["card", "cardlist"],
+        accept: ["cardlist", "card"],
         collisionPriority: CollisionPriority.Low,
         index: props.dndIndex
     });

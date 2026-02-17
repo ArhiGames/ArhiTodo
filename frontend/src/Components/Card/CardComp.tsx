@@ -23,7 +23,7 @@ const CardComp = (props: { cardId: number, dndIndex: number }) => {
     const { ref } = useSortable({
         id: props.cardId,
         type: "card",
-        accept: ["card"],
+        accept: "card",
         index: props.dndIndex,
         group: "cardlist"
     });

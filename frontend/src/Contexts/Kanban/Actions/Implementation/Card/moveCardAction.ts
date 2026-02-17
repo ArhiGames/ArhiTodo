@@ -18,7 +18,7 @@ const moveCardAction = (state: State, payload: MoveCardPayload) => {
     const changedItems: Card[] = [];
     let i: number = 0;
     for (const affectedCard of affectedCards) {
-        if (i >= payload.toIndex) {
+        if (payload.toIndex === 0 || i > payload.toIndex) {
             changedItems.push(affectedCard);
         }
         i++;
