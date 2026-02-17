@@ -5,6 +5,7 @@ import {type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, 
 import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import {useParams} from "react-router-dom";
+import type {Label} from "../../Models/States/types.ts";
 
 interface Props {
     currentlyEditingLabelId: number | null;
@@ -110,7 +111,9 @@ const LabelEditor = (props: Props) => {
 
         if (!props.currentlyEditingLabelId || !dispatch) return;
 
-        const currentlyEditingLabel = kanbanState.labels[props.currentlyEditingLabelId];
+        const currentlyEditingLabel: Label | undefined = kanbanState.labels.get(props.currentlyEditingLabelId);
+        if (!currentlyEditingLabel) return;
+
         const oldLabelText: string = currentlyEditingLabel.labelText;
         const oldLabelColor: number = currentlyEditingLabel.labelColor;
 
@@ -193,7 +196,9 @@ const LabelEditor = (props: Props) => {
         if (!props.currentlyEditingLabelId) return;
         props.setCurrentlyEditingLabelId(props.currentlyEditingLabelId);
 
-        const label = kanbanState.labels[props.currentlyEditingLabelId];
+        const label: Label | undefined = kanbanState.labels.get(props.currentlyEditingLabelId);
+        if (!label) return;
+
         const labelColor: Rgb = toRgb(label.labelColor);
         for (let i = 0; i < selectableColors.length; i++) {
             if ((selectableColors[i].red === labelColor.red &&
@@ -222,7 +227,7 @@ const LabelEditor = (props: Props) => {
         return (
             <>
                 <input className="classic-input"
-                       placeholder={ props.currentlyEditingLabelId !== null ? kanbanState.labels[props.currentlyEditingLabelId]?.labelText : "Label name..."}
+                       placeholder={ props.currentlyEditingLabelId !== null ? kanbanState.labels.get(props.currentlyEditingLabelId)?.labelText : "Label name..."}
                        ref={labelNameInputRef} maxLength={24}
                        value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                 <p>Color:</p>

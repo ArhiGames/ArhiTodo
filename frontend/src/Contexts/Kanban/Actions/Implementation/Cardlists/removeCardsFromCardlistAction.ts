@@ -1,18 +1,16 @@
-import type {Card, State} from "../../../../../Models/States/types.ts";
+import type {State} from "../../../../../Models/States/types.ts";
+import cleanCardListAction from "../cleanCardListAction.ts";
 
-const removeCardsFromCardlistAction = (state: State, fromCardListId: number )=> {
+const removeCardsFromCardlistAction = (state: State, fromCardListId: number)=> {
 
-    const remainingCards: Record<number, Card> = [];
-
-    for (const card of Object.values(state.cards)) {
-        if (card.cardListId !== fromCardListId) {
-            remainingCards[card.cardId] = card;
-        }
-    }
+    const { newCards, newCardLabels, newChecklists, newChecklistItems } = cleanCardListAction(state, [fromCardListId]);
 
     return {
         ...state,
-        cards: remainingCards
+        cards: newCards,
+        newCardLabels: newCardLabels,
+        newChecklists: newChecklists,
+        newChecklistItems: newChecklistItems,
     }
 
 }

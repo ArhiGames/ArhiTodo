@@ -1,12 +1,11 @@
 import {type Dispatch, useEffect, useState} from "react"
-import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
-import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
-import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
-import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {Board, CardList, State} from "../../Models/States/types.ts";
+import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
+import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
+import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
+import type {CardList, State} from "../../Models/States/types.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
@@ -15,9 +14,9 @@ import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import BoardCompHeader from "./BoardCompHeader.tsx";
 import "./Board.css"
-import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import type {Claim} from "../../Models/Claim.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {HubConnectionState} from "@microsoft/signalr";
 
 const BoardComp = () => {
 
@@ -29,63 +28,11 @@ const BoardComp = () => {
     const kanbanState: State = useKanbanState();
     const permissions = usePermissions();
 
-    const board: BoardGetDto = getUnnormalizedKanbanState();
-
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-    function getUnnormalizedKanbanState() {
-
-        let boardName: string = "";
-        let ownedByUserId: string = "";
-        for (let i = 0; i < Object.values(kanbanState.boards).length; i++) {
-            const board: Board = Object.values(kanbanState.boards)[i];
-            if (board.boardId === Number(boardId)) {
-                boardName = board.boardName;
-                ownedByUserId = board.ownedByUserId;
-                break;
-            }
-        }
-
-        const labels: LabelGetDto[] = [];
-        for (let i = 0; i < Object.values(kanbanState.labels).length; i++) {
-            const label = Object.values(kanbanState.labels)[i];
-            if (label.boardId === Number(boardId)) {
-                labels.push({
-                    labelId: label.labelId,
-                    labelText: label.labelText,
-                    labelColor: label.labelColor
-                })
-            }
-        }
-
-        const cardLists: CardListGetDto[] = [];
-        if (kanbanState.cardLists) {
-            for (let i = 0; i < Object.values(kanbanState.cardLists).length; i++) {
-                const list: CardList = Object.values(kanbanState.cardLists)[i];
-                if (list.boardId === Number(boardId)) {
-                    cardLists.push({
-                        cardListId: list.cardListId,
-                        cardListName: list.cardListName,
-                        cards: []
-                    })
-                }
-            }
-        }
-
-        const boardGetDto: BoardGetDto = {
-            boardId: Number(boardId),
-            boardName: boardName,
-            ownedByUserId: ownedByUserId,
-            cardLists: cardLists,
-            labels: labels,
-        }
-
-        return boardGetDto;
-    }
-
     useEffect(() => {
-        if (!kanbanState.boards[Number(boardId)]) {
+        if (!kanbanState.boards.get(Number(boardId))) {
             navigate(`/projects/${Number(projectId)}/board/`);
         }
     }, [boardId, kanbanState.boards, projectId, navigate]);
@@ -161,7 +108,7 @@ const BoardComp = () => {
 
         if (!hubState.hubConnection) return;
 
-        if (hubState.hubConnection.state !== "Connected") return;
+        if (hubState.hubConnection.state !== HubConnectionState.Connected) return;
 
         hubState.hubConnection.invoke("JoinBoardGroup", Number(boardId))
             .then(() => console.log(`Joined board group with id: ${Number(boardId)}`))
@@ -177,20 +124,17 @@ const BoardComp = () => {
                     <>
                         <div className="board-content scroller">
                             {
-                                board ? (
-                                    <>
-                                        { (board.cardLists && board.cardLists.length > 0) && (
-                                            board.cardLists.map((cardList: CardListGetDto) => {
-                                                return (
-                                                    <CardListComp cardList={cardList}
-                                                                  filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
-                                                );
-                                            }))}
-                                        { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
-                                    </>
-                                ) : (
-                                    <p>Loading...</p>
-                                )
+                                <>
+                                    {
+                                        Array.from(kanbanState.cardLists.values()).map((cardList: CardList) => {
+                                            if (cardList.boardId !== Number(boardId)) return null;
+                                            return (
+                                                <CardListComp cardListId={cardList.cardListId} filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>
+                                            );
+                                        })
+                                    }
+                                    { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
+                                </>
                             }
                         </div>
                         { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }

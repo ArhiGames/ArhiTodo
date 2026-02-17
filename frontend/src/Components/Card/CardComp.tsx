@@ -1,17 +1,15 @@
-import type { CardGetDto } from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type { Label, State } from "../../Models/States/types.ts";
+import type {Card, Label, State} from "../../Models/States/types.ts";
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
-import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {useDraggable} from "@dnd-kit/react";
 
-const CardComp = (props: { card: CardGetDto }) => {
+const CardComp = (props: { cardId: number }) => {
 
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
@@ -20,46 +18,32 @@ const CardComp = (props: { card: CardGetDto }) => {
     const { projectId, boardId } = useParams();
     const permissions = usePermissions();
 
+    const card: Card | undefined = kanbanState.cards.get(props.cardId);
+
     const { ref } = useDraggable({
-        id: `card-${props.card.cardId}`
+        id: `card-${props.cardId}`
     })
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
-    function getLabelByLabelId(labelId: number) {
-        return kanbanState.labels[labelId];
-    }
-
     function openCard() {
-        navigate(`/projects/${projectId}/board/${boardId}/card/${props.card.cardId}`);
-    }
-
-    function label(labelId: number) {
-
-        const label: Label = getLabelByLabelId(labelId);
-        const color: Rgb = toRgb(label.labelColor);
-
-        return (
-            <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }} className="card-label">
-                <p>{label.labelText}</p>
-            </div>
-        )
+        navigate(`/projects/${projectId}/board/${boardId}/card/${props.cardId}`);
     }
 
     async function onStateChange(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
         if (!dispatch) return;
 
-        const newState: boolean = !kanbanState.cards[props.card.cardId].isDone;
-        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: newState } });
+        const newState: boolean = !(kanbanState.cards.get(props.cardId)?.isDone);
+        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.cardId, newState: newState } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: !newState } });
+            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.cardId, newState: !newState } });
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.card.cardId}/done/${newState}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.cardId}/done/${newState}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -69,50 +53,71 @@ const CardComp = (props: { card: CardGetDto }) => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.card.cardId, newState: !newState } });
+                dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: props.cardId, newState: !newState } });
                 console.error(err);
             })
     }
 
-    function getTotalTasks(checklists: ChecklistGetDto[]) {
+    function getTotalTasks(): number {
         let totalTasks = 0;
-        for (const checklist of checklists) {
-            totalTasks += checklist.checklistItems.length;
+        for (const checklist of kanbanState.checklists.values()) {
+            if (checklist.cardId === props.cardId) {
+                for (const checklistItem of kanbanState.checklistItems.values()) {
+                    if (checklistItem.checklistId === checklist.checklistId) {
+                        totalTasks++;
+                    }
+                }
+            }
         }
         return totalTasks;
     }
 
-    function getTotalTasksCompleted(checklists: ChecklistGetDto[]) {
+    function getTotalTasksCompleted(): number {
         let totalCompletedTasks = 0;
-        for (const checklist of checklists) {
-            for (const checklistItem of checklist.checklistItems) {
-                if (checklistItem.isDone) {
-                    totalCompletedTasks++;
+        for (const checklist of kanbanState.checklists.values()) {
+            if (checklist.cardId === props.cardId) {
+                for (const checklistItem of kanbanState.checklistItems.values()) {
+                    if (checklistItem.checklistId === checklist.checklistId && checklistItem.isDone) {
+                        totalCompletedTasks++;
+                    }
                 }
             }
         }
         return totalCompletedTasks;
     }
 
+    function getCardLabelsJsx() {
+        const labelIds: number[] | undefined = kanbanState.cardLabels.get(props.cardId);
+        if (!labelIds) return null;
+
+        for (const labelId of labelIds) {
+            const label: Label | undefined = kanbanState.labels.get(labelId);
+            if (!label) continue;
+
+            const color: Rgb = toRgb(label.labelColor);
+            return (
+                <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }} className="card-label">
+                    <p>{label.labelText}</p>
+                </div>
+            )
+        }
+
+        return null;
+    }
+
     return (
         <div ref={ref} onClick={openCard} className="card"
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
-            { props.card.labelIds.length > 0 && (
-                <div className="card-labels-div">
-                    { props.card.labelIds.map((labelId: number) => {
-                        return label(labelId);
-                    })}
-                </div>
-            ) }
+            { getCardLabelsJsx() }
             <div style={{ display: "flex", alignItems: "center" }}>
                 <button onClick={onStateChange} disabled={!(permissions.hasManageCardsPermission())}
-                     className={`card-checkmark ${ (props.card.isDone || isHovering) ? "visible" : "hidden" }`}>{ props.card.isDone ? "✓" : "" }</button>
-                <p className="card-name">{props.card.cardName}</p>
-                <button style={{ opacity: "0" }} className={`card-checkmark ${ (props.card.isDone || isHovering) ? "hidden" : "visible" }`}/>
+                     className={`card-checkmark ${ (card?.isDone || isHovering) ? "visible" : "hidden" }`}>{ card?.isDone ? "✓" : "" }</button>
+                <p className="card-name">{card?.cardName}</p>
+                <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
-            { (props.card.checklists !== undefined && props.card.checklists.length > 0) && (
+            { (getTotalTasks() > 0) && (
                 <div className="card-checklist-hint">
-                    <p>✓ {getTotalTasksCompleted(props.card.checklists)} / {getTotalTasks(props.card.checklists)}</p>
+                    <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
                 </div>
             ) }
 

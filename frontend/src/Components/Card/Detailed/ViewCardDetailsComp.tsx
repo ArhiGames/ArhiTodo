@@ -31,7 +31,7 @@ const ViewCardDetailsComp = () => {
     const descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
 
     const [cardDescription, setCardDescription] = useState<string>("");
-    const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards[Number(cardId)]?.cardName);
+    const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards.get(Number(cardId))?.cardName ?? "");
 
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
     const [isSharing, setIsSharing] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const ViewCardDetailsComp = () => {
 
     useEffect(() => {
 
-        if (!kanbanState.cards[Number(cardId)]) {
+        if (!kanbanState.cards.has(Number(cardId))) {
             navigate(`/projects/${projectId}/board/${boardId}`);
             return;
         }
@@ -105,7 +105,7 @@ const ViewCardDetailsComp = () => {
         const labelIds: number[] = [];
         if (!detailedCard) return [];
 
-        for (const labelId of kanbanState.cardLabels[Number(cardId)]) {
+        for (const labelId of kanbanState.cardLabels.get(Number(cardId))!) {
             labelIds.push(labelId);
         }
 
@@ -171,7 +171,7 @@ const ViewCardDetailsComp = () => {
         if (!permissions.hasManageCardsPermission()) return;
         if (!dispatch || !detailedCard) return;
 
-        const newState: boolean = !kanbanState.cards[detailedCard.cardId].isDone;
+        const newState: boolean = !(kanbanState.cards.get(detailedCard.cardId)?.isDone);
         dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: newState } });
 
         const refreshedToken: string | null = await checkRefresh();
@@ -198,7 +198,8 @@ const ViewCardDetailsComp = () => {
     async function onCardRenamed() {
         if (inputtedCardName.length === 0 || !detailedCard || !dispatch) return;
 
-        const oldCardName: string = kanbanState.cards[detailedCard.cardId].cardName;
+        const oldCardName: string | undefined = kanbanState.cards.get(detailedCard.cardId)?.cardName;
+        if (!oldCardName) return;
 
         const newCardName: string = inputtedCardName;
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
@@ -303,7 +304,7 @@ const ViewCardDetailsComp = () => {
         }, 2000)
     }
 
-    if (!kanbanState.cards[Number(cardId)]) {
+    if (!kanbanState.cards.has(Number(cardId))) {
         return null;
     }
 
@@ -321,9 +322,9 @@ const ViewCardDetailsComp = () => {
         return (
             <>
                 {
-                    kanbanState.cardLabels[Number(cardId)] && (
-                        Object.values(kanbanState.cardLabels[Number(cardId)]).map((labelId: number) => {
-                            const label: Label = kanbanState.labels[labelId];
+                    kanbanState.cardLabels.has(Number(cardId)) && (
+                        kanbanState.cardLabels.get(Number(cardId))?.map((labelId: number) => {
+                            const label: Label | undefined = kanbanState.labels.get(labelId);
                             if (!label) return null;
                             const color: Rgb = toRgb(label.labelColor);
                             return (
@@ -390,7 +391,7 @@ const ViewCardDetailsComp = () => {
                            detailedCard && (
                                <button disabled={!(permissions.hasManageCardsPermission())} onClick={onStateChanged}
                                     className="card-checkmark visible">
-                                   { kanbanState.cards[detailedCard.cardId].isDone ? "✓" : "" }
+                                   { kanbanState.cards.get(detailedCard.cardId)?.isDone ? "✓" : "" }
                                </button>
                            )
                        }

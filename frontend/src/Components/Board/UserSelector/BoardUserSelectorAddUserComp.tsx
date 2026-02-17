@@ -16,8 +16,8 @@ const BoardUserSelectorAddUserComp = (props: Props) => {
     const { projectId, boardId } = useParams();
     const kanbanState = useKanbanState();
 
-    const isProjectOwner: boolean = kanbanState.projects[Number(projectId)].ownedByUserId === props.user.userId;
-    const isBoardOwner: boolean = kanbanState.boards[Number(boardId)].ownedByUserId === props.user.userId;
+    const isProjectOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === props.user.userId;
+    const isBoardOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === props.user.userId;
     const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
 

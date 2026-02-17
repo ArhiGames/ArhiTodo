@@ -2,61 +2,62 @@ import type { InitBoardPayload } from "../../Action.ts";
 import type {Card, CardList, Checklist, ChecklistItem, Label, State} from "../../../../../Models/States/types.ts";
 import type { CardListGetDto } from "../../../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import type {LabelGetDto} from "../../../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
+import type {CardGetDto} from "../../../../../Models/BackendDtos/Kanban/CardGetDto.ts";
 
 const initBoardAction = (state: State, payload: InitBoardPayload) => {
 
-    const cardLists: Record<number, CardList> = {};
+    const cardLists: Map<number, CardList> = new Map();
     const cardListsDtos: CardListGetDto[] = payload.boardGetDto.cardLists;
-    const cards: Record<number, Card> = {};
-    const labels: Record<number, Label> = {};
+    const cards: Map<number, Card> = new Map();
+    const labels: Map<number, Label> = new Map();
     const labelsDtos: LabelGetDto[] = payload.boardGetDto.labels;
-    const cardLabels: Record<number, number[]> = {}; // cardId <-> labelIds
-    const checklists: Record<number, Checklist> = {};
-    const checklistItems: Record<number, ChecklistItem> = {};
+    const cardLabels: Map<number, number[]> = new Map(); // cardId <-> labelIds
+    const checklists: Map<number, Checklist> = new Map();
+    const checklistItems: Map<number, ChecklistItem> = new Map();
 
     for (const cardListDto of cardListsDtos) {
-        cardLists[cardListDto.cardListId] = {
+        cardLists.set(cardListDto.cardListId, {
             boardId: payload.boardId,
             cardListId: cardListDto.cardListId,
             cardListName: cardListDto.cardListName
-        }
-        for (const cardDto of cardListDto.cards) {
-            cards[cardDto.cardId] = {
+        });
+        for (const cardDto of cardListDto.cards.sort((a: CardGetDto, b: CardGetDto) => a.position! > b.position! ? 1 : -1)) {
+            cards.set(cardDto.cardId, {
                 cardId: cardDto.cardId,
                 cardName: cardDto.cardName,
                 isDone: cardDto.isDone,
                 cardListId: cardListDto.cardListId
-            }
-            if (!cardLabels[cardDto.cardId]) {
-                cardLabels[cardDto.cardId] = [];
+            });
+            if (!cardLabels.get(cardDto.cardId)) {
+                cardLabels.set(cardDto.cardId, []);
             }
             for (const labelId of cardDto.labelIds) {
-                cardLabels[cardDto.cardId].push(labelId);
+                cardLabels.get(cardDto.cardId)?.push(labelId);
             }
 
             for (const checklist of cardDto.checklists) {
-                checklists[checklist.checklistId] = {
+                checklists.set(checklist.checklistId, {
                     checklistId: checklist.checklistId,
                     checklistName: checklist.checklistName,
                     cardId: cardDto.cardId
-                }
+                });
                 for (const checklistItem of checklist.checklistItems) {
-                    checklistItems[checklistItem.checklistItemId] = {
+                    checklistItems.set(checklistItem.checklistItemId, {
                         checklistItemId: checklistItem.checklistItemId,
                         checklistItemName: checklistItem.checklistItemName,
                         isDone: checklistItem.isDone,
                         checklistId: checklist.checklistId
-                    }
+                    });
                 }
             }
         }
     }
 
     for (const labelDto of labelsDtos) {
-        labels[labelDto.labelId] = {
+        labels.set(labelDto.labelId, {
             ...labelDto,
             boardId: payload.boardId
-        }
+        });
     }
 
     return {

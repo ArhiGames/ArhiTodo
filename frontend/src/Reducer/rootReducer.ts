@@ -14,7 +14,7 @@ import deleteCardAction from "../Contexts/Kanban/Actions/Implementation/Card/del
 import updateBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/updateBoardAction.ts";
 import createLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelAction.ts";
 import createLabelSucceededAction
-    from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelSucceededAction.tsx";
+    from "../Contexts/Kanban/Actions/Implementation/Labels/createLabelSucceededAction.ts";
 import deleteLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/deleteLabelAction.ts";
 import updateLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/updateLabelAction.ts";
 import addLabelToCard from "../Contexts/Kanban/Actions/Implementation/Labels/addLabelToCard.ts";
@@ -72,11 +72,11 @@ function rootReducer(state: State, action: Action): State {
         case "CREATE_LABEL_SUCCEEDED":
             return createLabelSucceededAction(state, action.payload);
         case "CREATE_LABEL_FAILED":
-            return deleteLabelAction(state, action.payload);
+            return deleteLabelAction(state, action.payload.labelToDelete);
         case "UPDATE_LABEL":
             return updateLabelAction(state, action.payload);
         case "DELETE_LABEL":
-            return deleteLabelAction(state, { labelToDelete: action.payload.labelId });
+            return deleteLabelAction(state, action.payload.labelId);
 
         case "ADD_LABEL_TO_CARD_OPTIMISTIC":
             return addLabelToCard(state, action.payload);
@@ -130,7 +130,7 @@ function rootReducer(state: State, action: Action): State {
         case "UPDATE_CHECKLIST":
             return updateChecklistAction(state, action.payload);
         case "DELETE_CHECKLIST":
-            return deleteChecklistAction(state, action.payload);
+            return deleteChecklistAction(state, action.payload.checklistId);
 
         case "CREATE_CHECKLIST_ITEM_OPTIMISTIC":
             return createChecklistItemAction(state, action.payload);

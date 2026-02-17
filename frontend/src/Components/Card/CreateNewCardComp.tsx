@@ -1,4 +1,3 @@
-import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
@@ -6,7 +5,7 @@ import type {CardGetDto} from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useParams} from "react-router-dom";
 
-const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
+const CreateNewCardComp = (props: { cardListId: number }) => {
 
     const dispatch = useKanbanDispatch();
     const { checkRefresh } = useAuth();
@@ -40,7 +39,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
         if (dispatch) {
             const predictedCardId = Date.now() * -1;
 
-            dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardList.cardListId, cardId: predictedCardId, cardName: cardName } })
+            dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardListId, cardId: predictedCardId, cardName: cardName } })
 
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) {
@@ -48,7 +47,7 @@ const CreateNewCardComp = (props: { cardList: CardListGetDto }) => {
                 return;
             }
 
-            fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardList.cardListId}/card`,
+            fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}/card`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },

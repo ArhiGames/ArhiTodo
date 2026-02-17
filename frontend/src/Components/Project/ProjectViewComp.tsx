@@ -38,9 +38,9 @@ const ProjectViewComp = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function loadDefaultBoard() {
 
-        if (!boardId && Object.keys(kanbanState.boards).length > 0) {
+        if (!boardId && kanbanState.boards.size > 0) {
             let firstId: number = -1;
-            for (const board of Object.values(kanbanState.boards)) {
+            for (const board of kanbanState.boards.values()) {
                 if (board.projectId === Number(projectId)) {
                     firstId = board.boardId;
                     break;
@@ -87,7 +87,7 @@ const ProjectViewComp = () => {
 
     useEffect(() => {
         if (!hasLoadedProject) return;
-        if (!kanbanState.projects[Number(projectId)]) {
+        if (!kanbanState.projects.has(Number(projectId))) {
             navigate("/");
         }
     }, [navigate, projectId, kanbanState.projects, hasLoadedProject]);
@@ -208,7 +208,7 @@ const ProjectViewComp = () => {
     return (
         <div className="project-view">
             <div className="board-selectors">
-                {Object.values(kanbanState.boards).map((board: Board) => {
+                {Array.from(kanbanState.boards.values()).map((board: Board) => {
                     return (
                         board.projectId === Number(projectId) ?
                             <BoardHeader isSelected={board.boardId === Number(boardId)} key={board.boardId} projectId={Number(projectId)} board={board}/> : null

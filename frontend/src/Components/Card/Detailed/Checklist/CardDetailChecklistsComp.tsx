@@ -110,7 +110,7 @@ const CardDetailChecklistsComp = () => {
                 }
             </div>
             {
-                Object.values(kanbanState.checklists).map((checklist: Checklist) => {
+                Array.from(kanbanState.checklists.values()).map((checklist: Checklist) => {
                     if (checklist.cardId !== Number(cardId)) return null;
                     return <CardDetailChecklistComp key={checklist.checklistId} checklistId={checklist.checklistId}/>
                 })

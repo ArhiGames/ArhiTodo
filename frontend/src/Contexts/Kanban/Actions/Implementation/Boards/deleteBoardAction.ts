@@ -1,10 +1,10 @@
-import type {State} from "../../../../../Models/States/types.ts";
+import type {Board, State} from "../../../../../Models/States/types.ts";
 import cleanBoardAction from "../cleanBoardAction.ts";
 
 const deleteBoardAction = (state: State, deleteBoardId: number) => {
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [deleteBoardId]: _, ...newBoards } = state.boards;
+    const newBoards: Map<number, Board> = new Map(state.boards);
+    newBoards.delete(deleteBoardId);
 
     const { newCardLists, newCards, newLabels, newCardLabels, newChecklists, newChecklistItems } = cleanBoardAction(state, [deleteBoardId]);
 

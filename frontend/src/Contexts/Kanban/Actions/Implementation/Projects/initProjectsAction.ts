@@ -3,13 +3,13 @@ import type {InitProjectPayload} from "../../Action.ts";
 
 const initProjectsAction = (state: State, payload: InitProjectPayload[]) => {
 
-    const projects: Record<number, Project> = {};
+    const projects: Map<number, Project> = new Map();
     for (const initProjectPayload of payload) {
-        projects[initProjectPayload.projectId] = {
+        projects.set(initProjectPayload.projectId, {
             projectId: initProjectPayload.projectId,
             projectName: initProjectPayload.projectName,
             ownedByUserId: initProjectPayload.ownedByUserId
-        }
+        })
     }
 
     return {

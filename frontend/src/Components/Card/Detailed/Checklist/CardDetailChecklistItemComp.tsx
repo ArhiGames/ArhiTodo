@@ -6,6 +6,7 @@ import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
+import type {ChecklistItem} from "../../../../Models/States/types.ts";
 
 interface Props {
     checklistId: number;
@@ -77,7 +78,8 @@ const CardDetailChecklistItemComp = (props: Props) => {
 
         if (checklistItemId < 0) return;
 
-        const checklistItem = kanbanState.checklistItems[checklistItemId];
+        const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(checklistItemId);
+        if (!checklistItem) return;
 
         if (dispatch) {
             dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: checklistItemId } });

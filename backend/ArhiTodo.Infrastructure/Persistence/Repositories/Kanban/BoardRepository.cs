@@ -80,7 +80,8 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         return boardGetDto;
     }
 
-    public async Task<Board?> GetAsync(int boardId, bool includeLabels = false, bool includeCardLists = false)
+    public async Task<Board?> GetAsync(int boardId, bool includeLabels = false, bool includeCardLists = false, 
+        bool includeCards = false)
     {
         IQueryable<Board> boardQuery = database.Boards
             .Include(b => b.BoardUserClaims)
@@ -93,6 +94,10 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         if (includeCardLists)
         {
             boardQuery = boardQuery.Include(b => b.CardLists);
+            if (includeCards)
+            {
+                boardQuery = boardQuery.Include(b => b.CardLists).ThenInclude(cl => cl.Cards);
+            }
         }
 
         return await boardQuery.FirstOrDefaultAsync(b => b.BoardId == boardId);

@@ -52,14 +52,14 @@ export type ChecklistItem = {
 }
 
 export interface State {
-    projects: Record<number, Project>;
-    projectPermission: Record<number, ProjectPermission>;
-    boards: Record<number, Board>;
-    boardUserClaims: Record<number, Claim[]>;
-    cardLists: Record<number, CardList>;
-    cards: Record<number, Card>;
-    labels: Record<number, Label>;
-    cardLabels: Record<number, number[]>; // cardId <-> labelIds
-    checklists: Record<number, Checklist>;
-    checklistItems: Record<number, ChecklistItem>;
+    projects: Map<number, Project>;
+    projectPermission: Map<number, ProjectPermission>;
+    boards: Map<number, Board>;
+    boardUserClaims: Map<number, Claim[]>;
+    cardLists: Map<number, CardList>;
+    cards: Map<number, Card>;
+    labels: Map<number, Label>;
+    cardLabels: Map<number, number[]>; // cardId <-> labelIds
+    checklists: Map<number, Checklist>;
+    checklistItems: Map<number, ChecklistItem>;
 }

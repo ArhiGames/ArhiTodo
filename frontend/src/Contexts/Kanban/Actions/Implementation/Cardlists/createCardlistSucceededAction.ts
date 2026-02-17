@@ -1,19 +1,21 @@
-import type {State} from "../../../../../Models/States/types.ts";
+import type {CardList, State} from "../../../../../Models/States/types.ts";
 import type {CreateCardlistSucceededPayload} from "../../Action.ts";
 
 const createCardlistSucceededAction = (state: State, payload: CreateCardlistSucceededPayload) => {
 
-    const { [payload.predictedCardlistId]: cardListToUpdate, ...restCardLists } = state.cardLists;
+    const newCardlists: Map<number, CardList> = new Map(state.cardLists);
+    const existingCardList: CardList | undefined = state.cardLists.get(payload.predictedCardlistId);
+    if (!existingCardList) return state;
+
+    newCardlists.set(payload.actualCardlistId, {
+        ...existingCardList,
+        cardListId: payload.actualCardlistId
+    });
+    newCardlists.delete(payload.predictedCardlistId);
 
     return {
         ...state,
-        cardLists: {
-            ...restCardLists,
-            [payload.actualCardlistId]: {
-                ...cardListToUpdate,
-                cardListId: payload.actualCardlistId,
-            }
-        }
+        cardLists: newCardlists
     }
 
 }

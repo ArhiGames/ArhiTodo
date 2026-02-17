@@ -36,7 +36,9 @@ const BoardCompHeader = (props: Props) => {
     }
 
     function getLabelJsxFor(labelId: number) {
-        const label: Label = kanbanState.labels[labelId];
+        const label: Label | undefined = kanbanState.labels.get(labelId);
+        if (!label) return null;
+
         const rgb: Rgb = toRgb(label.labelColor);
         return (
             <div key={labelId} onClick={(e) => startEditingLabels(e.currentTarget)}

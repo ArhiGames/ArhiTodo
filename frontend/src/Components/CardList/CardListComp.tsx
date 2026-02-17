@@ -1,10 +1,8 @@
-import type { CardGetDto } from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import CardComp from "../Card/CardComp.tsx";
-import type {Card, Checklist, ChecklistItem, State} from "../../Models/States/types.ts";
+import type {Card, CardList, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type { CardListGetDto } from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
-import type {ChecklistGetDto} from "../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
@@ -14,7 +12,7 @@ import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {useDraggable} from "@dnd-kit/react";
 
-const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number[] }) => {
+const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
     const { checkRefresh } = useAuth();
     const kanbanState: State = useKanbanState();
@@ -23,91 +21,31 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
     const permission = usePermissions();
 
     const { ref, handleRef } = useDraggable({
-        id: `cardlist-${props.cardList.cardListId}`
+        id: `cardlist-${props.cardListId}`
     });
 
-    const unnormalizedCards: CardGetDto[] = getUnnormalizedCards();
+    const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
 
     const editingNameInputRef = useRef<HTMLInputElement | null>(null);
     const [isEditingName, setIsEditingName] = useState<boolean>(false);
-    const [inputtedName, setInputtedName] = useState<string>(props.cardList.cardListName);
+    const [inputtedName, setInputtedName] = useState<string>(cardList?.cardListName ?? "");
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const editIconRef = useRef<HTMLImageElement | null>(null);
 
-    function getLabelsForCard(toGetCardId: number) {
-        const labels: number[] = [];
-
-        Object.keys(kanbanState.cardLabels).forEach((cardId) => {
-            if (toGetCardId === Number(cardId)) {
-                const labelIds: number[] = kanbanState.cardLabels[toGetCardId];
-                for (const labelId of labelIds) {
-                    labels.push(labelId);
-                }
-            }
-        })
-
-        return labels;
-    }
-
-    function getChecklistsForCard(toGetCardId: number) {
-        const checklists: ChecklistGetDto[] = [];
-
-        Object.values(kanbanState.checklists).forEach((checklist: Checklist) => {
-            if (toGetCardId === checklist.cardId) {
-                const createdChecklist: ChecklistGetDto = {
-                    checklistId: checklist.checklistId,
-                    checklistName: checklist.checklistName,
-                    checklistItems: []
-                };
-                Object.values(kanbanState.checklistItems).forEach((checklistItem: ChecklistItem) => {
-                    if (checklistItem.checklistId === checklist.checklistId) {
-                        createdChecklist.checklistItems.push({
-                            checklistItemId: checklistItem.checklistItemId,
-                            checklistItemName: checklistItem.checklistItemName,
-                            isDone: checklistItem.isDone
-                        })
-                    }
-                })
-                checklists.push(createdChecklist);
-            }
-        })
-
-        return checklists;
-    }
-
-    function getUnnormalizedCards() {
-
-        const newUnnormalizedCards: CardGetDto[] = [];
-        for (let i: number = 0; i < Object.values(kanbanState.cards).length; i++) {
-            const card: Card = Object.values(kanbanState.cards)[i];
-            if (card.cardListId === props.cardList.cardListId) {
-                newUnnormalizedCards.push({
-                    cardId: card.cardId,
-                    cardName: card.cardName,
-                    isDone: card.isDone,
-                    labelIds: getLabelsForCard(card.cardId),
-                    checklists: getChecklistsForCard(card.cardId)
-                })
-            }
-        }
-        return newUnnormalizedCards;
-
-    }
-
     const onChecklistNameChangeCommited = useCallback(async () => {
-        if (inputtedName.length <= 0 || inputtedName === props.cardList.cardListName) return;
+        if (!cardList || inputtedName.length <= 0 || inputtedName === cardList.cardListName) return;
 
-        const oldChecklistName: string = props.cardList.cardListName;
+        const oldChecklistName: string = cardList.cardListName;
 
         if (dispatch) {
-            dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardList.cardListId, cardListName: inputtedName } })
+            dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardListId, cardListName: inputtedName } })
         }
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
             if (dispatch) {
-                dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardList.cardListId, cardListName: oldChecklistName } })
+                dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardListId, cardListName: oldChecklistName } })
             }
             return;
         }
@@ -115,32 +53,32 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-            body: JSON.stringify({ cardListId: props.cardList.cardListId, cardListName: inputtedName })
+            body: JSON.stringify({ cardListId: props.cardListId, cardListName: inputtedName })
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Failed to update card list with id ${props.cardList.cardListId}`);
+                    throw new Error(`Failed to update card list with id ${props.cardListId}`);
                 }
 
                 return res.json();
             })
             .then((updatedCardList: CardListGetDto) => {
                 if (dispatch) {
-                    dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardList.cardListId, cardListName: updatedCardList.cardListName } })
+                    dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardListId, cardListName: updatedCardList.cardListName } })
                 }
             })
             .catch(err => {
                 if (dispatch) {
-                    dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardList.cardListId, cardListName: oldChecklistName } })
+                    dispatch({ type: "UPDATE_CARDLIST", payload: { cardListId: props.cardListId, cardListName: oldChecklistName } })
                 }
                 console.error(err);
             })
-    }, [checkRefresh, dispatch, inputtedName, boardId, props.cardList.cardListId, props.cardList.cardListName])
+    }, [cardList, inputtedName, dispatch, checkRefresh, boardId, props.cardListId])
 
     function onTryEditCardListNameClicked() {
-        if (!permission.hasManageCardListsPermission()) return;
+        if (!permission.hasManageCardListsPermission() || !cardList) return;
         setIsEditingName(true);
-        setInputtedName(props.cardList.cardListName);
+        setInputtedName(cardList.cardListName);
     }
 
     useEffect(() => {
@@ -178,12 +116,12 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
                                    value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
                         ) : (
                             <>
-                                <h3 ref={handleRef} onClick={onTryEditCardListNameClicked}>{props.cardList.cardListName}</h3>
+                                <h3 ref={handleRef} onClick={onTryEditCardListNameClicked}>{cardList?.cardListName}</h3>
                                 { (permission.hasManageCardsPermission() || permission.hasManageCardListsPermission()) && (
                                     <div className="cardlist-actions">
                                         <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
                                              onClick={() => setIsEditing(true)}/>
-                                        { isEditing && <CardListEditPopover cardListId={props.cardList.cardListId}
+                                        { isEditing && <CardListEditPopover cardListId={props.cardListId}
                                                                             editIconRef={editIconRef} onClose={() => setIsEditing(false)}/>
                                         }
                                     </div>
@@ -193,20 +131,25 @@ const CardListComp = (props: { cardList: CardListGetDto, filteringLabels: number
                     }
                 </div>
                 <div className="cards scroller">
-                    {unnormalizedCards.map((card: CardGetDto) => {
+                    {Array.from(kanbanState.cards.values()).map((card: Card) => {
+                        if (card.cardListId !== props.cardListId) return null;
+
+                        const labelIds: number[] | undefined = kanbanState.cardLabels.get(card.cardId);
+                        if (!labelIds) return <CardComp cardId={card.cardId} key={card.cardId}/>;
+
                         let contains: boolean = props.filteringLabels.length === 0;
                         for (const filteringLabelId of props.filteringLabels) {
-                            if (card.labelIds.some((labelId: number) => labelId === filteringLabelId)) {
+                            if (labelIds.some((labelId: number) => labelId === filteringLabelId)) {
                                 contains = true;
                                 break;
                             }
                         }
                         if (!contains) return null;
 
-                        return <CardComp card={card} key={card.cardId}/>
+                        return <CardComp cardId={card.cardId} key={card.cardId}/>
                     })}
                 </div>
-                { permission.hasManageCardsPermission() && <CreateNewCardComp cardList={props.cardList}/> }
+                { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }
             </div>
         </div>
     )

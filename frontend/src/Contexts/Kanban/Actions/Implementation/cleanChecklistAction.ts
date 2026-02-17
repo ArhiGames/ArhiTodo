@@ -2,13 +2,13 @@ import type {ChecklistItem, State} from "../../../../Models/States/types.ts";
 
 const cleanChecklistAction = (state: State, checklistIds: number[]) => {
 
-    const newChecklistItems: Record<number, ChecklistItem> = state.checklistItems;
+    const newChecklistItems: Map<number, ChecklistItem> = new Map(state.checklistItems);
 
-    const itemIdsToDelete = Object.values(state.checklistItems)
+    const itemIdsToDelete = Array.from(state.checklistItems.values())
         .filter(cli => checklistIds.includes(cli.checklistId))
         .map(cli => cli.checklistItemId);
 
-    itemIdsToDelete.forEach(id => delete newChecklistItems[id]);
+    itemIdsToDelete.forEach(id => newChecklistItems.delete(id));
 
     return { newChecklistItems }
 

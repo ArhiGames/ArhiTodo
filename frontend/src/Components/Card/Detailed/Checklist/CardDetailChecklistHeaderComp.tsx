@@ -8,6 +8,7 @@ import {createPortal} from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import * as React from "react";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
+import type {Checklist} from "../../../../Models/States/types.ts";
 
 interface Props {
     checklistId: number;
@@ -20,7 +21,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const { checkRefresh } = useAuth();
-    const checklist = kanbanState.checklists[props.checklistId];
+    const checklist: Checklist = kanbanState.checklists.get(props.checklistId)!;
     const { boardId, cardId } = useParams();
     const permissions = usePermissions();
 

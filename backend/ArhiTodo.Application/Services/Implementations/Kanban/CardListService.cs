@@ -60,7 +60,7 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         bool hasDeleteCardsFromCardListPermission = await cardListAuthorizer.HasDeleteCardsFromCardListPermission(cardListId);
         if (!hasDeleteCardsFromCardListPermission) return Errors.Forbidden;
         
-        Board? board = await boardRepository.GetAsync(boardId, false, true);
+        Board? board = await boardRepository.GetAsync(boardId, false, true, true);
         if (board is null) return Errors.NotFound;
 
         CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListId);

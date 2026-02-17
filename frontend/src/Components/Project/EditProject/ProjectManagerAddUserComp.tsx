@@ -16,7 +16,7 @@ const ProjectManagerAddUserComp = (props: Props) => {
     const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
     const kanbanState = useKanbanState();
 
-    const isProjectOwner: boolean = kanbanState.projects[Number(match?.params.projectId)]?.ownedByUserId === props.user.userId;
+    const isProjectOwner: boolean = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === props.user.userId;
     const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
 

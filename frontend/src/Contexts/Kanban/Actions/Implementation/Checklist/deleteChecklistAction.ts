@@ -1,10 +1,10 @@
-import type {State} from "../../../../../Models/States/types.ts";
+import type {Checklist, State} from "../../../../../Models/States/types.ts";
 import cleanChecklistAction from "../cleanChecklistAction.ts";
 
 const deleteChecklistAction = (state: State, checklistId: number) => {
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [checklistId]: _, ...restChecklists } = state.checklists;
+    const restChecklists: Map<number, Checklist> = new Map(state.checklists);
+    restChecklists.delete(checklistId);
 
     const { newChecklistItems } = cleanChecklistAction(state, [checklistId]);
 

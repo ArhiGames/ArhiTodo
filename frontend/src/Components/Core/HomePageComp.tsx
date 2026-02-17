@@ -57,7 +57,7 @@ const HomePageComp = () => {
 
     return (
         <div className="projects-container">
-            {Object.values(kanbanState.projects).map((project: Project) => {
+            {Array.from(kanbanState.projects.values()).map((project: Project) => {
                 return (
                     <ProjectCardComp key={project.projectId} project={project}/>
                 )

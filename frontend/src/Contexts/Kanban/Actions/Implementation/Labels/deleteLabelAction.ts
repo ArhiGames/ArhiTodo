@@ -1,29 +1,17 @@
-import type { State } from "../../../../../Models/States/types.ts";
+import type {Label, State} from "../../../../../Models/States/types.ts";
+import cleanLabelAction from "../cleanLabelAction.ts";
 
-const deleteLabelAction = (state: State, payload: { labelToDelete: number } ) => {
+const deleteLabelAction = (state: State, labelToDelete: number ) => {
 
-    const cardLabels: Record<number, number[]> = {}; // cardId <-> labelIds
+    const restLabels: Map<number, Label> = new Map(state.labels);
+    restLabels.delete(labelToDelete);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { [payload.labelToDelete]: _, ...restLabels } = state.labels;
-
-    for (const cardId of Object.keys(state.cardLabels)) {
-
-        if (!cardLabels[Number(cardId)]) {
-            cardLabels[Number(cardId)] = [];
-        }
-
-        for (const labelId of state.cardLabels[Number(cardId)]) {
-            if (Number(labelId) !== payload.labelToDelete) {
-                cardLabels[Number(cardId)].push(Number(labelId));
-            }
-        }
-    }
+    const { newCardLabels } = cleanLabelAction(state, [labelToDelete]);
 
     return {
         ...state,
         labels: restLabels,
-        cardLabels: cardLabels
+        cardLabels: newCardLabels
     }
 
 }

@@ -3,17 +3,17 @@ import type { ChangeLabelCardRelationPayload } from "../../Action.ts";
 
 const addLabelToCard = (state: State, payload: ChangeLabelCardRelationPayload) => {
 
-    const cardLabelIds: number[] = state.cardLabels[payload.cardId];
+    const cardLabels: Map<number, number[]> = new Map(state.cardLabels);
+    const cardLabelIds: number[] | undefined = cardLabels.get(payload.cardId);
+    if (!cardLabelIds) return state;
+
     if (!cardLabelIds.includes(payload.labelId)) {
         cardLabelIds.push(payload.labelId);
     }
 
     return {
         ...state,
-        cardLabels: {
-            ...state.cardLabels,
-            [payload.cardId]: cardLabelIds
-        }
+        cardLabels: cardLabels
     }
 
 }

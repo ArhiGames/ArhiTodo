@@ -17,14 +17,14 @@ const PermissionProvider = ({ children }: Props) => {
     function hasModifyProjectPermission(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
         const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[Number(match?.params.projectId)]?.isManager;
+        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         return hasPermissionGlobally || isProjectManager;
     }
 
     function isProjectManager(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
         const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectOwner = kanbanState.projects[Number(match?.params.projectId)]?.ownedByUserId === appUser?.id;
+        const isProjectOwner = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === appUser?.id;
         return mayModifyOthersProjectsGlobally || isProjectOwner;
     }
 
@@ -52,9 +52,9 @@ const PermissionProvider = ({ children }: Props) => {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[Number(match?.params.projectId)]?.isManager;
-        const hasBoardPermission = kanbanState.boardUserClaims[Number(match?.params.boardId)]
-            ?.some((buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "true");
+        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
+        const hasBoardPermission = kanbanState.boardUserClaims.get(Number(match?.params.boardId))?.some(
+            (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "true") ?? false;
         return hasPermissionGlobally || isProjectManager || hasBoardPermission;
     }
 
@@ -62,8 +62,8 @@ const PermissionProvider = ({ children }: Props) => {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission[Number(match?.params.projectId)]?.isManager;
-        const isOwner = kanbanState.boards[Number(match?.params.boardId)]?.ownedByUserId === appUser?.id;
+        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
+        const isOwner = kanbanState.boards.get(Number(match?.params.boardId))?.ownedByUserId === appUser?.id;
         return hasGlobalPermission || isProjectManager || isOwner;
     }
 

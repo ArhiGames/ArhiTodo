@@ -24,7 +24,7 @@ const CardDetailChecklistComp = (props: Props) => {
 
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
     const checklistItems: ChecklistItem[] = [];
-    Object.values(kanbanState.checklistItems).forEach((checklistItem: ChecklistItem)=> {
+    Array.from(kanbanState.checklistItems.values()).forEach((checklistItem: ChecklistItem)=> {
         if (checklistItem.checklistId === props.checklistId) {
             checklistItems.push(checklistItem);
         }

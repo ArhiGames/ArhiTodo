@@ -34,7 +34,7 @@ const LabelSelector = ( props: Props ) => {
 
     useEffect(() => {
         if (!currentlyEditingLabelId) return;
-        if (!kanbanState.labels[currentlyEditingLabelId]) {
+        if (!kanbanState.labels.has(currentlyEditingLabelId)) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             cancelAction();
         }
@@ -56,7 +56,7 @@ const LabelSelector = ( props: Props ) => {
                         <>
                             <div className="label-selector-existing scroller">
                                 {
-                                    Object.values(kanbanState.labels).map((label: Label) => {
+                                    Array.from(kanbanState.labels.values()).map((label: Label) => {
                                         return ( label.boardId == Number(boardId) && (
                                             <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
                                                            isSelected={ props.selectedLabels.includes(label.labelId) }

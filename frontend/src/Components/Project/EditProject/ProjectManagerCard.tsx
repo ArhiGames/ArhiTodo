@@ -21,7 +21,7 @@ const ProjectManagerCard = (props: Props) => {
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-    const isOwner: boolean = kanbanState.projects[props.project.projectId]?.ownedByUserId === props.projectManager.userId;
+    const isOwner: boolean = kanbanState.projects.get(props.project.projectId)?.ownedByUserId === props.projectManager.userId;
     const isSelf: boolean = appUser?.id === props.projectManager.userId;
 
     async function onDeleteProjectManagerConfirmed() {

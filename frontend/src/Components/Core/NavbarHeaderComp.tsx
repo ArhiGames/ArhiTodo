@@ -18,7 +18,7 @@ const NavbarHeaderComp = () => {
     const [isEditingProject, setIsEditingProject] = useState<boolean>(false);
 
     const projectId = match?.params.projectId;
-    const project: Project | null = kanbanState.projects[Number(projectId)];
+    const project: Project | undefined = kanbanState.projects.get(Number(projectId));
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
