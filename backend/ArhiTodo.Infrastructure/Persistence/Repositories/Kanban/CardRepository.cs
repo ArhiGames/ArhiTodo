@@ -23,6 +23,12 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
         return deletedRows == 1;
     }
 
+    public async Task<Card?> GetCard(int cardId)
+    {
+        Card? card = await projectDataBase.Cards.FindAsync(cardId);    
+        return card;
+    }
+
     public async Task<Card?> GetDetailedCard(int cardId)
     {
         Card? card = await projectDataBase.Cards

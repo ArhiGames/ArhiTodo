@@ -33,11 +33,11 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         return card.IsSuccess ? Ok(card.Value) : HandleFailure(card);
     }
 
-    [HttpPatch("board/{boardId:int}/cardlist/{cardListId:int}/card/{cardId:int}/move")]
-    public async Task<IActionResult> MoveCard(int boardId, int cardListId, int cardId,
+    [HttpPatch("board/{boardId:int}/card/{cardId:int}/move")]
+    public async Task<IActionResult> MoveCard(int boardId, int cardId,
         [FromBody] MoveCardPatchDto moveCardPatchDto)
     {
-        Result moveCardResult = await cardService.MoveCard(boardId, cardListId, cardId, moveCardPatchDto);
+        Result moveCardResult = await cardService.MoveCard(boardId, cardId, moveCardPatchDto);
         return moveCardResult.IsSuccess ? Ok() : HandleFailure(moveCardResult);
     }
     

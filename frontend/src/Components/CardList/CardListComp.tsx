@@ -119,13 +119,14 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[], dn
             const labelIds: number[] | undefined = kanbanState.cardLabels.get(card.cardId);
             if (!labelIds) return;
 
-            for (const filteringLabelId of props.filteringLabels) {
-                if (labelIds.some((labelId: number) => labelId === filteringLabelId)) {
+            if (props.filteringLabels.length > 0) {
+                if (labelIds.some((labelId: number) => props.filteringLabels.includes(labelId))) {
+                    cardIds.push(card.cardId);
                     return;
                 }
+            } else {
+                cardIds.push(card.cardId);
             }
-
-            cardIds.push(card.cardId);
         });
         return cardIds;
     }

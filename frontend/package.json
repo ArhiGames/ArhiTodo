@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dnd-kit/react": "^0.2.4",
+    "@dnd-kit/react": "^0.3.1",
     "@microsoft/signalr": "^10.0.0",
     "jwt-decode": "^4.0.0",
     "react": "^19.2.0",

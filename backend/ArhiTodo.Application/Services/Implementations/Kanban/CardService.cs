@@ -47,12 +47,12 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return succeeded ? Result.Success() : Errors.Unknown;
     }
 
-    public async Task<Result> MoveCard(int boardId, int cardListId, int cardId, MoveCardPatchDto moveCardPatchDto)
+    public async Task<Result> MoveCard(int boardId, int cardId, MoveCardPatchDto moveCardPatchDto)
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
         if (!hasEditCardPermission) return Errors.Forbidden;
         
-        Card? card = await cardRepository.GetDetailedCard(cardId);
+        Card? card = await cardRepository.GetCard(cardId);
         if (card is null) return Errors.NotFound;
         
         (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(moveCardPatchDto.CardListId, moveCardPatchDto.Location);
