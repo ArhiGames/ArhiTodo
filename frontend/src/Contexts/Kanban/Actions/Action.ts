@@ -154,6 +154,13 @@ export type UpdateChecklistItemStateAction = {
     newState: boolean;
 }
 
+export type SetDraggingOverTargetPayload = {
+    sourceId: number;
+    sourceType: string;
+    targetId: number;
+    targetType: string;
+}
+
 export type Action =
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
@@ -206,4 +213,6 @@ export type Action =
     { type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: CreateChecklistItemSucceededPayload } |
     { type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: number } } |
     { type: "UPDATE_CHECKLIST_ITEM", payload: UpdateChecklistItemPayload } |
-    { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction }
+    { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction } |
+
+    { type: "SET_DRAGGING_TARGET_ID", payload: SetDraggingOverTargetPayload | null }

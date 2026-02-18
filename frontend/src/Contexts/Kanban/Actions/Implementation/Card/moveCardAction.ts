@@ -8,21 +8,10 @@ const moveCardAction = (state: State, payload: MoveCardPayload) => {
     const movingCard: Card | undefined = state.cards.get(payload.cardId);
     if (!movingCard) return state;
 
-    const affectedCards: Card[] = [];
-    for (const card of state.cards.values()) {
-        if (card.cardListId === payload.toCardListId) {
-            affectedCards.push(card);
-        }
-    }
+    const affectedCards: Card[] = Array.from(state.cards.values())
+        .filter((c: Card) => c.cardListId === payload.toCardListId);
 
-    const changedItems: Card[] = [];
-    let i: number = 0;
-    for (const affectedCard of affectedCards) {
-        if (payload.toIndex === 0 || i > payload.toIndex) {
-            changedItems.push(affectedCard);
-        }
-        i++;
-    }
+    const changedItems: Card[] = affectedCards.filter((_: Card, index: number) => index >= payload.toIndex);
 
     changedItems.forEach((card: Card) => newCards.delete(card.cardId));
     newCards.delete(payload.cardId);

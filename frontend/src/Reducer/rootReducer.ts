@@ -145,6 +145,9 @@ function rootReducer(state: State, action: Action): State {
             return updateChecklistItemAction(state, action.payload);
         case "CHANGE_CHECKLIST_ITEM_STATE":
             return changeChecklistItemStateAction(state, action.payload);
+
+        case "SET_DRAGGING_TARGET_ID":
+            return { ...state, dragOverState: action.payload }
     }
 }
 

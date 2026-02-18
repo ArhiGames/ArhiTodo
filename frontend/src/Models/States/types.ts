@@ -51,6 +51,13 @@ export type ChecklistItem = {
     checklistId: number;
 }
 
+export type DragDropState = {
+    sourceId: number;
+    sourceType: string;
+    targetId: number;
+    targetType: string;
+}
+
 export interface State {
     projects: Map<number, Project>;
     projectPermission: Map<number, ProjectPermission>;
@@ -62,4 +69,5 @@ export interface State {
     cardLabels: Map<number, number[]>; // cardId <-> labelIds
     checklists: Map<number, Checklist>;
     checklistItems: Map<number, ChecklistItem>;
+    dragOverState: DragDropState | null;
 }

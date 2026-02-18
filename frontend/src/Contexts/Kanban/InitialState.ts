@@ -10,5 +10,6 @@ export const InitialState: State = {
     labels: new Map(),
     cardLabels: new Map(),
     checklists: new Map(),
-    checklistItems: new Map()
+    checklistItems: new Map(),
+    dragOverState: null
 }

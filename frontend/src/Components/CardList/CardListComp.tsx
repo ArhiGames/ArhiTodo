@@ -10,10 +10,12 @@ import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useSortable} from "@dnd-kit/react/sortable";
-import {CollisionPriority} from "@dnd-kit/abstract";
+import DroppableArea from "../../lib/Dnd/DroppableArea.tsx";
+import React from "react";
+import {useDraggable, useDroppable} from "@dnd-kit/react";
+import CardDragPreview from "../Card/CardDragPreview.tsx";
 
-const CardListComp = (props: { cardListId: number, filteringLabels: number[], dndIndex: number }) => {
+const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
     const { checkRefresh } = useAuth();
     const kanbanState: State = useKanbanState();
@@ -21,13 +23,14 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[], dn
     const { boardId } = useParams();
     const permission = usePermissions();
 
-    const { ref, handleRef } = useSortable({
-        id: props.cardListId,
-        type: "cardlist",
-        accept: ["cardlist", "card"],
-        collisionPriority: CollisionPriority.Low,
-        index: props.dndIndex
+    const { ref: draggableRef, handleRef } = useDraggable({
+        id: `cardListDraggable-${props.cardListId}`,
+        type: "cardlist"
     });
+    const { ref: droppableRef } = useDroppable({
+        id: `cardListDroppable-${props.cardListId}`,
+        type: "cardlist",
+    })
 
     const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -131,8 +134,13 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[], dn
         return cardIds;
     }
 
+    const setNodeRef = (node: HTMLDivElement) => {
+        draggableRef(node);
+        droppableRef(node);
+    }
+
     return (
-        <div className="cardlist" ref={ref}>
+        <div className="cardlist" ref={setNodeRef}>
             <div className="cardlist-background">
                 <div ref={cardListHeaderRef} className="cardlist-header">
                     {
@@ -156,8 +164,15 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[], dn
                     }
                 </div>
                 <div className="cards scroller">
-                    {getCardsFilteredCards().map((cardId: number, index: number) => {
-                        return <CardComp dndIndex={index} cardId={cardId} key={cardId}/>
+                    {getCardsFilteredCards().map((cardId: number) => {
+                        return (
+                            <React.Fragment key={cardId}>
+                                { kanbanState.dragOverState?.targetType === "card" &&
+                                    kanbanState.dragOverState?.targetId === cardId && <CardDragPreview/> }
+                                <DroppableArea type="card" id={`cardAreaDroppable-${cardId}`} height="0.5rem"/>
+                                <CardComp cardId={cardId}/>
+                            </React.Fragment>
+                        )
                     })}
                 </div>
                 { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }

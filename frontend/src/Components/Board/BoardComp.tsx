@@ -127,9 +127,9 @@ const BoardComp = () => {
                                 <>
                                     {Array.from(kanbanState.cardLists.values())
                                         .filter((cardList: CardList) => cardList.boardId === Number(boardId))
-                                        .map((cardList: CardList, index: number) => {
-                                            return <CardListComp cardListId={cardList.cardListId} dndIndex={index}
-                                                              filteringLabels={currentFilteringLabels} key={cardList.cardListId}/>;
+                                        .map((cardList: CardList) => {
+                                            return <CardListComp cardListId={cardList.cardListId} filteringLabels={currentFilteringLabels}
+                                                                 key={cardList.cardListId}/>;
                                         })}
                                     { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
                                 </>

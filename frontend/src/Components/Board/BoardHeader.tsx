@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Board } from "../../Models/States/types.ts";
-import {type FormEvent, useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
@@ -10,8 +10,6 @@ import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.ts
 import {API_BASE_URL} from "../../config/api.ts";
 import "./BoardHeader.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {RestrictToHorizontalAxis} from '@dnd-kit/abstract/modifiers';
-import {useSortable} from "@dnd-kit/react/sortable";
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean, dndIndex: number }) => {
 
@@ -20,14 +18,6 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const permissions = usePermissions();
 
     const containerDivRef = useRef<HTMLDivElement>(null);
-    const { ref, handleRef } = useSortable({
-        id: props.board.boardId,
-        type: "board",
-        accept: "board",
-        modifiers: [RestrictToHorizontalAxis],
-        index: props.dndIndex,
-    })
-
     const inputRef = useRef<HTMLInputElement>(null);
 
     const [newName, setNewName] = useState<string>("");
@@ -44,7 +34,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
         setIsEditing(true);
     }
 
-    async function onEditBoardNameSubmit(e: FormEvent<HTMLFormElement>) {
+    async function onEditBoardNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const refreshedToken: string | null = await checkRefresh();
@@ -107,15 +97,14 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     }
 
     const combinedRef = useCallback((node: HTMLDivElement | null) => {
-            ref(node);
             containerDivRef.current = node;
-        }, [ref]);
+        }, []);
 
     return (
         <>
             <div ref={combinedRef}>
                 <Link draggable="false" className={`board-header ${props.isSelected ? " selected-board-header" : ""}`} to={`/projects/${props.projectId}/board/${props.board.boardId}`}>
-                    <button className="drag-handle" ref={handleRef}>::</button>
+                    <button className="drag-handle">::</button>
                     <p>{props.board.boardName}</p>
                     { (permissions.hasEditBoardPermission() || permissions.hasDeleteBoardPermission())
                         && <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }

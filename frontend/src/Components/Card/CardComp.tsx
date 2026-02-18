@@ -7,9 +7,9 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useSortable} from "@dnd-kit/react/sortable";
+import {useDraggable, useDroppable} from "@dnd-kit/react";
 
-const CardComp = (props: { cardId: number, dndIndex: number }) => {
+const CardComp = (props: { cardId: number }) => {
 
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
@@ -20,13 +20,14 @@ const CardComp = (props: { cardId: number, dndIndex: number }) => {
 
     const card: Card | undefined = kanbanState.cards.get(props.cardId);
 
-    const { ref } = useSortable({
-        id: props.cardId,
-        type: "card",
-        accept: "card",
-        index: props.dndIndex,
-        group: "cardlist"
+    const { ref: draggableRef } = useDraggable({
+        id: `card-${props.cardId}`,
+        type: "card"
     });
+    const { ref: droppableRef } = useDroppable({
+        id: `cardDroppable-${props.cardId}`,
+        type: "card",
+    })
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -107,8 +108,13 @@ const CardComp = (props: { cardId: number, dndIndex: number }) => {
         })
     }
 
+    const setNodeRef = (node: HTMLDivElement) => {
+        draggableRef(node);
+        droppableRef(node);
+    }
+
     return (
-        <div ref={ref} onClick={openCard} className="card"
+        <div ref={setNodeRef} onClick={openCard} className="card"
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
             { kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
                 <div className="card-labels-div">
@@ -126,7 +132,6 @@ const CardComp = (props: { cardId: number, dndIndex: number }) => {
                     <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
                 </div>
             ) }
-
         </div>
     )
 

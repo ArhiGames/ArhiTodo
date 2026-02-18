@@ -1,5 +1,3 @@
-import {DragDropProvider} from "@dnd-kit/react";
-import {isSortable} from '@dnd-kit/dom/sortable';
 import {useKanbanDispatch, useKanbanState} from "../Contexts/Kanban/Hooks.ts";
 import {
     type CardMoveIndexByIdResult,
@@ -9,6 +7,7 @@ import {
 import {API_BASE_URL} from "../config/api.ts";
 import {matchPath} from "react-router-dom";
 import {useAuth} from "../Contexts/Authentication/useAuth.ts";
+import {DragDropProvider} from "@dnd-kit/react";
 
 interface Props {
     children: React.ReactNode;
@@ -21,22 +20,47 @@ const DragDropProviderComp = ({children}: Props) => {
     const { checkRefresh } = useAuth();
     const match = matchPath({ path: "/projects/:projectId/board/:boardId" }, location.pathname);
 
+    function extractId(stringId: string): number {
+        return Number(stringId.slice(stringId.indexOf("-") + 1));
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function doDragDrapChecks(event: any, finalized: boolean) {
+    function doDragEndChecks(event: any) {
         const { source, target } = event.operation;
 
-        if (isSortable(source)) {
-            if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
-                const sourceId: number = Number(source.id);
-                const targetId: number = Number(target.id);
-                const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined =
-                    target?.type === "card" ? getCardOnCardMoveIndexById(kanbanState, targetId) :
-                    target?.type === "cardlist" ? getCardOnCardListMoveIndexById(kanbanState, targetId) : undefined;
-                if (!cardMovedByIndexResult) return;
-                console.log(sourceId, targetId, target.type);
+        if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
+            const sourceId: number = extractId(source.id);
+            const targetId: number = extractId(target.id);
 
-                moveCardOptimistically(sourceId, cardMovedByIndexResult);
-                if (finalized) postCardMovedChanges(sourceId, cardMovedByIndexResult);
+
+            const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined =
+                target?.type === "card" ? getCardOnCardMoveIndexById(kanbanState, targetId) :
+                target?.type === "cardlist" ? getCardOnCardListMoveIndexById(kanbanState, targetId) : undefined;
+            if (!cardMovedByIndexResult) return;
+
+            moveCardOptimistically(sourceId, cardMovedByIndexResult);
+            postCardMovedChanges(sourceId, cardMovedByIndexResult);
+
+            if (dispatch) {
+                dispatch({ type: "SET_DRAGGING_TARGET_ID", payload: null })
+            }
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function updateDragOverState(event: any) {
+        const { source, target } = event.operation;
+
+        if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
+            const sourceId: number = extractId(source.id);
+            const targetId: number = extractId(target.id);
+
+            if (dispatch) {
+                dispatch({
+                    type: "SET_DRAGGING_TARGET_ID", payload: {
+                        sourceId, sourceType: source?.type, targetId, targetType: target?.type
+                    }
+                });
             }
         }
     }
@@ -72,9 +96,11 @@ const DragDropProviderComp = ({children}: Props) => {
 
     return (
         <DragDropProvider
+            onDragOver={(event) => {
+                updateDragOverState(event)
+            }}
             onDragEnd={(event) => {
-                if (event.canceled) return;
-                doDragDrapChecks(event, true);
+                doDragEndChecks(event);
             }}
             >
             {children}
