@@ -53,11 +53,11 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasEditCardPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
         
         (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(moveCardPatchDto.CardListId, moveCardPatchDto.Location);
 
-        Result moveCardResult = card.MoveCard(prevLocation, nextLocation);
+        Result moveCardResult = card.MoveCard(moveCardPatchDto.CardListId, prevLocation, nextLocation);
         await unitOfWork.SaveChangesAsync();
 
         return moveCardResult;

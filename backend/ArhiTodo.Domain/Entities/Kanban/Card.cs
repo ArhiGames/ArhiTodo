@@ -47,10 +47,11 @@ public class Card
             LexicalOrderHelper.GetBetween(prevLocation, null)) : validateCardNameResult.Error!;
     }
 
-    public Result MoveCard(string? prevLocation, string? nextLocation)
+    public Result MoveCard(int cardListId, string? prevLocation, string? nextLocation)
     {
         string newLocation = LexicalOrderHelper.GetBetween(prevLocation, nextLocation);
         Position = newLocation;
+        CardListId = cardListId;
         return Result.Success();
     }
     
