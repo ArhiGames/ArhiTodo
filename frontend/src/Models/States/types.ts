@@ -52,10 +52,11 @@ export type ChecklistItem = {
 }
 
 export type DragDropState = {
-    sourceId: number;
-    sourceType: string;
-    targetId: number;
-    targetType: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    source: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    target: any;
+    targetIndex: number;
 }
 
 export interface State {

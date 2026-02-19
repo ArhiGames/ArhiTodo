@@ -13,7 +13,6 @@ import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import DroppableArea from "../../lib/Dnd/DroppableArea.tsx";
 import React from "react";
 import {useDraggable, useDroppable} from "@dnd-kit/react";
-import CardDragPreview from "../Card/CardDragPreview.tsx";
 
 const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
@@ -164,13 +163,11 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                     }
                 </div>
                 <div className="cards scroller">
-                    {getCardsFilteredCards().map((cardId: number) => {
+                    {getCardsFilteredCards().map((cardId: number, index: number) => {
                         return (
                             <React.Fragment key={cardId}>
-                                { kanbanState.dragOverState?.targetType === "card" &&
-                                    kanbanState.dragOverState?.targetId === cardId && <CardDragPreview/> }
-                                <DroppableArea type="card" id={`cardAreaDroppable-${cardId}`} height="0.5rem"/>
-                                <CardComp cardId={cardId}/>
+                                <DroppableArea type="card" id={`cardAreaDroppable-${cardId}`} height="0.5rem" dndIndex={index}/>
+                                <CardComp cardId={cardId} dndIndex={index}/>
                             </React.Fragment>
                         )
                     })}

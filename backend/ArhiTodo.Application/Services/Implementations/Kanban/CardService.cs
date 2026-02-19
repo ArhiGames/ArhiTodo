@@ -21,7 +21,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasCreateCardPermission) return Errors.Forbidden;
 
         int cardCount = await cardRepository.GetCardsCount(cardListId);
-        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(cardListId, cardCount);
+        (string? prevLocation, string? _) = await cardRepository.GetPrevNextCards(cardListId, cardCount);
         
         Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName, prevLocation!);
         if (!createCardResult.IsSuccess) return createCardResult.Error!;

@@ -1,13 +1,13 @@
 import {useKanbanDispatch, useKanbanState} from "../Contexts/Kanban/Hooks.ts";
 import {
-    type CardMoveIndexByIdResult,
+    type CardMoveIndexByIdResult, getCardMoveIndex,
     getCardOnCardListMoveIndexById,
-    getCardOnCardMoveIndexById
-} from "./Helpers/getCardMoveIndexById.ts";
+} from "./Helpers/DndHelpers.ts";
 import {API_BASE_URL} from "../config/api.ts";
 import {matchPath} from "react-router-dom";
 import {useAuth} from "../Contexts/Authentication/useAuth.ts";
 import {DragDropProvider} from "@dnd-kit/react";
+import {extractId} from "./Helpers/DndHelpers.ts";
 
 interface Props {
     children: React.ReactNode;
@@ -20,30 +20,20 @@ const DragDropProviderComp = ({children}: Props) => {
     const { checkRefresh } = useAuth();
     const match = matchPath({ path: "/projects/:projectId/board/:boardId" }, location.pathname);
 
-    function extractId(stringId: string): number {
-        return Number(stringId.slice(stringId.indexOf("-") + 1));
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function doDragEndChecks(event: any) {
         const { source, target } = event.operation;
 
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
-            const sourceId: number = extractId(source.id);
-            const targetId: number = extractId(target.id);
-
-
-            const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined =
-                target?.type === "card" ? getCardOnCardMoveIndexById(kanbanState, targetId) :
-                target?.type === "cardlist" ? getCardOnCardListMoveIndexById(kanbanState, targetId) : undefined;
+            const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined = moveCardOptimistically(source, target);
             if (!cardMovedByIndexResult) return;
 
-            moveCardOptimistically(sourceId, cardMovedByIndexResult);
-            postCardMovedChanges(sourceId, cardMovedByIndexResult);
+            const sourceId: number = extractId(source.id);
+            postCardMovedChanges(sourceId, cardMovedByIndexResult).catch(console.error);
+        }
 
-            if (dispatch) {
-                dispatch({ type: "SET_DRAGGING_TARGET_ID", payload: null })
-            }
+        if (dispatch) {
+            dispatch({ type: "SET_DRAGGING_TARGET_ID", payload: null })
         }
     }
 
@@ -52,29 +42,45 @@ const DragDropProviderComp = ({children}: Props) => {
         const { source, target } = event.operation;
 
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
-            const sourceId: number = extractId(source.id);
-            const targetId: number = extractId(target.id);
+            const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined = moveCardOptimistically(source, target);
+            if (!cardMovedByIndexResult) return;
 
             if (dispatch) {
                 dispatch({
                     type: "SET_DRAGGING_TARGET_ID", payload: {
-                        sourceId, sourceType: source?.type, targetId, targetType: target?.type
+                        source, target, targetIndex: cardMovedByIndexResult.newIndex
                     }
                 });
             }
         }
     }
 
-    function moveCardOptimistically(movingCardId: number, cardMovedByIndexResult: CardMoveIndexByIdResult) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function moveCardOptimistically(source: any, target: any): CardMoveIndexByIdResult | undefined  {
+        const sourceId: number = extractId(source.id);
+        const targetId: number = extractId(target.id);
+
+        console.clear();
+
+        const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined =
+            target?.type === "card" ? getCardMoveIndex(kanbanState, target) :
+            target?.type === "cardlist" ? getCardOnCardListMoveIndexById(kanbanState, targetId) : undefined;
+        if (!cardMovedByIndexResult) return;
+
+        console.warn("newIndex: ", cardMovedByIndexResult.newIndex, "targetId: ", targetId);
+        console.warn("sourceId: ", sourceId);
+
         if (dispatch) {
             dispatch({
                 type: "MOVE_CARD", payload: {
-                    cardId: Number(movingCardId),
+                    cardId: Number(sourceId),
                     toCardListId: cardMovedByIndexResult.newCardListId,
                     toIndex: cardMovedByIndexResult.newIndex
                 }
             });
         }
+
+        return cardMovedByIndexResult;
     }
 
     async function postCardMovedChanges(movingCardId: number, cardMovedByIndexResult: CardMoveIndexByIdResult) {
@@ -97,7 +103,7 @@ const DragDropProviderComp = ({children}: Props) => {
     return (
         <DragDropProvider
             onDragOver={(event) => {
-                updateDragOverState(event)
+                updateDragOverState(event);
             }}
             onDragEnd={(event) => {
                 doDragEndChecks(event);

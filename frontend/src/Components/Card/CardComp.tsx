@@ -9,7 +9,12 @@ import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {useDraggable, useDroppable} from "@dnd-kit/react";
 
-const CardComp = (props: { cardId: number }) => {
+interface Props {
+    cardId: number;
+    dndIndex: number;
+}
+
+const CardComp = (props: Props) => {
 
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
@@ -22,11 +27,17 @@ const CardComp = (props: { cardId: number }) => {
 
     const { ref: draggableRef } = useDraggable({
         id: `card-${props.cardId}`,
-        type: "card"
+        type: "card",
+        data: {
+            index: props.dndIndex
+        }
     });
     const { ref: droppableRef } = useDroppable({
         id: `cardDroppable-${props.cardId}`,
         type: "card",
+        data: {
+            index: props.dndIndex
+        }
     })
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
