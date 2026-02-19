@@ -18,7 +18,7 @@ const DroppableArea = (props: Props) => {
     });
 
     return (
-        <div ref={ref} style={{ width: "100%", minHeight: props.height }}>{props.dndIndex}</div>
+        <div ref={ref} style={{ width: "100%", minHeight: props.height }}/>
     )
 
 }

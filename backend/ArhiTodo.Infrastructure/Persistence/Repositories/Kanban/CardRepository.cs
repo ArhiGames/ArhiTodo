@@ -39,7 +39,16 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
         return card;
     }
 
-    public async Task<(string? prevLocation, string? nextLocation)> GetPrevNextCards(int cardListId, int location)
+    public async Task<List<Card>> GetCardsFromCardList(int cardListId)
+    {
+        List<Card> cards = await projectDataBase.Cards
+            .Where(c => c.CardListId == cardListId)
+            .OrderBy(c => c.Position)
+            .ToListAsync();
+        return cards;
+    }
+
+    public async Task<(string? prevLocation, string? nextLocation)> GetPrevNextCards(int cardListId, int location, bool movedDown)
     {
         List<Card> cards = await projectDataBase.Cards
             .AsNoTracking()
@@ -47,9 +56,8 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
             .OrderBy(c => c.Position)
             .ToListAsync();
 
-        string? prevLocation = location == 0 ? null : cards[location - 1].Position;
-        string? nextLocation = cards.Count > location + 1 ? cards[location + 1].Position : null;
-
+        string? prevLocation = location == 0 ? null : cards[movedDown ? location : location - 1].Position;
+        string? nextLocation = cards.Count > location + 1 ? cards[movedDown ? location + 1 : location].Position : null;
         return (prevLocation, nextLocation);
     }
 

@@ -21,7 +21,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasCreateCardPermission) return Errors.Forbidden;
 
         int cardCount = await cardRepository.GetCardsCount(cardListId);
-        (string? prevLocation, string? _) = await cardRepository.GetPrevNextCards(cardListId, cardCount);
+        (string? prevLocation, string? _) = await cardRepository.GetPrevNextCards(cardListId, cardCount, false);
         
         Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName, prevLocation!);
         if (!createCardResult.IsSuccess) return createCardResult.Error!;
@@ -51,11 +51,25 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
         if (!hasEditCardPermission) return Errors.Forbidden;
-        
+
         Card? card = await cardRepository.GetCard(cardId);
         if (card is null) return Errors.NotFound;
         
-        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(moveCardPatchDto.CardListId, moveCardPatchDto.Location);
+        List<Card> cards = await cardRepository.GetCardsFromCardList(moveCardPatchDto.CardListId);
+        int index = 0;
+        for (int i = 0; i < cards.Count; i++)
+        {
+            if (card.CardId == cards[i].CardId)
+            {
+                index = i;
+                break;
+            }
+        }
+        // @Todo fix the index of problem, currently checking by reference, reference is different
+        bool movedDown = index < moveCardPatchDto.Location;
+        
+        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(
+            moveCardPatchDto.CardListId, moveCardPatchDto.Location, movedDown);
 
         Result moveCardResult = card.MoveCard(moveCardPatchDto.CardListId, prevLocation, nextLocation);
         await unitOfWork.SaveChangesAsync();
