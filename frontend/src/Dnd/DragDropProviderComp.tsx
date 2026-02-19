@@ -60,15 +60,10 @@ const DragDropProviderComp = ({children}: Props) => {
         const sourceId: number = extractId(source.id);
         const targetId: number = extractId(target.id);
 
-        console.clear();
-
         const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined =
             target?.type === "card" ? getCardMoveIndex(kanbanState, target) :
             target?.type === "cardlist" ? getCardOnCardListMoveIndexById(kanbanState, targetId) : undefined;
         if (!cardMovedByIndexResult) return;
-
-        console.warn("newIndex: ", cardMovedByIndexResult.newIndex, "targetId: ", targetId);
-        console.warn("sourceId: ", sourceId);
 
         if (dispatch) {
             dispatch({

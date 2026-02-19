@@ -69,15 +69,14 @@ const CreateNewCardComp = (props: { cardListId: number }) => {
                 })
         }
 
-        resetForm();
+        setCardName("");
+        cardRef.current?.focus();
 
     }
 
     function handleReset(e: FormEvent<HTMLFormElement>) {
-
         e.preventDefault();
         resetForm();
-
     }
 
     useEffect(() => {
