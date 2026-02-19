@@ -1,29 +1,53 @@
-import type {Card, State} from "../../../../../Models/States/types.ts";
+import type {Card, CardList, State} from "../../../../../Models/States/types.ts";
 import type {MoveCardPayload} from "../../Action.ts";
 
-const moveCardAction = (state: State, payload: MoveCardPayload) => {
+const moveCardAction = (state: State, payload: MoveCardPayload): State => {
 
-    const newCards: Map<number, Card> = new Map(state.cards);
+    const currentMovingCard: Card | undefined = state.cards.get(payload.cardId);
+    if (!currentMovingCard) return state;
 
-    const movingCard: Card | undefined = state.cards.get(payload.cardId);
-    if (!movingCard) return state;
+    const oldCardList: CardList | undefined = state.cardLists.get(currentMovingCard.cardListId);
+    if (!oldCardList) return state;
 
-    const destinationCards: Card[] = Array.from(state.cards.values())
-        .filter((c: Card) => c.cardListId === payload.toCardListId);
+    const newCardList: CardList | undefined = state.cardLists.get(payload.toCardListId);
+    if (!newCardList) return state;
 
-    const changedItems: Card[] = destinationCards.filter((_: Card, index: number) => index >= payload.toIndex);
+    const updatedOldCardIds = [...oldCardList.cardIds];
+    const updatedNewCardIds =
+        oldCardList === newCardList
+            ? updatedOldCardIds
+            : [...newCardList.cardIds];
 
-    changedItems.forEach((card: Card) => newCards.delete(card.cardId));
-    newCards.delete(payload.cardId);
-    newCards.set(movingCard.cardId, { ...movingCard, cardListId: payload.toCardListId });
-    changedItems.forEach((card: Card) => newCards.set(card.cardId, card));
+    const removeIndex = updatedOldCardIds.indexOf(payload.cardId);
+    if (removeIndex !== -1) {
+        updatedOldCardIds.splice(removeIndex, 1);
+    }
 
-    console.warn(changedItems);
+    updatedNewCardIds.splice(payload.toIndex, 0, payload.cardId);
+
+    const updatedCardLists = new Map(state.cardLists);
+    const updatedCards = new Map(state.cards);
+
+    updatedCardLists.set(oldCardList.cardListId, {
+        ...oldCardList,
+        cardIds: updatedOldCardIds,
+    });
+
+    updatedCardLists.set(newCardList.cardListId, {
+        ...newCardList,
+        cardIds: updatedNewCardIds,
+    });
+
+    updatedCards.set(payload.cardId, {
+        ...currentMovingCard,
+        cardListId: payload.toCardListId,
+    });
 
     return {
         ...state,
-        cards: newCards
-    }
+        cardLists: updatedCardLists,
+        cards: updatedCards,
+    };
 
 }
 
