@@ -1,5 +1,5 @@
 import CardComp from "../Card/CardComp.tsx";
-import type {Card, CardList, State} from "../../Models/States/types.ts";
+import type {CardList, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
@@ -115,21 +115,19 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
     function getCardsFilteredCards() {
         const cardIds: number[] = [];
-        Array.from(kanbanState.cards.values()).forEach((card: Card) => {
-            if (card.cardListId !== props.cardListId) return;
-
-            const labelIds: number[] | undefined = kanbanState.cardLabels.get(card.cardId);
+        kanbanState.cardLists.get(props.cardListId)?.cardIds.forEach((cardId: number) => {
+            const labelIds: number[] | undefined = kanbanState.cardLabels.get(cardId);
             if (!labelIds) return;
 
             if (props.filteringLabels.length > 0) {
                 if (labelIds.some((labelId: number) => props.filteringLabels.includes(labelId))) {
-                    cardIds.push(card.cardId);
+                    cardIds.push(cardId);
                     return;
                 }
             } else {
-                cardIds.push(card.cardId);
+                cardIds.push(cardId);
             }
-        });
+        })
         return cardIds;
     }
 

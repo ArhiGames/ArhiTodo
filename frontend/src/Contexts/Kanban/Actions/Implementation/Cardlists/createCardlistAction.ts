@@ -7,7 +7,8 @@ const createCardlistAction = (state: State, payload: CreateCardlistPayload) => {
     newCardlists.set(payload.cardListId, {
         cardListId: payload.cardListId,
         cardListName: payload.cardListName,
-        boardId: payload.boardId
+        boardId: payload.boardId,
+        cardIds: []
     });
 
     return {

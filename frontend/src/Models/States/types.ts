@@ -22,6 +22,7 @@ export type CardList = {
     cardListId: number;
     cardListName: string;
     boardId: number;
+    cardIds: number[];
 }
 
 export type Card = {

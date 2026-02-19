@@ -1,7 +1,26 @@
-import type {Checklist, State} from "../../../../Models/States/types.ts";
+import type {Card, CardList, Checklist, ChecklistItem, State} from "../../../../Models/States/types.ts";
 import cleanChecklistAction from "./cleanChecklistAction.ts";
 
-const cleanCardAction = (state: State, cardIds: number[]) => {
+interface ReturnType {
+    newCardLabels: Map<number, number[]>;
+    newChecklists: Map<number, Checklist>;
+    newChecklistItems: Map<number, ChecklistItem>;
+}
+
+const cleanCardAction = (state: State, cardIds: number[]): ReturnType => {
+    for (const cardId of cardIds) {
+        const card: Card | undefined = state.cards.get(cardId);
+        if (!card) return { newCardLabels: state.cardLabels, newChecklists: state.checklists, newChecklistItems: state.checklistItems };
+
+        const cardList: CardList | undefined = state.cardLists.get(card.cardListId);
+        if (!cardList) return { newCardLabels: state.cardLabels, newChecklists: state.checklists, newChecklistItems: state.checklistItems };
+
+        const indexToRemove = cardList.cardIds.indexOf(cardId);
+        if (indexToRemove !== -1) {
+            cardList.cardIds.splice(indexToRemove, 1);
+        }
+    }
+
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
     const newChecklists: Map<number, Checklist> = new Map(state.checklists);
 

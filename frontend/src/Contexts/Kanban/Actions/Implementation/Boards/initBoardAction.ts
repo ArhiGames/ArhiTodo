@@ -16,12 +16,16 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
     const checklistItems: Map<number, ChecklistItem> = new Map();
 
     for (const cardListDto of cardListsDtos) {
+        const cardIds: number[] = [];
         cardLists.set(cardListDto.cardListId, {
             boardId: payload.boardId,
             cardListId: cardListDto.cardListId,
-            cardListName: cardListDto.cardListName
+            cardListName: cardListDto.cardListName,
+            cardIds: cardIds
         });
         for (const cardDto of cardListDto.cards.sort((a: CardGetDto, b: CardGetDto) => a.position! > b.position! ? 1 : -1)) {
+            cardIds.push(cardDto.cardId);
+
             cards.set(cardDto.cardId, {
                 cardId: cardDto.cardId,
                 cardName: cardDto.cardName,
