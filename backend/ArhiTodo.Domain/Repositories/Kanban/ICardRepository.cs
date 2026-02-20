@@ -9,6 +9,4 @@ public interface ICardRepository
     Task<Card?> GetCard(int cardId);
     Task<Card?> GetDetailedCard(int cardId);
     Task<List<Card>> GetCardsFromCardList(int cardListId);
-    Task<(string? prevLocation, string? nextLocation)> GetPrevNextCards(int cardListId, int location, bool movedDown);
-    Task<int> GetCardsCount(int cardListId);
 }

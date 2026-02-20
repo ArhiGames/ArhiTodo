@@ -4,13 +4,12 @@ using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Card
+public class Card : Draggable
 {
     public int CardListId { get; private set; }
     public CardList CardList { get; } = null!;
     
     public int CardId { get; init; }
-    public string Position { get; private set; } = string.Empty;
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
@@ -21,13 +20,12 @@ public class Card
     private readonly List<CardLabel> _labels = [];
     public IReadOnlyCollection<CardLabel> Labels => _labels.AsReadOnly();
 
-    private Card() { }
+    private Card() : base("") { }
 
-    private Card(int cardListId, string cardName, string prevLocation)
+    private Card(int cardListId, string cardName, string position) : base(position)
     {
         CardListId = cardListId;
         CardName = cardName;
-        Position = prevLocation;
     }
 
     private static Result ValidateCardName(string name)
@@ -40,7 +38,7 @@ public class Card
         return Result.Success();
     }
 
-    public static Result<Card> Create(int cardListId, string cardName, string prevLocation)
+    public static Result<Card> Create(int cardListId, string cardName, string? prevLocation)
     {
         Result validateCardNameResult = ValidateCardName(cardName);
         return validateCardNameResult.IsSuccess ? new Card(cardListId, cardName, 
@@ -49,8 +47,8 @@ public class Card
 
     public Result MoveCard(int cardListId, string? prevLocation, string? nextLocation)
     {
-        string newLocation = LexicalOrderHelper.GetBetween(prevLocation, nextLocation);
-        Position = newLocation;
+        Result moveResult = Move(prevLocation, nextLocation);
+        if (!moveResult.IsSuccess) return moveResult;
         CardListId = cardListId;
         return Result.Success();
     }

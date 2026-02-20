@@ -1,4 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.Card;
+using ArhiTodo.Application.Helpers;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
@@ -20,10 +21,10 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         bool hasCreateCardPermission = await cardAuthorizer.HasCreateCardPermission(cardListId);
         if (!hasCreateCardPermission) return Errors.Forbidden;
 
-        int cardCount = await cardRepository.GetCardsCount(cardListId);
-        (string? prevLocation, string? _) = await cardRepository.GetPrevNextCards(cardListId, cardCount, false);
+        List<Card> cards = await cardRepository.GetCardsFromCardList(cardListId);
+        cards = cards.OrderBy(c => c.Position).ToList();
         
-        Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName, prevLocation!);
+        Result<Card> createCardResult = Card.Create(cardListId, cardCreateDto.CardName, cards.Count > 0 ? cards.Last().Position : null);
         if (!createCardResult.IsSuccess) return createCardResult.Error!;
         
         Card? card = await cardRepository.CreateAsync(createCardResult.Value!);
@@ -56,20 +57,8 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (card is null) return Errors.NotFound;
         
         List<Card> cards = await cardRepository.GetCardsFromCardList(moveCardPatchDto.CardListId);
-        int index = 0;
-        for (int i = 0; i < cards.Count; i++)
-        {
-            if (card.CardId == cards[i].CardId)
-            {
-                index = i;
-                break;
-            }
-        }
-        // @Todo fix the index of problem, currently checking by reference, reference is different
-        bool movedDown = index < moveCardPatchDto.Location;
-        
-        (string? prevLocation, string? nextLocation) = await cardRepository.GetPrevNextCards(
-            moveCardPatchDto.CardListId, moveCardPatchDto.Location, movedDown);
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(cards.Cast<Draggable>().ToList(), card, 
+            moveCardPatchDto.Location, card.CardListId != moveCardPatchDto.CardListId);
 
         Result moveCardResult = card.MoveCard(moveCardPatchDto.CardListId, prevLocation, nextLocation);
         await unitOfWork.SaveChangesAsync();
