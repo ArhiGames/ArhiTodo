@@ -1,4 +1,4 @@
-import type {CardList, State} from "../../Models/States/types.ts";
+import type {Card, CardList, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
@@ -112,18 +112,21 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     }, [isEditingName, onChecklistNameChangeCommited]);
 
     function getCardsFilteredCards() {
-        const cardIds: number[] = [];
+        const cardIds: { cardId: number, isDone: boolean }[] = [];
         kanbanState.cardLists.get(props.cardListId)?.cardIds.forEach((cardId: number) => {
+            const card: Card | undefined = kanbanState.cards.get(cardId);
+            if (!card) return;
+
             const labelIds: number[] | undefined = kanbanState.cardLabels.get(cardId);
             if (!labelIds) return;
 
             if (props.filteringLabels.length > 0) {
                 if (labelIds.some((labelId: number) => props.filteringLabels.includes(labelId))) {
-                    cardIds.push(cardId);
+                    cardIds.push({ cardId, isDone: card.isDone });
                     return;
                 }
             } else {
-                cardIds.push(cardId);
+                cardIds.push({ cardId, isDone: card.isDone });
             }
         })
         return cardIds;
@@ -132,6 +135,36 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const setNodeRef = (node: HTMLDivElement) => {
         draggableRef(node);
         droppableRef(node);
+    }
+
+    function getCardsScrollerJsx() {
+        const filteredCards: { cardId: number, isDone: boolean }[] = getCardsFilteredCards();
+
+        return (
+            <div className="cards scroller">
+                <div className="cards uncompleted">
+                    {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
+                        if (isDone) return null;
+                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
+                    })}
+                </div>
+                {
+                    filteredCards.some((fl: { cardId: number, isDone: boolean }) => fl.isDone) && (
+                        <div className="cardlist-un-completed-breaker">
+                            <div className="cardlist-un-completed-breaker-filler"/>
+                            <p>Completed</p>
+                            <div className="cardlist-un-completed-breaker-filler"/>
+                        </div>
+                    )
+                }
+                <div className="cards completed">
+                    {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
+                        if (!isDone) return null;
+                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
+                    })}
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -158,11 +191,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                         )
                     }
                 </div>
-                <div className="cards scroller">
-                    {getCardsFilteredCards().map((cardId: number, index: number) => {
-                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
-                    })}
-                </div>
+                { getCardsScrollerJsx() }
                 { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }
             </div>
         </div>

@@ -29,6 +29,10 @@
     margin: 0.25rem 0;
 }
 
+.card.completed {
+    opacity: 85%;
+}
+
 .card:hover {
     border-color: var(--highlight-selection);
     cursor: pointer;
@@ -36,6 +40,10 @@
 
 .card p {
     word-wrap: break-word;
+}
+
+.card.completed p {
+    text-decoration: line-through;
 }
 
 .card-checkmark {

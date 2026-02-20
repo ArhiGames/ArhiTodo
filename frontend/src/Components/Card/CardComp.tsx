@@ -95,15 +95,14 @@ const CardComp = (props: Props) => {
 
             const color: Rgb = toRgb(label.labelColor);
             return (
-                <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }} className="card-label">
-                    <p>{label.labelText}</p>
-                </div>
+                <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                     className="card-label">{label.labelText}</div>
             )
         })
     }
 
     return (
-        <div onClick={openCard} className="card"
+        <div onClick={openCard} className={`card ${card?.isDone ? "completed" : ""}`}
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
             { kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
                 <div className="card-labels-div">

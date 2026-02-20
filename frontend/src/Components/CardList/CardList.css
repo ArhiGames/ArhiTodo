@@ -93,3 +93,22 @@
     display: flex;
     flex-direction: column;
 }
+
+.cardlist-un-completed-breaker {
+    display: flex;
+    align-self: center;
+    opacity: 75%;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem
+}
+
+.cardlist-un-completed-breaker p {
+    width: fit-content;
+}
+
+.cardlist-un-completed-breaker-filler {
+    width: 100%;
+    background-color: var(--bg-x-light);
+    height: 6px;
+}
