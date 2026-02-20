@@ -32,6 +32,7 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
     public async Task<Card?> GetDetailedCard(int cardId)
     {
         Card? card = await projectDataBase.Cards
+            .Include(c => c.AssignedUsers)
             .Include(c => c.Labels)
             .Include(c => c.Checklists)
                 .ThenInclude(cl => cl.ChecklistItems)

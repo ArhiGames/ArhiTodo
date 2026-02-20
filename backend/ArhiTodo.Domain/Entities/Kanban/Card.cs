@@ -1,5 +1,6 @@
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
@@ -13,6 +14,9 @@ public class Card : Draggable
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
+
+    private readonly List<AssignedCardUser> _assignedUsers = [];
+    public IReadOnlyCollection<AssignedCardUser> AssignedUsers => _assignedUsers.AsReadOnly();
     
     private readonly List<Checklist> _checklists = [];
     public IReadOnlyCollection<Checklist> Checklists => _checklists.AsReadOnly();
@@ -117,5 +121,25 @@ public class Card : Draggable
                 "There is no label with the specified id on this card!");
         }
         return _labels.Remove(label) ? Result.Success() : Errors.Unknown;
+    }
+
+    public Result AssignUser(User user)
+    {
+        bool isDuplicate = _assignedUsers.Exists(asu => asu.UserId == user.UserId);
+        if (isDuplicate)
+            return new Error("AlreadyAssigned", ErrorType.Conflict,
+                "This user has already been assigned to this card!");
+        
+        _assignedUsers.Add(new AssignedCardUser(CardId, user.UserId));
+        return Result.Success();
+    }
+
+    public Result RemoveAssignedUser(Guid userId)
+    {
+        AssignedCardUser? assignedCardUser = _assignedUsers.FirstOrDefault(asu => asu.UserId == userId);
+        if (assignedCardUser is null) return Errors.NotFound;
+        
+        bool succeeded = _assignedUsers.Remove(assignedCardUser);
+        return succeeded ? Result.Success() : Errors.NotFound;
     }
 }

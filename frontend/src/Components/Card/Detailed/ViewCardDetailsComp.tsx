@@ -227,7 +227,7 @@ const ViewCardDetailsComp = () => {
             })
     }
 
-    async function updateCardDescription(e: FormEvent<HTMLFormElement>) {
+    async function updateCardDescription(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         if (cardDescription.length === 0 || !detailedCard) return;
 
@@ -263,7 +263,7 @@ const ViewCardDetailsComp = () => {
         setIsEditingDescription(false);
     }
 
-    function resetCardDescription(e: FormEvent<HTMLFormElement>) {
+    function resetCardDescription(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!detailedCard) return;
 
@@ -276,7 +276,7 @@ const ViewCardDetailsComp = () => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/project/${Number(projectId)}/board/${Number(boardId)}/card/${cardId}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })

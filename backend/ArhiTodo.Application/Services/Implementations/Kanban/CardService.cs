@@ -5,8 +5,10 @@ using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
+using ArhiTodo.Domain.Repositories.Authentication;
 using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
@@ -14,7 +16,7 @@ using ArhiTodo.Domain.Repositories.Kanban;
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class CardService(ICardRepository cardRepository, ICardNotificationService cardNotificationService,
-    IUnitOfWork unitOfWork, ICardAuthorizer cardAuthorizer) : ICardService
+    IUnitOfWork unitOfWork, ICardAuthorizer cardAuthorizer, IAccountRepository accountRepository) : ICardService
 {
     public async Task<Result<CardGetDto>> CreateCard(int boardId, int cardListId, CardCreateDto cardCreateDto)
     {
@@ -35,7 +37,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return cardGetDto;
     }
 
-    public async Task<Result> DeleteCard(int projectId, int boardId, int cardId)
+    public async Task<Result> DeleteCard(int boardId, int cardId)
     {
         bool hasDeleteCardPermission = await cardAuthorizer.HasDeleteCardPermission(cardId);
         if (!hasDeleteCardPermission) return Errors.Forbidden;
@@ -66,6 +68,39 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         cardNotificationService.MoveCard(boardId, cardId, moveCardPatchDto.CardListId, moveCardPatchDto.Location);
 
         return moveCardResult;
+    }
+
+    public async Task<Result> AssignUser(int cardId, Guid userId)
+    {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+
+        Card? card = await cardRepository.GetDetailedCard(cardId);
+        if (card is null) return Errors.NotFound;
+
+        User? user = await accountRepository.GetUserByGuidAsync(userId);
+        if (user is null) return Errors.NotFound;
+
+        Result assignUserResult = card.AssignUser(user);
+        if (!assignUserResult.IsSuccess) return assignUserResult.Error!;
+
+        await unitOfWork.SaveChangesAsync();
+        return Result.Success();
+    }
+
+    public async Task<Result> UnassignUser(int cardId, Guid userId)
+    {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+
+        Card? card = await cardRepository.GetDetailedCard(cardId);
+        if (card is null) return Errors.NotFound;
+
+        Result unassignUserResult = card.RemoveAssignedUser(userId);
+        if (!unassignUserResult.IsSuccess) return unassignUserResult.Error!;
+
+        await unitOfWork.SaveChangesAsync();
+        return Result.Success();
     }
 
     public async Task<Result<CardGetDto>> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto)

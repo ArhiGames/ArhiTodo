@@ -14,6 +14,11 @@ public class CardConfiguration : IEntityTypeConfiguration<Card>
             .IsRequired()
             .HasMaxLength(256);
 
+        builder.HasMany(c => c.AssignedUsers)
+            .WithOne(asu => asu.Card)
+            .HasForeignKey(asu => asu.CardId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         builder.HasOne(c => c.CardList)
             .WithMany(cl => cl.Cards)
             .HasForeignKey(c => c.CardListId)

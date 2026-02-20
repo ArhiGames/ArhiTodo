@@ -15,7 +15,7 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
         builder.HasOne(b => b.Owner)
             .WithMany()
             .HasForeignKey(b => b.OwnerId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Property(b => b.BoardName)
             .IsRequired()

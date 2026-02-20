@@ -42,13 +42,27 @@ public class CardsController(ICardService cardService, ILabelService labelServic
     }
     
     
-    [HttpDelete("project/{projectId:int}/board/{boardId:int}/card/{cardId:int}")]
-    public async Task<IActionResult> DeleteCard(int projectId, int boardId, int cardId)
+    [HttpDelete("board/{boardId:int}/card/{cardId:int}")]
+    public async Task<IActionResult> DeleteCard(int boardId, int cardId)
     {
-        Result deleteCardResult = await cardService.DeleteCard(projectId, boardId, cardId);
+        Result deleteCardResult = await cardService.DeleteCard(boardId, cardId);
         return deleteCardResult.IsSuccess ? NoContent() : HandleFailure(deleteCardResult);
     }
 
+    [HttpPost("card/{cardId:int}/assign/user/{userId:guid}")]
+    public async Task<IActionResult> AssignUser(int cardId, Guid userId)
+    {
+        Result assignUserResult = await cardService.AssignUser(cardId, userId);
+        return assignUserResult.IsSuccess ? Ok() : HandleFailure(assignUserResult);
+    }
+
+    [HttpDelete("card/{cardId:int}/unassign/user/{userId:guid}")]
+    public async Task<IActionResult> UnassignUser(int cardId, Guid userId)
+    {
+        Result unassignUserResult = await cardService.UnassignUser(cardId, userId);
+        return unassignUserResult.IsSuccess ? NoContent() : HandleFailure(unassignUserResult);
+    }
+    
     [HttpPatch("board/{boardId:int}/card/{cardId:int}/done/{isDone:bool}")]
     public async Task<IActionResult> PatchCardStatus(int boardId, int cardId, bool isDone)
     {

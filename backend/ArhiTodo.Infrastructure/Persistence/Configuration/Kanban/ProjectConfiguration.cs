@@ -15,7 +15,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.HasOne(p => p.Owner)
             .WithMany()
             .HasForeignKey(p => p.OwnerId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Property(p => p.ProjectName)
             .IsRequired()
