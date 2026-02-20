@@ -12,6 +12,10 @@ export function buildCardConnection(hubConnection: HubConnection, dispatch: Disp
         dispatch({ type: "DELETE_CARD", payload: { cardId: cardId } })
     });
 
+    hubConnection.on("MoveCard", (cardId: number, toCardListId: number, toIndex: number) => {
+        dispatch({ type: "MOVE_CARD", payload: { cardId: cardId, toCardListId: toCardListId, toIndex: toIndex } })
+    })
+
     hubConnection.on("PatchCardName", (cardId: number, cardGetDto: CardGetDto) => {
         dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: cardId, cardName: cardGetDto.cardName } });
     });

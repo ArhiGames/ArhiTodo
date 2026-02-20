@@ -63,6 +63,8 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         Result moveCardResult = card.MoveCard(moveCardPatchDto.CardListId, prevLocation, nextLocation);
         await unitOfWork.SaveChangesAsync();
 
+        cardNotificationService.MoveCard(boardId, cardId, moveCardPatchDto.CardListId, moveCardPatchDto.Location);
+
         return moveCardResult;
     }
 

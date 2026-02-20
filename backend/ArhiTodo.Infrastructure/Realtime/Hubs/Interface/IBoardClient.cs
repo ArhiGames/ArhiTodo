@@ -22,6 +22,7 @@ public interface IBoardClient
     
     Task CreateCard(int boardId, int cardListId, CardGetDto card);
     Task DeleteCard(int cardId);
+    Task MoveCard(int cardId, int toCardListId, int toIndex);
     Task PatchCardName(int cardId, CardGetDto card);
     Task PathCardStatus(int cardId, bool isDone);
     
