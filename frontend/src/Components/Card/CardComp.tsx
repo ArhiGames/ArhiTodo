@@ -7,11 +7,9 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useDraggable, useDroppable} from "@dnd-kit/react";
 
 interface Props {
     cardId: number;
-    dndIndex: number;
 }
 
 const CardComp = (props: Props) => {
@@ -24,21 +22,6 @@ const CardComp = (props: Props) => {
     const permissions = usePermissions();
 
     const card: Card | undefined = kanbanState.cards.get(props.cardId);
-
-    const { ref: draggableRef } = useDraggable({
-        id: `card-${props.cardId}`,
-        type: "card",
-        data: {
-            index: props.dndIndex
-        }
-    });
-    const { ref: droppableRef } = useDroppable({
-        id: `cardDroppable-${props.cardId}`,
-        type: "card",
-        data: {
-            index: props.dndIndex
-        }
-    })
 
     const [isHovering, setIsHovering] = useState<boolean>(false);
 
@@ -119,13 +102,8 @@ const CardComp = (props: Props) => {
         })
     }
 
-    const setNodeRef = (node: HTMLDivElement) => {
-        draggableRef(node);
-        droppableRef(node);
-    }
-
     return (
-        <div ref={setNodeRef} onClick={openCard} className="card"
+        <div onClick={openCard} className="card"
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
             { kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
                 <div className="card-labels-div">

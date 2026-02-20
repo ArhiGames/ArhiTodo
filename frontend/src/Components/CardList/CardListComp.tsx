@@ -1,4 +1,3 @@
-import CardComp from "../Card/CardComp.tsx";
 import type {CardList, State} from "../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
@@ -10,9 +9,8 @@ import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import DroppableArea from "../../lib/Dnd/DroppableArea.tsx";
-import React from "react";
 import {useDraggable, useDroppable} from "@dnd-kit/react";
+import CardCompWrapper from "../Card/CardCompWrapper.tsx";
 
 const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
@@ -162,12 +160,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                 </div>
                 <div className="cards scroller">
                     {getCardsFilteredCards().map((cardId: number, index: number) => {
-                        return (
-                            <React.Fragment key={cardId}>
-                                <DroppableArea type="card" id={`cardAreaDroppable-${cardId}`} height="0.5rem" dndIndex={index}/>
-                                <CardComp cardId={cardId} dndIndex={index}/>
-                            </React.Fragment>
-                        )
+                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
                 { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }

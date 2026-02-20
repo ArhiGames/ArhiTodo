@@ -45,6 +45,8 @@ const DragDropProviderComp = ({children}: Props) => {
             const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined = moveCardOptimistically(source, target);
             if (!cardMovedByIndexResult) return;
 
+            console.log(target.id);
+
             if (dispatch) {
                 dispatch({
                     type: "SET_DRAGGING_TARGET_ID", payload: {
