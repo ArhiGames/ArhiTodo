@@ -1,11 +1,9 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect, useRef, useState} from "react";
-import LabelSelector from "../../Labels/LabelSelector.tsx";
+import {useCallback, useEffect, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import type {Label, State} from "../../../Models/States/types.ts";
+import type {State} from "../../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
-import {type Rgb, toRgb} from "../../../lib/Functions.ts";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
@@ -13,6 +11,7 @@ import "./DetailedCard.css"
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import ViewCardMembersComp from "./ViewCardMembersComp.tsx";
 import ViewCardDescriptionComp from "./ViewCardDescriptionComp.tsx";
+import ViewCardLabelsComp from "./ViewCardLabelsComp.tsx";
 
 const ViewCardDetailsComp = () => {
 
@@ -22,10 +21,6 @@ const ViewCardDetailsComp = () => {
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
-
-    const currentEditLabelRef = useRef<HTMLElement>(null);
-
-    const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
 
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards.get(Number(cardId))?.cardName ?? "");
 
@@ -44,68 +39,6 @@ const ViewCardDetailsComp = () => {
         }
 
     }, [navigate, kanbanState.cards, cardId, projectId, boardId]);
-
-    function getPureLabelIds() {
-        const labelIds: number[] = [];
-        for (const labelId of kanbanState.cardLabels.get(Number(cardId))!) {
-            labelIds.push(labelId);
-        }
-        return labelIds;
-    }
-
-    async function onLabelSelected(labelId: number) {
-        if (!dispatch || !cardId) return;
-
-        dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
-
-        const refreshedToken: string | null = await checkRefresh();
-        if (!refreshedToken) {
-            dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to add card label");
-                }
-            })
-            .catch(err => {
-                dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
-                console.error(err);
-            })
-    }
-
-    async function onLabelUnselected(labelId: number) {
-        if (!dispatch || !cardId) return;
-
-        dispatch({ type: "REMOVE_LABEL_FROM_CARD", payload: { cardId: Number(cardId), labelId: labelId } });
-
-        const refreshedToken: string | null = await checkRefresh();
-        if (!refreshedToken) {
-            dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
-            {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to delete card label");
-                }
-            })
-            .catch(err => {
-                dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: Number(cardId), labelId: labelId } });
-                console.error(err);
-            })
-    }
 
     async function onStateChanged() {
 
@@ -205,46 +138,6 @@ const ViewCardDetailsComp = () => {
         return null;
     }
 
-
-
-    function onLabelSelectedClicked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
-        currentEditLabelRef.current = e.currentTarget;
-        setIsEditingLabels(!isEditingLabels);
-    }
-
-    function cardLabelsJsx() {
-        return (
-            <>
-                {
-                    kanbanState.cardLabels.has(Number(cardId)) && (
-                        kanbanState.cardLabels.get(Number(cardId))?.map((labelId: number) => {
-                            const label: Label | undefined = kanbanState.labels.get(labelId);
-                            if (!label) return null;
-                            const color: Rgb = toRgb(label.labelColor);
-                            return (
-                                <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
-                                     key={label.labelId} className="detailed-card-label"
-                                     onClick={onLabelSelectedClicked}>
-                                    {label.labelText}
-                                </div>
-                            )
-                        }))
-                }
-                { permissions.hasManageCardsPermission() && <button onClick={onLabelSelectedClicked}
-                                                     className="button standard-button">+</button> }
-                {
-                    isEditingLabels && <LabelSelector element={currentEditLabelRef}
-                                                      actionTitle="Edit card labels"
-                                                      onClose={() => setIsEditingLabels(false)}
-                                                      onLabelSelected={onLabelSelected}
-                                                      onLabelUnselected={onLabelUnselected}
-                                                      selectedLabels={getPureLabelIds()}
-                                                      selectable={permissions.hasManageCardsPermission()}/>
-                }
-            </>
-        )
-    }
-
     return (
         <Modal modalSize="modal-large" onClosed={onViewDetailsClosed}
                header={
@@ -284,9 +177,7 @@ const ViewCardDetailsComp = () => {
             <div className="card-details-modal-wrapper">
                 <div className="card-details-modal">
                     <p className="category-paragraph">Labels</p>
-                    <div className="card-details-labels">
-                        { cardLabelsJsx() }
-                    </div>
+                    <ViewCardLabelsComp/>
                     <p className="category-paragraph">Members</p>
                     <ViewCardMembersComp/>
                     <div className="card-detailed-description-div">
