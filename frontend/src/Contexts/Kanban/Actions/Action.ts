@@ -1,5 +1,6 @@
 import type { BoardGetDto } from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import type {Claim} from "../../../Models/Claim.ts";
+import type {PublicUserGetDto} from "../../../Models/States/types.ts";
 
 export type InitProjectPayload = {
     projectId: number;
@@ -63,6 +64,11 @@ export type CreateBoardSucceededPayload = {
     actualBoardId: number;
 }
 
+export type InitBoardMembersPayload = {
+    boardId: number;
+    boardMembers: PublicUserGetDto[];
+}
+
 export type SetBoardPermissionsPayload = {
     boardId: number;
     boardUserClaims: Claim[];
@@ -113,6 +119,11 @@ export type UpdateCardStatePayload = {
 export type UpdateCardDescriptionPayload = {
     cardId: number;
     description: string;
+}
+
+export type UpdateCardAssignedUsersPayload = {
+    cardId: number;
+    assignedUserId: string;
 }
 
 export type MoveCardPayload = {
@@ -191,7 +202,7 @@ export type Action =
     { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
     { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
     { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
-
+    { type: "INIT_BOARD_MEMBERS", payload: InitBoardMembersPayload } |
     { type: "UPDATE_BOARD", payload: UpdateBoardPayload } |
     { type: "DELETE_BOARD", payload: { boardId: number } } |
 
@@ -208,6 +219,8 @@ export type Action =
     { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
     { type: "UPDATE_CARD_DESCRIPTION", payload: UpdateCardDescriptionPayload } |
+    { type: "ASSIGN_CARD_MEMBER", payload: UpdateCardAssignedUsersPayload } |
+    { type: "REMOVE_ASSIGNED_CARD_MEMBER", payload: UpdateCardAssignedUsersPayload } |
     { type: "DELETE_CARD", payload: { cardId: number } } |
     { type: "MOVE_CARD", payload: MoveCardPayload } |
 

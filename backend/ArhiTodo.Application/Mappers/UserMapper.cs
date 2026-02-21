@@ -1,20 +1,34 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Application.Mappers;
 
 public static class UserMapper
 {
-    public static UserGetDto ToGetDto(this User user)
+    extension(User user)
     {
-        return new UserGetDto
+        public UserGetDto ToGetDto()
         {
-            UserId = user.UserId,
-            CreatedAt = user.CreatedAt,
-            UserName = user.UserName,
-            Email = user.Email.ToString(),
-            JoinedViaInvitationKey = user.JoinedViaInvitationKey,
-            UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList()
-        };
+            return new UserGetDto
+            {
+                UserId = user.UserId,
+                CreatedAt = user.CreatedAt,
+                UserName = user.UserName,
+                Email = user.Email.ToString(),
+                JoinedViaInvitationKey = user.JoinedViaInvitationKey,
+                UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList()
+            };
+        }
+
+        public BoardMemberGetDto ToBoardMemberGetDto()
+        {
+            return new BoardMemberGetDto
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                Email = user.Email.ToString()
+            };
+        }
     }
 }

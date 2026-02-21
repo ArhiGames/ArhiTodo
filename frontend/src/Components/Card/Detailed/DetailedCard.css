@@ -95,6 +95,7 @@
     height: 18rem;
     resize: none;
     font-family: Arial, serif;
+    font-size: 16px;
     transition: color 0.15s;
 }
 

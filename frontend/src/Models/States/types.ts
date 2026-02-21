@@ -11,11 +11,18 @@ export type ProjectPermission = {
     isManager: boolean;
 }
 
+export interface PublicUserGetDto {
+    userId: string;
+    userName: string;
+    email: string;
+}
+
 export type Board = {
     projectId: number;
     boardId: number;
     boardName: string;
     ownedByUserId: string;
+    boardMembers: PublicUserGetDto[];
 }
 
 export type CardList = {

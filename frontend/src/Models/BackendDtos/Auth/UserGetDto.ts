@@ -1,10 +1,8 @@
 import type {Claim} from "../../Claim.ts";
+import type {PublicUserGetDto} from "../../States/types.ts";
 
-export type UserGetDto = {
-    userId: string;
+export interface UserGetDto extends PublicUserGetDto {
     createdAt: string;
-    userName: string;
-    email: string;
     joinedViaInvitationKey: string;
     userClaims: Claim[];
     boardUserClaims: Claim[];

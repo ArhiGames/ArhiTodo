@@ -1,7 +1,7 @@
 import type {Board, State} from "../../../../../Models/States/types.ts";
 import type { InitBoardsPayload } from "../../Action.ts";
 
-const initBoardsAction = (state: State, payload: { projectId: number, boards: InitBoardsPayload[] }) => {
+const initBoardsAction = (state: State, payload: { projectId: number, boards: InitBoardsPayload[] }): State => {
 
     const boards: Map<number, Board> = new Map();
     for (const board of payload.boards) {
@@ -9,7 +9,8 @@ const initBoardsAction = (state: State, payload: { projectId: number, boards: In
             projectId: payload.projectId,
             boardId: board.boardId,
             boardName: board.boardName,
-            ownedByUserId: board.ownedByUserId
+            ownedByUserId: board.ownedByUserId,
+            boardMembers: []
         });
     }
 

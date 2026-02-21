@@ -152,3 +152,18 @@
     width: fit-content;
     font-size: small;
 }
+
+.view-card-members-popover h3 {
+    justify-self: center;
+    margin-bottom: 0.5rem;
+}
+
+.view-card-members-popover {
+    width: 320px;
+}
+
+.card-members-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

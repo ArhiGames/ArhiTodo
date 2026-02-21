@@ -5,12 +5,20 @@ import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import "./UserSelector.css"
 
 interface Props {
-    child: React.FunctionComponent<{ user: UserGetDto, selectedUsers: UserGetDto[], setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>> }>;
+    child: React.FunctionComponent<{
+        user: UserGetDto,
+        selectedUsers: UserGetDto[],
+        setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>,
+        onUserSelected?: (user: UserGetDto) => void,
+        onUserUnselected?: (user: UserGetDto) => void
+    }>;
     selectedUsers: UserGetDto[];
     setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>;
+    onUserSelected?: (user: UserGetDto) => void;
+    onUserUnselected?: (user: UserGetDto) => void;
 }
 
-const UserSelector = (props: Props) => {
+const AccountUserSelector = (props: Props) => {
 
     const { checkRefresh } = useAuth();
 
@@ -71,13 +79,15 @@ const UserSelector = (props: Props) => {
                     return res.json();
                 })
                 .then((accounts: UserGetDto[]) => {
-                    const newUserAccounts = [...userAccounts];
-                    for (const account of accounts) {
-                        if (!newUserAccounts.some(a => a.userId === account.userId)) {
-                            newUserAccounts.push(account);
+                    setUserAccounts((prev: UserGetDto[]) => {
+                        const newUserAccounts = [...prev];
+                        for (const account of accounts) {
+                            if (!newUserAccounts.some(a => a.userId === account.userId)) {
+                                newUserAccounts.push(account);
+                            }
                         }
-                    }
-                    setUserAccounts(newUserAccounts);
+                        return newUserAccounts;
+                    });
                 })
                 .catch(console.error);
 
@@ -90,7 +100,8 @@ const UserSelector = (props: Props) => {
         <div className="user-selector">
             <div className="user-selector-users">
                 {userAccounts.slice(currentPage * 5, (currentPage * 5) + 5).map((user: UserGetDto) => {
-                    return <props.child key={user.userId} user={user} selectedUsers={props.selectedUsers} setSelectedUsers={props.setSelectedUsers}/>
+                    return <props.child key={user.userId} user={user} selectedUsers={props.selectedUsers} setSelectedUsers={props.setSelectedUsers}
+                                        onUserSelected={props.onUserSelected} onUserUnselected={props.onUserUnselected}/>
                 })}
             </div>
             {
@@ -107,4 +118,4 @@ const UserSelector = (props: Props) => {
 
 }
 
-export default UserSelector;
+export default AccountUserSelector;

@@ -8,7 +8,7 @@ import "./BoardUserSelector.css"
 import {useParams} from "react-router-dom";
 import type {Claim} from "../../../Models/Claim.ts";
 import BoardUserSelectorEditUserClaimsComp from "./BoardUserSelectorEditUserClaimsComp.tsx";
-import UserSelector from "../../User/UserSelector/UserSelector.tsx";
+import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
 import BoardUserSelectorAddUserComp from "./BoardUserSelectorAddUserComp.tsx";
 
 interface Props {
@@ -169,7 +169,7 @@ const BoardUserSelector = (props: Props) => {
                     isAddingUser ? (
                         <>
                             <h3>Manage users</h3>
-                            <UserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers} child={BoardUserSelectorAddUserComp}/>
+                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers} child={BoardUserSelectorAddUserComp}/>
                         </>
                     ) : currentViewingUser ? (
                         <BoardUserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>

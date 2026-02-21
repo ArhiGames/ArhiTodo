@@ -13,8 +13,10 @@ const createCardAction = (state: State, payload: CreateCardPayload): State => {
     newCards.set(payload.cardId, {
         cardId: payload.cardId,
         cardName: payload.cardName,
+        cardDescription: "",
         isDone: false,
         cardListId: payload.cardListId,
+        assignedUserIds: []
     });
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
     newCardLabels.set(payload.cardId, []);

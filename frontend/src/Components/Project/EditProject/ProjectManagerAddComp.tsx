@@ -1,6 +1,6 @@
 import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from "react";
 import Popover from "../../../lib/Popover/Popover.tsx";
-import UserSelector from "../../User/UserSelector/UserSelector.tsx";
+import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import ProjectManagerAddUserComp from "./ProjectManagerAddUserComp.tsx";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
@@ -111,7 +111,7 @@ const ProjectManagerAddComp = (props: Props) => {
             { isAddingProjectManager && (
                     <Popover element={addProjectManagerDivRef} close={() => setIsAddingProjectManager(false)} closeIfClickedOutside>
                         <>
-                            <UserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}/>
+                            <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}/>
                             <div className="add-project-manager-footer">
                                 <button disabled={updatedProjectManagerStates.length <= 0} onClick={() => {
                                     setIsAddingProjectManager(false);

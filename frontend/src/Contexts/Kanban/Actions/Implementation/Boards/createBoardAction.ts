@@ -8,7 +8,8 @@ const createBoardAction = (state: State, payload: CreateBoardPayload): State => 
         projectId: payload.projectId,
         boardId: payload.boardId,
         boardName: payload.boardName,
-        ownedByUserId: payload.ownedByUserId
+        ownedByUserId: payload.ownedByUserId,
+        boardMembers: []
     });
 
     return {

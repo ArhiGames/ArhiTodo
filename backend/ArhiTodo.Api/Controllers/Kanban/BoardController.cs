@@ -36,6 +36,13 @@ public class BoardController(IBoardService boardService) : ApiControllerBase
         return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
     }
     
+    [HttpGet("board/{boardId:int}/members/public")]
+    public async Task<IActionResult> GetPublicBoardMembers(int boardId)
+    {
+        Result<List<BoardMemberGetDto>> userGetDtos = await boardService.GetPublicBoardMembers(boardId);
+        return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
+    }
+    
     [HttpPost("project/{projectId:int}/board/")]
     public async Task<IActionResult> CreateBoard(int projectId, [FromBody] BoardCreateDto boardCreateDto)
     {

@@ -10,6 +10,7 @@ public interface IBoardService
 {
     Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos);
     Task<Result<List<UserGetDto>>> GetBoardMembers(int boardId);
+    Task<Result<List<BoardMemberGetDto>>> GetPublicBoardMembers(int boardId);
     Task<Result<List<UserGetDto>>> UpdateBoardMemberStatus(int boardId, 
         List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos);
     

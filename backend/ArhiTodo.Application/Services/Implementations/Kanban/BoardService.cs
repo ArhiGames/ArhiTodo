@@ -78,6 +78,20 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardMemberGetDtos;
     }
 
+    public async Task<Result<List<BoardMemberGetDto>>> GetPublicBoardMembers(int boardId)
+    {
+        bool hasBoardViewPermission = await boardAuthorizer.HasBoardViewPermission(boardId);
+        if (!hasBoardViewPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board is null) return Errors.NotFound;
+
+        List<Guid> boardMemberIds = board.GetMemberIds();
+        List<User> boardMembers = await accountRepository.GetUsersByGuidsAsync(boardMemberIds);
+
+        return boardMembers.Select(bm => bm.ToBoardMemberGetDto()).ToList();
+    }
+
     public async Task<Result<List<UserGetDto>>> UpdateBoardMemberStatus(int boardId, 
         List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {

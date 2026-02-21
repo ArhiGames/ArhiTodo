@@ -1,21 +1,29 @@
-import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import type {Dispatch, SetStateAction} from "react";
+import type {PublicUserGetDto} from "../../../Models/States/types.ts";
 
 interface Props {
-    user: UserGetDto;
-    selectedUsers: UserGetDto[];
-    setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>;
+    user: PublicUserGetDto,
+    selectedUsers: PublicUserGetDto[],
+    setSelectedUsers: Dispatch<SetStateAction<PublicUserGetDto[]>>,
+    onUserSelected?: (user: PublicUserGetDto) => void,
+    onUserUnselected?: (user: PublicUserGetDto) => void
 }
 
 const DefaultUserSelectorUserComp = (props: Props) => {
 
-    const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
+    const isSelected: boolean = props.selectedUsers.some((selectedUser: PublicUserGetDto) => selectedUser.userId === props.user.userId);
 
     function onUserCompClicked() {
         if (isSelected) {
-            props.setSelectedUsers(props.selectedUsers.filter((user: UserGetDto) => user.userId !== props.user.userId));
+            props.setSelectedUsers((prev: PublicUserGetDto[]) => prev.filter((user: PublicUserGetDto) => user.userId !== props.user.userId));
+            if (props.onUserUnselected) {
+                props.onUserUnselected(props.user)
+            }
         } else {
-            props.setSelectedUsers([...props.selectedUsers, props.user]);
+            props.setSelectedUsers((prev: PublicUserGetDto[]) => [...prev, props.user]);
+            if (props.onUserSelected) {
+                props.onUserSelected(props.user);
+            }
         }
     }
 

@@ -5,7 +5,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {CardList, State} from "../../Models/States/types.ts";
+import type {PublicUserGetDto, CardList, State} from "../../Models/States/types.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
@@ -63,12 +63,9 @@ const BoardComp = () => {
                     return res.json()
                 })
                 .then((boardGetDto: BoardGetDto) => {
-
                     if (dispatch) {
                         dispatch({ type: "INIT_BOARD", payload: { boardId: boardGetDto.boardId, boardGetDto: boardGetDto }});
                     }
-                    setIsLoaded(true);
-
                 })
                 .catch(err => {
                     if (err.name === "AbortError") {
@@ -96,6 +93,29 @@ const BoardComp = () => {
                     }
                 })
                 .catch(console.error);
+
+            await fetch(`${API_BASE_URL}/board/${boardId}/members/public`, {
+                method: 'GET',
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Could not fetch board members!");
+                    }
+
+                    return res.json();
+                })
+                .then((members: PublicUserGetDto[]) => {
+                    if (dispatch) {
+                        dispatch({
+                            type: "INIT_BOARD_MEMBERS",
+                            payload: {boardId: Number(boardId), boardMembers: members}
+                        });
+                    }
+                })
+                .catch(console.error);
+
+            setIsLoaded(true);
         }
 
         run();

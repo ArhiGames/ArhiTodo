@@ -48,6 +48,9 @@ import setProjectPermissionAction
 import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/Boards/setBoardPermissionsAction.ts";
 import moveCardAction from "../Contexts/Kanban/Actions/Implementation/Card/moveCardAction.ts";
 import updateCardDescriptionAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardDescriptionAction.ts";
+import assignCardUserAction from "../Contexts/Kanban/Actions/Implementation/Card/assignCardUserAction.ts";
+import removeAssignedUserAction from "../Contexts/Kanban/Actions/Implementation/Card/removeAssignedUserAction.ts";
+import initBoardMembersAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardMembersAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -93,7 +96,8 @@ function rootReducer(state: State, action: Action): State {
             return createBoardSucceededAction(state, action.payload);
         case "CREATE_BOARD_FAILED":
             return deleteBoardAction(state, action.payload.failedBoardId);
-
+        case "INIT_BOARD_MEMBERS":
+            return initBoardMembersAction(state, action.payload);
         case "UPDATE_BOARD":
             return updateBoardAction(state, action.payload);
         case "DELETE_BOARD":
@@ -124,6 +128,10 @@ function rootReducer(state: State, action: Action): State {
             return updateCardStateAction(state, action.payload);
         case "UPDATE_CARD_DESCRIPTION":
             return updateCardDescriptionAction(state, action.payload);
+        case "ASSIGN_CARD_MEMBER":
+            return assignCardUserAction(state, action.payload);
+        case "REMOVE_ASSIGNED_CARD_MEMBER":
+            return removeAssignedUserAction(state, action.payload);
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
         case "MOVE_CARD":
