@@ -15,6 +15,7 @@ public static class CardMapper
             CardName = card.CardName,
             CardDescription = card.CardDescription,
             LabelIds = card.Labels.Select(cl => cl.LabelId).ToList(),
+            AssignedUserIds = card.AssignedUsers.Select(asu => asu.UserId).ToList(),
             Checklists = card.Checklists.Select(cl => cl.ToGetDto()).ToList()
         };
     }

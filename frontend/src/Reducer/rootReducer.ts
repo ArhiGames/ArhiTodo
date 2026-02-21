@@ -47,6 +47,7 @@ import setProjectPermissionAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
 import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/Boards/setBoardPermissionsAction.ts";
 import moveCardAction from "../Contexts/Kanban/Actions/Implementation/Card/moveCardAction.ts";
+import updateCardDescriptionAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardDescriptionAction.ts";
 
 function rootReducer(state: State, action: Action): State {
     switch (action.type) {
@@ -121,6 +122,8 @@ function rootReducer(state: State, action: Action): State {
             return updateCardNameAction(state, action.payload);
         case "UPDATE_CARD_STATE":
             return updateCardStateAction(state, action.payload);
+        case "UPDATE_CARD_DESCRIPTION":
+            return updateCardDescriptionAction(state, action.payload);
         case "DELETE_CARD":
             return deleteCardAction(state, action.payload.cardId);
         case "MOVE_CARD":

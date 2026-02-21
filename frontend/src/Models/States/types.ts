@@ -26,10 +26,12 @@ export type CardList = {
 }
 
 export type Card = {
+    cardListId: number;
     cardId: number;
     cardName: string;
+    cardDescription: string;
     isDone: boolean;
-    cardListId: number;
+    assignedUserIds: string[];
 }
 
 export type Label = {

@@ -1,9 +1,8 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {type FormEvent, Fragment, useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import LabelSelector from "../../Labels/LabelSelector.tsx";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import type {DetailedCardGetDto} from "../../../Models/BackendDtos/Kanban/DetailedCardGetDto.ts";
 import type {Label, State} from "../../../Models/States/types.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {type Rgb, toRgb} from "../../../lib/Functions.ts";
@@ -12,25 +11,22 @@ import {API_BASE_URL} from "../../../config/api.ts";
 import CardDetailChecklistsComp from "./Checklist/CardDetailChecklistsComp.tsx";
 import "./DetailedCard.css"
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
+import ViewCardMembersComp from "./ViewCardMembersComp.tsx";
+import ViewCardDescriptionComp from "./ViewCardDescriptionComp.tsx";
 
 const ViewCardDetailsComp = () => {
 
     const navigate = useNavigate();
-    const { token, checkRefresh } = useAuth();
+    const { checkRefresh } = useAuth();
     const { projectId, boardId, cardId } = useParams();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
 
     const currentEditLabelRef = useRef<HTMLElement>(null);
-    const [detailedCard, setDetailedCard] = useState<DetailedCardGetDto>();
 
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
-    const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
 
-    const descriptionInputRef = useRef<HTMLTextAreaElement | null>(null);
-
-    const [cardDescription, setCardDescription] = useState<string>("");
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards.get(Number(cardId))?.cardName ?? "");
 
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
@@ -49,66 +45,11 @@ const ViewCardDetailsComp = () => {
 
     }, [navigate, kanbanState.cards, cardId, projectId, boardId]);
 
-    useEffect(() => {
-        if (cardId == undefined) return;
-
-        const abortController = new AbortController();
-
-        const run = async () => {
-            const refreshedToken: string | null = await checkRefresh();
-            if (!refreshedToken || abortController.signal.aborted) return;
-
-            fetch(`${API_BASE_URL}/card/${cardId}`,
-                {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-                    signal: abortController.signal,
-                })
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error("Failed to fetch detailed card");
-                    }
-
-                    return res.json();
-                })
-                .then((detailedCard: DetailedCardGetDto) => {
-                    setDetailedCard(detailedCard);
-                    setCardDescription(detailedCard.cardDescription);
-                })
-                .catch(err => {
-                    if (err.name === "AbortError") {
-                        return;
-                    }
-                    onViewDetailsClosed();
-                    console.error(err);
-                })
-        }
-
-        run();
-
-        return () => abortController.abort();
-
-    }, [boardId, cardId, projectId, token, checkRefresh, onViewDetailsClosed]);
-
-    useEffect(() => {
-
-        if (isEditingDescription) {
-            if (!descriptionInputRef.current) return;
-
-            descriptionInputRef.current.focus();
-            descriptionInputRef.current.setSelectionRange(cardDescription.length, cardDescription.length);
-        }
-
-    }, [isEditingDescription]);
-
     function getPureLabelIds() {
         const labelIds: number[] = [];
-        if (!detailedCard) return [];
-
         for (const labelId of kanbanState.cardLabels.get(Number(cardId))!) {
             labelIds.push(labelId);
         }
-
         return labelIds;
     }
 
@@ -169,18 +110,18 @@ const ViewCardDetailsComp = () => {
     async function onStateChanged() {
 
         if (!permissions.hasManageCardsPermission()) return;
-        if (!dispatch || !detailedCard) return;
+        if (!dispatch) return;
 
-        const newState: boolean = !(kanbanState.cards.get(detailedCard.cardId)?.isDone);
-        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: newState } });
+        const newState: boolean = !(kanbanState.cards.get(Number(cardId))?.isDone);
+        dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: Number(cardId), newState: newState } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: !newState } });
+            dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: Number(cardId), newState: !newState } });
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${detailedCard.cardId}/done/${newState}`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${Number(cardId)}/done/${newState}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
@@ -190,27 +131,27 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: detailedCard.cardId, newState: !newState } });
+                dispatch({ type: "UPDATE_CARD_STATE", payload: { cardId: Number(cardId), newState: !newState } });
                 console.error(err);
             })
     }
 
     async function onCardRenamed() {
-        if (inputtedCardName.length === 0 || !detailedCard || !dispatch) return;
+        if (inputtedCardName.length === 0 || !dispatch) return;
 
-        const oldCardName: string | undefined = kanbanState.cards.get(detailedCard.cardId)?.cardName;
+        const oldCardName: string | undefined = kanbanState.cards.get(Number(cardId))?.cardName;
         if (!oldCardName) return;
 
         const newCardName: string = inputtedCardName;
-        dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: newCardName } });
+        dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: Number(cardId), cardName: newCardName } });
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
-            dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: oldCardName } });
+            dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: Number(cardId), cardName: oldCardName } });
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${detailedCard.cardId}/name`, {
+        fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${Number(cardId)}/name`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({ newCardName: newCardName })
@@ -221,54 +162,10 @@ const ViewCardDetailsComp = () => {
                 }
             })
             .catch(err => {
-                dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: detailedCard.cardId, cardName: oldCardName } });
+                dispatch({ type: "UPDATE_CARD_NAME", payload: { cardId: Number(cardId), cardName: oldCardName } });
                 setInputtedCardName(oldCardName);
                 console.error(err);
             })
-    }
-
-    async function updateCardDescription(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault();
-        if (cardDescription.length === 0 || !detailedCard) return;
-
-        const refreshedToken: string | null = await checkRefresh();
-        if (!refreshedToken) return;
-
-        fetch(`${API_BASE_URL}/card/${detailedCard.cardId}/description`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-            body: JSON.stringify({ newCardDescription: cardDescription })
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to update card description");
-                }
-
-                return res.json();
-            })
-            .then((detailedCard: DetailedCardGetDto) => {
-                setDetailedCard((prev: DetailedCardGetDto | undefined) => {
-                    if (!prev) return;
-
-                    return {
-                        ...prev,
-                        cardDescription: detailedCard.cardDescription,
-                    }
-                });
-            })
-            .catch(err => {
-                console.error(err);
-            })
-
-        setIsEditingDescription(false);
-    }
-
-    function resetCardDescription(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault();
-        if (!detailedCard) return;
-
-        setCardDescription(detailedCard.cardDescription);
-        setIsEditingDescription(false);
     }
 
     async function onDeleteCardConfirmed() {
@@ -308,10 +205,7 @@ const ViewCardDetailsComp = () => {
         return null;
     }
 
-    function onEditCardDescriptionPressed() {
-        if (!permissions.hasManageCardsPermission()) return;
-        setIsEditingDescription(true);
-    }
+
 
     function onLabelSelectedClicked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
         currentEditLabelRef.current = e.currentTarget;
@@ -351,49 +245,15 @@ const ViewCardDetailsComp = () => {
         )
     }
 
-    function cardDescriptionJsx() {
-        return (
-            <form onSubmit={updateCardDescription} onReset={resetCardDescription}>
-                {
-                    isEditingDescription ? (
-                        <>
-                            <textarea value={cardDescription} ref={descriptionInputRef}
-                                      placeholder="This card currently does not have a description..."
-                                      onChange={(e) => setCardDescription(e.target.value)}
-                                      maxLength={8192}/>
-                            <div style={{ display: "flex", gap: "0.5rem" }}>
-                                <button className={`button ${ detailedCard && cardDescription !== detailedCard.cardDescription ?
-                                    "valid-submit-button" : "standard-button" }`}
-                                        type="submit">Save description</button>
-                                <button type="reset" className="button standard-button">Cancel</button>
-                            </div>
-                        </>
-                    ) : (
-                        <p onClick={onEditCardDescriptionPressed}
-                           className="card-detailed-description">{ cardDescription.length > 0 ?
-                            cardDescription.split('\n').map((line, idx) => (
-                                <Fragment key={idx}>
-                                    {line}
-                                    <br/>
-                                </Fragment>
-                            )) : "This card currently does not have a description..." }</p>
-                    )
-                }
-            </form>
-        )
-    }
-
     return (
         <Modal modalSize="modal-large" onClosed={onViewDetailsClosed}
                header={
                    <>
                        {
-                           detailedCard && (
-                               <button disabled={!(permissions.hasManageCardsPermission())} onClick={onStateChanged}
-                                    className="card-checkmark visible">
-                                   { kanbanState.cards.get(detailedCard.cardId)?.isDone ? "✓" : "" }
-                               </button>
-                           )
+                           <button disabled={!(permissions.hasManageCardsPermission())} onClick={onStateChanged}
+                                className="card-checkmark visible">
+                               { kanbanState.cards.get(Number(cardId))?.isDone ? "✓" : "" }
+                           </button>
                        }
                        { permissions.hasManageCardsPermission() ?
                            (<input className="card-detail-name" value={inputtedCardName}
@@ -427,11 +287,13 @@ const ViewCardDetailsComp = () => {
                     <div className="card-details-labels">
                         { cardLabelsJsx() }
                     </div>
+                    <p className="category-paragraph">Members</p>
+                    <ViewCardMembersComp/>
                     <div className="card-detailed-description-div">
                         <p className="category-paragraph">Label description</p>
-                        { cardDescriptionJsx() }
+                        <ViewCardDescriptionComp/>
                     </div>
-                    { detailedCard && <CardDetailChecklistsComp/> }
+                    <CardDetailChecklistsComp/>
                 </div>
             </div>
         </Modal>

@@ -13,5 +13,6 @@ public class CardGetDto
     public string CardDescription { get; set; } = string.Empty;
     
     public List<int> LabelIds { get; set; } = [];
+    public List<Guid> AssignedUserIds { get; set; } = [];
     public List<ChecklistGetDto> Checklists { get; set; } = [];
 }

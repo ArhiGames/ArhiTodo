@@ -110,6 +110,11 @@ export type UpdateCardStatePayload = {
     newState: boolean;
 }
 
+export type UpdateCardDescriptionPayload = {
+    cardId: number;
+    description: string;
+}
+
 export type MoveCardPayload = {
     cardId: number;
     toCardListId: number;
@@ -202,6 +207,7 @@ export type Action =
     { type: "CREATE_CARD_FAILED", payload: { failedCardId: number } } |
     { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
+    { type: "UPDATE_CARD_DESCRIPTION", payload: UpdateCardDescriptionPayload } |
     { type: "DELETE_CARD", payload: { cardId: number } } |
     { type: "MOVE_CARD", payload: MoveCardPayload } |
 

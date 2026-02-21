@@ -27,10 +27,12 @@ const initBoardAction = (state: State, payload: InitBoardPayload) => {
             cardIds.push(cardDto.cardId);
 
             cards.set(cardDto.cardId, {
+                cardListId: cardListDto.cardListId,
                 cardId: cardDto.cardId,
                 cardName: cardDto.cardName,
+                cardDescription: cardDto.cardDescription,
                 isDone: cardDto.isDone,
-                cardListId: cardListDto.cardListId
+                assignedUserIds: cardDto.assignedUserIds
             });
             if (!cardLabels.get(cardDto.cardId)) {
                 cardLabels.set(cardDto.cardId, []);
