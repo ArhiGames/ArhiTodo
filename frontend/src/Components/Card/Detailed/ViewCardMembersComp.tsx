@@ -7,13 +7,14 @@ import {useParams} from "react-router-dom";
 import type {Board, PublicUserGetDto, Card} from "../../../Models/States/types.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import CardUserIcon from "../CardUserIcon.tsx";
 
 const ViewCardMembersComp = () => {
 
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const { boardId, cardId } = useParams();
-    const { checkRefresh } = useAuth();
+    const { checkRefresh, appUser } = useAuth();
 
     const [isEditingMembers, setIsEditingMembers] = useState<boolean>(false);
     const [selectedUsers, setSelectedUsers] = useState<PublicUserGetDto[]>(getCurrentSelectedStateUsers());
@@ -111,9 +112,29 @@ const ViewCardMembersComp = () => {
         }
     }
 
+    function getSortedAssignedUsersJsx() {
+        const card: Card | undefined = kanbanState.cards.get(Number(cardId));
+        if (!card) return null;
+
+        const sortedUserIds: string[] = [...card.assignedUserIds].sort((a: string, b: string) => {
+            if (a === appUser?.id) return -1;
+            if (b === appUser?.id) return 1;
+            return 0;
+        });
+
+        return (
+            <>
+                { sortedUserIds.map((userId: string) => {
+                    return <CardUserIcon onClick={onOpenCardMembersClicked} key={userId} cardMemberId={userId}/>
+                })}
+            </>
+        )
+    }
+
     return (
         <>
-            <div className="card-members">
+            <div className="card-detail-members">
+                { getSortedAssignedUsersJsx() }
                 <div onClick={onOpenCardMembersClicked} className="card-member-card" ref={addCardMemberRef}>+</div>
             </div>
             { isEditingMembers && (

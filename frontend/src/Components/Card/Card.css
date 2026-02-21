@@ -167,3 +167,35 @@
     flex-direction: column;
     gap: 0.5rem;
 }
+
+.card-completion-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-members {
+    display: flex;
+    gap: 0.25rem;
+    flex-direction: row-reverse;
+}
+
+.card-member-card {
+    background-color: var(--bg-xx-light);
+    border-radius: 50%;
+    padding: 0.25rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.card-member-card:hover {
+    background-color: var(--bg-xxx-light);
+    cursor: pointer;
+}
+
+.card-member-card.self {
+    background-color: var(--bg-xxx-light);
+}

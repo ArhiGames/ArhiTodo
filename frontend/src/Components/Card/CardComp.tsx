@@ -7,6 +7,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import CardUserIcon from "./CardUserIcon.tsx";
 
 interface Props {
     cardId: number;
@@ -17,7 +18,7 @@ const CardComp = (props: Props) => {
     const navigate = useNavigate();
     const kanbanState: State = useKanbanState();
     const dispatch = useKanbanDispatch();
-    const { checkRefresh } = useAuth();
+    const { appUser, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const permissions = usePermissions();
 
@@ -101,6 +102,32 @@ const CardComp = (props: Props) => {
         })
     }
 
+    function getCardMembersJsx() {
+        if (!card) return null;
+
+        const sortedUserIds: string[] = [...card.assignedUserIds].sort((a: string, b: string) => {
+            if (a === appUser?.id) return -1;
+            if (b === appUser?.id) return 1;
+            return 0;
+        })
+
+        const showingCardMemberIds: string[] = sortedUserIds.slice(0, 4);
+        const remainingCardMembersCount: number = card.assignedUserIds.length - 4;
+
+        if (showingCardMemberIds.length === 0) return null;
+
+        return (
+            <div className="card-members">
+                {showingCardMemberIds.map((cardMemberId: string) => {
+                    return <CardUserIcon key={cardMemberId} cardMemberId={cardMemberId}/>
+                })}
+                { remainingCardMembersCount > 0 && (
+                    <div className="card-member-card">+{remainingCardMembersCount}</div>
+                )}
+            </div>
+        )
+    }
+
     return (
         <div onClick={openCard} className={`card ${card?.isDone ? "completed" : ""}`}
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
@@ -115,9 +142,14 @@ const CardComp = (props: Props) => {
                 <p className="card-name">{card?.cardName}</p>
                 <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
-            { (getTotalTasks() > 0) && (
-                <div className="card-checklist-hint">
-                    <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
+            { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0) && (
+                <div className="card-completion-details">
+                    { (getTotalTasks() > 0) && (
+                        <div className="card-checklist-hint">
+                            <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
+                        </div>
+                    ) }
+                    { getCardMembersJsx() }
                 </div>
             ) }
         </div>

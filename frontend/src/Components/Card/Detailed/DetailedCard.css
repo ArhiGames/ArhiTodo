@@ -114,19 +114,8 @@
     color: var(--text-color-shaded);
 }
 
-.card-member-card {
-    background-color: var(--bg-xx-light);
-    border-radius: 50%;
-    padding: 0.25rem;
-    width: 32px;
-    height: 32px;
+.card-detail-members {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.2s;
-}
-
-.card-member-card:hover {
-    background-color: var(--bg-xxx-light);
-    cursor: pointer;
+    flex-wrap: wrap;
+    gap: 0.25rem;
 }
