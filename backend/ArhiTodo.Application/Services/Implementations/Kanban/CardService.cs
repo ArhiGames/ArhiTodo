@@ -126,7 +126,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
 
     public async Task<Result<CardGetDto>> PatchCardStatus(int boardId, int cardId, bool isDone)
     {
-        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId, true);
         if (!hasEditCardPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);

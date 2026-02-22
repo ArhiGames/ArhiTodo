@@ -141,7 +141,7 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
 
     public async Task<Result<ChecklistItemGetDto>> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState)
     {
-        bool hasEditChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        bool hasEditChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId, true);
         if (!hasEditChecklistItemPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);

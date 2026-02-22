@@ -14,6 +14,7 @@ export type PermissionContextType = {
 
     hasManageCardListsPermission: () => boolean;
     hasManageCardsPermission: () => boolean;
+    hasEditCardStatePermission: (cardId: number) => boolean;
     hasManageLabelsPermission: () => boolean;
     
     userDispatch: Dispatch<UserAction> | undefined;
@@ -32,6 +33,7 @@ export const PermissionContext = createContext<PermissionContextType>({
 
     hasManageCardListsPermission: () => false,
     hasManageCardsPermission: () => false,
+    hasEditCardStatePermission: () => false,
     hasManageLabelsPermission: () => false,
     
     userDispatch: undefined

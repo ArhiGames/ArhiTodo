@@ -42,7 +42,7 @@ const ViewCardDetailsComp = () => {
 
     async function onStateChanged() {
 
-        if (!permissions.hasManageCardsPermission()) return;
+        if (!permissions.hasEditCardStatePermission(Number(cardId))) return;
         if (!dispatch) return;
 
         const newState: boolean = !(kanbanState.cards.get(Number(cardId))?.isDone);
@@ -143,7 +143,7 @@ const ViewCardDetailsComp = () => {
                header={
                    <>
                        {
-                           <button disabled={!(permissions.hasManageCardsPermission())} onClick={onStateChanged}
+                           <button disabled={!(permissions.hasEditCardStatePermission(Number(cardId)))} onClick={onStateChanged}
                                 className="card-checkmark visible">
                                { kanbanState.cards.get(Number(cardId))?.isDone ? "✓" : "" }
                            </button>

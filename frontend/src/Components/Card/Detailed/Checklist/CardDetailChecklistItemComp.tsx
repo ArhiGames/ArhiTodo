@@ -28,11 +28,16 @@ const CardDetailChecklistItemComp = (props: Props) => {
 
     async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
 
+        if (!permission.hasEditCardStatePermission(Number(cardId))) return;
+
         if (dispatch) {
-            dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: {
+            dispatch({
+                type: "CHANGE_CHECKLIST_ITEM_STATE",
+                payload: {
                     checklistItemId: checklistItemId,
                     newState: checked
-                }});
+                }
+            });
         }
 
         const refreshedToken: string | null = await checkRefresh();
@@ -244,7 +249,8 @@ const CardDetailChecklistItemComp = (props: Props) => {
                     <>
                         <div className="card-detail-checklist-item-info">
                             <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
-                                handleCheckboxClick(props.checklistItem.checklistItemId, checked)} disabled={!permission.hasManageCardsPermission()}/>
+                                           handleCheckboxClick(props.checklistItem.checklistItemId, checked)}
+                                           disabled={!permission.hasEditCardStatePermission(Number(cardId))}/>
                             <p className={props.checklistItem.isDone ? "checklist-item-name-done" : "checklist-item-name"}>{props.checklistItem.checklistItemName}</p>
                         </div>
                         { permission.hasManageCardsPermission() && (

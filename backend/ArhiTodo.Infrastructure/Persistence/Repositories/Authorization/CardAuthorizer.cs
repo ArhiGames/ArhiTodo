@@ -8,10 +8,11 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 
 public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService authorizationService, ProjectDataBase database) : ICardAuthorizer
 {
-    private async Task<bool> HasCardPermission(int cardId, BoardClaimTypes boardClaimTypes, string? optionalPolicy)
+    private async Task<bool> HasCardPermission(int cardId, BoardClaimTypes boardClaimTypes, string? optionalPolicy, bool validAsAssignedUser = false)
     {
         bool hasEditCardPermission = await database.Cards
             .AnyAsync(c => c.CardId == cardId && (
+                (validAsAssignedUser && c.AssignedUsers.Any(asu => asu.UserId == currentUser.UserId)) ||
                 c.CardList.Board.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 c.CardList.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
@@ -37,10 +38,10 @@ public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService auth
         return hasGlobalPermission;
     }
 
-    public async Task<bool> HasEditCardPermission(int cardId)
+    public async Task<bool> HasEditCardPermission(int cardId, bool validAsAssignedUser = false)
     {
         return await HasCardPermission(cardId, BoardClaimTypes.ManageCards,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+            nameof(UserClaimTypes.ModifyOthersProjects), validAsAssignedUser);
     }
 
     public async Task<bool> HasDeleteCardPermission(int cardId)

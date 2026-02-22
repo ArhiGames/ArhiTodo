@@ -5,6 +5,7 @@ import {matchPath} from "react-router-dom";
 import type {Claim} from "../../Models/Claim.ts";
 import {InitialUserState} from "./InitialUserState.ts";
 import userReducer from "../../Reducer/userReducer.ts";
+import {useKanbanState} from "../Kanban/Hooks.ts";
 
 interface Props {
     children: ReactNode;
@@ -12,7 +13,8 @@ interface Props {
 
 const PermissionProvider = ({ children }: Props) => {
 
-    const { jwtPayload } = useAuth();
+    const { appUser, jwtPayload } = useAuth();
+    const kanbanState = useKanbanState();
     const [state, dispatch] = useReducer(userReducer, InitialUserState);
 
     function hasModifyProjectPermission(): boolean {
@@ -88,6 +90,12 @@ const PermissionProvider = ({ children }: Props) => {
         return hasBoardPermission("ManageCards");
     }
 
+    function hasEditCardStatePermission(cardId: number): boolean {
+        const isAssignedCardMember: boolean = kanbanState.cards.get(cardId)?.assignedUserIds
+            .some(asu => asu === appUser?.id) ?? false;
+        return isAssignedCardMember || hasBoardPermission("ManageCards");
+    }
+
     function hasManageLabelsPermission(): boolean {
         return hasBoardPermission("ManageLabels");
     }
@@ -106,6 +114,7 @@ const PermissionProvider = ({ children }: Props) => {
 
             hasManageCardListsPermission,
             hasManageCardsPermission,
+            hasEditCardStatePermission,
             hasManageLabelsPermission,
 
             userDispatch: dispatch

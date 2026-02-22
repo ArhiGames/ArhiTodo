@@ -137,7 +137,7 @@ const CardComp = (props: Props) => {
                 </div>
             ) }
             <div style={{ display: "flex", alignItems: "center" }}>
-                <button onClick={onStateChange} disabled={!(permissions.hasManageCardsPermission())}
+                <button onClick={onStateChange} disabled={!(permissions.hasEditCardStatePermission(props.cardId))}
                      className={`card-checkmark ${ (card?.isDone || isHovering) ? "visible" : "hidden" }`}>{ card?.isDone ? "✓" : "" }</button>
                 <p className="card-name">{card?.cardName}</p>
                 <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
