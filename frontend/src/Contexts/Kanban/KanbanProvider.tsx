@@ -1,11 +1,11 @@
 import { KanbanDispatchContext, KanbanStateContext } from "./KanbanContexts.ts";
 import { type ReactNode, useReducer } from "react";
-import rootReducer from "../../Reducer/rootReducer.ts";
+import kanbanReducer from "../../Reducer/kanbanReducer.ts";
 import { InitialState } from "./InitialState.ts";
 
 const KanbanProvider = ( props: { children: ReactNode } ) => {
 
-    const [state, dispatch] = useReducer(rootReducer, InitialState);
+    const [state, dispatch] = useReducer(kanbanReducer, InitialState);
 
     return (
         <KanbanStateContext.Provider value={state}>

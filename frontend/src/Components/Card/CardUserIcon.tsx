@@ -1,4 +1,4 @@
-import type {PublicUserGetDto} from "../../Models/States/types.ts";
+import type {PublicUserGetDto} from "../../Models/States/KanbanState.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import {useParams} from "react-router-dom";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";

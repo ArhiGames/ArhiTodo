@@ -1,7 +1,7 @@
-import type {Card, State} from "../../../../../Models/States/types.ts";
-import type {UpdateCardAssignedUsersPayload} from "../../Action.ts";
+import type {Card, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {UpdateCardAssignedUsersPayload} from "../../KanbanAction.ts";
 
-const removeAssignedUserAction = (state: State, payload: UpdateCardAssignedUsersPayload): State => {
+const removeAssignedUserAction = (state: KanbanState, payload: UpdateCardAssignedUsersPayload): KanbanState => {
 
     const card: Card | undefined = state.cards.get(payload.cardId);
     if (!card) return state;

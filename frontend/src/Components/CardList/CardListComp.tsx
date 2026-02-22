@@ -1,4 +1,4 @@
-import type {Card, CardList, State} from "../../Models/States/types.ts";
+import type {Card, CardList, KanbanState} from "../../Models/States/KanbanState.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import CreateNewCardComp from "../Card/CreateNewCardComp.tsx";
@@ -15,7 +15,7 @@ import CardCompWrapper from "../Card/CardCompWrapper.tsx";
 const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
     const { checkRefresh } = useAuth();
-    const kanbanState: State = useKanbanState();
+    const kanbanState: KanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
     const permission = usePermissions();

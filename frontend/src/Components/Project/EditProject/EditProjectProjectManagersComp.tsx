@@ -1,4 +1,4 @@
-import type {Project} from "../../../Models/States/types.ts";
+import type {Project} from "../../../Models/States/KanbanState.ts";
 import {useEffect, useState} from "react";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";

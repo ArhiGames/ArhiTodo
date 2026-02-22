@@ -1,6 +1,6 @@
 import LabelSelector from "../../Labels/LabelSelector.tsx";
 import {type Rgb, toRgb} from "../../../lib/Functions.ts";
-import type {Label} from "../../../Models/States/types.ts";
+import type {Label} from "../../../Models/States/KanbanState.ts";
 import {useParams} from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";

@@ -1,7 +1,7 @@
-import type {CardList, State} from "../../../../../Models/States/types.ts";
-import type {CreateCardlistPayload} from "../../Action.ts";
+import type {CardList, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {CreateCardlistPayload} from "../../KanbanAction.ts";
 
-const createCardlistAction = (state: State, payload: CreateCardlistPayload) => {
+const createCardlistAction = (state: KanbanState, payload: CreateCardlistPayload) => {
 
     const newCardlists: Map<number, CardList> = new Map(state.cardLists);
     newCardlists.set(payload.cardListId, {

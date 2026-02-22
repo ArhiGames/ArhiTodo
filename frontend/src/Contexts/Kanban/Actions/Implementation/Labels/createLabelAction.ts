@@ -1,7 +1,7 @@
-import type {Label, State} from "../../../../../Models/States/types.ts";
-import type { CreateLabelPayload } from "../../Action.ts";
+import type {Label, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type { CreateLabelPayload } from "../../KanbanAction.ts";
 
-const createLabelAction = (state: State, payload: CreateLabelPayload) => {
+const createLabelAction = (state: KanbanState, payload: CreateLabelPayload) => {
 
     const labels: Map<number, Label> = new Map(state.labels);
     labels.set(payload.labelId, {

@@ -1,7 +1,7 @@
-import type {Card, State} from "../../../../Models/States/types.ts";
+import type {Card, KanbanState} from "../../../../Models/States/KanbanState.ts";
 import cleanCardAction from "./cleanCardAction.ts";
 
-const cleanCardListAction = (state: State, cardListIds: number[]) => {
+const cleanCardListAction = (state: KanbanState, cardListIds: number[]) => {
     const newCards: Map<number, Card> = new Map(state.cards);
 
     const cardIdsToDelete = Array.from(state.cards.values())

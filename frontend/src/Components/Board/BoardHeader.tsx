@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { Board } from "../../Models/States/types.ts";
+import type { Board } from "../../Models/States/KanbanState.ts";
 import {useCallback, useEffect, useRef, useState} from "react";
 import Popover from "../../lib/Popover/Popover.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";

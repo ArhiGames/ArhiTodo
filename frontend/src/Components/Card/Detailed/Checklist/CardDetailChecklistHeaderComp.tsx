@@ -8,7 +8,7 @@ import {createPortal} from "react-dom";
 import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import * as React from "react";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
-import type {Checklist} from "../../../../Models/States/types.ts";
+import type {Checklist} from "../../../../Models/States/KanbanState.ts";
 
 interface Props {
     checklistId: number;

@@ -1,6 +1,6 @@
-import type { Action } from "../Contexts/Kanban/Actions/Action.ts";
+import type { KanbanAction } from "../Contexts/Kanban/Actions/KanbanAction.ts";
 import createBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/createBoardAction.ts";
-import type { State } from "../Models/States/types.ts";
+import type { KanbanState } from "../Models/States/KanbanState.ts";
 import initBoardsAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardsAction.ts";
 import deleteBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/deleteBoardAction.ts";
 import initBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardAction.ts";
@@ -43,16 +43,13 @@ import initProjectAction from "../Contexts/Kanban/Actions/Implementation/Project
 import initProjectsAction from "../Contexts/Kanban/Actions/Implementation/Projects/initProjectsAction.ts";
 import updateProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/updateProjectAction.ts";
 import deleteProjectAction from "../Contexts/Kanban/Actions/Implementation/Projects/deleteProjectAction.ts";
-import setProjectPermissionAction
-    from "../Contexts/Kanban/Actions/Implementation/Projects/setProjectPermissionAction.ts";
-import setBoardPermissionsAction from "../Contexts/Kanban/Actions/Implementation/Boards/setBoardPermissionsAction.ts";
 import moveCardAction from "../Contexts/Kanban/Actions/Implementation/Card/moveCardAction.ts";
 import updateCardDescriptionAction from "../Contexts/Kanban/Actions/Implementation/Card/updateCardDescriptionAction.ts";
 import assignCardUserAction from "../Contexts/Kanban/Actions/Implementation/Card/assignCardUserAction.ts";
 import removeAssignedUserAction from "../Contexts/Kanban/Actions/Implementation/Card/removeAssignedUserAction.ts";
 import initBoardMembersAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardMembersAction.ts";
 
-function rootReducer(state: State, action: Action): State {
+function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
         case "INIT_PROJECTS":
             return initProjectsAction(state, action.payload);
@@ -62,15 +59,11 @@ function rootReducer(state: State, action: Action): State {
             return updateProjectAction(state, action.payload);
         case "DELETE_PROJECT":
             return deleteProjectAction(state, action.payload.projectId);
-        case "SET_PROJECT_PERMISSION":
-            return setProjectPermissionAction(state, action.payload);
 
         case "INIT_BOARDS":
             return initBoardsAction(state, action.payload);
         case "INIT_BOARD":
             return initBoardAction(state, action.payload);
-        case "SET_BOARD_PERMISSION":
-            return setBoardPermissionsAction(state, action.payload);
 
         case "CREATE_LABEL_OPTIMISTIC":
             return createLabelAction(state, action.payload);
@@ -156,10 +149,7 @@ function rootReducer(state: State, action: Action): State {
             return updateChecklistItemAction(state, action.payload);
         case "CHANGE_CHECKLIST_ITEM_STATE":
             return changeChecklistItemStateAction(state, action.payload);
-
-        case "SET_DRAGGING_TARGET_ID":
-            return { ...state, dragOverState: action.payload }
     }
 }
 
-export default rootReducer;
+export default kanbanReducer;

@@ -1,7 +1,7 @@
 import {type Dispatch, type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
-import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
+import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
@@ -12,7 +12,7 @@ const CreateNewCardListComp = () => {
     const [cardListName, setCardListName] = useState<string>("");
     const cardListNameRef = useRef<HTMLInputElement>(null);
     const creationCardListRef = useRef<HTMLDivElement>(null)
-    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
+    const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
     const { boardId } = useParams();
     const { checkRefresh } = useAuth();
 

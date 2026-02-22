@@ -2,7 +2,7 @@ import {Link, matchPath, useLocation} from "react-router-dom";
 import LoggedInUserCardComp from "../User/Nav/LoggedInUserCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {Project} from "../../Models/States/types.ts";
+import type {Project} from "../../Models/States/KanbanState.ts";
 import {useEffect, useState} from "react";
 import EditProjectModalComp from "../Project/EditProject/EditProjectModalComp.tsx";
 import "./Navbar.css"

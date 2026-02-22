@@ -5,7 +5,7 @@ import {type Dispatch, type RefObject, type SetStateAction, useEffect, useMemo, 
 import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import {useParams} from "react-router-dom";
-import type {Label} from "../../Models/States/types.ts";
+import type {Label} from "../../Models/States/KanbanState.ts";
 
 interface Props {
     currentlyEditingLabelId: number | null;

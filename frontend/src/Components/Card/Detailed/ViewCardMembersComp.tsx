@@ -4,15 +4,17 @@ import Popover from "../../../lib/Popover/Popover.tsx";
 import "./DetailedCard.css"
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {useParams} from "react-router-dom";
-import type {Board, PublicUserGetDto, Card} from "../../../Models/States/types.ts";
+import type {Board, PublicUserGetDto, Card} from "../../../Models/States/KanbanState.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import CardUserIcon from "../CardUserIcon.tsx";
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 
 const ViewCardMembersComp = () => {
 
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const permissions = usePermissions();
     const { boardId, cardId } = useParams();
     const { checkRefresh, appUser } = useAuth();
 
@@ -23,6 +25,7 @@ const ViewCardMembersComp = () => {
     const addCardMemberRef = useRef<HTMLDivElement>(null);
 
     function onOpenCardMembersClicked(e: React.MouseEvent<HTMLDivElement>) {
+        if (!permissions.hasManageCardsPermission()) return;
         addCardMemberRef.current = e.currentTarget;
         setIsEditingMembers(true);
     }
@@ -135,7 +138,7 @@ const ViewCardMembersComp = () => {
         <>
             <div className="card-detail-members">
                 { getSortedAssignedUsersJsx() }
-                <div onClick={onOpenCardMembersClicked} className="card-member-card" ref={addCardMemberRef}>+</div>
+                { permissions.hasManageCardsPermission() && <div onClick={onOpenCardMembersClicked} className="card-member-card" ref={addCardMemberRef}>+</div> }
             </div>
             { isEditingMembers && (
                 <Popover close={() => setIsEditingMembers(false)} element={addCardMemberRef} closeIfClickedOutside>

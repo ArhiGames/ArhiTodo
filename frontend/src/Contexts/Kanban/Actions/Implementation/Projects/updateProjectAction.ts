@@ -1,7 +1,7 @@
-import type {Project, State} from "../../../../../Models/States/types.ts";
-import type {UpdateProjectPayload} from "../../Action.ts";
+import type {Project, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {UpdateProjectPayload} from "../../KanbanAction.ts";
 
-const updateProjectAction = (state: State, payload: UpdateProjectPayload) => {
+const updateProjectAction = (state: KanbanState, payload: UpdateProjectPayload) => {
 
     const newProjects: Map<number, Project> = new Map();
 

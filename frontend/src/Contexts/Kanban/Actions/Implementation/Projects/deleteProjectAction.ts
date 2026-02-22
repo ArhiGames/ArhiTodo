@@ -1,7 +1,7 @@
-import type {Project, State} from "../../../../../Models/States/types.ts";
+import type {Project, KanbanState} from "../../../../../Models/States/KanbanState.ts";
 import cleanProjectAction from "../cleanProjectAction.ts";
 
-const deleteProjectAction = (state: State, projectId: number) => {
+const deleteProjectAction = (state: KanbanState, projectId: number) => {
 
     const restProjects: Map<number, Project> = new Map(state.projects);
     restProjects.delete(projectId);

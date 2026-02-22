@@ -1,7 +1,7 @@
-import type {Board, State} from "../../../../../Models/States/types.ts";
-import type { InitBoardsPayload } from "../../Action.ts";
+import type {Board, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type { InitBoardsPayload } from "../../KanbanAction.ts";
 
-const initBoardsAction = (state: State, payload: { projectId: number, boards: InitBoardsPayload[] }): State => {
+const initBoardsAction = (state: KanbanState, payload: { projectId: number, boards: InitBoardsPayload[] }): KanbanState => {
 
     const boards: Map<number, Board> = new Map();
     for (const board of payload.boards) {

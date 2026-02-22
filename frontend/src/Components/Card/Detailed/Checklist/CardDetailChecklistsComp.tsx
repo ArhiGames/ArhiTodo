@@ -6,7 +6,7 @@ import {type FormEvent, useEffect, useRef, useState} from "react";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
-import type {Checklist} from "../../../../Models/States/types.ts";
+import type {Checklist} from "../../../../Models/States/KanbanState.ts";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 

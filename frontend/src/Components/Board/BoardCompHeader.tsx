@@ -1,5 +1,5 @@
 import LabelSelector from "../Labels/LabelSelector.tsx";
-import type {Label} from "../../Models/States/types.ts";
+import type {Label} from "../../Models/States/KanbanState.ts";
 import {type Rgb, toRgb} from "../../lib/Functions.ts";
 import {type Dispatch, type SetStateAction, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";

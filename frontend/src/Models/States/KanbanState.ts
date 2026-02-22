@@ -1,14 +1,7 @@
-import type {Claim} from "../Claim.ts";
-
 export type Project = {
     projectId: number;
     projectName: string;
     ownedByUserId: string;
-}
-
-export type ProjectPermission = {
-    projectId: number;
-    isManager: boolean;
 }
 
 export interface PublicUserGetDto {
@@ -61,24 +54,13 @@ export type ChecklistItem = {
     checklistId: number;
 }
 
-export type DragDropState = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    source: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: any;
-    targetIndex: number;
-}
-
-export interface State {
+export interface KanbanState {
     projects: Map<number, Project>;
-    projectPermission: Map<number, ProjectPermission>;
     boards: Map<number, Board>;
-    boardUserClaims: Map<number, Claim[]>;
     cardLists: Map<number, CardList>;
     cards: Map<number, Card>;
     labels: Map<number, Label>;
     cardLabels: Map<number, number[]>; // cardId <-> labelIds
     checklists: Map<number, Checklist>;
     checklistItems: Map<number, ChecklistItem>;
-    dragOverState: DragDropState | null;
 }

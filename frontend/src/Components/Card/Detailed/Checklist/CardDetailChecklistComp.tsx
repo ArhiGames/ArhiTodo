@@ -3,7 +3,7 @@ import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/Ch
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
-import type { ChecklistItem } from "../../../../Models/States/types.ts";
+import type { ChecklistItem } from "../../../../Models/States/KanbanState.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 import {useParams} from "react-router-dom";

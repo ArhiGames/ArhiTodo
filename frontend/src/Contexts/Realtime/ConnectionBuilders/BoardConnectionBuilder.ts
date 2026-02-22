@@ -1,9 +1,9 @@
 import type {HubConnection} from "@microsoft/signalr";
 import type {BoardGetDto} from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import type {Dispatch} from "react";
-import type {Action} from "../../Kanban/Actions/Action.ts";
+import type {KanbanAction} from "../../Kanban/Actions/KanbanAction.ts";
 
-export function buildBoardConnection(hubConnection: HubConnection, dispatch: Dispatch<Action>) {
+export function buildBoardConnection(hubConnection: HubConnection, dispatch: Dispatch<KanbanAction>) {
     hubConnection.on("CreateBoard", (projectId: number, board: BoardGetDto) => {
         dispatch({
             type: "CREATE_BOARD_OPTIMISTIC",

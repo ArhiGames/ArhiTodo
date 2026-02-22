@@ -6,7 +6,7 @@ import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
-import type {ChecklistItem} from "../../../../Models/States/types.ts";
+import type {ChecklistItem} from "../../../../Models/States/KanbanState.ts";
 
 interface Props {
     checklistId: number;

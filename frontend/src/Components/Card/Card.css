@@ -87,6 +87,8 @@
     border-radius: 10px;
     width: fit-content;
     font-size: smaller;
+    display: flex;
+    align-items: center;
 }
 
 .creation-card {

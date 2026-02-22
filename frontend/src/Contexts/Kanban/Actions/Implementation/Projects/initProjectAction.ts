@@ -1,7 +1,7 @@
-import type {Project, State} from "../../../../../Models/States/types.ts";
-import type {InitProjectPayload} from "../../Action.ts";
+import type {Project, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {InitProjectPayload} from "../../KanbanAction.ts";
 
-const initProjectAction = (state: State, payload: InitProjectPayload) => {
+const initProjectAction = (state: KanbanState, payload: InitProjectPayload) => {
 
     const newProjects: Map<number, Project> = new Map();
     newProjects.set(payload.projectId, {

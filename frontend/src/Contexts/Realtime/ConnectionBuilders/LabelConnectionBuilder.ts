@@ -1,9 +1,9 @@
 import type {HubConnection} from "@microsoft/signalr";
 import type {Dispatch} from "react";
-import type {Action} from "../../Kanban/Actions/Action.ts";
+import type {KanbanAction} from "../../Kanban/Actions/KanbanAction.ts";
 import type {LabelGetDto} from "../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 
-export function buildLabelConnection(hubConnection: HubConnection, dispatch: Dispatch<Action>) {
+export function buildLabelConnection(hubConnection: HubConnection, dispatch: Dispatch<KanbanAction>) {
     hubConnection.on("CreateLabel", (boardId: number, labelGetDto: LabelGetDto) => {
         dispatch({ type: "CREATE_LABEL_OPTIMISTIC", payload: {
                 boardId: boardId,

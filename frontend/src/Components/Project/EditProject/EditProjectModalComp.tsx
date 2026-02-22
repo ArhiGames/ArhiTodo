@@ -1,5 +1,5 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
-import type {Project} from "../../../Models/States/types.ts";
+import type {Project} from "../../../Models/States/KanbanState.ts";
 import {useState} from "react";
 import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";

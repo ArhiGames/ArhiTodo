@@ -1,7 +1,7 @@
-import type {State} from "../../../../../Models/States/types.ts";
-import type {ChangeLabelCardRelationPayload} from "../../Action.ts";
+import type {KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {ChangeLabelCardRelationPayload} from "../../KanbanAction.ts";
 
-const removeLabelFromCard = (state: State, payload: ChangeLabelCardRelationPayload) => {
+const removeLabelFromCard = (state: KanbanState, payload: ChangeLabelCardRelationPayload) => {
 
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
 

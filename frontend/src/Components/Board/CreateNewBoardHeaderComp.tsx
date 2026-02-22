@@ -1,7 +1,7 @@
 import Popover from "../../lib/Popover/Popover.tsx";
 import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
 import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
-import type { Action } from "../../Contexts/Kanban/Actions/Action.ts";
+import type { KanbanAction } from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
@@ -16,7 +16,7 @@ const CreateNewBoardHeaderComp = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
-    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
+    const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
 
     function onCreateBoardPressed() {
         setOpen(true);

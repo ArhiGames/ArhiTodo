@@ -1,7 +1,7 @@
-import type {Checklist, State} from "../../../../../Models/States/types.ts";
-import type {CreateChecklistSucceededPayload} from "../../Action.ts";
+import type {Checklist, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {CreateChecklistSucceededPayload} from "../../KanbanAction.ts";
 
-const createChecklistSucceededAction = (state: State, payload: CreateChecklistSucceededPayload) => {
+const createChecklistSucceededAction = (state: KanbanState, payload: CreateChecklistSucceededPayload) => {
 
     const newChecklists: Map<number, Checklist> = new Map(state.checklists);
     const existingChecklist: Checklist | undefined = state.checklists.get(payload.predictedChecklistId);

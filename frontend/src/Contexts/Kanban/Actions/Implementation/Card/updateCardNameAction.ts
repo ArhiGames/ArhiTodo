@@ -1,7 +1,7 @@
-import type {Card, State} from "../../../../../Models/States/types.ts";
-import type {UpdateCardNamePayload} from "../../Action.ts";
+import type {Card, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {UpdateCardNamePayload} from "../../KanbanAction.ts";
 
-const updateCardNameAction = (state: State, payload: UpdateCardNamePayload) => {
+const updateCardNameAction = (state: KanbanState, payload: UpdateCardNamePayload) => {
 
     const newCards: Map<number, Card> = new Map(state.cards);
     const existingCard: Card | undefined = state.cards.get(payload.cardId);

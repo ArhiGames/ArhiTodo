@@ -3,9 +3,9 @@ import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {Action} from "../../Contexts/Kanban/Actions/Action.ts";
+import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {PublicUserGetDto, CardList, State} from "../../Models/States/types.ts";
+import type {PublicUserGetDto, CardList, KanbanState} from "../../Models/States/KanbanState.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
@@ -20,12 +20,12 @@ import {HubConnectionState} from "@microsoft/signalr";
 
 const BoardComp = () => {
 
-    const { checkRefresh } = useAuth();
+    const { appUser, checkRefresh } = useAuth();
     const { projectId, boardId, cardId } = useParams();
     const navigate = useNavigate();
     const hubState: HubContextState = useRealtimeHub();
-    const dispatch: Dispatch<Action> | undefined = useKanbanDispatch();
-    const kanbanState: State = useKanbanState();
+    const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
+    const kanbanState: KanbanState = useKanbanState();
     const permissions = usePermissions();
 
     const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
@@ -88,8 +88,12 @@ const BoardComp = () => {
                     return res.json();
                 })
                 .then((boardUserClaims: Claim[]) => {
-                    if (dispatch) {
-                        dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: Number(boardId), boardUserClaims: boardUserClaims } });
+                    if (permissions.userDispatch) {
+                        const isOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === appUser?.id;
+                        permissions.userDispatch({
+                            type: "SET_BOARD_PERMISSION",
+                            payload: { boardId: Number(boardId), boardUserClaims: boardUserClaims, isOwner }
+                        })
                     }
                 })
                 .catch(console.error);
@@ -109,7 +113,7 @@ const BoardComp = () => {
                     if (dispatch) {
                         dispatch({
                             type: "INIT_BOARD_MEMBERS",
-                            payload: {boardId: Number(boardId), boardMembers: members}
+                            payload: { boardId: Number(boardId), boardMembers: members }
                         });
                     }
                 })
@@ -122,7 +126,7 @@ const BoardComp = () => {
 
         return () => abortController.abort();
 
-    }, [projectId, boardId, checkRefresh, dispatch, navigate]);
+    }, [boardId, kanbanState.boards]);
 
     useEffect(() => {
 
@@ -134,7 +138,7 @@ const BoardComp = () => {
             .then(() => console.log(`Joined board group with id: ${Number(boardId)}`))
             .catch(console.error);
 
-    }, [dispatch, hubState.hubConnection, boardId]);
+    }, [boardId, hubState.hubConnection]);
 
     return (
         <div className="board-body">

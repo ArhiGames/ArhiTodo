@@ -1,7 +1,7 @@
-import { createContext } from "react";
-import type { State } from "../../Models/States/types.ts";
-import type { Action } from "./Actions/Action.ts";
+import {createContext, type Dispatch} from "react";
+import type { KanbanState } from "../../Models/States/KanbanState.ts";
+import type { KanbanAction } from "./Actions/KanbanAction.ts";
 import { InitialState } from "./InitialState.ts";
 
-export const KanbanStateContext = createContext<State>(InitialState);
-export const KanbanDispatchContext = createContext<React.Dispatch<Action> | undefined>(undefined);
+export const KanbanStateContext = createContext<KanbanState>(InitialState);
+export const KanbanDispatchContext = createContext<Dispatch<KanbanAction> | undefined>(undefined);

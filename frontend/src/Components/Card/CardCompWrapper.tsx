@@ -2,6 +2,7 @@ import {useDraggable, useDroppable} from "@dnd-kit/react";
 import CardComp from "./CardComp.tsx";
 
 import {CollisionPriority} from "@dnd-kit/abstract";
+import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     cardId: number;
@@ -10,9 +11,12 @@ interface Props {
 
 const CardCompWrapper = (props: Props) => {
 
+    const permissions = usePermissions();
+
     const { ref: draggableRef } = useDraggable({
         id: `card-${props.cardId}`,
         type: "card",
+        disabled: !permissions.hasManageCardsPermission(),
         data: {
             index: props.dndIndex
         }
@@ -20,6 +24,7 @@ const CardCompWrapper = (props: Props) => {
     const { ref: droppableRef } = useDroppable({
         id: `cardDroppable-${props.cardId}`,
         type: "card",
+        disabled: !permissions.hasManageCardsPermission(),
         collisionPriority: CollisionPriority.Highest,
         data: {
             index: props.dndIndex

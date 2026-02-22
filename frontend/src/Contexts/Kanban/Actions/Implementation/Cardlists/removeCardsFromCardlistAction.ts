@@ -1,7 +1,7 @@
-import type {State} from "../../../../../Models/States/types.ts";
+import type {KanbanState} from "../../../../../Models/States/KanbanState.ts";
 import cleanCardListAction from "../cleanCardListAction.ts";
 
-const removeCardsFromCardlistAction = (state: State, fromCardListId: number)=> {
+const removeCardsFromCardlistAction = (state: KanbanState, fromCardListId: number)=> {
 
     const { newCards, newCardLabels, newChecklists, newChecklistItems } = cleanCardListAction(state, [fromCardListId]);
 

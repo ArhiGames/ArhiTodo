@@ -3,7 +3,7 @@ import ProjectCardComp from "../Project/ProjectCardComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {Project} from "../../Models/States/types.ts";
+import type {Project} from "../../Models/States/KanbanState.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
@@ -26,7 +26,7 @@ const HomePageComp = () => {
             fetch(`${API_BASE_URL}/project`,
                 {
                     method: 'GET',
-                    headers: { "Authorization": `Bearer ${refreshedToken}` },
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                     signal: abortController.signal
                 })
                 .then(res => {

@@ -1,6 +1,6 @@
-import type {ChecklistItem, State} from "../../../../../Models/States/types.ts";
+import type {ChecklistItem, KanbanState} from "../../../../../Models/States/KanbanState.ts";
 
-const deleteChecklistItemAction = ( state: State, payload: { checklistItemId: number } ) => {
+const deleteChecklistItemAction = (state: KanbanState, payload: { checklistItemId: number } ) => {
 
     const newChecklistItems: Map<number, ChecklistItem> = new Map(state.checklistItems);
     newChecklistItems.delete(payload.checklistItemId);

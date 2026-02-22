@@ -2,7 +2,7 @@ import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useCallback, useEffect, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import type {State} from "../../../Models/States/types.ts";
+import type {KanbanState} from "../../../Models/States/KanbanState.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
@@ -18,7 +18,7 @@ const ViewCardDetailsComp = () => {
     const navigate = useNavigate();
     const { checkRefresh } = useAuth();
     const { projectId, boardId, cardId } = useParams();
-    const kanbanState: State = useKanbanState();
+    const kanbanState: KanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
 

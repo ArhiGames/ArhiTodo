@@ -1,5 +1,5 @@
 import type {Dispatch, SetStateAction} from "react";
-import type {PublicUserGetDto} from "../../../Models/States/types.ts";
+import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 interface Props {
     user: PublicUserGetDto,

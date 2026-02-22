@@ -1,7 +1,7 @@
-import type {Board, State} from "../../../../../Models/States/types.ts";
-import type {InitBoardMembersPayload} from "../../Action.ts";
+import type {Board, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {InitBoardMembersPayload} from "../../KanbanAction.ts";
 
-const initBoardMembersAction = (state: State, payload: InitBoardMembersPayload): State => {
+const initBoardMembersAction = (state: KanbanState, payload: InitBoardMembersPayload): KanbanState => {
 
     const board: Board | undefined = state.boards.get(payload.boardId);
     if (!board) return state;

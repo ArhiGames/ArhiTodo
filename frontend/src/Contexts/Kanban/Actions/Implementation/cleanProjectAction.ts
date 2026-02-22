@@ -1,7 +1,7 @@
-import type {Board, State} from "../../../../Models/States/types.ts";
+import type {Board, KanbanState} from "../../../../Models/States/KanbanState.ts";
 import cleanBoardAction from "./cleanBoardAction.ts";
 
-const cleanProjectAction = (state: State, projectId: number) =>  {
+const cleanProjectAction = (state: KanbanState, projectId: number) =>  {
 
     const newBoards: Map<number, Board> = new Map(state.boards);
 

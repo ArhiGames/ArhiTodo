@@ -1,6 +1,5 @@
 import type { BoardGetDto } from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {Claim} from "../../../Models/Claim.ts";
-import type {PublicUserGetDto} from "../../../Models/States/types.ts";
+import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 export type InitProjectPayload = {
     projectId: number;
@@ -11,11 +10,6 @@ export type InitProjectPayload = {
 export type UpdateProjectPayload = {
     projectId: number;
     projectName: string;
-}
-
-export type SetProjectPermissionsPayload = {
-    projectId: number;
-    isManager: boolean;
 }
 
 export type InitBoardsPayload = {
@@ -67,11 +61,6 @@ export type CreateBoardSucceededPayload = {
 export type InitBoardMembersPayload = {
     boardId: number;
     boardMembers: PublicUserGetDto[];
-}
-
-export type SetBoardPermissionsPayload = {
-    boardId: number;
-    boardUserClaims: Claim[];
 }
 
 export type UpdateBoardPayload = {
@@ -170,24 +159,14 @@ export type UpdateChecklistItemStateAction = {
     newState: boolean;
 }
 
-export type SetDraggingOverTargetPayload = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    source: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: any;
-    targetIndex: number;
-}
-
-export type Action =
+export type KanbanAction =
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
     { type: "UPDATE_PROJECT", payload: UpdateProjectPayload } |
     { type: "DELETE_PROJECT", payload: { projectId: number } } |
-    { type: "SET_PROJECT_PERMISSION", payload: SetProjectPermissionsPayload } |
 
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
-    { type: "SET_BOARD_PERMISSION", payload: SetBoardPermissionsPayload } |
 
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
@@ -233,6 +212,4 @@ export type Action =
     { type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: CreateChecklistItemSucceededPayload } |
     { type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: number } } |
     { type: "UPDATE_CHECKLIST_ITEM", payload: UpdateChecklistItemPayload } |
-    { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction } |
-
-    { type: "SET_DRAGGING_TARGET_ID", payload: SetDraggingOverTargetPayload | null }
+    { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction }

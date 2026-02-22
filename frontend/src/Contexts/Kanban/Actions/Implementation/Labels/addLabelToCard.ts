@@ -1,7 +1,7 @@
-import type { State } from "../../../../../Models/States/types.ts";
-import type { ChangeLabelCardRelationPayload } from "../../Action.ts";
+import type { KanbanState } from "../../../../../Models/States/KanbanState.ts";
+import type { ChangeLabelCardRelationPayload } from "../../KanbanAction.ts";
 
-const addLabelToCard = (state: State, payload: ChangeLabelCardRelationPayload) => {
+const addLabelToCard = (state: KanbanState, payload: ChangeLabelCardRelationPayload) => {
 
     const cardLabels: Map<number, number[]> = new Map(state.cardLabels);
     const cardLabelIds: number[] | undefined = cardLabels.get(payload.cardId);

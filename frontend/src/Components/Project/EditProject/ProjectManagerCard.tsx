@@ -1,6 +1,6 @@
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
-import type {Project} from "../../../Models/States/types.ts";
+import type {Project} from "../../../Models/States/KanbanState.ts";
 import {type Dispatch, type SetStateAction, useState} from "react";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";

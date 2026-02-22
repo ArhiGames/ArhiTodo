@@ -1,4 +1,4 @@
-import type { Label } from "../../Models/States/types.ts";
+import type { Label } from "../../Models/States/KanbanState.ts";
 import "./EditableLabel.css"
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";

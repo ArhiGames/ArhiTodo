@@ -1,6 +1,6 @@
-import type {State} from "../../../../Models/States/types.ts";
+import type {KanbanState} from "../../../../Models/States/KanbanState.ts";
 
-const cleanLabelAction = (state: State, labelIds: number[]) => {
+const cleanLabelAction = (state: KanbanState, labelIds: number[]) => {
 
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
 

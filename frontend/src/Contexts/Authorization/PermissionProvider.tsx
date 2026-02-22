@@ -1,9 +1,10 @@
-import type {ReactNode} from "react";
+import {type ReactNode, useReducer} from "react";
 import {PermissionContext} from "./PermissionContext.ts";
 import {useAuth} from "../Authentication/useAuth.ts";
-import {useKanbanState} from "../Kanban/Hooks.ts";
 import {matchPath} from "react-router-dom";
 import type {Claim} from "../../Models/Claim.ts";
+import {InitialUserState} from "./InitialUserState.ts";
+import userReducer from "../../Reducer/userReducer.ts";
 
 interface Props {
     children: ReactNode;
@@ -11,20 +12,20 @@ interface Props {
 
 const PermissionProvider = ({ children }: Props) => {
 
-    const { jwtPayload, appUser } = useAuth();
-    const kanbanState = useKanbanState();
+    const { jwtPayload } = useAuth();
+    const [state, dispatch] = useReducer(userReducer, InitialUserState);
 
     function hasModifyProjectPermission(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
         const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
+        const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         return hasPermissionGlobally || isProjectManager;
     }
 
     function isProjectManager(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
         const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectOwner = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === appUser?.id;
+        const isProjectOwner = state.projectPermission.get(Number(match?.params.projectId))?.isProjectOwner ?? false;
         return mayModifyOthersProjectsGlobally || isProjectOwner;
     }
 
@@ -52,8 +53,8 @@ const PermissionProvider = ({ children }: Props) => {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
-        const hasBoardPermission = kanbanState.boardUserClaims.get(Number(match?.params.boardId))?.some(
+        const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
+        const hasBoardPermission = state.boardPermissions.get(Number(match?.params.boardId))?.boardUserClaims.some(
             (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "true") ?? false;
         return hasPermissionGlobally || isProjectManager || hasBoardPermission;
     }
@@ -62,8 +63,8 @@ const PermissionProvider = ({ children }: Props) => {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
-        const isProjectManager = kanbanState.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
-        const isOwner = kanbanState.boards.get(Number(match?.params.boardId))?.ownedByUserId === appUser?.id;
+        const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
+        const isOwner = state.boardPermissions.get(Number(match?.params.boardId))?.isBoardOwner ?? false;
         return hasGlobalPermission || isProjectManager || isOwner;
     }
 
@@ -106,6 +107,8 @@ const PermissionProvider = ({ children }: Props) => {
             hasManageCardListsPermission,
             hasManageCardsPermission,
             hasManageLabelsPermission,
+
+            userDispatch: dispatch
             }}>
             {children}
         </PermissionContext.Provider>

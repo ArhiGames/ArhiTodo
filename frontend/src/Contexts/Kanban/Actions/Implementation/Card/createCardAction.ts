@@ -1,7 +1,7 @@
-import type {Card, CardList, State} from "../../../../../Models/States/types.ts";
-import type {CreateCardPayload} from "../../Action.ts";
+import type {Card, CardList, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {CreateCardPayload} from "../../KanbanAction.ts";
 
-const createCardAction = (state: State, payload: CreateCardPayload): State => {
+const createCardAction = (state: KanbanState, payload: CreateCardPayload): KanbanState => {
 
     const cardList: CardList | undefined = state.cardLists.get(payload.cardListId);
     if (!cardList) return state;

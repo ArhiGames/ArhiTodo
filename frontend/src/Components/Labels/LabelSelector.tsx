@@ -1,7 +1,7 @@
 import Popover from "../../lib/Popover/Popover.tsx";
 import {type RefObject, useEffect, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type { Label } from "../../Models/States/types.ts";
+import type { Label } from "../../Models/States/KanbanState.ts";
 import "./LabelSelector.css"
 import EditableLabel from "./EditableLabel.tsx";
 import LabelEditor from "./LabelEditor.tsx";

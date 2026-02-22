@@ -3,7 +3,7 @@ import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {Board, State} from "../../Models/States/types.ts";
+import type {Board, KanbanState} from "../../Models/States/KanbanState.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
@@ -23,10 +23,10 @@ import type {Claim} from "../../Models/Claim.ts";
 
 const ProjectViewComp = () => {
 
-    const { token, checkRefresh } = useAuth();
+    const { token, checkRefresh, appUser } = useAuth();
     const { projectId, boardId } = useParams();
     const hubState: HubContextState = useRealtimeHub();
-    const kanbanState: State = useKanbanState();
+    const kanbanState: KanbanState = useKanbanState();
     const permissions = usePermissions();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
@@ -130,8 +130,12 @@ const ProjectViewComp = () => {
                     return res.json();
                 })
                 .then((projectPermission: { isManager: boolean }) => {
-                    if (dispatch) {
-                        dispatch({type: "SET_PROJECT_PERMISSION", payload: { projectId: Number(projectId), isManager: projectPermission.isManager }});
+                    if (permissions.userDispatch) {
+                        const isOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === appUser?.id;
+                        permissions.userDispatch({
+                            type: "SET_PROJECT_PERMISSION",
+                            payload: { projectId: Number(projectId), isManager: projectPermission.isManager, isOwner }
+                        });
                     }
                 })
                 .catch(console.error);
@@ -143,7 +147,7 @@ const ProjectViewComp = () => {
 
         return () => abortController.abort();
 
-    }, [dispatch, projectId, checkRefresh]);
+    }, []);
 
     useEffect(() => {
 
@@ -163,11 +167,23 @@ const ProjectViewComp = () => {
 
         connection.on("UpdateProjectManager", (projectId: number, isManager: boolean) => {
             loadBoards();
-            dispatch({ type: "SET_PROJECT_PERMISSION", payload: { projectId: Number(projectId), isManager: isManager } });
+            if (permissions.userDispatch) {
+                const isOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === appUser?.id;
+                permissions.userDispatch({
+                    type: "SET_PROJECT_PERMISSION",
+                    payload: { projectId: Number(projectId), isManager: isManager, isOwner }
+                });
+            }
         })
         connection.on("UpdateUserBoardPermissions", (boardId: number, claims: Claim[]) => {
             loadBoards();
-            dispatch({ type: "SET_BOARD_PERMISSION", payload: { boardId: boardId, boardUserClaims: claims } })
+            if (permissions.userDispatch) {
+                const isOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === appUser?.id;
+                permissions.userDispatch({
+                    type: "SET_BOARD_PERMISSION",
+                    payload: { boardId: boardId, boardUserClaims: claims, isOwner }
+                })
+            }
         });
 
         const startConnection = async () => {
@@ -191,7 +207,7 @@ const ProjectViewComp = () => {
                 .catch(console.error);
         }
 
-    }, [dispatch, token, projectId]);
+    }, []);
 
     useEffect(() => {
         if (hasLoadedBoards) {

@@ -1,7 +1,7 @@
-import type {Checklist, State} from "../../../../../Models/States/types.ts";
+import type {Checklist, KanbanState} from "../../../../../Models/States/KanbanState.ts";
 import cleanChecklistAction from "../cleanChecklistAction.ts";
 
-const deleteChecklistAction = (state: State, checklistId: number) => {
+const deleteChecklistAction = (state: KanbanState, checklistId: number) => {
 
     const restChecklists: Map<number, Checklist> = new Map(state.checklists);
     restChecklists.delete(checklistId);

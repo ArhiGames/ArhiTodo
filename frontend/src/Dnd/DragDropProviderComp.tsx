@@ -31,10 +31,6 @@ const DragDropProviderComp = ({children}: Props) => {
             const sourceId: number = extractId(source.id);
             postCardMovedChanges(sourceId, cardMovedByIndexResult).catch(console.error);
         }
-
-        if (dispatch) {
-            dispatch({ type: "SET_DRAGGING_TARGET_ID", payload: null })
-        }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,16 +40,6 @@ const DragDropProviderComp = ({children}: Props) => {
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
             const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined = moveCardOptimistically(source, target);
             if (!cardMovedByIndexResult) return;
-
-            console.log(target.id);
-
-            if (dispatch) {
-                dispatch({
-                    type: "SET_DRAGGING_TARGET_ID", payload: {
-                        source, target, targetIndex: cardMovedByIndexResult.newIndex
-                    }
-                });
-            }
         }
     }
 

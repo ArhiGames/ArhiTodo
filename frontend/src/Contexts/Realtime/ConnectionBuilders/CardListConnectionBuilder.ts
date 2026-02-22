@@ -1,9 +1,9 @@
 import type {HubConnection} from "@microsoft/signalr";
 import type {Dispatch} from "react";
-import type {Action} from "../../Kanban/Actions/Action.ts";
+import type {KanbanAction} from "../../Kanban/Actions/KanbanAction.ts";
 import type {CardListGetDto} from "../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 
-export function buildCardListConnection(hubConnection: HubConnection, dispatch: Dispatch<Action>) {
+export function buildCardListConnection(hubConnection: HubConnection, dispatch: Dispatch<KanbanAction>) {
     hubConnection.on("CreateCardList", (boardId: number, cardList: CardListGetDto) => {
         if (dispatch) {
             dispatch({ type: "CREATE_CARDLIST_OPTIMISTIC", payload: { boardId, cardListId: cardList.cardListId, cardListName: cardList.cardListName } });

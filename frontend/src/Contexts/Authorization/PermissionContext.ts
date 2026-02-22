@@ -1,4 +1,5 @@
-import {createContext} from "react";
+import {createContext, type Dispatch} from "react";
+import type {UserAction} from "./Actions/userAction.ts";
 
 export type PermissionContextType = {
     hasEditProjectManagerPermission: () => boolean;
@@ -14,6 +15,8 @@ export type PermissionContextType = {
     hasManageCardListsPermission: () => boolean;
     hasManageCardsPermission: () => boolean;
     hasManageLabelsPermission: () => boolean;
+    
+    userDispatch: Dispatch<UserAction> | undefined;
 }
 
 export const PermissionContext = createContext<PermissionContextType>({
@@ -30,4 +33,6 @@ export const PermissionContext = createContext<PermissionContextType>({
     hasManageCardListsPermission: () => false,
     hasManageCardsPermission: () => false,
     hasManageLabelsPermission: () => false,
+    
+    userDispatch: undefined
 })

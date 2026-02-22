@@ -1,4 +1,4 @@
-import type {Card, CardList, State} from "../../Models/States/types.ts";
+import type {Card, CardList, KanbanState} from "../../Models/States/KanbanState.ts";
 
 export type CardMoveIndexByIdResult = {
     newIndex: number;
@@ -10,7 +10,7 @@ function extractId(stringId: string): number {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getCardMoveIndex = (state: State, target: any, ): CardMoveIndexByIdResult | undefined => {
+const getCardMoveIndex = (state: KanbanState, target: any, ): CardMoveIndexByIdResult | undefined => {
 
     const movedToCard: Card | undefined = state.cards.get(extractId(target.id));
     if (!movedToCard) return undefined;
@@ -19,7 +19,7 @@ const getCardMoveIndex = (state: State, target: any, ): CardMoveIndexByIdResult 
 
 }
 
-const getCardOnCardListMoveIndexById = (state: State, movedToCardListId: number): CardMoveIndexByIdResult | undefined => {
+const getCardOnCardListMoveIndexById = (state: KanbanState, movedToCardListId: number): CardMoveIndexByIdResult | undefined => {
 
     const movedToCardList: CardList | undefined = state.cardLists.get(movedToCardListId);
     if (!movedToCardList) return undefined;

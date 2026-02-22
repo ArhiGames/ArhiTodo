@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {Card, Label, State} from "../../Models/States/types.ts";
+import type {Card, Label, KanbanState} from "../../Models/States/KanbanState.ts";
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
 import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
@@ -16,7 +16,7 @@ interface Props {
 const CardComp = (props: Props) => {
 
     const navigate = useNavigate();
-    const kanbanState: State = useKanbanState();
+    const kanbanState: KanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const { appUser, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
