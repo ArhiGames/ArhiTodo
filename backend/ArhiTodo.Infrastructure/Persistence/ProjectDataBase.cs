@@ -23,6 +23,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     public DbSet<Board> Boards { get; set; }
     public DbSet<CardList> CardLists { get; set; }
     public DbSet<Card> Cards { get; set; }
+    public DbSet<AssignedCardUser> AssignedCardUsers { get; set; }
     public DbSet<Label> Labels { get; set; }
     
     public DbSet<Checklist> Checklists { get; set; }

@@ -17,6 +17,13 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         return boardPermissions;
     }
 
+    public async Task RemoveAssignedCardUsers(int boardId, List<Guid> userIds)
+    {
+        await database.AssignedCardUsers
+            .Where(acu => acu.Card.CardList.BoardId == boardId && userIds.Contains(acu.UserId))
+            .ExecuteDeleteAsync();
+    }
+
     public async Task<Board> CreateBoardAsync(Board board)
     {
         EntityEntry<Board> boardEntityEntry = database.Boards.Add(board);

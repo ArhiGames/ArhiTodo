@@ -81,6 +81,12 @@ public class Board
             return new Error("UpdatingOwnerClaims", ErrorType.Conflict,
                 "Cannot update the board user claims of the owner from the board!");
         }
+
+        if (boardClaimType == BoardClaimTypes.ViewBoard)
+        {
+            return new Error("WrongMethodCalled", ErrorType.Conflict,
+                "Cannot change the view board claim using this method! Use the AddMember Method directly!");
+        }
         
         BoardUserClaim? foundBoardUserClaim = _boardUserClaims.Find(bc => bc.UserId == userId && bc.Type == boardClaimType);
         if (foundBoardUserClaim is null)

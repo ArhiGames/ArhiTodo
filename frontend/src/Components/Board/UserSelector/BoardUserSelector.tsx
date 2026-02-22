@@ -27,7 +27,7 @@ const BoardUserSelector = (props: Props) => {
 
     const [isAddingUser, setIsAddingUser] = useState<boolean>(false);
     const [selectedAddingUsers, setSelectedAddingUsers] = useState<UserGetDto[]>([]);
-    const [updatedMemberStates, setUpdatedMemberStates] = useState<{ userId: string, newMemberState: boolean }[]>([]);
+    const [updatedMemberStates, setUpdatedMemberStates] = useState<Map<string, boolean>>(new Map()); // userId <-> memberState
 
     useEffect(() => {
 
@@ -61,30 +61,22 @@ const BoardUserSelector = (props: Props) => {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setUpdatedClaims([]);
-        setUpdatedMemberStates([]);
+        setUpdatedMemberStates(new Map());
     }, [currentViewingUser, isAddingUser]);
 
-    useEffect(() => {
+    function onUserMemberSelected(user: UserGetDto) {
+        setUpdatedMemberStates((prev: Map<string, boolean>) => {
+            prev.set(user.userId, true);
+            return prev;
+        });
+    }
 
-        // Looping over every current board member, if the member isn't in the selected ones, it must be unselected.
-        const newUpdatedMemberStates: { userId: string, newMemberState: boolean }[] = [];
-        for (const boardMember of boardMembers) {
-            if (selectedAddingUsers.findIndex(au => au.userId === boardMember.userId) === -1) {
-                newUpdatedMemberStates.push({ userId: boardMember.userId, newMemberState: false });
-            }
-        }
-
-        // Looping over the currently selected adding users, if the adding user currently isn't a member, it must be selected.
-        for (const addingUser of selectedAddingUsers) {
-            if (boardMembers.findIndex(bm => bm.userId === addingUser.userId) === -1) {
-                newUpdatedMemberStates.push({ userId: addingUser.userId, newMemberState: true });
-            }
-        }
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUpdatedMemberStates(newUpdatedMemberStates);
-
-    }, [boardMembers, selectedAddingUsers]);
+    function onUserMemberUnselected(user: UserGetDto) {
+        setUpdatedMemberStates((prev: Map<string, boolean>) => {
+            prev.set(user.userId, false);
+            return prev;
+        });
+    }
 
     function onAbortButtonPressed() {
         if (isAddingUser) {
@@ -118,13 +110,12 @@ const BoardUserSelector = (props: Props) => {
                 return res.json();
             })
             .then((boardUserClaims: Claim[]) => {
-
-                const newUsers = [...boardMembers];
-                const foundUser: UserGetDto | undefined = newUsers.find((user: UserGetDto) => user.userId === currentViewingUser.userId)
-                if (!foundUser) return;
-                foundUser.boardUserClaims = boardUserClaims;
-
-                setBoardMembers(newUsers);
+                setBoardMembers((prev: UserGetDto[]) => {
+                    const foundUser: UserGetDto | undefined = prev.find((user: UserGetDto) => user.userId === currentViewingUser.userId)
+                    if (!foundUser) return prev;
+                    foundUser.boardUserClaims = boardUserClaims;
+                    return prev;
+                });
                 setCurrentViewingUser(null);
             })
             .catch(console.error)
@@ -135,15 +126,20 @@ const BoardUserSelector = (props: Props) => {
 
     async function onSaveMembersChangesButtonPressed() {
         if (!isAddingUser) return;
-        if (updatedMemberStates.length <= 0) return;
+        if (updatedMemberStates.size <= 0) return;
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
+        const boardMemberStatusUpdateList: { userId: string, newMemberState: boolean }[] = [];
+        updatedMemberStates.forEach((value: boolean, key: string) => {
+            boardMemberStatusUpdateList.push({ userId: key, newMemberState: value });
+        })
+
         fetch(`${API_BASE_URL}/board/${boardId}/members`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-            body: JSON.stringify(updatedMemberStates),
+            body: JSON.stringify(boardMemberStatusUpdateList),
         })
             .then(res => {
                 if (!res.ok) {
@@ -152,13 +148,13 @@ const BoardUserSelector = (props: Props) => {
 
                 return res.json();
             })
-            .then((user: UserGetDto[]) => {
-                setBoardMembers(user);
-                setIsAddingUser(false);
+            .then((members: UserGetDto[]) => {
+                setBoardMembers(members);
             })
             .catch(console.error)
             .finally(() => {
-                setUpdatedMemberStates([]);
+                setIsAddingUser(false);
+                setUpdatedMemberStates(new Map());
             })
     }
 
@@ -169,7 +165,8 @@ const BoardUserSelector = (props: Props) => {
                     isAddingUser ? (
                         <>
                             <h3>Manage users</h3>
-                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers} child={BoardUserSelectorAddUserComp}/>
+                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers} child={BoardUserSelectorAddUserComp}
+                                                 onUserSelected={onUserMemberSelected} onUserUnselected={onUserMemberUnselected}/>
                         </>
                     ) : currentViewingUser ? (
                         <BoardUserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>
@@ -187,7 +184,7 @@ const BoardUserSelector = (props: Props) => {
                     { !currentViewingUser && !isAddingUser && <button onClick={() => setIsAddingUser(true)}
                                                                       className="button standard-button">Manage users</button> }
                     { isAddingUser ? (
-                        <button className={`button ${updatedMemberStates.length > 0 ? 
+                        <button className={`button ${updatedMemberStates.size > 0 ? 
                             "valid-submit-button" : "standard-button"}`} onClick={onSaveMembersChangesButtonPressed}>Save</button>
                     ) : currentViewingUser ? (
                         <button className={`button ${updatedClaims.length > 0 ?

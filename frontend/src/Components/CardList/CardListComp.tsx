@@ -9,7 +9,6 @@ import CardListEditPopover from "./CardListEditPopover.tsx";
 import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useDraggable, useDroppable} from "@dnd-kit/react";
 import CardCompWrapper from "../Card/CardCompWrapper.tsx";
 
 const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
@@ -19,15 +18,6 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
     const permission = usePermissions();
-
-    const { ref: draggableRef, handleRef } = useDraggable({
-        id: `cardListDraggable-${props.cardListId}`,
-        type: "cardlist"
-    });
-    const { ref: droppableRef } = useDroppable({
-        id: `cardListDroppable-${props.cardListId}`,
-        type: "cardlist",
-    })
 
     const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -132,11 +122,6 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
         return cardIds;
     }
 
-    const setNodeRef = (node: HTMLDivElement) => {
-        draggableRef(node);
-        droppableRef(node);
-    }
-
     function getCardsScrollerJsx() {
         const filteredCards: { cardId: number, isDone: boolean }[] = getCardsFilteredCards();
 
@@ -168,7 +153,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     }
 
     return (
-        <div className="cardlist" ref={setNodeRef}>
+        <div className="cardlist">
             <div className="cardlist-background">
                 <div ref={cardListHeaderRef} className="cardlist-header">
                     {
@@ -177,7 +162,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                                    value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
                         ) : (
                             <>
-                                <h3 ref={handleRef} onClick={onTryEditCardListNameClicked}>{cardList?.cardListName}</h3>
+                                <h3 onClick={onTryEditCardListNameClicked}>{cardList?.cardListName}</h3>
                                 { (permission.hasManageCardsPermission() || permission.hasManageCardListsPermission()) && (
                                     <div className="cardlist-actions">
                                         <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"

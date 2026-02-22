@@ -8,6 +8,8 @@ interface Props {
     user: UserGetDto;
     selectedUsers: UserGetDto[];
     setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>;
+    onUserSelected?: (user: UserGetDto) => void;
+    onUserUnselected?: (user: UserGetDto) => void;
 }
 
 const BoardUserSelectorAddUserComp = (props: Props) => {
@@ -25,8 +27,14 @@ const BoardUserSelectorAddUserComp = (props: Props) => {
         if (isBoardOwner || isSelf) return;
         if (isSelected) {
             props.setSelectedUsers(props.selectedUsers.filter((selectedUser: UserGetDto) => selectedUser.userId !== props.user.userId));
+            if (props.onUserUnselected) {
+                props.onUserUnselected(props.user);
+            }
         } else {
             props.setSelectedUsers([...props.selectedUsers, props.user]);
+            if (props.onUserSelected) {
+                props.onUserSelected(props.user);
+            }
         }
     }
 

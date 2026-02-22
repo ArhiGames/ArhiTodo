@@ -7,6 +7,7 @@ namespace ArhiTodo.Domain.Repositories.Kanban;
 public interface IBoardRepository
 {
     Task<List<BoardUserClaim>> GetBoardPermissions(int boardId);
+    Task RemoveAssignedCardUsers(int boardId, List<Guid> userIds);
     
     Task<Board> CreateBoardAsync(Board board);
     Task RemoveBoardAsync(Board board);

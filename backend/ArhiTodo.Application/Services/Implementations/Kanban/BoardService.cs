@@ -49,21 +49,11 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
         List<ClaimGetDto> boardUserClaims = board.BoardUserClaims.Where(buc => buc.UserId == userId).Select(buc => buc.ToGetDto()).ToList();
         boardNotificationService.UpdateUserBoardPermissions(userId, boardId, boardUserClaims);
-        
-        return board.BoardUserClaims.Where(bc => bc.UserId == userId).Select(bc => bc.ToGetDto()).ToList();
+        return boardUserClaims;
     }
 
-    public async Task<Result<List<UserGetDto>>> GetBoardMembers(int boardId)
+    private static List<UserGetDto> RelateBoardUserClaimsToMember(Board board, List<User> boardMembers)
     {
-        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
-        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
-        
-        Board? board = await boardRepository.GetAsync(boardId);
-        if (board is null) return Errors.NotFound;
-
-        List<Guid> boardMemberIds = board.GetMemberIds();
-        List<User> boardMembers = await accountRepository.GetUsersByGuidsAsync(boardMemberIds);
-        
         List<UserGetDto> boardMemberGetDtos = [];
         foreach (User boardMember in boardMembers)
         {
@@ -76,6 +66,20 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             boardMemberGetDtos.Add(boardMemberGetDto);
         }
         return boardMemberGetDtos;
+    }
+
+    public async Task<Result<List<UserGetDto>>> GetBoardMembers(int boardId)
+    {
+        bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardEditUsersPermission(boardId);
+        if (!hasBoardManageUsersPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId);
+        if (board is null) return Errors.NotFound;
+
+        List<Guid> boardMemberIds = board.GetMemberIds();
+        List<User> boardMembers = await accountRepository.GetUsersByGuidsAsync(boardMemberIds);
+
+        return RelateBoardUserClaimsToMember(board, boardMembers);
     }
 
     public async Task<Result<List<PublicUserGetDto>>> GetPublicBoardMembers(int boardId)
@@ -106,26 +110,28 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
-        
-        foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
+
+        List<Guid> addingUserIds =
+            boardMemberStatusUpdateDtos.Where(bm => bm.NewMemberState).Select(bm => bm.UserId).ToList();
+        List<Guid> removingUserIds =
+            boardMemberStatusUpdateDtos.Where(bm => !bm.NewMemberState).Select(bm => bm.UserId).ToList();
+
+        foreach (Guid addingUserId in addingUserIds)
         {
-            if (boardMemberStatusUpdateDto.NewMemberState)
-            {
-                Result addMemberResult = board.AddMember(boardMemberStatusUpdateDto.UserId);
-                if (!addMemberResult.IsSuccess) return addMemberResult.Error!;
-            }
-            else
-            {
-                Result removeMemberResult = board.RemoveMember(boardMemberStatusUpdateDto.UserId);
-                if (!removeMemberResult.IsSuccess) return removeMemberResult.Error!;
-            }
+            Result addMemberResult = board.AddMember(addingUserId);
+            if (!addMemberResult.IsSuccess) return addMemberResult.Error!;
+        }
+        foreach (Guid removingUserId in removingUserIds)
+        {
+            Result removeMemberResult = board.RemoveMember(removingUserId);
+            if (!removeMemberResult.IsSuccess) return removeMemberResult.Error!;
         }
 
         await unitOfWork.SaveChangesAsync();
+        await boardRepository.RemoveAssignedCardUsers(boardId, removingUserIds);
 
-        List<User> users =
-            await accountRepository.GetUsersByGuidsAsync(boardMemberStatusUpdateDtos.
-                Where(bm => bm.NewMemberState).Select(bm => bm.UserId).ToList());
+        List<User> addedUsers =
+            await accountRepository.GetUsersByGuidsAsync(addingUserIds);
 
         foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
         {
@@ -134,7 +140,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             boardNotificationService.UpdateUserBoardPermissions(boardMemberStatusUpdateDto.UserId, boardId, boardUserClaims);
             if (boardMemberStatusUpdateDto.NewMemberState)
             {
-                boardNotificationService.AddBoardMember(boardId, users.FirstOrDefault(u => u.UserId == boardMemberStatusUpdateDto.UserId)!.ToPublicGetDto());
+                boardNotificationService.AddBoardMember(boardId, addedUsers.FirstOrDefault(u => u.UserId == boardMemberStatusUpdateDto.UserId)!.ToPublicGetDto());
             }
             else
             {
@@ -142,7 +148,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             }
         }
         
-        return await GetBoardMembers(boardId);
+        List<Guid> boardMemberIds = board.GetMemberIds();
+        List<User> boardMembers = await accountRepository.GetUsersByGuidsAsync(boardMemberIds);
+        return RelateBoardUserClaimsToMember(board, boardMembers);
     }
 
     public async Task<Result<BoardGetDto>> CreateBoard(int projectId, BoardCreateDto boardCreateDto)

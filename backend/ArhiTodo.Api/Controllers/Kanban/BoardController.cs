@@ -25,8 +25,8 @@ public class BoardController(IBoardService boardService) : ApiControllerBase
     public async Task<IActionResult> UpdateMemberStatus(int boardId,
         [FromBody] List<BoardMemberStatusUpdateDto> boardMemberStatusUpdateDtos)
     {
-        Result<List<UserGetDto>> userGetDtos = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
-        return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
+        Result<List<UserGetDto>> updateBoardMembersResult = await boardService.UpdateBoardMemberStatus(boardId, boardMemberStatusUpdateDtos);
+        return updateBoardMembersResult.IsSuccess ? Ok(updateBoardMembersResult.Value) : HandleFailure(updateBoardMembersResult);
     }
 
     [HttpGet("board/{boardId:int}/members")]
