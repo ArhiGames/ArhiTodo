@@ -15,7 +15,7 @@ public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService auth
                 c.CardList.Board.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 c.CardList.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasEditCardPermission) return true;
         if (optionalPolicy is null) return false;
 
@@ -30,7 +30,7 @@ public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService auth
                 cl.Board.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 cl.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageCards &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasEditCardPermission) return true;
 
         bool hasGlobalPermission = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));

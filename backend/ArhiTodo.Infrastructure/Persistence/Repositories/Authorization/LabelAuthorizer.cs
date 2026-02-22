@@ -15,7 +15,7 @@ public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService aut
                 l.Board.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 l.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasEditLabelPermission) return true;
         if (optionalPolicy is null) return false;
 
@@ -30,7 +30,7 @@ public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService aut
                 b.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 b.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageLabels &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasCreateLabelPermission) return true;
 
         bool hasGlobalPermission = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));

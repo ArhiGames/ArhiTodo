@@ -40,6 +40,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
     public async Task<BoardGetDto?> GetReadModelAsync(int boardId)
     {
         BoardGetDto? boardGetDto = await database.Boards
+            .AsNoTracking()
             .Where(b => b.BoardId == boardId)
             .Select(b => new BoardGetDto
             {
@@ -125,7 +126,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
             .Where(b => b.ProjectId == projectId &&
                         (b.Project.ProjectManagers.Any(pm => pm.UserId == userId) ||
                          b.BoardUserClaims.Any(buc =>
-                             buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true")))
+                             buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value)))
             .ToListAsync();
 
         return boards;

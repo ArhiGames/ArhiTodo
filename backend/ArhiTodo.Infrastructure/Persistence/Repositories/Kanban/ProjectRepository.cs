@@ -41,7 +41,7 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
                                       p.Boards.Any(b => b.BoardUserClaims.Any(buc =>
                                           buc.UserId == userId &&
                                           buc.Type == BoardClaimTypes.ViewBoard &&
-                                          buc.Value == "true"))));
+                                          buc.Value))));
         return project;
     }
 
@@ -59,7 +59,7 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
                         p.Boards.Any(b => b.BoardUserClaims.Any(buc => 
                             buc.UserId == userId && 
                             buc.Type == BoardClaimTypes.ViewBoard && 
-                            buc.Value == "true")))
+                            buc.Value)))
             .ToListAsync();
         return projects;
     }

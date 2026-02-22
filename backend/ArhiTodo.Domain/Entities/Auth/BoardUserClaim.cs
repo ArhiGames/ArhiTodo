@@ -16,7 +16,7 @@ public class BoardUserClaim
 {
     public BoardClaimTypes Type { get; private set; }
 
-    public string Value { get; private set; } = string.Empty;
+    public bool Value { get; private set; }
     
     public int BoardId { get; init; }
     public Board Board { get; } = null!;
@@ -26,7 +26,7 @@ public class BoardUserClaim
 
     private BoardUserClaim() { }
     
-    public BoardUserClaim(BoardClaimTypes boardClaimType, string value, int boardId, Guid userId)
+    public BoardUserClaim(BoardClaimTypes boardClaimType, bool value, int boardId, Guid userId)
     {
         Type = boardClaimType;
         Value = value;
@@ -34,7 +34,7 @@ public class BoardUserClaim
         UserId = userId;
     }
 
-    public void UpdateValue(string newValue)
+    public void UpdateValue(bool newValue)
     {
         Value = newValue;
     }

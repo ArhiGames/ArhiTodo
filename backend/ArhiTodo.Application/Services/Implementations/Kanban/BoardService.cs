@@ -54,18 +54,15 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     private static List<UserGetDto> RelateBoardUserClaimsToMember(Board board, List<User> boardMembers)
     {
-        List<UserGetDto> boardMemberGetDtos = [];
-        foreach (User boardMember in boardMembers)
+        ILookup<Guid, ClaimGetDto> claimsLookup = board.BoardUserClaims
+            .ToLookup(buc => buc.UserId, buc => buc.ToGetDto());
+
+        return boardMembers.Select(member => 
         {
-            UserGetDto boardMemberGetDto = boardMember.ToGetDto();
-            
-            List<ClaimGetDto> boardUserClaims =
-                board.BoardUserClaims.Where(buc => buc.UserId == boardMemberGetDto.UserId).Select(buc => buc.ToGetDto()).ToList();
-            boardMemberGetDto.BoardUserClaims = boardUserClaims;
-            
-            boardMemberGetDtos.Add(boardMemberGetDto);
-        }
-        return boardMemberGetDtos;
+            UserGetDto dto = member.ToGetDto();
+            dto.BoardUserClaims = claimsLookup[dto.UserId].ToList();
+            return dto;
+        }).ToList();
     }
 
     public async Task<Result<List<UserGetDto>>> GetBoardMembers(int boardId)

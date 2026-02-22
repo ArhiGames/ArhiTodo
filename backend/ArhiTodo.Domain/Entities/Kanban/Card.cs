@@ -98,11 +98,10 @@ public class Card : Draggable
         {
             ChecklistItem? checklistItem =
                 checklist.ChecklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
-            if (checklistItem != null)
-            {
-                checklistItem.UpdateChecklistItemState(isDone);
-                return checklistItem;
-            }
+            if (checklistItem == null) continue;
+            
+            checklistItem.UpdateChecklistItemState(isDone);
+            return checklistItem;
         }
         return null;
     }

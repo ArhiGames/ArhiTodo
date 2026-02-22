@@ -15,21 +15,21 @@ public class UserClaim
 {
     public UserClaimTypes Type { get; private set; }
 
-    public string Value { get; private set; } = string.Empty;
+    public bool Value { get; private set; }
     
     public Guid UserId { get; private set; }
     public User User { get; } = null!;
     
     private UserClaim() { }
 
-    public UserClaim(Guid userId, UserClaimTypes type, string value)
+    public UserClaim(Guid userId, UserClaimTypes type, bool value)
     {
         UserId = userId;
         Type = type;
         Value = value;
     }
 
-    public void ChangeClaimValue(string value)
+    public void ChangeClaimValue(bool value)
     {
         Value = value;
     }

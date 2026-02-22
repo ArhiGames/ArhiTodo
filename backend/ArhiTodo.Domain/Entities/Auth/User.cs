@@ -52,7 +52,7 @@ public class User
             : validateUserNameResult.Error!;
     }
  
-    public Result AddUserClaim(UserClaimTypes userClaimTypes, string value)
+    public Result AddUserClaim(UserClaimTypes userClaimTypes, bool value)
     {
         if (UserName == "admin")
         {
@@ -65,7 +65,7 @@ public class User
         return Result.Success();
     }
     
-    public Result ChangeClaimValue(UserClaimTypes userClaimTypes, string value)
+    public Result ChangeClaimValue(UserClaimTypes userClaimTypes, bool value)
     {
         if (UserName == "admin")
         {

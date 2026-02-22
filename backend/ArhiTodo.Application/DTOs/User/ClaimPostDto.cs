@@ -1,3 +1,3 @@
 ﻿namespace ArhiTodo.Application.DTOs.User;
 
-public record ClaimPostDto(string ClaimType, string ClaimValue);
+public record ClaimPostDto(string ClaimType, bool ClaimValue);

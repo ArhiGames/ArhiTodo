@@ -25,7 +25,7 @@ public class AuthorizationService(ICurrentUser currentUser, IAccountRepository a
             if (claimsAuthorizationRequirement.AllowedValues is null) continue;
 
             bool hasClaim = user.UserClaims.Any(uc => uc.Type.ToString().Equals(claimsAuthorizationRequirement.ClaimType) &&
-                                                      claimsAuthorizationRequirement.AllowedValues.Contains(uc.Value));
+                                                      claimsAuthorizationRequirement.AllowedValues.Contains(uc.Value.ToString()));
             if (!hasClaim) return false;
         }
 

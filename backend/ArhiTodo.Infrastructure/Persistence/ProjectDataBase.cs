@@ -43,7 +43,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
 
             foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
             {
-                appUser.Value!.AddUserClaim(userClaimType, "true");
+                appUser.Value!.AddUserClaim(userClaimType, true);
             }
             
             context.Set<User>().Add(appUser.Value!);

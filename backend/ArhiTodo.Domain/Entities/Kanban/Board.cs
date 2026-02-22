@@ -70,11 +70,11 @@ public class Board
         foreach (BoardClaimTypes boardClaim in Enum.GetValuesAsUnderlyingType<BoardClaimTypes>())
         {
             if (boardClaim == BoardClaimTypes.ViewBoard) continue; // Handled by the AddMember method
-            AddOrUpdateUserClaim(boardClaim, "true", userId);
+            AddOrUpdateUserClaim(boardClaim, true, userId);
         }
     }
     
-    public Result AddOrUpdateUserClaim(BoardClaimTypes boardClaimType, string newValue, Guid userId)
+    public Result AddOrUpdateUserClaim(BoardClaimTypes boardClaimType, bool newValue, Guid userId)
     {
         if (OwnerId == userId)
         {
@@ -109,7 +109,7 @@ public class Board
             return new Error("AlreadyMember", ErrorType.Conflict,
                 "The user with the specified id is already a member of the board!");
         }
-        BoardUserClaim boardUserClaim = new(BoardClaimTypes.ViewBoard, "true", BoardId, userId);
+        BoardUserClaim boardUserClaim = new(BoardClaimTypes.ViewBoard, true, BoardId, userId);
         _boardUserClaims.Add(boardUserClaim);
         return Result.Success();
     }
@@ -129,12 +129,12 @@ public class Board
     private bool IsMember(Guid userId)
     {
         return _boardUserClaims.Any(buc =>
-            buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true");
+            buc.UserId == userId && buc is { Type: BoardClaimTypes.ViewBoard, Value: true });
     } 
 
     public List<Guid> GetMemberIds()
     {
-        return _boardUserClaims.Where(buc => buc.Type == BoardClaimTypes.ViewBoard && buc.Value == "true")
+        return _boardUserClaims.Where(buc => buc is { Type: BoardClaimTypes.ViewBoard, Value: true })
             .Select(buc => buc.UserId).ToList();
     }
 

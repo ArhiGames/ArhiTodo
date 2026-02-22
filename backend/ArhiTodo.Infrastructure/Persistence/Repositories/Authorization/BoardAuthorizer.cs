@@ -15,7 +15,7 @@ public class BoardAuthorizer(ICurrentUser currentUser, IAuthorizationService aut
                            (b.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                             b.BoardUserClaims.Any(buc =>
                                 buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
-                                buc.Value == "true")));
+                                buc.Value)));
         if (hasPermission) return true;
         if (optionalPolicy is null) return false;
 

@@ -51,7 +51,7 @@ public class AuthService(
 
         string refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         
-        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value)).ToList();
+        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value.ToString())).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
         
         return new LoginGetDto(user.UserId, jwt, refreshToken);
@@ -97,7 +97,7 @@ public class AuthService(
         UserSession? userSession = user.UserSessions.FirstOrDefault(us => us.TokenHash == hashedToken);
         if (userSession == null) return Errors.Unauthenticated;
         
-        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value)).ToList();
+        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value.ToString())).ToList();
         string jwt = jwtTokenGeneratorService.GenerateToken(userSession.User, claims);
         return jwt;
     }

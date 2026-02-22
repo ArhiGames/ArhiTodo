@@ -15,7 +15,7 @@ public class CardListAuthorizer(ICurrentUser currentUser, IAuthorizationService 
                 cl.Board.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 cl.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == permission &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasCreateCardListPermission) return true;
         if (optionalPolicy is null) return false;
         
@@ -30,7 +30,7 @@ public class CardListAuthorizer(ICurrentUser currentUser, IAuthorizationService 
                 b.Project.ProjectManagers.Any(pm => pm.UserId == currentUser.UserId) ||
                 b.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageCardLists &&
-                    buc.Value == "true")));
+                    buc.Value)));
         if (hasCreateCardListPermission) return true;
         
         bool fulfillsPolicyGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));

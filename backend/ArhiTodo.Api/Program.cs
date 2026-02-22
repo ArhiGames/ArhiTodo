@@ -90,35 +90,35 @@ builder.Services.AddAuthorization();
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(nameof(UserClaimTypes.CreateProjects), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.CreateProjects), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.CreateProjects), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.AccessAdminDashboard), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.ManageUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
-        policy.RequireClaim(nameof(UserClaimTypes.ManageUsers), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "True");
+        policy.RequireClaim(nameof(UserClaimTypes.ManageUsers), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.DeleteUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
-        policy.RequireClaim(nameof(UserClaimTypes.DeleteUsers), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "True");
+        policy.RequireClaim(nameof(UserClaimTypes.DeleteUsers), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.InviteOtherUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
-        policy.RequireClaim(nameof(UserClaimTypes.InviteOtherUsers), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "True");
+        policy.RequireClaim(nameof(UserClaimTypes.InviteOtherUsers), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.UpdateAppSettings), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "true");
-        policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard), "True");
+        policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings), "True");
     })
     .AddPolicy(nameof(UserClaimTypes.ModifyOthersProjects), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.ModifyOthersProjects), "true");
+        policy.RequireClaim(nameof(UserClaimTypes.ModifyOthersProjects), "True");
     });
 
 builder.Services.AddControllers();
