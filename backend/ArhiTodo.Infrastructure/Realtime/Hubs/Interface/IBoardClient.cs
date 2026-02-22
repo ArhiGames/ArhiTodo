@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.Project;
+﻿using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Domain.Entities.DTOs;
 
@@ -13,6 +14,8 @@ public interface IBoardClient
     Task CreateBoard(int projectId, BoardGetDto board);
     Task UpdateBoard(int projectId, BoardGetDto board);
     Task DeleteBoard(int boardId);
+    Task AddBoardMember(int boardId, PublicUserGetDto publicUserGetDto);
+    Task RemoveBoardMember(int boardId, Guid userId);
     Task UpdateUserBoardPermissions(int boardId, List<ClaimGetDto> claimGetDtos);
 
     Task CreateCardList(int boardId, CardListGetDto cardList);
@@ -23,6 +26,8 @@ public interface IBoardClient
     Task CreateCard(int boardId, int cardListId, CardGetDto card);
     Task DeleteCard(int cardId);
     Task MoveCard(int cardId, int toCardListId, int toIndex);
+    Task AssignUser(int cardId, Guid userId);
+    Task RemoveAssignedUser(int cardId, Guid userId);
     Task PatchCardName(int cardId, CardGetDto card);
     Task PathCardStatus(int cardId, bool isDone);
     

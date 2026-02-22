@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
 import Popover from "../../../lib/Popover/Popover.tsx";
 import "./DetailedCard.css"
@@ -41,17 +41,20 @@ const ViewCardMembersComp = () => {
             .filter((bm): bm is PublicUserGetDto => !!bm);
     }
 
-    const postAssignCardMember = useCallback(async (userId: string) => {
+    async function postAssignCardMember(userId: string) {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
             if (dispatch) {
-                dispatch({ type: "REMOVE_ASSIGNED_CARD_MEMBER", payload: { cardId: Number(cardId), assignedUserId: userId } });
+                dispatch({
+                    type: "REMOVE_ASSIGNED_CARD_MEMBER",
+                    payload: {cardId: Number(cardId), assignedUserId: userId}
+                });
             }
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/assign/user/${userId}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/assign/user/${userId}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {"Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}`}
         })
             .then(res => {
                 if (!res.ok) {
@@ -60,11 +63,14 @@ const ViewCardMembersComp = () => {
             })
             .catch(err => {
                 if (dispatch) {
-                    dispatch({ type: "REMOVE_ASSIGNED_CARD_MEMBER", payload: { cardId: Number(cardId), assignedUserId: userId } });
+                    dispatch({
+                        type: "REMOVE_ASSIGNED_CARD_MEMBER",
+                        payload: {cardId: Number(cardId), assignedUserId: userId}
+                    });
                 }
                 console.error(err);
             });
-    }, [cardId, checkRefresh, dispatch])
+    }
 
     async function deleteAssignCardMember(userId: string) {
         const refreshedToken: string | null = await checkRefresh();
@@ -74,7 +80,7 @@ const ViewCardMembersComp = () => {
             }
         }
 
-        fetch(`${API_BASE_URL}/card/${Number(cardId)}/unassign/user/${userId}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/unassign/user/${userId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })

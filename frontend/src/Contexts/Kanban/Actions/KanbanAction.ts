@@ -63,6 +63,16 @@ export type InitBoardMembersPayload = {
     boardMembers: PublicUserGetDto[];
 }
 
+export type AddBoardMembersPayload = {
+    boardId: number;
+    boardMember: PublicUserGetDto;
+}
+
+export type RemoveBoardMembersPayload = {
+    boardId: number;
+    boardMemberId: string;
+}
+
 export type UpdateBoardPayload = {
     boardId: number;
     boardName: string;
@@ -167,6 +177,14 @@ export type KanbanAction =
 
     { type: "INIT_BOARDS", payload: { projectId: number, boards: InitBoardsPayload[] }} |
     { type: "INIT_BOARD", payload: InitBoardPayload } |
+    { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
+    { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
+    { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
+    { type: "INIT_BOARD_MEMBERS", payload: InitBoardMembersPayload } |
+    { type: "ADD_BOARD_MEMBER", payload: AddBoardMembersPayload } |
+    { type: "REMOVE_BOARD_MEMBER", payload: RemoveBoardMembersPayload } |
+    { type: "UPDATE_BOARD", payload: UpdateBoardPayload } |
+    { type: "DELETE_BOARD", payload: { boardId: number } } |
 
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
@@ -177,13 +195,6 @@ export type KanbanAction =
     { type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: ChangeLabelCardRelationPayload } |
     { type: "ADD_LABEL_TO_CARD_FAILED", payload: ChangeLabelCardRelationPayload } |
     { type: "REMOVE_LABEL_FROM_CARD", payload: ChangeLabelCardRelationPayload } |
-
-    { type: "CREATE_BOARD_OPTIMISTIC", payload: CreateBoardPayload } |
-    { type: "CREATE_BOARD_SUCCEEDED", payload: CreateBoardSucceededPayload } |
-    { type: "CREATE_BOARD_FAILED", payload: { failedBoardId: number } } |
-    { type: "INIT_BOARD_MEMBERS", payload: InitBoardMembersPayload } |
-    { type: "UPDATE_BOARD", payload: UpdateBoardPayload } |
-    { type: "DELETE_BOARD", payload: { boardId: number } } |
 
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |

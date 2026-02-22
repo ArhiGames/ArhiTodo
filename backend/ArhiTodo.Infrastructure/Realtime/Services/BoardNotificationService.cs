@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.User;
+﻿using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
@@ -22,6 +23,16 @@ public class BoardNotificationService(IHubContext<BoardHub, IBoardClient> hubCon
     public void DeleteBoard(int projectId, int boardId)
     {
         hubContext.Clients.Group($"grp-project-{projectId}").DeleteBoard(boardId);
+    }
+
+    public void AddBoardMember(int boardId, PublicUserGetDto publicUserGetDto)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").AddBoardMember(boardId, publicUserGetDto);
+    }
+
+    public void RemoveBoardMember(int boardId, Guid userId)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").RemoveBoardMember(boardId, userId);
     }
 
     public void UpdateUserBoardPermissions(Guid userId, int boardId, List<ClaimGetDto> claimGetDtos)

@@ -9,8 +9,8 @@ public interface ICardService
     Task<Result<CardGetDto>> CreateCard(int boardId, int cardListId, CardCreateDto cardCreateDto);
     Task<Result> DeleteCard(int boardId, int cardId);
     Task<Result> MoveCard(int boardId, int cardId, MoveCardPatchDto moveCardPatchDto);
-    Task<Result> AssignUser(int cardId, Guid userId);
-    Task<Result> UnassignUser(int cardId, Guid userId);
+    Task<Result> AssignUser(int boardId, int cardId, Guid userId);
+    Task<Result> UnassignUser(int boardId, int cardId, Guid userId);
     Task<Result<CardGetDto>> PatchCardName(int boardId, int cardId, PatchCardNameDto patchCardNameDto);
     Task<Result<CardGetDto>> PatchCardStatus(int boardId, int cardId, bool isDone);
     Task<Result<CardGetDto>> PatchCardDescription(int cardId, PatchCardDescriptionDto patchCardDescriptionDto);

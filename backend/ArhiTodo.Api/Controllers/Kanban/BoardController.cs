@@ -39,7 +39,7 @@ public class BoardController(IBoardService boardService) : ApiControllerBase
     [HttpGet("board/{boardId:int}/members/public")]
     public async Task<IActionResult> GetPublicBoardMembers(int boardId)
     {
-        Result<List<BoardMemberGetDto>> userGetDtos = await boardService.GetPublicBoardMembers(boardId);
+        Result<List<PublicUserGetDto>> userGetDtos = await boardService.GetPublicBoardMembers(boardId);
         return userGetDtos.IsSuccess ? Ok(userGetDtos.Value) : HandleFailure(userGetDtos);
     }
     

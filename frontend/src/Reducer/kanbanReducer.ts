@@ -48,6 +48,8 @@ import updateCardDescriptionAction from "../Contexts/Kanban/Actions/Implementati
 import assignCardUserAction from "../Contexts/Kanban/Actions/Implementation/Card/assignCardUserAction.ts";
 import removeAssignedUserAction from "../Contexts/Kanban/Actions/Implementation/Card/removeAssignedUserAction.ts";
 import initBoardMembersAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardMembersAction.ts";
+import addBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boards/addBoardMemberAction.ts";
+import removeBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boards/removeBoardMemberAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -64,6 +66,22 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return initBoardsAction(state, action.payload);
         case "INIT_BOARD":
             return initBoardAction(state, action.payload);
+        case "CREATE_BOARD_OPTIMISTIC":
+            return createBoardAction(state, action.payload);
+        case "CREATE_BOARD_SUCCEEDED":
+            return createBoardSucceededAction(state, action.payload);
+        case "CREATE_BOARD_FAILED":
+            return deleteBoardAction(state, action.payload.failedBoardId);
+        case "INIT_BOARD_MEMBERS":
+            return initBoardMembersAction(state, action.payload);
+        case "ADD_BOARD_MEMBER":
+            return addBoardMemberAction(state, action.payload);
+        case "REMOVE_BOARD_MEMBER":
+            return removeBoardMemberAction(state, action.payload);
+        case "UPDATE_BOARD":
+            return updateBoardAction(state, action.payload);
+        case "DELETE_BOARD":
+            return deleteBoardAction(state, action.payload.boardId)
 
         case "CREATE_LABEL_OPTIMISTIC":
             return createLabelAction(state, action.payload);
@@ -82,19 +100,6 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return removeLabelFromCard(state, action.payload);
         case "REMOVE_LABEL_FROM_CARD":
             return removeLabelFromCard(state, action.payload);
-
-        case "CREATE_BOARD_OPTIMISTIC":
-            return createBoardAction(state, action.payload);
-        case "CREATE_BOARD_SUCCEEDED":
-            return createBoardSucceededAction(state, action.payload);
-        case "CREATE_BOARD_FAILED":
-            return deleteBoardAction(state, action.payload.failedBoardId);
-        case "INIT_BOARD_MEMBERS":
-            return initBoardMembersAction(state, action.payload);
-        case "UPDATE_BOARD":
-            return updateBoardAction(state, action.payload);
-        case "DELETE_BOARD":
-            return deleteBoardAction(state, action.payload.boardId)
 
         case "CREATE_CARDLIST_OPTIMISTIC":
             return createCardlistAction(state, action.payload);

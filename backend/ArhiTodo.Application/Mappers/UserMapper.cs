@@ -21,9 +21,9 @@ public static class UserMapper
             };
         }
 
-        public BoardMemberGetDto ToBoardMemberGetDto()
+        public PublicUserGetDto ToPublicGetDto()
         {
-            return new BoardMemberGetDto
+            return new PublicUserGetDto
             {
                 UserId = user.UserId,
                 UserName = user.UserName,

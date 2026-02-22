@@ -70,7 +70,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return moveCardResult;
     }
 
-    public async Task<Result> AssignUser(int cardId, Guid userId)
+    public async Task<Result> AssignUser(int boardId, int cardId, Guid userId)
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
         if (!hasEditCardPermission) return Errors.Forbidden;
@@ -85,10 +85,12 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!assignUserResult.IsSuccess) return assignUserResult.Error!;
 
         await unitOfWork.SaveChangesAsync();
+        cardNotificationService.AssignUser(boardId, card.CardId, userId);
+        
         return Result.Success();
     }
 
-    public async Task<Result> UnassignUser(int cardId, Guid userId)
+    public async Task<Result> UnassignUser(int boardId, int cardId, Guid userId)
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
         if (!hasEditCardPermission) return Errors.Forbidden;
@@ -100,6 +102,8 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!unassignUserResult.IsSuccess) return unassignUserResult.Error!;
 
         await unitOfWork.SaveChangesAsync();
+        cardNotificationService.RemoveAssignedUser(boardId, card.CardId, userId);
+        
         return Result.Success();
     }
 

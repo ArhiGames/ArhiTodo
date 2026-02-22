@@ -23,6 +23,16 @@ public class CardNotificationService(IHubContext<BoardHub, IBoardClient> hubCont
         hubContext.Clients.Group($"grp-board-{boardId}").MoveCard(cardId, toCardList, toIndex);
     }
 
+    public void AssignUser(int boardId, int cardId, Guid userId)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").AssignUser(cardId, userId);
+    }
+
+    public void RemoveAssignedUser(int boardId, int cardId, Guid userId)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").RemoveAssignedUser(cardId, userId);
+    }
+
     public void PatchCardName(int boardId, int cardId, CardGetDto card)
     {
         hubContext.Clients.Group($"grp-board-{boardId}").PatchCardName(cardId, card);

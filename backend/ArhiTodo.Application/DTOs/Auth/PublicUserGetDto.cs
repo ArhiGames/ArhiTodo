@@ -1,6 +1,6 @@
-﻿namespace ArhiTodo.Application.DTOs.Board;
+﻿namespace ArhiTodo.Application.DTOs.Auth;
 
-public class BoardMemberGetDto
+public class PublicUserGetDto
 {
     public Guid UserId { get; set; } 
     

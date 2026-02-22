@@ -78,7 +78,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         return boardMemberGetDtos;
     }
 
-    public async Task<Result<List<BoardMemberGetDto>>> GetPublicBoardMembers(int boardId)
+    public async Task<Result<List<PublicUserGetDto>>> GetPublicBoardMembers(int boardId)
     {
         bool hasBoardViewPermission = await boardAuthorizer.HasBoardViewPermission(boardId);
         if (!hasBoardViewPermission) return Errors.Forbidden;
@@ -89,7 +89,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         List<Guid> boardMemberIds = board.GetMemberIds();
         List<User> boardMembers = await accountRepository.GetUsersByGuidsAsync(boardMemberIds);
 
-        return boardMembers.Select(bm => bm.ToBoardMemberGetDto()).ToList();
+        return boardMembers.Select(bm => bm.ToPublicGetDto()).ToList();
     }
 
     public async Task<Result<List<UserGetDto>>> UpdateBoardMemberStatus(int boardId, 
@@ -123,11 +123,23 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
         await unitOfWork.SaveChangesAsync();
 
+        List<User> users =
+            await accountRepository.GetUsersByGuidsAsync(boardMemberStatusUpdateDtos.
+                Where(bm => bm.NewMemberState).Select(bm => bm.UserId).ToList());
+
         foreach (BoardMemberStatusUpdateDto boardMemberStatusUpdateDto in boardMemberStatusUpdateDtos)
         {
             List<ClaimGetDto> boardUserClaims = board.BoardUserClaims
                 .Where(buc => buc.UserId == boardMemberStatusUpdateDto.UserId).Select(buc => buc.ToGetDto()).ToList();
             boardNotificationService.UpdateUserBoardPermissions(boardMemberStatusUpdateDto.UserId, boardId, boardUserClaims);
+            if (boardMemberStatusUpdateDto.NewMemberState)
+            {
+                boardNotificationService.AddBoardMember(boardId, users.FirstOrDefault(u => u.UserId == boardMemberStatusUpdateDto.UserId)!.ToPublicGetDto());
+            }
+            else
+            {
+                boardNotificationService.RemoveBoardMember(boardId, boardMemberStatusUpdateDto.UserId);
+            }
         }
         
         return await GetBoardMembers(boardId);

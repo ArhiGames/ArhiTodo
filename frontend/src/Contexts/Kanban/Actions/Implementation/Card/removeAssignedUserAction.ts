@@ -7,8 +7,9 @@ const removeAssignedUserAction = (state: KanbanState, payload: UpdateCardAssigne
     if (!card) return state;
 
     const indexToRemove: number = card.assignedUserIds.indexOf(payload.assignedUserId);
-    if (indexToRemove === -1) return state;
-    card.assignedUserIds.splice(indexToRemove, 1);
+    if (indexToRemove !== -1) {
+        card.assignedUserIds.splice(indexToRemove, 1);
+    }
 
     const newCards: Map<number, Card> = new Map(state.cards);
     newCards.set(payload.cardId, card);
