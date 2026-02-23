@@ -2,20 +2,14 @@
   arhitodo.frontend:
     image: ghcr.io/arhigames/arhitodo.frontend:closedalpha
     container_name: arhitodo.frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "5123:80"
     depends_on:
       - arhitodo.api
   
   arhitodo.api:
     image: ghcr.io/arhigames/arhitodo.backend:closedalpha
     container_name: arhitodo.api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_HTTP_PORTS=5000;5001
       - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=boarddb;Username=username;Password=password
