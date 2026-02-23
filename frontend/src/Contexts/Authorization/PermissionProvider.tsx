@@ -19,14 +19,14 @@ const PermissionProvider = ({ children }: Props) => {
 
     function hasModifyProjectPermission(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
-        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "True";
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         return hasPermissionGlobally || isProjectManager;
     }
 
     function isProjectManager(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
-        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const mayModifyOthersProjectsGlobally = jwtPayload?.ModifyOthersProjects === "True";
         const isProjectOwner = state.projectPermission.get(Number(match?.params.projectId))?.isProjectOwner ?? false;
         return mayModifyOthersProjectsGlobally || isProjectOwner;
     }
@@ -36,7 +36,7 @@ const PermissionProvider = ({ children }: Props) => {
     }
 
     function hasCreateProjectPermission(): boolean {
-        return jwtPayload?.CreateProjects === "true";
+        return jwtPayload?.CreateProjects === "True";
     }
 
     function hasEditProjectPermission(): boolean {
@@ -54,7 +54,7 @@ const PermissionProvider = ({ children }: Props) => {
     function hasBoardPermission(boardClaim: string): boolean {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
-        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "true";
+        const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "True";
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         const hasBoardPermission = state.boardPermissions.get(Number(match?.params.boardId))?.boardUserClaims.some(
             (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "true") ?? false;
@@ -64,7 +64,7 @@ const PermissionProvider = ({ children }: Props) => {
     function isBoardOwner(): boolean {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
-        const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "true";
+        const hasGlobalPermission = jwtPayload?.ModifyOthersProjects === "True";
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         const isOwner = state.boardPermissions.get(Number(match?.params.boardId))?.isBoardOwner ?? false;
         return hasGlobalPermission || isProjectManager || isOwner;

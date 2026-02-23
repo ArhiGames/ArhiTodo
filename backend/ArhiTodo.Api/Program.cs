@@ -2,8 +2,10 @@ using System.Text;
 using ArhiTodo.Application;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Infrastructure;
+using ArhiTodo.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
@@ -11,7 +13,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy.WithOrigins(builder.Configuration["FrontendSettings:BaseUrl"]!)
             .AllowAnyHeader()
@@ -142,16 +144,16 @@ builder.Services.AddSwaggerGen(options =>
 
 WebApplication app = builder.Build();
 
-app.UseCors("AllowFrontend");
+app.UseCors("CorsPolicy");
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+using IServiceScope scope = app.Services.CreateScope();
+using ProjectDataBase projectDataBase = scope.ServiceProvider.GetRequiredService<ProjectDataBase>();
+projectDataBase.Database.Migrate();
 
-app.UseHttpsRedirection();
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

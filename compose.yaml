@@ -1,0 +1,52 @@
+﻿services:
+  arhitodo.frontend:
+    image: arhitodo.frontend
+    container_name: arhitodo.frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - arhitodo.api
+  
+  arhitodo.api:
+    image: arhitodo.api
+    container_name: arhitodo.api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5000;5001
+      - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=boarddb;Username=arvid;Password=sicherespasswort
+      - FrontendSettings__BaseUrl=
+      - JWT__Issuer=
+      - JWT__Audience=
+      - JWT__SigningKey=344faccb39583f6bfb9c22ac46167f828262165f18ef9cdfb96d34d3fc6e72ef0f32bc46a240a2fc99c496fa1f99e9d4f3195831e78a84e9092cb4e7249d797c
+    ports:
+      - "8080:5000"
+      - "8081:5001"
+    depends_on:
+      arhitodo.database:
+        condition: service_healthy
+
+  arhitodo.database:
+    image: postgres:18-alpine
+    container_name: arhitodo.database
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=boarddb
+      - POSTGRES_USER=arvid
+      - POSTGRES_PASSWORD=sicherespasswort
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d boarddb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

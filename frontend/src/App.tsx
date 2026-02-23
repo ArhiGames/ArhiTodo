@@ -43,13 +43,13 @@ function AppContent() {
                     </Route>
                 </Route>
                 <Route path="admin">
-                    <Route path="dashboard" element={<ProtectedRoute requiredClaims={[ { claimType: "AccessAdminDashboard", claimValue: "true" } ]}><AdminDashboardNavbarComp/></ProtectedRoute>}>
+                    <Route path="dashboard" element={<ProtectedRoute requiredClaims={[ { claimType: "AccessAdminDashboard", claimValue: "True" } ]}><AdminDashboardNavbarComp/></ProtectedRoute>}>
                         <Route index element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
                         <Route path="appsettings" element={<ProtectedRoute><AdminAppSettingsComp/></ProtectedRoute>}></Route>
                         <Route path="users/:userId?"
-                               element={<ProtectedRoute requiredClaims={[ { claimType: "ManageUsers", claimValue: "true" } ]}><AdminUserManagementComp/></ProtectedRoute>}></Route>
+                               element={<ProtectedRoute requiredClaims={[ { claimType: "ManageUsers", claimValue: "True" } ]}><AdminUserManagementComp/></ProtectedRoute>}></Route>
                         <Route path="usergroups"
-                               element={<ProtectedRoute requiredClaims={[ { claimType: "ManageUsers", claimValue: "true" } ]}><AdminUserGroupsSettingsComp/></ProtectedRoute>}></Route>
+                               element={<ProtectedRoute requiredClaims={[ { claimType: "ManageUsers", claimValue: "True" } ]}><AdminUserGroupsSettingsComp/></ProtectedRoute>}></Route>
                     </Route>
                 </Route>
             </Routes>

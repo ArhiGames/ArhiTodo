@@ -1,5 +1,5 @@
 import {type ReactNode, useCallback, useEffect, useState} from "react";
-import type {JwtPayload} from "../../Models/JwtPayload.ts";
+import type {KanbanJwtPayload} from "../../Models/KanbanJwtPayload.ts";
 import {jwtDecode} from "jwt-decode";
 import {AuthContext} from "./AuthContext.ts";
 import {loginApi, logoutApi, refreshApi, registerApi} from "../../Services/AuthService.tsx";
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
     const [appUser, setAppUser] = useState<AppUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [jwtPayload, setJwtPayload] = useState<JwtPayload | null>(null);
+    const [jwtPayload, setJwtPayload] = useState<KanbanJwtPayload | null>(null);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     const register = async (userName: string, email: string,
@@ -25,13 +25,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (userName: string, password: string) => {
 
-        const jwt: JwtPayload | null = await loginApi(userName, password);
+        const jwt: KanbanJwtPayload | null = await loginApi(userName, password);
 
         if (!jwt) return;
         onLoggedIn(jwt);
     }
 
-    function onLoggedIn(jwt: JwtPayload) {
+    function onLoggedIn(jwt: KanbanJwtPayload) {
         setToken(localStorage.getItem("token"));
         setJwtPayload(jwt);
         setAppUser( { id: jwt.nameid, unique_name: jwt.unique_name, email: jwt.email} );
@@ -69,9 +69,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return null;
         }
 
-        const decoded: JwtPayload = jwtDecode(savedToken);
-        const now = Date.now() / 1000;
-        if (decoded.exp > now) {
+        const decoded: KanbanJwtPayload = jwtDecode(savedToken);
+        const now: number = Date.now() / 1000;
+        if (decoded.exp && decoded.exp > now) {
             setToken(savedToken);
             setJwtPayload(decoded);
             setAppUser({ id: decoded.nameid, unique_name: decoded.unique_name, email: decoded.email });

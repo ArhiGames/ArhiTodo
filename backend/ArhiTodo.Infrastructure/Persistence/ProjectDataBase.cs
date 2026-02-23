@@ -41,10 +41,7 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
             string hashedPassword = passwordHashService.Hash("admin");
             Result<User> appUser = User.Create("admin", Email.Create("admin@admin.admin").Value!, hashedPassword);
 
-            foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
-            {
-                appUser.Value!.AddUserClaim(userClaimType, true);
-            }
+            appUser.Value!.AddAdminUserClaims();
             
             context.Set<User>().Add(appUser.Value!);
             context.SaveChanges();

@@ -10,7 +10,7 @@ const AdminDashboardNavbarComp = () => {
         <div className="admin-dashboard-page">
             <nav className="settings-sidebar admin-dashboard-navbar">
                 <Link to="/admin/dashboard/appsettings">App settings</Link>
-                { jwtPayload?.AccessAdminDashboard === "true" && jwtPayload.ManageUsers === "true" && <Link to="/admin/dashboard/users">Manage users</Link> }
+                { jwtPayload?.AccessAdminDashboard === "True" && jwtPayload.ManageUsers && <Link to="/admin/dashboard/users">Manage users</Link> }
                 { /*jwtPayload?.AccessAdminDashboard === "true" && jwtPayload.ManageUsers === "true" && <Link to="/admin/dashboard/usergroups">User groups</Link>*/ }
             </nav>
 

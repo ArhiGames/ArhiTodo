@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DDF77E2-1128-431A-BBA1-9AB2011621FA}"
 	ProjectSection(SolutionItems) = preProject
-		compose.yaml = compose.yaml
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArhiTodo.Domain", "ArhiTodo.Domain\ArhiTodo.Domain.csproj", "{DA726D05-330F-492C-8F5B-83D610AE805E}"

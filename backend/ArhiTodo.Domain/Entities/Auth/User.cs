@@ -51,6 +51,15 @@ public class User
             ? new User(userName, email, hashedPassword, joinedViaInvitationKey)
             : validateUserNameResult.Error!;
     }
+
+    public void AddAdminUserClaims()
+    {
+        _userClaims.Clear();
+        foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
+        {
+            _userClaims.Add(new UserClaim(UserId, userClaimType, true));
+        }
+    }
  
     public Result AddUserClaim(UserClaimTypes userClaimTypes, bool value)
     {

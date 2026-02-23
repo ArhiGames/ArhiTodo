@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import type { JwtPayload } from "../Models/JwtPayload.ts";
+import type { KanbanJwtPayload } from "../Models/KanbanJwtPayload.ts";
 import type { UserLoginResponseDto } from "../Models/BackendDtos/Auth/UserLoginResponseDto.ts";
 import { AUTH_BASE_URL } from "../config/api.ts";
 import type { Error } from "../Models/BackendDtos/Auth/Error.ts"
@@ -7,7 +7,7 @@ import type { Error } from "../Models/BackendDtos/Auth/Error.ts"
 export const getJwtPayloadFromToken = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
-    return jwtDecode<JwtPayload>(token);
+    return jwtDecode<KanbanJwtPayload>(token);
 }
 
 export const registerApi = async (username: string, email: string,

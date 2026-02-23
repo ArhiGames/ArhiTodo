@@ -147,7 +147,7 @@ const AdminUserManagementComp = () => {
                 { usersCount > users.length && <button onClick={onLoadMoreButtonPressed} className="users-show-more">Show more...</button> }
             </div>
             {
-                jwtPayload?.InviteOtherUsers === "true" && (
+                jwtPayload?.InviteOtherUsers === "True" && (
                     <>
                         <nav className="user-management-nav">
                             <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>

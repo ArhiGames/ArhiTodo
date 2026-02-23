@@ -1,12 +1,12 @@
 import { createContext } from "react";
 import type { AppUser } from "../../Models/AppUser.ts";
 import type { Error } from "../../Models/BackendDtos/Auth/Error.ts"
-import type {JwtPayload} from "../../Models/JwtPayload.ts";
+import type {KanbanJwtPayload} from "../../Models/KanbanJwtPayload.ts";
 
 export type AuthContextType = {
     appUser: AppUser | null;
     token: string | null;
-    jwtPayload: JwtPayload | null;
+    jwtPayload: KanbanJwtPayload | null;
     isLoaded: boolean;
     checkRefresh: () => Promise<string | null>;
     register: (userName: string, email: string, password: string, invitationKey: string) => Promise<Error | null>;

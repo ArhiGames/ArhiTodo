@@ -32,7 +32,7 @@ const LoggedInUserPopover = (props: Props) => {
                 <h2>{appUser?.unique_name}</h2>
                 <p>{appUser?.email}</p>
                 <button className="button standard-button" onClick={handleAccountSettingsButtonPressed}>Account settings</button>
-                { jwtPayload?.AccessAdminDashboard === "true" && <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button> }
+                { jwtPayload?.AccessAdminDashboard === "True" && <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button> }
                 <button className="button standard-button" onClick={() => logout(true)}>Sign out</button>
             </div>
         </Popover>

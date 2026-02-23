@@ -113,7 +113,7 @@ const UserDetailsModalComp = ( { currentViewingUser, setCurrentViewingUser }: Pr
                            { (!isSelf && !isViewingAdminUser) &&
                                <button onClick={trySubmitChanges} className={`button ${updatedClaims.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button> }
                            <button onClick={() => navigate("/admin/dashboard/users/")} className="button standard-button">Abort</button>
-                           { (!isSelf && !isViewingAdminUser && jwtPayload?.DeleteUsers === "true") &&
+                           { (!isSelf && !isViewingAdminUser && jwtPayload?.DeleteUsers === "True") &&
                                <button onClick={() => setIsTryingToDelete(true)} className="button standard-button button-with-icon">
                                    <img src="/trashcan-icon.svg" alt="" className="icon" height="24px"/>
                                    <p>Delete user</p>
@@ -129,7 +129,7 @@ const UserDetailsModalComp = ( { currentViewingUser, setCurrentViewingUser }: Pr
                 </div>
             </Modal>
             {
-                isTryingToDelete && jwtPayload?.DeleteUsers === "true" && (
+                isTryingToDelete && jwtPayload?.DeleteUsers === "True" && (
                     createPortal(
                         <ConfirmationModal onConfirmed={confirmUserDelete}
                                            onClosed={() => setIsTryingToDelete(false)}
