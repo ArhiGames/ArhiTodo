@@ -1,6 +1,6 @@
 ﻿services:
   arhitodo.frontend:
-    image: arhitodo.frontend
+    image: ghcr.io/arhigames/arhitodo.frontend:closedalpha
     container_name: arhitodo.frontend
     build:
       context: ./frontend
@@ -11,14 +11,14 @@
       - arhitodo.api
   
   arhitodo.api:
-    image: arhitodo.api
+    image: ghcr.io/arhigames/arhitodo.backend:closedalpha
     container_name: arhitodo.api
     build:
       context: ./backend
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_HTTP_PORTS=5000;5001
-      - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=boarddb;Username=arvid;Password=sicherespasswort
+      - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=boarddb;Username=username;Password=password
       - FrontendSettings__BaseUrl=
       - JWT__Issuer=
       - JWT__Audience=
@@ -38,8 +38,8 @@
       - "5432:5432"
     environment:
       - POSTGRES_DB=boarddb
-      - POSTGRES_USER=arvid
-      - POSTGRES_PASSWORD=sicherespasswort
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d boarddb"]
       interval: 5s
