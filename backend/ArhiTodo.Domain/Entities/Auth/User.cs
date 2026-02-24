@@ -1,8 +1,21 @@
-﻿using ArhiTodo.Domain.Common.Errors;
+﻿using System.Security.Claims;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.ValueObjects;
 
 namespace ArhiTodo.Domain.Entities.Auth;
+
+[Flags]
+public enum UserClaimTypes
+{
+    CreateProjects = 1 << 0,
+    ModifyOthersProjects = 1 << 1,
+    AccessAdminDashboard = 1 << 2,
+    ManageUsers = 1 << 3,
+    DeleteUsers = 1 << 4,
+    InviteOtherUsers = 1 << 5,
+    UpdateAppSettings = 1 << 6
+}
 
 public class User
 {
@@ -18,11 +31,10 @@ public class User
 
     public string? JoinedViaInvitationKey { get; private set; } = string.Empty;
 
+    public int UserClaims { get; private set; }
+    
     private readonly List<UserSession> _userSessions = [];
     public IReadOnlyCollection<UserSession> UserSessions => _userSessions.Where(us => us.ExpiresAt > DateTimeOffset.UtcNow).ToList();
-
-    private readonly List<UserClaim> _userClaims = [];
-    public IReadOnlyCollection<UserClaim> UserClaims => _userClaims;
     
     private User() { }
 
@@ -54,24 +66,11 @@ public class User
 
     public void AddAdminUserClaims()
     {
-        _userClaims.Clear();
+        UserClaims = 0;
         foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
         {
-            _userClaims.Add(new UserClaim(UserId, userClaimType, true));
+            UserClaims |= (int)userClaimType;
         }
-    }
- 
-    public Result AddUserClaim(UserClaimTypes userClaimTypes, bool value)
-    {
-        if (UserName == "admin")
-        {
-            return new Error("ChangingAdminUserClaims", ErrorType.Conflict,
-                "You cannot edit the admin user!");
-        }
-        
-        UserClaim userClaim = new(UserId, userClaimTypes, value);
-        _userClaims.Add(userClaim);
-        return Result.Success();
     }
     
     public Result ChangeClaimValue(UserClaimTypes userClaimTypes, bool value)
@@ -81,12 +80,21 @@ public class User
             return new Error("ChangingAdminUserClaims", ErrorType.Conflict,
                 "You cannot edit the admin user!");
         }
-        
-        UserClaim? userClaim = _userClaims.FirstOrDefault(uc => uc.Type == userClaimTypes);
-        if (userClaim is null) return Errors.NotFound;
-        
-        userClaim.ChangeClaimValue(value);
+
+        if (value)
+        {
+            UserClaims |= (int)userClaimTypes;
+        }
+        else
+        {
+            UserClaims &= ~(int)userClaimTypes;
+        }
         return Result.Success();
+    }
+
+    public void ChangePassword(string hashedPassword)
+    {
+        HashedPassword = hashedPassword;
     }
 
     public Result AddUserSession(UserSession userSession)
@@ -111,8 +119,22 @@ public class User
         return _userSessions.Remove(foundUserSession) ? Result.Success() : Errors.Unknown;
     }
 
+    public List<Claim> GetUserClaimsAsList()
+    {
+        List<Claim> claims = [];
+        foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
+        {
+            bool hasClaim = (UserClaims & (int)userClaimType) != 0;
+            if (hasClaim)
+            {
+                claims.Add(new Claim(userClaimType.ToString(), true.ToString()));
+            }
+        }
+        return claims;
+    }
+
     public void ClearUserSessions()
     {
-        _userClaims.Clear();
+        UserClaims = 0;
     }
 }

@@ -13,7 +13,7 @@ interface Props {
 
 const EditableClaimsComp = (props: Props) => {
 
-    const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.claimValue == "true");
+    const [claimBooleanValue, setClaimBooleanValue] = useState<boolean>(props.claim?.claimValue == "True");
 
     function onToggleValueChanged(newValue: boolean) {
 
@@ -24,7 +24,7 @@ const EditableClaimsComp = (props: Props) => {
             const newClaims: Claim[] = props.updatedClaims.filter((predicate: Claim) => (predicate.claimType !== props.defaultClaim.claimType));
             props.setUpdatedClaims(newClaims);
         } else {
-            const newClaims: Claim[] = [...props.updatedClaims, { claimType: props.defaultClaim.claimType, claimValue: String(newValue) } ];
+            const newClaims: Claim[] = [...props.updatedClaims, { claimType: props.defaultClaim.claimType, claimValue: newValue ? "True" : "False" } ];
             props.setUpdatedClaims(newClaims);
         }
 

@@ -19,10 +19,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 email => email.ToString(),
                 str => Email.Create(str).Value!);
 
-        builder.HasMany(u => u.UserClaims)
-            .WithOne(uc => uc.User)
-            .HasForeignKey(uc => uc.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(u => u.UserSessions)
             .WithOne(us => us.User)
             .HasForeignKey(us => us.UserId)

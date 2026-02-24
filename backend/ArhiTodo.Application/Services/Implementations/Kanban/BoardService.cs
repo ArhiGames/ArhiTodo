@@ -41,7 +41,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             bool succeeded = Enum.TryParse(claimPostDto.ClaimType, out BoardClaimTypes boardClaimType);
             if (!succeeded) return new Error("InvalidClaimType", ErrorType.BadRequest, "Invalid board claim type!");
             
-            Result addOrUpdateUserClaimResult = board.AddOrUpdateUserClaim(boardClaimType, claimPostDto.ClaimValue, userId);
+            Result addOrUpdateUserClaimResult = board.AddOrUpdateUserClaim(boardClaimType, claimPostDto.ClaimValue == true.ToString(), userId);
             if (!addOrUpdateUserClaimResult.IsSuccess) return addOrUpdateUserClaimResult.Error!;
         }
 

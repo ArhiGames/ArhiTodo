@@ -1,5 +1,4 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
-using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Domain.Entities.Auth;
 
 namespace ArhiTodo.Application.Mappers;
@@ -17,7 +16,7 @@ public static class UserMapper
                 UserName = user.UserName,
                 Email = user.Email.ToString(),
                 JoinedViaInvitationKey = user.JoinedViaInvitationKey,
-                UserClaims = user.UserClaims.Select(uc => uc.ToGetDto()).ToList()
+                UserClaims = user.GetUserClaimsAsList().Select(uc => uc.ToGetDto()).ToList()
             };
         }
 

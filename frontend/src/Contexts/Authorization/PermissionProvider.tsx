@@ -57,7 +57,7 @@ const PermissionProvider = ({ children }: Props) => {
         const hasPermissionGlobally = jwtPayload?.ModifyOthersProjects === "True";
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
         const hasBoardPermission = state.boardPermissions.get(Number(match?.params.boardId))?.boardUserClaims.some(
-            (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "true") ?? false;
+            (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "True") ?? false;
         return hasPermissionGlobally || isProjectManager || hasBoardPermission;
     }
 

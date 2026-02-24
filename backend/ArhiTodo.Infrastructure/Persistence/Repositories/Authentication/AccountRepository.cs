@@ -45,24 +45,9 @@ public class AccountRepository(ProjectDataBase database) : IAccountRepository
         return changedRows == 1;
     }
 
-    public async Task<bool> ChangePassword(Guid guid, string hashedPassword)
+    public async Task<List<User>> GetUsers(int page)
     {
-        int changedRows = await database.Users
-            .Where(u => u.UserId == guid)
-            .ExecuteUpdateAsync(p => p.SetProperty(u => u.HashedPassword, hashedPassword));
-        return changedRows >= 1;
-    }
-
-    public async Task<List<User>> GetUsers(int page, bool includeGlobalPermissions)
-    {
-        IQueryable<User> request = database.Users;
-
-        if (includeGlobalPermissions)
-        {
-            request = request.Include(u => u.UserClaims);
-        }
-
-        List<User> users = await request
+        List<User> users = await database.Users
             .OrderBy(u => u.CreatedAt)
             .Skip(5 * page)
             .Take(5)
@@ -85,21 +70,15 @@ public class AccountRepository(ProjectDataBase database) : IAccountRepository
 
     public async Task<User?> GetUserByGuidAsync(Guid guid, bool includeSessions = false)
     {
-        IQueryable<User> userQuery = database.Users.Include(u => u.UserClaims);
-        if (includeSessions)
-        {
-            userQuery = userQuery.Include(u => u.UserSessions);
-        }
-        return await userQuery.FirstOrDefaultAsync(u => u.UserId == guid);
+        IQueryable<User> queryableUser = database.Users;
+        if (includeSessions) queryableUser = queryableUser.Include(u => u.UserSessions); 
+        return await queryableUser.FirstOrDefaultAsync(u => u.UserId == guid);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username, bool includeSessions = false)
     {
-        IQueryable<User> userQuery = database.Users.Include(u => u.UserClaims);
-        if (includeSessions)
-        {
-            userQuery = userQuery.Include(u => u.UserSessions);
-        }
-        return await userQuery.FirstOrDefaultAsync(u => u.UserName == username);
+        IQueryable<User> queryableUser = database.Users;
+        if (includeSessions) queryableUser = queryableUser.Include(u => u.UserSessions);
+        return await queryableUser.FirstOrDefaultAsync(u => u.UserName == username);
     }
 }

@@ -12,7 +12,6 @@ public class ProjectDataBase(DbContextOptions<ProjectDataBase> options, IPasswor
     : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<UserClaim> UserClaims { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<InvitationLink> InvitationLinks { get; set; }
 

@@ -51,8 +51,7 @@ public class AuthService(
 
         string refreshToken = await tokenService.GenerateRefreshTokenAndAddSessionEntry(user, userAgent);
         
-        List<Claim> claims = user.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value.ToString())).ToList();
-        string jwt = jwtTokenGeneratorService.GenerateToken(user, claims);
+        string jwt = jwtTokenGeneratorService.GenerateToken(user, user.GetUserClaimsAsList());
         
         return new LoginGetDto(user.UserId, jwt, refreshToken);
     }
@@ -70,11 +69,12 @@ public class AuthService(
         if (!isCorrectPassword) return Errors.Unauthenticated;
 
         string hashedPassword = passwordHashService.Hash(updatePasswordDto.NewPassword);
-        bool succeeded = await accountRepository.ChangePassword(currentUser.UserId, hashedPassword);
+        foundUser.ChangePassword(hashedPassword);
 
+        await unitOfWork.SaveChangesAsync();
         await LogoutEveryDevice(currentUser.UserId);
         
-        return succeeded ? Result.Success() : Errors.Unknown;
+        return Result.Success();
     }
 
     public async Task<Result> DeleteAccount(Guid userId)
@@ -97,7 +97,7 @@ public class AuthService(
         UserSession? userSession = user.UserSessions.FirstOrDefault(us => us.TokenHash == hashedToken);
         if (userSession == null) return Errors.Unauthenticated;
         
-        List<Claim> claims = userSession.User.UserClaims.Select(uc => new Claim(uc.Type.ToString(), uc.Value.ToString())).ToList();
+        List<Claim> claims = user.GetUserClaimsAsList();
         string jwt = jwtTokenGeneratorService.GenerateToken(userSession.User, claims);
         return jwt;
     }

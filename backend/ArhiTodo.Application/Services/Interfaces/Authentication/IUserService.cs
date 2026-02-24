@@ -8,6 +8,6 @@ public interface IUserService
 {
     Task<Result<List<ClaimGetDto>>> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos);
     Task<Result<UserGetDto>> GetUser(Guid guid);
-    Task<Result<List<UserGetDto>>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId);
+    Task<Result<List<UserGetDto>>> GetUsers(int page);
     Task<Result<int>> GetUserCount();
 }

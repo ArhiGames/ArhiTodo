@@ -12,7 +12,7 @@ interface Props {
 
 const BoardUserSelectorToggleComp = (props: Props) => {
 
-    const [checked, setChecked] = useState<boolean>(props.claim?.claimValue === "true");
+    const [checked, setChecked] = useState<boolean>(props.claim?.claimValue === "True");
 
     function onCheckedStateChanged(newState: boolean) {
 

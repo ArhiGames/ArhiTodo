@@ -15,10 +15,9 @@ public class AccountController(IUserService userService, IAuthService authServic
 {
     [Authorize(Policy = nameof(UserClaimTypes.ManageUsers))]
     [HttpGet("accounts/{page:int}")]
-    public async Task<IActionResult> GetAccounts(int page, [FromQuery] bool? includeGlobalPermissions, 
-        [FromQuery] int? boardPermissionsBoardId)
+    public async Task<IActionResult> GetAccounts(int page)
     {
-        Result<List<UserGetDto>> users = await userService.GetUsers(page, includeGlobalPermissions ?? false, boardPermissionsBoardId);
+        Result<List<UserGetDto>> users = await userService.GetUsers(page);
         return users.IsSuccess ? Ok(users.Value) : HandleFailure(users);
     }
 

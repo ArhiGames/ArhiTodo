@@ -22,10 +22,11 @@ public class AuthorizationService(ICurrentUser currentUser, IAccountRepository a
         foreach (IAuthorizationRequirement requirement in policy.Requirements)
         {
             if (requirement is not ClaimsAuthorizationRequirement claimsAuthorizationRequirement) continue;
-            if (claimsAuthorizationRequirement.AllowedValues is null) continue;
 
-            bool hasClaim = user.UserClaims.Any(uc => uc.Type.ToString().Equals(claimsAuthorizationRequirement.ClaimType) &&
-                                                      claimsAuthorizationRequirement.AllowedValues.Contains(uc.Value.ToString()));
+            bool succeeded = Enum.TryParse(claimsAuthorizationRequirement.ClaimType, out UserClaimTypes userClaimType);
+            if (!succeeded) return false;
+            
+            bool hasClaim = (user.UserClaims & (int)userClaimType) != 0;
             if (!hasClaim) return false;
         }
 

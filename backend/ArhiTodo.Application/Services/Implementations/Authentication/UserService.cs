@@ -8,12 +8,10 @@ using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Authentication;
 using ArhiTodo.Domain.Repositories.Common;
-using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Authentication;
 
-public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepository, IAuthorizationService authorizationService, 
-    IBoardRepository boardRepository, ICurrentUser currentUser) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepository, IAuthorizationService authorizationService, ICurrentUser currentUser) : IUserService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateClaims(Guid userId, List<ClaimPostDto> claimPostDtos)
     {
@@ -33,40 +31,22 @@ public class UserService(IUnitOfWork unitOfWork, IAccountRepository accountRepos
         {
             bool succeededParsing = Enum.TryParse(claimPostDto.ClaimType, out UserClaimTypes userClaimType);
             if (!succeededParsing) continue;
-            
-            UserClaim? existingClaim = user.UserClaims.FirstOrDefault(uc => uc.Type == userClaimType);
-            if (existingClaim is null)
-            {
-                Result addUserClaimResult = user.AddUserClaim(userClaimType, claimPostDto.ClaimValue);
-                if (!addUserClaimResult.IsSuccess) return addUserClaimResult.Error!;
-            }
-            else
-            {
-                Result changeUserClaimResult = user.ChangeClaimValue(userClaimType, claimPostDto.ClaimValue);
-                if (!changeUserClaimResult.IsSuccess) return changeUserClaimResult.Error!;
-            }
+
+            Result changeUserClaimResult = user.ChangeClaimValue(userClaimType, claimPostDto.ClaimValue == true.ToString());
+            if (!changeUserClaimResult.IsSuccess) return changeUserClaimResult.Error!;
         }
 
         await unitOfWork.SaveChangesAsync();
-        return user.UserClaims.Select(uc => uc.ToGetDto()).ToList();
+        return user.GetUserClaimsAsList().Select(uc => uc.ToGetDto()).ToList();
     }
 
-    public async Task<Result<List<UserGetDto>>> GetUsers(int page, bool includeGlobalPermissions, int? boardPermissionsBoardId)
+    public async Task<Result<List<UserGetDto>>> GetUsers(int page)
     {
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ManageUsers));
         if (!authorized) return Errors.Forbidden;
         
-        List<User> users = await accountRepository.GetUsers(page, includeGlobalPermissions);
+        List<User> users = await accountRepository.GetUsers(page);
         List<UserGetDto> userGetDtos = users.Select(u => u.ToGetDto()).ToList();
-
-        if (boardPermissionsBoardId == null) return userGetDtos;
-        
-        List<BoardUserClaim> boardUserClaims = await boardRepository.GetBoardPermissions(boardPermissionsBoardId.Value);
-        foreach (BoardUserClaim boardUserClaim in boardUserClaims)
-        {
-            UserGetDto? foundUser = userGetDtos.FirstOrDefault(u => u.UserId == boardUserClaim.UserId);
-            foundUser?.BoardUserClaims.Add(boardUserClaim.ToGetDto());
-        }
 
         return userGetDtos;
     }
