@@ -114,7 +114,7 @@ public class Card : Draggable
     public Result RemoveLabel(int labelId)
     {
         CardLabel? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
-        if (label == null)
+        if (label is null)
         {
             return new Error("NoLabelWithId", ErrorType.Conflict,
                 "There is no label with the specified id on this card!");
