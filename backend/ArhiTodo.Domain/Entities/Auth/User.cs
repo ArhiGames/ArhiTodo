@@ -135,6 +135,6 @@ public class User
 
     public void ClearUserSessions()
     {
-        UserClaims = 0;
+        _userSessions.Clear();
     }
 }
