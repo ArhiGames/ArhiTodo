@@ -2,6 +2,7 @@
 using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Domain.Entities.DTOs;
+using ArhiTodo.Domain.Entities.Kanban;
 
 namespace ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 
@@ -25,6 +26,7 @@ public interface IBoardClient
     
     Task CreateCard(int boardId, int cardListId, CardGetDto card);
     Task DeleteCard(int cardId);
+    Task UpdateCardUrgencyLevel(int cardId, CardUrgencyLevel cardUrgencyLevel);
     Task MoveCard(int cardId, int toCardListId, int toIndex);
     Task AssignUser(int cardId, Guid userId);
     Task RemoveAssignedUser(int cardId, Guid userId);

@@ -1,5 +1,6 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Entities.DTOs;
+using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Interface;
 using Microsoft.AspNetCore.SignalR;
@@ -16,6 +17,11 @@ public class CardNotificationService(IHubContext<BoardHub, IBoardClient> hubCont
     public void DeleteCard(int boardId, int cardId)
     {
         hubContext.Clients.Group($"grp-board-{boardId}").DeleteCard(cardId);
+    }
+
+    public void UpdateCardUrgency(int boardId, int cardId, CardUrgencyLevel cardUrgencyLevel)
+    {
+        hubContext.Clients.Group($"grp-board-{boardId}").UpdateCardUrgencyLevel(cardId, cardUrgencyLevel);
     }
 
     public void MoveCard(int boardId, int cardId, int toCardList, int toIndex)

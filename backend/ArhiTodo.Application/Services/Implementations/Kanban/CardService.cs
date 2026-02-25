@@ -85,10 +85,12 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         Card? card = await cardRepository.GetCard(cardId);
         if (card is null) return Errors.NotFound;
 
+        CardUrgencyLevel cardUrgencyLevel = (CardUrgencyLevel)urgencyLevel;
         Result setCardUrgencyResult = card.SetCardUrgency((CardUrgencyLevel)urgencyLevel);
         if (!setCardUrgencyResult.IsSuccess) return setCardUrgencyResult.Error!;
             
         await unitOfWork.SaveChangesAsync();
+        cardNotificationService.UpdateCardUrgency(boardId, cardId, cardUrgencyLevel);
 
         return Result.Success();
     }
