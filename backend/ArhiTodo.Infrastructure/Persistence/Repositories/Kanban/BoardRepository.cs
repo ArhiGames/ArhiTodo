@@ -56,9 +56,10 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
                     Cards = cl.Cards.Select(c => new CardGetDto
                     {
                         CardId = c.CardId,
-                        Position = c.Position,
                         CardName = c.CardName,
                         CardDescription = c.CardDescription,
+                        Position = c.Position,
+                        CardUrgencyLevel = c.CardUrgencyLevel,
                         AssignedUserIds = c.AssignedUsers.Select(asu => asu.UserId).ToList(),
                         IsDone = c.IsDone,
                         Checklists = c.Checklists.Select(cel => new ChecklistGetDto

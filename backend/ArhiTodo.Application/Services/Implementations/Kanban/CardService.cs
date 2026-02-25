@@ -70,6 +70,29 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         return moveCardResult;
     }
 
+    public async Task<Result> UpdateCardUrgency(int boardId, int cardId, int urgencyLevel)
+    {
+        bool isValidUrgencyLevel = Enum.IsDefined(typeof(CardUrgencyLevel), urgencyLevel);
+        if (!isValidUrgencyLevel)
+        {
+            return new Error("Illegal card urgency level", ErrorType.BadRequest,
+                "Urgency levels only go from 0-4");
+        }
+        
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+
+        Card? card = await cardRepository.GetCard(cardId);
+        if (card is null) return Errors.NotFound;
+
+        Result setCardUrgencyResult = card.SetCardUrgency((CardUrgencyLevel)urgencyLevel);
+        if (!setCardUrgencyResult.IsSuccess) return setCardUrgencyResult.Error!;
+            
+        await unitOfWork.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
     public async Task<Result> AssignUser(int boardId, int cardId, Guid userId)
     {
         bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);

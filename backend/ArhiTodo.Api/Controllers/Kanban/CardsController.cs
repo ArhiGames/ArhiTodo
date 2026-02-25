@@ -40,7 +40,13 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         Result moveCardResult = await cardService.MoveCard(boardId, cardId, moveCardPatchDto);
         return moveCardResult.IsSuccess ? Ok() : HandleFailure(moveCardResult);
     }
-    
+
+    [HttpPatch("board/{boardId:int}/card{cardId:int}/urgency/{urgencyLevel:int}")]
+    public async Task<IActionResult> UpdateCardUrgency(int boardId, int cardId, int urgencyLevel)
+    {
+        Result updateCardUrgencyResult = await cardService.UpdateCardUrgency(boardId, cardId, urgencyLevel);
+        return updateCardUrgencyResult.IsSuccess ? Ok() : HandleFailure(updateCardUrgencyResult);
+    }
     
     [HttpDelete("board/{boardId:int}/card/{cardId:int}")]
     public async Task<IActionResult> DeleteCard(int boardId, int cardId)

@@ -150,9 +150,12 @@ using IServiceScope scope = app.Services.CreateScope();
 using ProjectDataBase projectDataBase = scope.ServiceProvider.GetRequiredService<ProjectDataBase>();
 projectDataBase.Database.Migrate();
 
-app.MapOpenApi();
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

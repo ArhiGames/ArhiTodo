@@ -11,9 +11,10 @@ public static class CardMapper
         {
             CardId = card.CardId,
             Position = card.Position,
-            IsDone = card.IsDone,
             CardName = card.CardName,
             CardDescription = card.CardDescription,
+            IsDone = card.IsDone,
+            CardUrgencyLevel = card.CardUrgencyLevel,
             LabelIds = card.Labels.Select(cl => cl.LabelId).ToList(),
             AssignedUserIds = card.AssignedUsers.Select(asu => asu.UserId).ToList(),
             Checklists = card.Checklists.Select(cl => cl.ToGetDto()).ToList()

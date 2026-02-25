@@ -5,6 +5,15 @@ using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
+public enum CardUrgencyLevel
+{
+    None,
+    Low,
+    Medium,
+    High,
+    Urgent
+}
+
 public class Card : Draggable
 {
     public int CardListId { get; private set; }
@@ -14,6 +23,8 @@ public class Card : Draggable
     public string CardName { get; private set; } = string.Empty;
     public string CardDescription { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
+
+    public CardUrgencyLevel CardUrgencyLevel { get; private set; } = CardUrgencyLevel.None;
 
     private readonly List<AssignedCardUser> _assignedUsers = [];
     public IReadOnlyCollection<AssignedCardUser> AssignedUsers => _assignedUsers.AsReadOnly();
@@ -63,6 +74,12 @@ public class Card : Draggable
         if (!validateCardNameResult.IsSuccess) return validateCardNameResult;
         
         CardName = cardName;
+        return Result.Success();
+    }
+
+    public Result SetCardUrgency(CardUrgencyLevel cardUrgencyLevel)
+    {
+        CardUrgencyLevel = cardUrgencyLevel;
         return Result.Success();
     }
 
