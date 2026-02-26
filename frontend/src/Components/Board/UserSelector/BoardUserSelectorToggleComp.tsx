@@ -19,7 +19,7 @@ const BoardUserSelectorToggleComp = (props: Props) => {
         if (props.updatedClaims.find((c: Claim) => c.claimType === props.defaultClaim.claimType)) {
             props.setUpdatedClaims(props.updatedClaims.filter(uc => uc.claimType !== props.defaultClaim.claimType))
         } else {
-            props.setUpdatedClaims([...props.updatedClaims, { claimType: props.defaultClaim.claimType, claimValue: String(newState) } ])
+            props.setUpdatedClaims([...props.updatedClaims, { claimType: props.defaultClaim.claimType, claimValue: newState ? "True" : "False" } ])
         }
 
         setChecked(newState);
