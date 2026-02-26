@@ -1,23 +1,23 @@
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class CardList
+public class CardList : Draggable
 {
     public int BoardId { get; private set; }
     public Board Board { get; } = null!;
     
     public int CardListId { get; private set; }
-    public string Position { get; private set; } = string.Empty;
     public string CardListName { get; private set; } = string.Empty;
 
     private readonly List<Card> _cards = [];
     public IReadOnlyCollection<Card> Cards => _cards.AsReadOnly();
 
-    private CardList() { }
+    private CardList() : base("") { }
 
-    private CardList(int boardId, string cardListName)
+    private CardList(int boardId, string cardListName, string position) : base(position)
     {
         BoardId = boardId;
         CardListName = cardListName;
@@ -33,10 +33,11 @@ public class CardList
         return Result.Success();
     }
 
-    public static Result<CardList> Create(int boardId, string cardListName)
+    public static Result<CardList> Create(int boardId, string cardListName, string? prevPosition)
     {
         Result validateCardListNameResult = ValidateCardListName(cardListName);
-        return validateCardListNameResult.IsSuccess ? new CardList(boardId, cardListName) : validateCardListNameResult.Error!;
+        return validateCardListNameResult.IsSuccess ? new CardList(boardId, cardListName, 
+            LexicalOrderHelper.GetBetween(prevPosition, null)) : validateCardListNameResult.Error!;
     }
 
     public Result ChangeCardListName(string cardListName)

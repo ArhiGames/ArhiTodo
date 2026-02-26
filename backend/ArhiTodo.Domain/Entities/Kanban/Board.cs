@@ -1,16 +1,16 @@
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Board
+public class Board : Draggable
 {
     public int ProjectId { get; private set; }
     public Project Project { get; } = null!;
     
     public int BoardId { get; init; }
-    public string Position { get; private set; } = string.Empty;
     public string BoardName { get; private set; } = string.Empty;
     
     public Guid OwnerId { get; private set; }
@@ -25,9 +25,9 @@ public class Board
     private readonly List<BoardUserClaim> _boardUserClaims = [];
     public IReadOnlyCollection<BoardUserClaim> BoardUserClaims => _boardUserClaims.AsReadOnly();
     
-    private Board() {  }
+    private Board() : base("") {  }
 
-    private Board(int projectId, string name, Guid createdByUserId)
+    private Board(int projectId, string name, Guid createdByUserId, string prevPosition) : base(prevPosition)
     {
         ProjectId = projectId;
         BoardName = name;
@@ -44,12 +44,12 @@ public class Board
         return Result.Success();
     }
 
-    public static Result<Board> Create(int projectId, string name, Guid createdByUserId)
+    public static Result<Board> Create(int projectId, string name, Guid createdByUserId, string? prevPosition)
     {
         Result validateBoardNameResult = ValidateBoardName(name);
         if (!validateBoardNameResult.IsSuccess) return validateBoardNameResult.Error!;
         
-        Board board = new(projectId, name, createdByUserId);
+        Board board = new(projectId, name, createdByUserId, LexicalOrderHelper.GetBetween(prevPosition, null));
         board.InitializeCreatorPermissions(createdByUserId);
         return board;
 
@@ -154,9 +154,9 @@ public class Board
         return _cardLists.Remove(cardList) ? Result.Success() : Errors.Unknown;
     }
     
-    public Result<Label> AddLabel(string labelText, int labelColor)
+    public Result<Label> AddLabel(string labelText, int labelColor, string? prevPosition)
     {
-        Result<Label> createLabelResult = Label.Create(BoardId, labelText, labelColor);
+        Result<Label> createLabelResult = Label.Create(BoardId, labelText, labelColor, prevPosition);
         if (!createLabelResult.IsSuccess) return createLabelResult;
         
         _labels.Add(createLabelResult.Value!);

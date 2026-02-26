@@ -1,21 +1,21 @@
 ﻿using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Label
+public class Label : Draggable
 {
     public int BoardId { get; private set; }
     public Board Board { get; } = null!;
     
     public int LabelId { get; private set; }
-    public string Position { get; private set; } = string.Empty;
     public int LabelColor { get; private set; }
     public string LabelText { get; private set; } = string.Empty;
 
-    private Label() { }
+    private Label() : base("") { }
 
-    private Label(int boardId, string labelText, int labelColor)
+    private Label(int boardId, string labelText, int labelColor, string prevPosition) : base(prevPosition)
     {
         BoardId = boardId;
         LabelText = labelText;
@@ -32,11 +32,11 @@ public class Label
         return Result.Success();
     }
 
-    public static Result<Label> Create(int boardId, string labelText, int labelColor)
+    public static Result<Label> Create(int boardId, string labelText, int labelColor, string? prevPosition)
     {
         Result validateLabelNameResult = ValidateLabelName(labelText);
         return validateLabelNameResult.IsSuccess
-            ? new Label(boardId, labelText, labelColor)
+            ? new Label(boardId, labelText, labelColor, LexicalOrderHelper.GetBetween(prevPosition, null))
             : validateLabelNameResult.Error!;
     }
 

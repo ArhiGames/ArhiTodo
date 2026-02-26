@@ -22,8 +22,11 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         
         Board? board = await boardRepository.GetAsync(boardId, true);
         if (board is null) return Errors.NotFound;
+
+        List<Label> sortedLabels = board.Labels.OrderBy(l => l.Position).ToList();
         
-        Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, labelCreateDto.LabelColor);
+        Result<Label> createdLabel = board.AddLabel(labelCreateDto.LabelText, 
+            labelCreateDto.LabelColor, sortedLabels.Count > 0 ? sortedLabels.Last().Position : null);
         if (!createdLabel.IsSuccess) return createdLabel.Error!;
         
         await unitOfWork.SaveChangesAsync();

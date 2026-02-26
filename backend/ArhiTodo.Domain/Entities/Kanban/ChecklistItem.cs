@@ -1,21 +1,21 @@
 ﻿using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class ChecklistItem
+public class ChecklistItem : Draggable
 {
     public int ChecklistId { get; private set; }
     public Checklist Checklist { get; } = null!;
     
     public int ChecklistItemId { get; private set; }
-    public string Position { get; private set; } = string.Empty;
     public string ChecklistItemName { get; private set; } = string.Empty;
     public bool IsDone { get; private set; }
 
-    private ChecklistItem() { }
+    private ChecklistItem() : base("") { }
 
-    private ChecklistItem(string checklistItemName)
+    private ChecklistItem(string checklistItemName, string position) : base(position)
     {
         ChecklistItemName = checklistItemName;
     }
@@ -30,11 +30,11 @@ public class ChecklistItem
         return Result.Success();
     }
 
-    public static Result<ChecklistItem> Create(string checklistItemName)
+    public static Result<ChecklistItem> Create(string checklistItemName, string? prevPosition)
     {
         Result validateChecklistItemNameResult = ValidateChecklistItemName(checklistItemName);
         return validateChecklistItemNameResult.IsSuccess
-            ? new ChecklistItem(checklistItemName)
+            ? new ChecklistItem(checklistItemName, LexicalOrderHelper.GetBetween(prevPosition, null))
             : validateChecklistItemNameResult.Error!;
     }
 

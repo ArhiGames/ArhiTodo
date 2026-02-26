@@ -62,5 +62,9 @@ public static class InfrastructureInjection
     public static void RegisterInfrastructureApp(this WebApplication webApplication)
     {
         webApplication.MapHub<BoardHub>("/hub/board");
+
+        using IServiceScope scope = webApplication.Services.CreateScope();
+        ProjectDataBase projectDataBase = scope.ServiceProvider.GetRequiredService<ProjectDataBase>();
+        projectDataBase.Database.Migrate();
     } 
 }

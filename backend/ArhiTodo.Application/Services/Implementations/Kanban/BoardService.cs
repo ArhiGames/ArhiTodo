@@ -20,7 +20,7 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
     IAuthorizationService authorizationService, IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, 
-    IAccountRepository accountRepository, ICurrentUser currentUser) : IBoardService
+    IAccountRepository accountRepository, ICurrentUser currentUser, IProjectRepository projectRepository) : IBoardService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
@@ -154,13 +154,22 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     {
         bool hasCreateBoardPermission = await boardAuthorizer.HasCreateBoardPermission(projectId);
         if (!hasCreateBoardPermission) return Errors.Forbidden;
+
+        Project? project = await projectRepository.GetAsyncIncludingBoards(projectId);
+        if (project is null) return Errors.NotFound;
+
+        List<Board> sortedBoards = project.Boards.OrderBy(b => b.Position).ToList();
         
-        Result<Board> createBoardResult = Board.Create(projectId, boardCreateDto.BoardName, currentUser.UserId);
+        Result<Board> createBoardResult = Board.Create(projectId, boardCreateDto.BoardName, currentUser.UserId, 
+            sortedBoards.Count > 0 ? sortedBoards.Last().Position : null);
         if (!createBoardResult.IsSuccess) return createBoardResult.Error!;
-            
-        Board addedBoard = await boardRepository.CreateBoardAsync(createBoardResult.Value!);
+
+        Result addBoardResult = project.AddBoard(createBoardResult.Value!);
+        if (!addBoardResult.IsSuccess) return addBoardResult.Error!;
+
+        await unitOfWork.SaveChangesAsync();
         
-        BoardGetDto boardGetDto = addedBoard.ToGetDto();
+        BoardGetDto boardGetDto = createBoardResult.Value!.ToGetDto();
         boardNotificationService.CreateBoard(projectId, boardGetDto);
         return boardGetDto;
     }
@@ -186,11 +195,14 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
     {
         bool hasBoardManageUsersPermission = await boardAuthorizer.HasBoardDeletePermission(boardId);
         if (!hasBoardManageUsersPermission) return Errors.Forbidden;
-        
-        Board? board = await boardRepository.GetAsync(boardId);
-        if (board is null) return Errors.NotFound;
 
-        await boardRepository.RemoveBoardAsync(board);
+        Project? project = await projectRepository.GetAsyncIncludingBoards(projectId);
+        if (project is null) return Errors.NotFound;
+
+        Result removeBoardResult = project.RemoveBoard(boardId);
+        if (!removeBoardResult.IsSuccess) return removeBoardResult.Error!;
+
+        await unitOfWork.SaveChangesAsync();
         
         boardNotificationService.DeleteBoard(projectId, boardId);
         return Result.Success();

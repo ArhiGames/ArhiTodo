@@ -2,10 +2,8 @@ using System.Text;
 using ArhiTodo.Application;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Infrastructure;
-using ArhiTodo.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
@@ -145,10 +143,6 @@ builder.Services.AddSwaggerGen(options =>
 WebApplication app = builder.Build();
 
 app.UseCors("CorsPolicy");
-
-using IServiceScope scope = app.Services.CreateScope();
-using ProjectDataBase projectDataBase = scope.ServiceProvider.GetRequiredService<ProjectDataBase>();
-projectDataBase.Database.Migrate();
 
 if (app.Environment.IsDevelopment())
 {

@@ -30,6 +30,14 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         return project;
     }
 
+    public async Task<Project?> GetAsyncIncludingBoards(int projectId)
+    {
+        Project? project = await database.Projects
+            .Include(p => p.Boards)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        return project;
+    }
+
     public async Task<Project?> GetAsync(int projectId, Guid userId)
     {
         Project? project = await database.Projects

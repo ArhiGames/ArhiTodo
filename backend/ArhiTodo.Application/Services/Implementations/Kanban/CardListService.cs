@@ -23,7 +23,10 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         Board? board = await boardRepository.GetAsync(boardId, false, true);
         if (board is null) return Errors.NotFound;
 
-        Result<CardList> createCardlistResult = CardList.Create(boardId, cardListCreateDto.CardListName);
+        List<CardList> sortedCardLists = board.CardLists.OrderBy(cl => cl.Position).ToList(); 
+
+        Result<CardList> createCardlistResult = CardList.Create(boardId, cardListCreateDto.CardListName,
+            sortedCardLists.Count > 0 ? sortedCardLists.Last().Position : null);
         if (!createCardlistResult.IsSuccess) return createCardlistResult.Error!;
         
         board.AddCardlist(createCardlistResult.Value!);

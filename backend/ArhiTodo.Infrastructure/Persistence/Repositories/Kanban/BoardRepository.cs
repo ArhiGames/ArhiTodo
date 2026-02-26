@@ -3,38 +3,16 @@ using ArhiTodo.Domain.Entities.DTOs;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Kanban;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
-    public async Task<List<BoardUserClaim>> GetBoardPermissions(int boardId)
-    {
-        List<BoardUserClaim> boardPermissions = await database.BoardUserClaims
-            .Where(buc => buc.BoardId == boardId)
-            .ToListAsync();
-        return boardPermissions;
-    }
-
     public async Task RemoveAssignedCardUsers(int boardId, List<Guid> userIds)
     {
         await database.AssignedCardUsers
             .Where(acu => acu.Card.CardList.BoardId == boardId && userIds.Contains(acu.UserId))
             .ExecuteDeleteAsync();
-    }
-
-    public async Task<Board> CreateBoardAsync(Board board)
-    {
-        EntityEntry<Board> boardEntityEntry = database.Boards.Add(board);
-        await database.SaveChangesAsync();
-        return boardEntityEntry.Entity;
-    }
-
-    public async Task RemoveBoardAsync(Board board)
-    {
-        database.Boards.Remove(board);
-        await database.SaveChangesAsync();
     }
 
     public async Task<BoardGetDto?> GetReadModelAsync(int boardId)

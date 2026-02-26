@@ -1,23 +1,23 @@
 ﻿using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
+using ArhiTodo.Domain.Helpers;
 
 namespace ArhiTodo.Domain.Entities.Kanban;
 
-public class Checklist
+public class Checklist : Draggable
 {
     public int CardId { get; private set; }
     public Card Card { get; } = null!;
     
     public int ChecklistId { get; private set; }
-    public string Position { get; private set; } = string.Empty;
     public string ChecklistName { get; private set; } = string.Empty;
 
     private readonly List<ChecklistItem> _checklistItems = [];
     public IReadOnlyCollection<ChecklistItem> ChecklistItems => _checklistItems.AsReadOnly();
     
-    private Checklist() { }
+    private Checklist() : base("") { }
 
-    private Checklist(int cardId, string checklistName)
+    private Checklist(int cardId, string checklistName, string position) : base(position)
     {
         CardId = cardId;
         ChecklistName = checklistName;
@@ -33,11 +33,11 @@ public class Checklist
         return Result.Success();
     }
 
-    public static Result<Checklist> Create(int cardId, string checklistName)
+    public static Result<Checklist> Create(int cardId, string checklistName, string? prevPosition)
     {
         Result validateChecklistNameResult = ValidateChecklistName(checklistName);
         return validateChecklistNameResult.IsSuccess
-            ? new Checklist(cardId, checklistName)
+            ? new Checklist(cardId, checklistName, LexicalOrderHelper.GetBetween(prevPosition, null))
             : validateChecklistNameResult.Error!;
     }
 
@@ -50,9 +50,9 @@ public class Checklist
         return Result.Success();
     }
 
-    public Result<ChecklistItem> AddChecklistItem(string checklistItemName)
+    public Result<ChecklistItem> AddChecklistItem(string checklistItemName, string? prevPosition)
     {
-        Result<ChecklistItem> addChecklistItemResult = ChecklistItem.Create(checklistItemName);
+        Result<ChecklistItem> addChecklistItemResult = ChecklistItem.Create(checklistItemName, prevPosition);
         if (!addChecklistItemResult.IsSuccess) return addChecklistItemResult.Error!;
         
         _checklistItems.Add(addChecklistItemResult.Value!);

@@ -24,7 +24,10 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         Card? card = await cardRepository.GetDetailedCard(cardId);
         if (card is null) return Errors.NotFound;
 
-        Result<Checklist> createChecklistResult = Checklist.Create(cardId, checklistCreateDto.ChecklistName);
+        List<Checklist> sortedChecklists = card.Checklists.OrderBy(cl => cl.Position).ToList();
+
+        Result<Checklist> createChecklistResult = Checklist.Create(cardId, checklistCreateDto.ChecklistName,
+            sortedChecklists.Count > 0 ? sortedChecklists.Last().Position : null);
         if (!createChecklistResult.IsSuccess) return createChecklistResult.Error!;
         
         card.AddChecklist(createChecklistResult.Value!);
@@ -84,8 +87,11 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
 
         Checklist? checklist = card.Checklists.FirstOrDefault(c => c.ChecklistId == checklistId);
         if (checklist is null) return Errors.NotFound;
+
+        List<ChecklistItem> sortedChecklistItems = checklist.ChecklistItems.OrderBy(ci => ci.Position).ToList();
         
-        Result<ChecklistItem> createdChecklistItemResult = checklist.AddChecklistItem(checklistItemCreateDto.ChecklistItemName);
+        Result<ChecklistItem> createdChecklistItemResult = checklist.AddChecklistItem(checklistItemCreateDto.ChecklistItemName,
+            sortedChecklistItems.Count > 0 ? sortedChecklistItems.Last().Position : null);
         if (!createdChecklistItemResult.IsSuccess) return createdChecklistItemResult.Error!;
         
         await unitOfWork.SaveChangesAsync();

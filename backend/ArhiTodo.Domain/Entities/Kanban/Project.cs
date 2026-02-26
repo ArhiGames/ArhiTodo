@@ -44,6 +44,22 @@ public class Project
         return checkProjectNameResult.IsSuccess ? new Project(name, user) : checkProjectNameResult.Error!;
     }
 
+    public Result AddBoard(Board board)
+    {
+        _boards.Add(board);
+        return Result.Success();
+    }
+
+    public Result RemoveBoard(int boardId)
+    {
+        Board? board = _boards.Find(b => b.BoardId == boardId);
+        if (board is null)
+        {
+            return Errors.NotFound;
+        }
+        return _boards.Remove(board) ? Result.Success() : Errors.Unknown;
+    }
+
     public Result ChangeName(string projectName)
     {
         Result checkProjectNameResult = ValidateProjectName(projectName);
