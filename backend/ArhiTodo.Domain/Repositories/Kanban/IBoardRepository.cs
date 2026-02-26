@@ -10,6 +10,5 @@ public interface IBoardRepository
     Task<BoardGetDto?> GetReadModelAsync(int boardId);
     Task<Board?> GetAsync(int boardId, bool includeLabels = false, bool includeCardLists = false, bool includeCards = false);
     
-    Task<List<Board>> GetAllAsync(int projectId);
     Task<List<Board>> GetAllAsync(Guid userId, int projectId);
 }

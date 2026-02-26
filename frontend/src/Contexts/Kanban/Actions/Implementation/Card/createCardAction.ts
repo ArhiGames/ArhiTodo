@@ -15,6 +15,7 @@ const createCardAction = (state: KanbanState, payload: CreateCardPayload): Kanba
         cardName: payload.cardName,
         cardDescription: "",
         isDone: false,
+        cardUrgencyLevel: 0,
         cardListId: payload.cardListId,
         assignedUserIds: []
     });

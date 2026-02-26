@@ -1,14 +1,13 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
-using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 
-public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService authorizationService, ICurrentUser currentUser) : ILabelAuthorizer
+public class LabelAuthorizer(ProjectDataBase database, ICurrentUser currentUser) : ILabelAuthorizer
 {
-    private async Task<bool> HasLabelPermission(int labelId, BoardClaimTypes boardClaimTypes, string? optionalPolicy)
+    private async Task<bool> HasLabelPermission(int labelId, BoardClaimTypes boardClaimTypes)
     {
         bool hasEditLabelPermission = await database.Labels
             .AnyAsync(l => l.LabelId == labelId && (
@@ -16,11 +15,7 @@ public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService aut
                 l.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
                     buc.Value)));
-        if (hasEditLabelPermission) return true;
-        if (optionalPolicy is null) return false;
-
-        bool hasGlobalPermission = await authorizationService.CheckPolicy(optionalPolicy);
-        return hasGlobalPermission;
+        return hasEditLabelPermission;
     }
     
     public async Task<bool> HasCreateLabelPermission(int boardId)
@@ -31,21 +26,16 @@ public class LabelAuthorizer(ProjectDataBase database, IAuthorizationService aut
                 b.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageLabels &&
                     buc.Value)));
-        if (hasCreateLabelPermission) return true;
-
-        bool hasGlobalPermission = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        return hasGlobalPermission;
+        return hasCreateLabelPermission;
     }
 
     public async Task<bool> HasEditLabelPermission(int labelId)
     {
-        return await HasLabelPermission(labelId, BoardClaimTypes.ManageLabels,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasLabelPermission(labelId, BoardClaimTypes.ManageLabels);
     }
 
     public async Task<bool> HasDeleteLabelPermission(int labelId)
     {
-        return await HasLabelPermission(labelId, BoardClaimTypes.ManageLabels,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasLabelPermission(labelId, BoardClaimTypes.ManageLabels);
     }
 }

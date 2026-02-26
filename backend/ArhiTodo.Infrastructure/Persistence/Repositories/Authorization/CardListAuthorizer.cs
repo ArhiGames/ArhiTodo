@@ -2,13 +2,12 @@
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Authorization;
 using Microsoft.EntityFrameworkCore;
-using IAuthorizationService = ArhiTodo.Application.Services.Interfaces.Authorization.IAuthorizationService;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 
-public class CardListAuthorizer(ICurrentUser currentUser, IAuthorizationService authorizationService, ProjectDataBase database) : ICardListAuthorizer
+public class CardListAuthorizer(ICurrentUser currentUser, ProjectDataBase database) : ICardListAuthorizer
 {
-    private async Task<bool> HasCardListPermission(int cardListId, BoardClaimTypes permission, string? optionalPolicy)
+    private async Task<bool> HasCardListPermission(int cardListId, BoardClaimTypes permission)
     {
         bool hasCreateCardListPermission = await database.CardLists
             .AnyAsync(cl => cl.CardListId == cardListId && (
@@ -16,11 +15,7 @@ public class CardListAuthorizer(ICurrentUser currentUser, IAuthorizationService 
                 cl.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == permission &&
                     buc.Value)));
-        if (hasCreateCardListPermission) return true;
-        if (optionalPolicy is null) return false;
-        
-        bool fulfillsPolicyGlobally = await authorizationService.CheckPolicy(optionalPolicy);
-        return fulfillsPolicyGlobally;
+        return hasCreateCardListPermission;
     }
     
     public async Task<bool> HasCreateCardListPermission(int boardId)
@@ -31,27 +26,21 @@ public class CardListAuthorizer(ICurrentUser currentUser, IAuthorizationService 
                 b.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageCardLists &&
                     buc.Value)));
-        if (hasCreateCardListPermission) return true;
-        
-        bool fulfillsPolicyGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        return fulfillsPolicyGlobally;
+        return hasCreateCardListPermission;
     }
 
     public async Task<bool> HasEditCardListPermission(int cardListId)
     {
-        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCardLists,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCardLists);
     }
 
     public async Task<bool> HasDeleteCardsFromCardListPermission(int cardListId)
     {
-        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCards,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCards);
     }
 
     public async Task<bool> HasDeleteCardListPermission(int cardListId)
     {
-        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCardLists,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasCardListPermission(cardListId, BoardClaimTypes.ManageCardLists);
     }
 }

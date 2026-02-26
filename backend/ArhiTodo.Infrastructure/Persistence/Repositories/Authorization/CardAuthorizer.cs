@@ -1,14 +1,13 @@
 ﻿using ArhiTodo.Application.Services.Interfaces.Authentication;
-using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Repositories.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Authorization;
 
-public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService authorizationService, ProjectDataBase database) : ICardAuthorizer
+public class CardAuthorizer(ICurrentUser currentUser, ProjectDataBase database) : ICardAuthorizer
 {
-    private async Task<bool> HasCardPermission(int cardId, BoardClaimTypes boardClaimTypes, string? optionalPolicy, bool validAsAssignedUser = false)
+    private async Task<bool> HasCardPermission(int cardId, BoardClaimTypes boardClaimTypes, bool validAsAssignedUser = false)
     {
         bool hasEditCardPermission = await database.Cards
             .AnyAsync(c => c.CardId == cardId && (
@@ -17,11 +16,7 @@ public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService auth
                 c.CardList.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == boardClaimTypes &&
                     buc.Value)));
-        if (hasEditCardPermission) return true;
-        if (optionalPolicy is null) return false;
-
-        bool hasGlobalPermission = await authorizationService.CheckPolicy(optionalPolicy);
-        return hasGlobalPermission;
+        return hasEditCardPermission;
     }
     
     public async Task<bool> HasCreateCardPermission(int cardListId)
@@ -32,27 +27,21 @@ public class CardAuthorizer(ICurrentUser currentUser, IAuthorizationService auth
                 cl.Board.BoardUserClaims.Any(buc =>
                     buc.UserId == currentUser.UserId && buc.Type == BoardClaimTypes.ManageCards &&
                     buc.Value)));
-        if (hasEditCardPermission) return true;
-
-        bool hasGlobalPermission = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        return hasGlobalPermission;
+        return hasEditCardPermission;
     }
 
     public async Task<bool> HasEditCardPermission(int cardId, bool validAsAssignedUser = false)
     {
-        return await HasCardPermission(cardId, BoardClaimTypes.ManageCards,
-            nameof(UserClaimTypes.ModifyOthersProjects), validAsAssignedUser);
+        return await HasCardPermission(cardId, BoardClaimTypes.ManageCards, validAsAssignedUser);
     }
 
     public async Task<bool> HasDeleteCardPermission(int cardId)
     {
-        return await HasCardPermission(cardId, BoardClaimTypes.ManageCards,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasCardPermission(cardId, BoardClaimTypes.ManageCards);
     }
 
     public async Task<bool> HasViewCardPermission(int cardId)
     {
-        return await HasCardPermission(cardId, BoardClaimTypes.ViewBoard,
-            nameof(UserClaimTypes.ModifyOthersProjects));
+        return await HasCardPermission(cardId, BoardClaimTypes.ViewBoard);
     }
 }

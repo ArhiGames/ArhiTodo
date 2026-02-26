@@ -3,7 +3,6 @@ using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
-using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Domain.Common.Errors;
@@ -18,9 +17,9 @@ using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
-public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository,
-    IAuthorizationService authorizationService, IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, 
-    IAccountRepository accountRepository, ICurrentUser currentUser, IProjectRepository projectRepository) : IBoardService
+public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository, 
+    IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, IAccountRepository accountRepository, 
+    ICurrentUser currentUser, IProjectRepository projectRepository) : IBoardService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
@@ -210,19 +209,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
 
     public async Task<Result<List<BoardGetDto>>> GetEveryBoard(int projectId)
     {
-        List<Board> boards;
-        
-        bool mayEditProjectsGlobally =
-            await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (mayEditProjectsGlobally)
-        {
-            boards = await boardRepository.GetAllAsync(projectId);
-        }
-        else
-        {
-            boards = await boardRepository.GetAllAsync(currentUser.UserId, projectId);
-        }
-        
+        List<Board> boards = await boardRepository.GetAllAsync(currentUser.UserId, projectId);
         return boards.Select(b => b.ToGetDto()).ToList();
     }
 

@@ -11,11 +11,6 @@ export const defaultGlobalClaims: DefaultClaim[] = [
         claimDescription: "If enabled the user can create projects where ever he wants"
     },
     {
-        claimType: "ModifyOthersProjects",
-        claimName: "Modify projects",
-        claimDescription: "If enabled the user can edit everything from every single project existing. The user is also allowed to delete the project"
-    },
-    {
         claimType: "AccessAdminDashboard",
         claimName: "Access admin dashboard",
         claimDescription: "If enabled, the user can access the admin dashboard, but cannot modify anything"

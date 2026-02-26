@@ -6,7 +6,6 @@ export interface KanbanJwtPayload extends JwtPayload {
     DeleteUsers: string,
     InviteOtherUsers: string,
     ManageUsers: string,
-    ModifyOthersProjects: string,
     UpdateAppSettings: string,
     nameid: string;
     unique_name: string;

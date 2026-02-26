@@ -91,14 +91,6 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
         return await boardQuery.FirstOrDefaultAsync(b => b.BoardId == boardId);
     }
 
-    public async Task<List<Board>> GetAllAsync(int projectId)
-    {
-        List<Board> boards = await database.Boards
-            .Where(b => b.ProjectId == projectId)
-            .ToListAsync();
-        return boards;
-    }
-
     public async Task<List<Board>> GetAllAsync(Guid userId, int projectId)
     {
         List<Board> boards = await database.Boards

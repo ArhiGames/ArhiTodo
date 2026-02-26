@@ -115,10 +115,6 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
         policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings));
-    })
-    .AddPolicy(nameof(UserClaimTypes.ModifyOthersProjects), policy =>
-    {
-        policy.RequireClaim(nameof(UserClaimTypes.ModifyOthersProjects));
     });
 
 builder.Services.AddControllers();

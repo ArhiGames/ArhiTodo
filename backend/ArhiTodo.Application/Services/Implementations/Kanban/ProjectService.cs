@@ -29,8 +29,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
 
-        bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (project.OwnerId != currentUser.UserId && !mayManageProjectsGlobally)
+        if (project.OwnerId != currentUser.UserId)
         {
             return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only the project owner can edit the project managers!");
         }
@@ -64,8 +63,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
         
-        bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (!project.IsProjectMember(currentUser.UserId) && !mayManageProjectsGlobally)
+        if (!project.IsProjectMember(currentUser.UserId))
         {
             return new Error("GetProjectManagers", ErrorType.Forbidden, 
                 "Only the project owner and project managers can retrieve the project managers!");
@@ -113,14 +111,10 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectUpdateDto.ProjectId);
         if (project is null) return Errors.NotFound;
 
-        bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (!mayManageProjectsGlobally)
+        bool isProjectManager = project.IsProjectMember(currentUser.UserId);
+        if (project.OwnerId != currentUser.UserId && !isProjectManager)
         {
-            bool isProjectManager = project.IsProjectMember(currentUser.UserId);
-            if (project.OwnerId != currentUser.UserId && !isProjectManager)
-            {
-                return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only project managers can update the project!");
-            }            
+            return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only project managers can update the project!");
         }
 
         Result changeNameResult = project.ChangeName(projectUpdateDto.ProjectName);
@@ -137,8 +131,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
         
-        bool mayDeleteProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (project.OwnerId != currentUser.UserId && !mayDeleteProjectsGlobally)
+        if (project.OwnerId != currentUser.UserId)
         {
             return new Error("DeleteProject", ErrorType.Forbidden, "Only the project owner can delete projects!");
         }
@@ -150,13 +143,6 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
 
     public async Task<Result<ProjectGetDto>> GetProject(int projectId)
     {
-        bool mayManageProjectsGlobally = await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        if (mayManageProjectsGlobally)
-        {
-            Project? project = await projectRepository.GetAsync(projectId);
-            return project is null ? Errors.NotFound : project.ToGetDto();
-        }
-
         Project? checkedProject = await projectRepository.GetAsync(projectId, currentUser.UserId);
         if (checkedProject is null) return Errors.NotFound;
         return checkedProject.ToGetDto();
@@ -164,19 +150,7 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
 
     public async Task<Result<List<ProjectGetDto>>> GetProjects()
     {
-        bool mayManageProjectsGlobally =
-            await authorizationService.CheckPolicy(nameof(UserClaimTypes.ModifyOthersProjects));
-        
-        List<Project> projects;
-        if (mayManageProjectsGlobally)
-        {
-            projects = await projectRepository.GetAllAsync();
-        }
-        else
-        {
-            projects = await projectRepository.GetAllAsync(currentUser.UserId);
-        }
-        
+        List<Project> projects = await projectRepository.GetAllAsync(currentUser.UserId);
         return projects.Select(p => p.ToGetDto()).ToList();
     }
 }
