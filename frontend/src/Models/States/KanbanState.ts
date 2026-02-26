@@ -31,6 +31,7 @@ export type Card = {
     cardName: string;
     cardDescription: string;
     isDone: boolean;
+    cardUrgencyLevel: number;
     assignedUserIds: string[];
 }
 

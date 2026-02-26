@@ -6,6 +6,7 @@ export type CardGetDto = {
     cardName: string;
     cardDescription: string;
     isDone: boolean;
+    cardUrgencyLevel: number;
     labelIds: number[];
     assignedUserIds: string[];
     checklists: ChecklistGetDto[];

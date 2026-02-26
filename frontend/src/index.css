@@ -23,6 +23,8 @@
     --primary: hsl(210, 100%, 60%);
     --primary-hover: hsl(210, 100%, 70%);
 
+    --warning: hsl(0, 75%, 57%);
+
     --text-color: hsl(0, 0%, 98%);
     --text-color-shaded: hsl(220, 10%, 70%);
 

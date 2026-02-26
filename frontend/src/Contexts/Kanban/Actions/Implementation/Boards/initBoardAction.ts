@@ -32,6 +32,7 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
                 cardName: cardDto.cardName,
                 cardDescription: cardDto.cardDescription,
                 isDone: cardDto.isDone,
+                cardUrgencyLevel: cardDto.cardUrgencyLevel,
                 assignedUserIds: cardDto.assignedUserIds
             });
             if (!cardLabels.get(cardDto.cardId)) {

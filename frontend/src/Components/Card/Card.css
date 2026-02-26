@@ -172,7 +172,7 @@
 
 .card-completion-details {
     display: flex;
-    justify-content: space-between;
+    gap: 0.5rem;
 }
 
 .card-members {
@@ -200,4 +200,29 @@
 
 .card-member-card.self {
     background-color: var(--bg-xxx-light);
+}
+
+.card-urgency-label {
+    background-color: var(--bg-xx-light);
+    border-radius: 10px;
+    padding: 5px;
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.card-urgency-label.low img {
+    filter: invert(63%) sepia(7%) saturate(4447%) hue-rotate(187deg) brightness(105%) contrast(101%);
+}
+
+.card-urgency-label.medium img {
+    filter: invert(69%) sepia(57%) saturate(495%) hue-rotate(2deg) brightness(108%) contrast(105%);
+}
+
+.card-urgency-label.high img {
+    filter: invert(49%) sepia(54%) saturate(4434%) hue-rotate(3deg) brightness(107%) contrast(103%);
+}
+
+.card-urgency-label.urgent img {
+    filter: invert(17%) sepia(78%) saturate(5981%) hue-rotate(2deg) brightness(100%) contrast(102%);
 }

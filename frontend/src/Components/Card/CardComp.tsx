@@ -8,6 +8,7 @@ import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CardUserIcon from "./CardUserIcon.tsx";
+import CardUrgencyLabel from "./CardUrgencyLabel.tsx";
 
 interface Props {
     cardId: number;
@@ -144,6 +145,8 @@ const CardComp = (props: Props) => {
             </div>
             { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0) && (
                 <div className="card-completion-details">
+                    { card && !card.isDone && card.cardUrgencyLevel > 0 && card.cardUrgencyLevel < 5 &&
+                        <CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/> }
                     { (getTotalTasks() > 0) && (
                         <div className="card-checklist-hint">
                             <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
