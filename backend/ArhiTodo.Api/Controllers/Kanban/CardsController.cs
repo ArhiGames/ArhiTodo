@@ -41,7 +41,7 @@ public class CardsController(ICardService cardService, ILabelService labelServic
         return moveCardResult.IsSuccess ? Ok() : HandleFailure(moveCardResult);
     }
 
-    [HttpPatch("board/{boardId:int}/card{cardId:int}/urgency/{urgencyLevel:int}")]
+    [HttpPatch("board/{boardId:int}/card/{cardId:int}/urgency/{urgencyLevel:int}")]
     public async Task<IActionResult> UpdateCardUrgency(int boardId, int cardId, int urgencyLevel)
     {
         Result updateCardUrgencyResult = await cardService.UpdateCardUrgency(boardId, cardId, urgencyLevel);

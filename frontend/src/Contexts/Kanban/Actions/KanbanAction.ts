@@ -120,6 +120,11 @@ export type UpdateCardDescriptionPayload = {
     description: string;
 }
 
+export type UpdateCardUrgencyPayload = {
+    cardId: number;
+    newUrgencyLevel: number;
+}
+
 export type UpdateCardAssignedUsersPayload = {
     cardId: number;
     assignedUserId: string;
@@ -209,6 +214,7 @@ export type KanbanAction =
     { type: "UPDATE_CARD_NAME", payload: UpdateCardNamePayload } |
     { type: "UPDATE_CARD_STATE", payload: UpdateCardStatePayload } |
     { type: "UPDATE_CARD_DESCRIPTION", payload: UpdateCardDescriptionPayload } |
+    { type: "UPDATE_CARD_URGENCY", payload: UpdateCardUrgencyPayload } |
     { type: "ASSIGN_CARD_MEMBER", payload: UpdateCardAssignedUsersPayload } |
     { type: "REMOVE_ASSIGNED_CARD_MEMBER", payload: UpdateCardAssignedUsersPayload } |
     { type: "DELETE_CARD", payload: { cardId: number } } |

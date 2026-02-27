@@ -29,6 +29,7 @@
     font-weight: bold;
     font-size: large;
     margin-top: 0.8rem;
+    margin-bottom: 0.1rem;
 }
 
 .card-details-footer {
@@ -118,4 +119,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+}
+
+.urgencies-popover {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 125px;
 }

@@ -146,7 +146,7 @@ const CardComp = (props: Props) => {
             { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0) && (
                 <div className="card-completion-details">
                     { card && !card.isDone && card.cardUrgencyLevel > 0 && card.cardUrgencyLevel < 5 &&
-                        <CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/> }
+                        <div style={{ width: "fit-content" }}><CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/></div> }
                     { (getTotalTasks() > 0) && (
                         <div className="card-checklist-hint">
                             <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>

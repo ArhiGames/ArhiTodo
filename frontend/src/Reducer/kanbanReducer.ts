@@ -50,6 +50,8 @@ import removeAssignedUserAction from "../Contexts/Kanban/Actions/Implementation/
 import initBoardMembersAction from "../Contexts/Kanban/Actions/Implementation/Boards/initBoardMembersAction.ts";
 import addBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boards/addBoardMemberAction.ts";
 import removeBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boards/removeBoardMemberAction.ts";
+import updateCardUrgencyLevelAction
+    from "../Contexts/Kanban/Actions/Implementation/Card/updateCardUrgencyLevelAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -126,6 +128,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return updateCardStateAction(state, action.payload);
         case "UPDATE_CARD_DESCRIPTION":
             return updateCardDescriptionAction(state, action.payload);
+        case "UPDATE_CARD_URGENCY":
+            return updateCardUrgencyLevelAction(state, action.payload);
         case "ASSIGN_CARD_MEMBER":
             return assignCardUserAction(state, action.payload);
         case "REMOVE_ASSIGNED_CARD_MEMBER":

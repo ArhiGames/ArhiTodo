@@ -12,6 +12,7 @@ import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts"
 import ViewCardMembersComp from "./ViewCardMembersComp.tsx";
 import ViewCardDescriptionComp from "./ViewCardDescriptionComp.tsx";
 import ViewCardLabelsComp from "./ViewCardLabelsComp.tsx";
+import ViewCardUrgencyComp from "./ViewCardUrgencyComp.tsx";
 
 const ViewCardDetailsComp = () => {
 
@@ -178,8 +179,16 @@ const ViewCardDetailsComp = () => {
                 <div className="card-details-modal">
                     <p className="category-paragraph">Labels</p>
                     <ViewCardLabelsComp/>
-                    <p className="category-paragraph">Members</p>
-                    <ViewCardMembersComp/>
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                        <div>
+                            <p className="category-paragraph">Urgency</p>
+                            <ViewCardUrgencyComp/>
+                        </div>
+                        <div>
+                            <p className="category-paragraph">Members</p>
+                            <ViewCardMembersComp/>
+                        </div>
+                    </div>
                     <div className="card-detailed-description-div">
                         <p className="category-paragraph">Label description</p>
                         <ViewCardDescriptionComp/>
