@@ -1,5 +1,3 @@
-Disclaimer: This project is still in active development and not usable yet, not everything is already done! 
-
 # Arhi Todo
 Free and Open Source Kanban Style Todo App, perfect for your projects!
 
