@@ -8,7 +8,7 @@ export const defaultGlobalClaims: DefaultClaim[] = [
     {
         claimType: "CreateProjects",
         claimName: "Create projects",
-        claimDescription: "If enabled the user can create projects where ever he wants"
+        claimDescription: "If enabled the user can create projects"
     },
     {
         claimType: "AccessAdminDashboard",

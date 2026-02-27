@@ -87,6 +87,10 @@ const CardComp = (props: Props) => {
         return totalCompletedTasks;
     }
 
+    function shouldShowUrgencyLevel(): boolean {
+        return (card && !card.isDone && card.cardUrgencyLevel > 0 && card.cardUrgencyLevel < 5) ?? false;
+    }
+
     function getCardLabelsJsx() {
         const labelIds: number[] | undefined = kanbanState.cardLabels.get(props.cardId);
         if (!labelIds) return null;
@@ -143,15 +147,18 @@ const CardComp = (props: Props) => {
                 <p className="card-name">{card?.cardName}</p>
                 <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
-            { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0) && (
+            { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0 || shouldShowUrgencyLevel()) && (
                 <div className="card-completion-details">
-                    { card && !card.isDone && card.cardUrgencyLevel > 0 && card.cardUrgencyLevel < 5 &&
-                        <div style={{ width: "fit-content" }}><CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/></div> }
+                    { card && shouldShowUrgencyLevel() && (
+                        <div style={{ width: "fit-content" }}>
+                            <CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/>
+                        </div>
+                    )}
                     { (getTotalTasks() > 0) && (
                         <div className="card-checklist-hint">
                             <p>✓ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
                         </div>
-                    ) }
+                    )}
                     { getCardMembersJsx() }
                 </div>
             ) }

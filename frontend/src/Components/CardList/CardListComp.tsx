@@ -127,7 +127,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
         return (
             <div className="cards scroller">
-                <div className="cards uncompleted">
+                <div>
                     {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
                         if (isDone) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
@@ -142,7 +142,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                         </div>
                     )
                 }
-                <div className="cards completed">
+                <div>
                     {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
                         if (!isDone) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>

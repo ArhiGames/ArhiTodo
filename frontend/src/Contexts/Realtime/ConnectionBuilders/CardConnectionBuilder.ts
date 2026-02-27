@@ -20,6 +20,10 @@ export function buildCardConnection(hubConnection: HubConnection, dispatch: Disp
         dispatch({ type: "ASSIGN_CARD_MEMBER", payload: { cardId: cardId, assignedUserId: userId } });
     });
 
+    hubConnection.on("UpdateCardUrgencyLevel", (cardId: number, cardUrgencyLevel: number) => {
+        dispatch({ type: "UPDATE_CARD_URGENCY", payload: { cardId: cardId, newUrgencyLevel: cardUrgencyLevel } });
+    })
+
     hubConnection.on("RemoveAssignedUser", (cardId: number, userId: string) => {
         dispatch({ type: "REMOVE_ASSIGNED_CARD_MEMBER", payload: { cardId: cardId, assignedUserId: userId } });
     });
