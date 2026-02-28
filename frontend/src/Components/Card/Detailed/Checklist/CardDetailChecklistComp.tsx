@@ -88,7 +88,7 @@ const CardDetailChecklistComp = (props: Props) => {
 
                 return res.json();
             })
-            .then((checklistItem: ChecklistItemGetDto)=> {
+            .then((checklistItem: ChecklistItemGetDto) => {
                 if (dispatch) {
                     dispatch({ type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: {
                         predictedChecklistItemId: predictedChecklistItemId,
@@ -104,7 +104,6 @@ const CardDetailChecklistComp = (props: Props) => {
             })
 
         setAddingTaskInputValue("");
-        setIsAddingTask(false);
     }
 
     function cancelTaskAddition() {

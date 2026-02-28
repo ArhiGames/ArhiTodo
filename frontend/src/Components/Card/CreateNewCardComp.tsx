@@ -1,11 +1,16 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useParams} from "react-router-dom";
 
-const CreateNewCardComp = (props: { cardListId: number }) => {
+interface Props {
+    cardListId: number;
+    scrollDown: () => void;
+}
+
+const CreateNewCardComp = (props: Props) => {
 
     const dispatch = useKanbanDispatch();
     const { checkRefresh } = useAuth();
@@ -17,22 +22,18 @@ const CreateNewCardComp = (props: { cardListId: number }) => {
     const cardRef = useRef<HTMLInputElement>(null);
 
     function handleClicked() {
-
         setIsCreating(true);
         setTimeout(() => {
             cardRef.current?.focus();
         }, 0)
-
     }
 
     function resetForm() {
-
         setCardName("");
         setIsCreating(false);
-
     }
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
 
@@ -40,6 +41,7 @@ const CreateNewCardComp = (props: { cardListId: number }) => {
             const predictedCardId = Date.now() * -1;
 
             dispatch({ type: "CREATE_CARD_OPTIMISTIC", payload: { cardListId: props.cardListId, cardId: predictedCardId, cardName: cardName } })
+            setTimeout(() => props.scrollDown(), 0);
 
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) {
@@ -74,7 +76,7 @@ const CreateNewCardComp = (props: { cardListId: number }) => {
 
     }
 
-    function handleReset(e: FormEvent<HTMLFormElement>) {
+    function handleReset(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         resetForm();
     }

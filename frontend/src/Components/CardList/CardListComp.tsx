@@ -28,6 +28,8 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const editIconRef = useRef<HTMLImageElement | null>(null);
 
+    const scrollDownElemRef = useRef<HTMLDivElement>(null);
+
     async function onEditCardListNameEnterPressed(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === "Enter") {
             editingNameInputRef.current?.blur();
@@ -135,6 +137,10 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
         return cardIds;
     }
 
+    function scrollDown() {
+        scrollDownElemRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
     function getCardsScrollerJsx() {
         const filteredCards: { cardId: number, isDone: boolean }[] = getCardsFilteredCards();
 
@@ -161,6 +167,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
+                <div ref={scrollDownElemRef} className="scroll-down-shadow-elem"></div>
             </div>
         )
     }
@@ -191,7 +198,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                     }
                 </div>
                 { getCardsScrollerJsx() }
-                { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId}/> }
+                { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId} scrollDown={scrollDown}/> }
             </div>
         </div>
     )
