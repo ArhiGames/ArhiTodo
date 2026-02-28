@@ -19,7 +19,7 @@ const CreateNewBoardHeaderComp = () => {
     const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
 
     function onCreateBoardPressed() {
-        setOpen(true);
+        setOpen((prev: boolean) => !prev);
     }
 
     function closePopover(e: MouseEvent) {
@@ -87,7 +87,7 @@ const CreateNewBoardHeaderComp = () => {
         <div ref={createBoardHeaderRef} onClick={onCreateBoardPressed}>
             <button className="board-header create-board-header">Create new board...</button>
             { open && (
-                <Popover element={createBoardHeaderRef} close={closePopover}>
+                <Popover element={createBoardHeaderRef} triggerElement={createBoardHeaderRef} close={closePopover}>
                     <div className="create-new-board-popup">
                         <form onSubmit={onCreateBoardSubmitted}>
                             <input style={{ width: "100%" }} className="classic-input"

@@ -105,23 +105,23 @@ const ProjectManagerAddComp = (props: Props) => {
 
     return (
         <>
-            <button ref={addProjectManagerDivRef} onClick={() => setIsAddingProjectManager(true)} className="edit-project-modal-manager add">
+            <button ref={addProjectManagerDivRef} onClick={() => setIsAddingProjectManager((prev: boolean) => !prev)} className="edit-project-modal-manager add">
                 <p>+</p>
             </button>
             { isAddingProjectManager && (
-                    <Popover element={addProjectManagerDivRef} close={() => setIsAddingProjectManager(false)} closeIfClickedOutside>
-                        <>
-                            <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}/>
-                            <div className="add-project-manager-footer">
-                                <button disabled={updatedProjectManagerStates.length <= 0} onClick={() => {
-                                    setIsAddingProjectManager(false);
-                                    setIsSavingProjectManagerChanges(true);
-                                }} className={`button ${updatedProjectManagerStates.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button>
-                                <button onClick={() => setIsAddingProjectManager(false)} className="button standard-button">Cancel</button>
-                            </div>
-                        </>
-                    </Popover>
-                )}
+                <Popover element={addProjectManagerDivRef} triggerElement={addProjectManagerDivRef} close={() => setIsAddingProjectManager(false)}>
+                    <>
+                        <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}/>
+                        <div className="add-project-manager-footer">
+                            <button disabled={updatedProjectManagerStates.length <= 0} onClick={() => {
+                                setIsAddingProjectManager(false);
+                                setIsSavingProjectManagerChanges(true);
+                            }} className={`button ${updatedProjectManagerStates.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button>
+                            <button onClick={() => setIsAddingProjectManager(false)} className="button standard-button">Cancel</button>
+                        </div>
+                    </>
+                </Popover>
+            )}
             { isSavingProjectManagerChanges && getConfirmSavingProjectManagerChangesJsx() }
         </>
     )

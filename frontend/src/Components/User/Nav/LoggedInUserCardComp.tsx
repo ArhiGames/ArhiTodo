@@ -8,7 +8,7 @@ const LoggedInUserCardComp = (props: { appUser: AppUser }) => {
     const element = useRef<HTMLDivElement | null>(null);
 
     function handleOnClicked() {
-        setPopoverOpened(true);
+        setPopoverOpened((prev: boolean) => !prev);
     }
 
     function closePopover() {

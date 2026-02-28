@@ -19,6 +19,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
     const containerDivRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const editBoardButtonRef = useRef<HTMLImageElement>(null);
 
     const [newName, setNewName] = useState<string>("");
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -30,8 +31,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
     function onEditBoardClicked(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
         e.preventDefault();
-        e.stopPropagation();
-        setIsEditing(true);
+        setIsEditing((prev: boolean) => !prev);
     }
 
     async function onEditBoardNameSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -107,11 +107,11 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                     <button className="drag-handle">::</button>
                     <p>{props.board.boardName}</p>
                     { (permissions.hasEditBoardPermission() || permissions.hasDeleteBoardPermission())
-                        && <img className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }
+                        && <img ref={editBoardButtonRef} className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }
                 </Link>
                 {
                     isEditing && (
-                        <Popover element={containerDivRef} close={() => setIsEditing(false)}>
+                        <Popover element={containerDivRef} close={() => setIsEditing(false)} triggerElement={editBoardButtonRef}>
                             <div className="edit-board-popup">
                                 <form onSubmit={onEditBoardNameSubmit}>
                                     { permissions.hasEditBoardPermission() && (

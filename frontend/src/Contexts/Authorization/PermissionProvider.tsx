@@ -28,7 +28,8 @@ const PermissionProvider = ({ children }: Props) => {
     }
 
     function hasEditProjectManagerPermission(): boolean {
-        return isProjectManager();
+        const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
+        return kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === appUser?.id;
     }
 
     function hasCreateProjectPermission(): boolean {

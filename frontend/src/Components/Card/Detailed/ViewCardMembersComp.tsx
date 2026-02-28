@@ -27,7 +27,7 @@ const ViewCardMembersComp = () => {
     function onOpenCardMembersClicked(e: React.MouseEvent<HTMLDivElement>) {
         if (!permissions.hasManageCardsPermission()) return;
         addCardMemberRef.current = e.currentTarget;
-        setIsEditingMembers(true);
+        setIsEditingMembers((prev: boolean) => !prev);
     }
 
     function getCurrentSelectedStateUsers() {
@@ -147,7 +147,7 @@ const ViewCardMembersComp = () => {
                 { permissions.hasManageCardsPermission() && <div onClick={onOpenCardMembersClicked} className="card-member-card" ref={addCardMemberRef}>+</div> }
             </div>
             { isEditingMembers && (
-                <Popover close={() => setIsEditingMembers(false)} element={addCardMemberRef} closeIfClickedOutside>
+                <Popover close={() => setIsEditingMembers(false)} element={addCardMemberRef} triggerElement={addCardMemberRef}>
                     <div className="view-card-members-popover">
                         <h3>Assign users</h3>
                         <div className="card-members-selector">

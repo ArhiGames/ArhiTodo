@@ -45,7 +45,7 @@ const LabelSelector = ( props: Props ) => {
     }
 
     return (
-        <Popover close={props.onClose} element={props.element}>
+        <Popover close={props.onClose} element={props.element} triggerElement={props.element}>
             <div className="label-selector-popover">
                 <p>{ isCreating ? "Creating label" : currentlyEditingLabelId !== null ? "Editing label" : props.actionTitle }</p>
                 {

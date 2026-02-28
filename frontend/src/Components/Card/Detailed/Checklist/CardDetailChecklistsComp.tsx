@@ -87,10 +87,12 @@ const CardDetailChecklistsComp = () => {
                 {
                     permissions.hasManageCardsPermission() && (
                         <>
-                            <button ref={addChecklistButtonRef} onClick={() => setIsAddingChecklist(true)} className="button standard-button">+</button>
+                            <button ref={addChecklistButtonRef} onClick={() => setIsAddingChecklist((prev: boolean) => !prev)}
+                                    className="button standard-button">+</button>
                             {
                                 isAddingChecklist && (
-                                    <Popover close={() => setIsAddingChecklist(false)} element={addChecklistButtonRef} closeIfClickedOutside>
+                                    <Popover close={() => setIsAddingChecklist(false)} element={addChecklistButtonRef}
+                                             triggerElement={addChecklistButtonRef}>
                                         <form className="card-detail-add-checklist-form" onSubmit={onCreateChecklistSubmit} onReset={() => setIsAddingChecklist(false)}>
                                             <input ref={addChecklistNameInputRef} placeholder="Checklist name..." className="classic-input"
                                                    value={inputtedChecklistName}

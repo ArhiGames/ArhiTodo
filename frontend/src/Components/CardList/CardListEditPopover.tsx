@@ -108,7 +108,7 @@ const CardListEditPopover = (props: Props) => {
     }
 
     return (
-        <Popover element={props.editIconRef} close={props.onClose}>
+        <Popover element={props.editIconRef} triggerElement={props.editIconRef} close={props.onClose}>
             <div className="cardlist-popover-actions">
                 { permissions.hasManageCardsPermission() && (
                     <button className="button standard-button iconized-button"

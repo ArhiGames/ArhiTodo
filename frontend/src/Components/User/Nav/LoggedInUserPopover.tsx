@@ -27,7 +27,7 @@ const LoggedInUserPopover = (props: Props) => {
     }
 
     return (
-        <Popover element={props.element} close={props.onClose} offsetX={-10} offsetY={5}>
+        <Popover element={props.element} triggerElement={props.element} close={props.onClose} offsetX={-15} offsetY={5}>
             <div className="logged-in-user-popover">
                 <h2>{appUser?.unique_name}</h2>
                 <p>{appUser?.email}</p>

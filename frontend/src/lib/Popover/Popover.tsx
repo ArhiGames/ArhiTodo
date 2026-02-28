@@ -4,38 +4,35 @@ import "./Popover.css"
 
 interface PopoverProps {
     element: RefObject<HTMLElement | null>;
+    triggerElement: RefObject<HTMLElement | null>;
     children: ReactNode;
     close: (e: MouseEvent) => void;
-    closeIfClickedOutside?: boolean;
     offsetX?: number;
     offsetY?: number;
 }
 
-const Popover = ( { element, children, close, closeIfClickedOutside = true, offsetX = 0, offsetY = 0 }: PopoverProps ) => {
+const Popover = ( { element, triggerElement, children, close, offsetX = 0, offsetY = 0 }: PopoverProps ) => {
 
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const popoverRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-
-        if (!closeIfClickedOutside) return;
-
         function handleClicked(e: MouseEvent) {
-            e.stopPropagation();
-            if (!popoverRef.current) return;
+            if (!popoverRef.current || !triggerElement.current) return;
 
-            if (!popoverRef.current.contains(e.target as Node)) {
+            const target = e.target as Node;
+            if (triggerElement.current.contains(target)) {
+                return;
+            }
+
+            if (!popoverRef.current.contains(target)) {
                 close(e);
             }
         }
 
-        document.addEventListener("mousedown", handleClicked);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClicked)
-        }
-
-    }, [close, closeIfClickedOutside]);
+        document.addEventListener("mouseup", handleClicked);
+        return () => document.removeEventListener("mouseup", handleClicked);
+    }, [close, triggerElement, popoverRef]);
 
     useLayoutEffect(() => {
 

@@ -54,7 +54,7 @@ const BoardCompHeader = (props: Props) => {
             { permissions.hasManageBoardUsersPermission() && (
                 <>
                     <img src="/settings-icon.svg" alt="Settings" style={{ height: "36px", marginRight: "1rem" }}
-                         ref={boardMembersButtonRef} onClick={() => setIsEditingMembers(true)}
+                         ref={boardMembersButtonRef} onClick={() => setIsEditingMembers((prev: boolean) => !prev)}
                          className="icon clickable"/>
                     { isEditingMembers && (
                         <BoardUserSelector element={boardMembersButtonRef} close={() => setIsEditingMembers(false)}/>

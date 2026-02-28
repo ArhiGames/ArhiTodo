@@ -159,7 +159,7 @@ const BoardUserSelector = (props: Props) => {
     }
 
     return (
-        <Popover element={props.element} close={props.close}>
+        <Popover element={props.element} triggerElement={props.element} close={props.close}>
             <div className="board-user-selector-popover">
                 {
                     isAddingUser ? (

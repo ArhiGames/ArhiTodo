@@ -66,9 +66,9 @@ const ViewCardUrgencyComp = () => {
 
     return (
         <>
-            <CardUrgencyLabel ref={urgencyLabelRef} onClick={() => setIsEditing(true)} cardUrgencyLevel={card.cardUrgencyLevel}/>
+            <CardUrgencyLabel ref={urgencyLabelRef} onClick={() => setIsEditing((prev: boolean) => !prev)} cardUrgencyLevel={card.cardUrgencyLevel}/>
             { isEditing && (
-                <Popover close={() => setIsEditing(false)} element={urgencyLabelRef} closeIfClickedOutside>
+                <Popover close={() => setIsEditing(false)} element={urgencyLabelRef} triggerElement={urgencyLabelRef}>
                     <div className="urgencies-popover">
                         {[0, 1, 2, 3, 4].map((urgencyLevel: number) => {
                             return <CardUrgencyLabel key={urgencyLevel} cardUrgencyLevel={urgencyLevel}
