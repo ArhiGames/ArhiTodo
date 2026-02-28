@@ -38,3 +38,9 @@
 .selected-selectable-color {
     border: 2px solid white;
 }
+
+.label-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

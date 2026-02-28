@@ -59,7 +59,8 @@ const LabelEditor = (props: Props) => {
         { red: 26, green: 0, blue: 102 },
     ], []);
 
-    async function createEditLabel() {
+    async function createEditLabel(e: React.SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
         if (props.isCreating) {
             await createLabel();
         } else if (props.currentlyEditingLabelId !== null) {
@@ -219,38 +220,29 @@ const LabelEditor = (props: Props) => {
         labelNameInputRef.current?.focus();
     }, [props.isCreating, props.currentlyEditingLabelId]);
 
-    function getActionArea() {
-        return (
-            <>
-                <input className="classic-input"
-                       placeholder={ props.currentlyEditingLabelId === null ? "Label name..." : "" }
-                       ref={labelNameInputRef} maxLength={24}
-                       value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
-                <p>Color:</p>
-                <div className="color-selector">
-                    { selectableColors.map((color, index) => {
-                        return <button key={index} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
-                                       onClick={() => setCurrentSelectedColor(color)}
-                                       className={`selectable-color${(currentSelectedColor.red === color.red &&
-                                           currentSelectedColor.green === color.green &&
-                                           currentSelectedColor.blue === color.blue)
-                                           ? " selected-selectable-color" : ""}`}/>
-                    })}
-                </div>
-            </>
-        )
-    }
-
     return (
-        <>
-            {getActionArea()}
+        <form className="label-editor-form" onSubmit={createEditLabel} onReset={props.cancelAction}>
+            <input className="classic-input" style={{ width: "100%" }}
+                   placeholder={ props.currentlyEditingLabelId === null ? "Label name..." : "" }
+                   ref={labelNameInputRef} maxLength={24}
+                   value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
+            <p>Color:</p>
+            <div className="color-selector">
+                { selectableColors.map((color, index) => {
+                    return <button type="button" key={index} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                                   onClick={() => setCurrentSelectedColor(color)}
+                                   className={`selectable-color${(currentSelectedColor.red === color.red &&
+                                       currentSelectedColor.green === color.green &&
+                                       currentSelectedColor.blue === color.blue)
+                                       ? " selected-selectable-color" : ""}`}/>
+                })}
+            </div>
             <div style={{ display: "flex", width: "100%", gap: "0.2rem" }}>
-                <button onClick={createEditLabel}
-                        className={`button ${(labelName.length > 0 || props.currentlyEditingLabelId !== null) ? "valid-submit-button" : "standard-button"}`}>
+                <button type="submit" className={`button ${(labelName.length > 0 || props.currentlyEditingLabelId !== null) ? 
+                    "valid-submit-button" : "standard-button"}`}>
                     { props.isCreating ? "Create" : props.currentlyEditingLabelId !== null ? "Edit" : "" }
                 </button>
-                <button onClick={props.cancelAction}
-                        className="button standard-button">Cancel</button>
+                <button type="reset" className="button standard-button">Cancel</button>
                 { props.currentlyEditingLabelId !== null && (
                     <button onClick={deleteLabel}
                             className="button standard-button button-with-icon">
@@ -259,7 +251,7 @@ const LabelEditor = (props: Props) => {
                     </button>
                 ) }
             </div>
-        </>
+        </form>
     )
 
 }
