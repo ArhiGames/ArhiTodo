@@ -2,6 +2,7 @@ services:
   arhitodo.frontend:
     image: ghcr.io/arhigames/arhitodo.frontend:closedalpha
     container_name: arhitodo.frontend
+    restart: unless-stopped
     ports:
       - "5123:5123"
     depends_on:
@@ -10,6 +11,7 @@ services:
   arhitodo.api:
     image: ghcr.io/arhigames/arhitodo.backend:closedalpha
     container_name: arhitodo.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_HTTP_PORTS=5000;5001
       - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
@@ -27,7 +29,7 @@ services:
   arhitodo.database:
     image: postgres:18
     container_name: arhitodo.database
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
