@@ -11,6 +11,7 @@ import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 interface Props {
     cardListId: number;
     editIconRef: RefObject<HTMLImageElement | null>;
+    startEditNameAction: () => void;
     onClose: () => void;
 }
 
@@ -110,6 +111,10 @@ const CardListEditPopover = (props: Props) => {
     return (
         <Popover element={props.editIconRef} triggerElement={props.editIconRef} close={props.onClose}>
             <div className="cardlist-popover-actions">
+                { permissions.hasManageCardListsPermission() && (
+                    <button className="button standard-button"
+                            onClick={props.startEditNameAction}>Rename</button>
+                )}
                 { permissions.hasManageCardsPermission() && (
                     <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteAllCards(true)}>

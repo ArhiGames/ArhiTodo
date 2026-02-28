@@ -37,7 +37,7 @@ const EditableLabel = ( props: Props ) => {
         <div className="editable-label-div" onClick={onEditableLabelDivPressed}>
             <div style={{ position: "relative", width: "100%" }}>
                 <button style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{props.label.labelText}</button>
-                { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✓</span> }
+                { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✔</span> }
             </div>
             { permissions.hasManageLabelsPermission() && <img className="edit-label-icon" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/> }
         </div>

@@ -22,6 +22,15 @@ const CreateNewBoardHeaderComp = () => {
         setOpen((prev: boolean) => !prev);
     }
 
+    function resetBoardInputForm() {
+        setOpen(false);
+        setBoardName("");
+
+        setTimeout(() => {
+            setOpen(true);
+        })
+    }
+
     function closePopover(e: MouseEvent) {
         e.stopPropagation();
         setOpen(false);
@@ -47,7 +56,7 @@ const CreateNewBoardHeaderComp = () => {
                 return;
             }
 
-            fetch(`${API_BASE_URL}/project/${projectId}/board`, {
+            await fetch(`${API_BASE_URL}/project/${projectId}/board`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
                 body: JSON.stringify({ boardName: boardName })
@@ -69,23 +78,20 @@ const CreateNewBoardHeaderComp = () => {
                 })
         }
 
-        setOpen(false);
+        resetBoardInputForm();
     }
 
     useEffect(() => {
-
-        if (open) {
-            boardNameInputRef.current?.focus();
-        } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setBoardName("");
-        }
-
+        boardNameInputRef.current?.focus();
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setBoardName("");
     }, [open]);
 
     return (
-        <div ref={createBoardHeaderRef} onClick={onCreateBoardPressed}>
-            <button className="board-header create-board-header">Create new board...</button>
+        <>
+            <div ref={createBoardHeaderRef} onClick={onCreateBoardPressed}>
+                <button className="board-header create-board-header">Create new board...</button>
+            </div>
             { open && (
                 <Popover element={createBoardHeaderRef} triggerElement={createBoardHeaderRef} close={closePopover}>
                     <div className="create-new-board-popup">
@@ -100,7 +106,7 @@ const CreateNewBoardHeaderComp = () => {
                     </div>
                 </Popover>)
             }
-        </div>
+        </>
     )
 
 }

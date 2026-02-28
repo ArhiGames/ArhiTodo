@@ -28,8 +28,16 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const editIconRef = useRef<HTMLImageElement | null>(null);
 
+    async function onEditCardListNameEnterPressed(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter") {
+            editingNameInputRef.current?.blur();
+            setIsEditingName(false);
+        }
+    }
+
     const onChecklistNameChangeCommited = useCallback(async () => {
         if (!cardList || inputtedName.length <= 0 || inputtedName === cardList.cardListName) return;
+        editingNameInputRef.current?.blur();
 
         const oldChecklistName: string = cardList.cardListName;
 
@@ -101,6 +109,11 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
     }, [isEditingName, onChecklistNameChangeCommited]);
 
+    function onRenameCardListActionPressed() {
+        setIsEditing(false);
+        onTryEditCardListNameClicked();
+    }
+
     function getCardsFilteredCards() {
         const cardIds: { cardId: number, isDone: boolean }[] = [];
         kanbanState.cardLists.get(props.cardListId)?.cardIds.forEach((cardId: number) => {
@@ -159,7 +172,8 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                     {
                         isEditingName ? (
                             <input ref={editingNameInputRef} className="classic-input small" onBlur={onChecklistNameChangeCommited} maxLength={25}
-                                   value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}/>
+                                   value={inputtedName} onChange={(e) => setInputtedName(e.target.value)}
+                                   onKeyDown={onEditCardListNameEnterPressed}/>
                         ) : (
                             <>
                                 <h3 onClick={onTryEditCardListNameClicked}>{cardList?.cardListName}</h3>
@@ -167,7 +181,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                                     <div className="cardlist-actions">
                                         <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
                                              onClick={() => setIsEditing((prev: boolean) => !prev)}/>
-                                        { isEditing && <CardListEditPopover cardListId={props.cardListId}
+                                        { isEditing && <CardListEditPopover cardListId={props.cardListId} startEditNameAction={onRenameCardListActionPressed}
                                                                             editIconRef={editIconRef} onClose={() => setIsEditing(false)}/>
                                         }
                                     </div>

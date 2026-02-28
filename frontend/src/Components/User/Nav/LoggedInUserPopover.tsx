@@ -3,6 +3,7 @@ import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {useNavigate} from "react-router-dom";
 import type {RefObject} from "react";
 import "./LoggedInUser.css"
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -12,7 +13,8 @@ interface Props {
 const LoggedInUserPopover = (props: Props) => {
 
     const navigate = useNavigate();
-    const { appUser, jwtPayload, logout } = useAuth();
+    const { appUser, logout } = useAuth();
+    const permissions = usePermissions();
 
     function handleAccountSettingsButtonPressed(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
@@ -32,7 +34,8 @@ const LoggedInUserPopover = (props: Props) => {
                 <h2>{appUser?.unique_name}</h2>
                 <p>{appUser?.email}</p>
                 <button className="button standard-button" onClick={handleAccountSettingsButtonPressed}>Account settings</button>
-                { jwtPayload?.AccessAdminDashboard === "True" && <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button> }
+                { permissions.hasAccessAdminDashboardPermission() &&
+                    <button className="button standard-button" onClick={handleAdministrationButtonPressed}>Administration</button> }
                 <button className="button standard-button" onClick={() => logout(true)}>Sign out</button>
             </div>
         </Popover>

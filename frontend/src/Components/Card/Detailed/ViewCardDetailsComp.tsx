@@ -1,6 +1,6 @@
 import Modal from "../../../lib/Modal/Default/Modal.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import type {KanbanState} from "../../../Models/States/KanbanState.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
@@ -23,6 +23,7 @@ const ViewCardDetailsComp = () => {
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
 
+    const cardInputRef = useRef<HTMLInputElement>(null);
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards.get(Number(cardId))?.cardName ?? "");
 
     const [isDeletingCard, setIsDeletingCard] = useState<boolean>(false);
@@ -40,6 +41,12 @@ const ViewCardDetailsComp = () => {
         }
 
     }, [navigate, kanbanState.cards, cardId, projectId, boardId]);
+
+    async function onEditCardNameEnterPressed(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter") {
+            await onCardRenamed();
+        }
+    }
 
     async function onStateChanged() {
 
@@ -72,6 +79,7 @@ const ViewCardDetailsComp = () => {
 
     async function onCardRenamed() {
         if (inputtedCardName.length === 0 || !dispatch) return;
+        cardInputRef.current?.blur();
 
         const oldCardName: string | undefined = kanbanState.cards.get(Number(cardId))?.cardName;
         if (!oldCardName) return;
@@ -146,11 +154,12 @@ const ViewCardDetailsComp = () => {
                        {
                            <button disabled={!(permissions.hasEditCardStatePermission(Number(cardId)))} onClick={onStateChanged}
                                 className="card-checkmark visible">
-                               { kanbanState.cards.get(Number(cardId))?.isDone ? "✓" : "" }
+                               { kanbanState.cards.get(Number(cardId))?.isDone ? "✔" : "" }
                            </button>
                        }
                        { permissions.hasManageCardsPermission() ?
                            (<input className="card-detail-name" value={inputtedCardName}
+                                   onKeyDown={onEditCardNameEnterPressed} ref={cardInputRef}
                                    onChange={(e) => setInputtedCardName(e.target.value)}
                                    onBlur={onCardRenamed} minLength={1} maxLength={256}/>) : (
                                 <p>{inputtedCardName}</p>

@@ -2,6 +2,8 @@ import {createContext, type Dispatch} from "react";
 import type {UserAction} from "./Actions/userAction.ts";
 
 export type PermissionContextType = {
+    hasAccessAdminDashboardPermission: () => boolean;
+
     hasEditProjectManagerPermission: () => boolean;
     hasCreateProjectPermission: () => boolean;
     hasEditProjectPermission: () => boolean;
@@ -21,6 +23,8 @@ export type PermissionContextType = {
 }
 
 export const PermissionContext = createContext<PermissionContextType>({
+    hasAccessAdminDashboardPermission: () => false,
+
     hasEditProjectManagerPermission: () => false,
     hasCreateProjectPermission: () => false,
     hasEditProjectPermission: () => false,

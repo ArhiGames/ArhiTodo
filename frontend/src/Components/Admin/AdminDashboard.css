@@ -105,3 +105,9 @@
     opacity: 1;
     cursor: pointer;
 }
+
+.user-management-users-unsufficient-permissions {
+    opacity: 75%;
+    margin-top: auto;
+    text-align: center
+}

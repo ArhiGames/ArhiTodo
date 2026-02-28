@@ -17,6 +17,10 @@ const PermissionProvider = ({ children }: Props) => {
     const kanbanState = useKanbanState();
     const [state, dispatch] = useReducer(userReducer, InitialUserState);
 
+    function hasAccessAdminDashboardPermission(): boolean {
+        return jwtPayload?.ManageUsers === "True" || jwtPayload?.InviteOtherUsers === "True" || jwtPayload?.UpdateAppSettings === "True";
+    }
+
     function hasModifyProjectPermission(): boolean {
         const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
         return state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
@@ -97,6 +101,8 @@ const PermissionProvider = ({ children }: Props) => {
 
     return (
         <PermissionContext.Provider value={{
+            hasAccessAdminDashboardPermission,
+
             hasEditProjectManagerPermission,
             hasCreateProjectPermission,
             hasEditProjectPermission,

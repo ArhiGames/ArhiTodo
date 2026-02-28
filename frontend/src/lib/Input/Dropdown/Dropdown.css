@@ -32,7 +32,7 @@
 
 .dropdown-child:hover {
     cursor: pointer;
-    background-color: var(--std-button-highlight);
+    background-color: var(--bg-xxx-light);
 }
 
 .dropdown-child p {

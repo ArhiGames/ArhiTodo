@@ -92,28 +92,20 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.RequireClaim(nameof(UserClaimTypes.CreateProjects));
     })
-    .AddPolicy(nameof(UserClaimTypes.AccessAdminDashboard), policy =>
-    {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
-    })
     .AddPolicy(nameof(UserClaimTypes.ManageUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
         policy.RequireClaim(nameof(UserClaimTypes.ManageUsers));
     })
     .AddPolicy(nameof(UserClaimTypes.DeleteUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
         policy.RequireClaim(nameof(UserClaimTypes.DeleteUsers));
     })
     .AddPolicy(nameof(UserClaimTypes.InviteOtherUsers), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
         policy.RequireClaim(nameof(UserClaimTypes.InviteOtherUsers));
     })
     .AddPolicy(nameof(UserClaimTypes.UpdateAppSettings), policy =>
     {
-        policy.RequireClaim(nameof(UserClaimTypes.AccessAdminDashboard));
         policy.RequireClaim(nameof(UserClaimTypes.UpdateAppSettings));
     });
 

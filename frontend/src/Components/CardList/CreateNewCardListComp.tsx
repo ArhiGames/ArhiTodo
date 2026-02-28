@@ -18,11 +18,8 @@ const CreateNewCardListComp = () => {
 
     function onStartCreatingNewCardClicked() {
         setIsCreating(true);
-        setTimeout(() => {
-
-            cardListNameRef.current?.focus();
-
-        }, 0);
+        setCardListName("");
+        cardListNameRef.current?.focus();
     }
 
     function closeForm() {
@@ -65,7 +62,7 @@ const CreateNewCardListComp = () => {
                 });
         }
 
-        closeForm();
+        onStartCreatingNewCardClicked();
     }
 
     useEffect(() => {

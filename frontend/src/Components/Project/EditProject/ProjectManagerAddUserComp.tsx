@@ -38,7 +38,7 @@ const ProjectManagerAddUserComp = (props: Props) => {
                 </div>
                 <p style={{ opacity: "75%" }}>{props.user.email}</p>
             </div>
-            { isSelected && <p>✓</p> }
+            { isSelected && <p>✔</p> }
         </div>
     )
 

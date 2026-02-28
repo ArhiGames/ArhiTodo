@@ -47,15 +47,14 @@
     border: none;
     background-color: var(--bg-x-light);
     font-size: medium;
-    color: var(--text-color-shaded);
     transition: color 0.15s;
     width: 100%;
     margin-right: 1rem;
+    color: var(--text-color);
 }
 
 .card-detail-name:focus {
     outline: none;
-    color: var(--text-color);
 }
 
 .card-details-labels {

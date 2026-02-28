@@ -18,16 +18,15 @@ const ProtectedRoute = (props: Props) => {
         if (!jwtPayload) return false;
         if (!isAuthenticated()) return false;
 
-        if (props.requiredClaims) {
-            for (const requiredClaim of props.requiredClaims) {
-                const jwtValue = String(jwtPayload[requiredClaim.claimType as keyof typeof jwtPayload]);
-                if (jwtValue !== requiredClaim.claimValue) {
-                    return false;
-                }
+        if (!props.requiredClaims) return true;
+        for (const requiredClaim of props.requiredClaims) {
+            const jwtValue = String(jwtPayload[requiredClaim.claimType as keyof typeof jwtPayload]);
+            if (jwtValue === requiredClaim.claimValue) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     return fulfillsRequirements()

@@ -20,6 +20,8 @@ const AdminUserManagementComp = () => {
     const [isViewingCreatedInvitationsLinks, setIsViewingCreatedInvitationsLinks] = useState<boolean>(false);
 
     const loadUsers = async (page: number) => {
+        if (jwtPayload?.ManageUsers !== "True") return;
+
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
@@ -58,6 +60,7 @@ const AdminUserManagementComp = () => {
 
     useEffect(() => {
 
+        if (jwtPayload?.ManageUsers !== "True") return;
         if (!userId) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentViewingUser(null);
@@ -98,10 +101,11 @@ const AdminUserManagementComp = () => {
 
         return () => controller.abort();
 
-    }, [checkRefresh, token, userId]);
+    }, [checkRefresh, jwtPayload?.ManageUsers, token, userId]);
 
     useEffect(() => {
 
+        if (jwtPayload?.ManageUsers !== "True") return;
         const run = async () => {
             const refreshedToken: string | null = await checkRefresh();
             if (!refreshedToken) return;
@@ -140,26 +144,29 @@ const AdminUserManagementComp = () => {
         <div className="admin-settings-content admin-usermanagement-page">
             <h2>User management</h2>
             <p>Manage user permissions, delete & add users</p>
-            <div className="user-management-users-div scroller">
-                {users.map((user: UserGetDto) => (
-                    <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
-                ))}
-                { usersCount > users.length && <button onClick={onLoadMoreButtonPressed} className="users-show-more">Show more...</button> }
-            </div>
-            {
-                jwtPayload?.InviteOtherUsers === "True" && (
-                    <>
-                        <nav className="user-management-nav">
-                            <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
-                        </nav>
-                        {
-                            (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
-                                <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
-                            )
-                        }
-                    </>
-                )
-            }
+            { jwtPayload?.ManageUsers === "True" ? (
+                <div className="user-management-users-div scroller">
+                    {users.map((user: UserGetDto) => (
+                        <EditableUserComp canEdit={user.userName !== "admin"} isSelf={user.userId === appUser?.id} onEdit={onEditUser} user={user} key={user.userId}/>
+                    ))}
+                    { usersCount > users.length && <button onClick={onLoadMoreButtonPressed} className="users-show-more">Show more...</button> }
+                </div>
+            ) : (
+                <h2 className="user-management-users-unsufficient-permissions">Permissions insufficient to view users!</h2>
+            )}
+
+            {jwtPayload?.InviteOtherUsers === "True" && (
+                <>
+                    <nav className="user-management-nav">
+                        <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
+                    </nav>
+                    {
+                        (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
+                            <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
+                        )
+                    }
+                </>
+            )}
 
             {
                 currentViewingUser && (

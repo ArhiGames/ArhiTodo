@@ -9,7 +9,7 @@ namespace ArhiTodo.Domain.Entities.Auth;
 public enum UserClaimTypes
 {
     CreateProjects = 1 << 0,
-    AccessAdminDashboard = 1 << 1,
+    UnusedUserClaimType = 1 << 1, //AccessAdminDashboard
     ManageUsers = 1 << 2,
     DeleteUsers = 1 << 3,
     InviteOtherUsers = 1 << 4,

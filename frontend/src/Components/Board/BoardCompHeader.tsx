@@ -32,7 +32,7 @@ const BoardCompHeader = (props: Props) => {
 
     function startEditingLabels(onTarget: HTMLElement) {
         seeLabelsButtonRef.current = onTarget;
-        setIsEditingLabels(true);
+        setIsEditingLabels((prev: boolean) => !prev);
     }
 
     function getLabelJsxFor(labelId: number) {

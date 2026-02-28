@@ -16,7 +16,7 @@ const FancyCheckbox = ({ value, onChange, disabled }: Props) => {
 
     return (
         <div onClick={handleCheckboxClick} className={`fancy-checkbox-div ${disabled ? "disabled" : ""}`}>
-            <p className={`fancy-checkbox ${value ? "visible" : "invisible"}`}>✓</p>
+            <p className={`fancy-checkbox ${value ? "visible" : "invisible"}`}>✔</p>
         </div>
     )
 

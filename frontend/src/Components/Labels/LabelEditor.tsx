@@ -23,7 +23,8 @@ const LabelEditor = (props: Props) => {
     const { boardId } = useParams();
 
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
-    const [labelName, setLabelName] = useState<string>("");
+    const initialLabelName: string = (props.currentlyEditingLabelId ? kanbanState.labels.get(props.currentlyEditingLabelId)?.labelText : "") ?? "";
+    const [labelName, setLabelName] = useState<string>(initialLabelName);
     const [currentSelectedColor, setCurrentSelectedColor] = useState<Rgb>({ red: 0, green: 255, blue: 85 });
 
     const selectableColors: Rgb[] = useMemo(() => [
@@ -215,19 +216,14 @@ const LabelEditor = (props: Props) => {
     }, [kanbanState.labels, props, selectableColors]);
 
     useEffect(() => {
-        if (props.isCreating) {
-            labelNameInputRef.current?.focus();
-        } else {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setLabelName("");
-        }
+        labelNameInputRef.current?.focus();
     }, [props.isCreating, props.currentlyEditingLabelId]);
 
     function getActionArea() {
         return (
             <>
                 <input className="classic-input"
-                       placeholder={ props.currentlyEditingLabelId !== null ? kanbanState.labels.get(props.currentlyEditingLabelId)?.labelText : "Label name..."}
+                       placeholder={ props.currentlyEditingLabelId === null ? "Label name..." : "" }
                        ref={labelNameInputRef} maxLength={24}
                        value={labelName} onChange={(e) => setLabelName(e.target.value)}></input>
                 <p>Color:</p>

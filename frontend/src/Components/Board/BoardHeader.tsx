@@ -21,7 +21,7 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
     const inputRef = useRef<HTMLInputElement>(null);
     const editBoardButtonRef = useRef<HTMLImageElement>(null);
 
-    const [newName, setNewName] = useState<string>("");
+    const [newName, setNewName] = useState<string>(props.board.boardName);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
 
@@ -58,9 +58,6 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                 }
             })
             .catch(console.error)
-            .finally(() => {
-                setNewName("");
-            })
 
         setIsEditing(false);
     }
@@ -117,12 +114,13 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
                                     { permissions.hasEditBoardPermission() && (
                                         <>
                                             <label>Title</label>
-                                            <input ref={inputRef} className="classic-input" placeholder={props.board.boardName} maxLength={35} required
+                                            <input ref={inputRef} className="classic-input" maxLength={35} required
                                                    value={newName} onChange={(e) => setNewName(e.target.value)}/>
                                         </>
                                     )}
                                     <div style={{ display: "flex", gap: "0.5rem" }}>
-                                        { permissions.hasEditBoardPermission() && <button type="submit" className={`button ${newName.length > 0 ? "valid-submit-button" : "standard-button"}`}>Change</button> }
+                                        { permissions.hasEditBoardPermission() && <button type="submit" className={`button ${props.board.boardName !== newName ? 
+                                            "valid-submit-button" : "standard-button"}`}>Change</button> }
                                         { permissions.hasDeleteBoardPermission() && (
                                             <button onClick={tryDeleteBoard} type="button" className="button standard-button button-with-icon">
                                                 <img src="/trashcan-icon.svg" alt="" className="icon" style={{ height: "24px" }}></img>
