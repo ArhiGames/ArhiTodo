@@ -16,6 +16,12 @@ export function buildCardListConnection(hubConnection: HubConnection, dispatch: 
         }
     });
 
+    hubConnection.on("MoveCardList", (cardListId: number, toIndex: number) => {
+        if (dispatch) {
+            dispatch({ type: "MOVE_CARDLIST", payload: { cardListId: cardListId, toIndex: toIndex } });
+        }
+    })
+
     hubConnection.on("DeleteCardsFromCardList", (cardListId: number) => {
         if (dispatch) {
             dispatch({ type: "DELETE_CARDS_FROM_CARDLIST", payload: { fromCardListId: cardListId } });
