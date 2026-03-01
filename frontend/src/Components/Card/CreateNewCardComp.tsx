@@ -4,6 +4,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardGetDto} from "../../Models/BackendDtos/Kanban/CardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useParams} from "react-router-dom";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     cardListId: number;
@@ -20,6 +21,7 @@ const CreateNewCardComp = (props: Props) => {
     const [cardName, setCardName] = useState<string>("");
     const formRef = useRef<HTMLFormElement>(null);
     const cardRef = useRef<HTMLInputElement>(null);
+    const hubConnection = useRealtimeHub();
 
     function handleClicked() {
         setIsCreating(true);
@@ -52,7 +54,11 @@ const CreateNewCardComp = (props: Props) => {
             fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}/card`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${refreshedToken}`,
+                        "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                    },
                     body: JSON.stringify({ cardName: cardName })
                 })
                 .then(res => {

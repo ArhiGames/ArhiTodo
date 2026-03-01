@@ -3,8 +3,6 @@ import type {ChangeLabelCardRelationPayload} from "../../KanbanAction.ts";
 
 const removeLabelFromCard = (state: KanbanState, payload: ChangeLabelCardRelationPayload) => {
 
-    console.log(payload.labelId)
-
     const labelIds: number[] | undefined = state.cardLabels.get(payload.cardId);
     if (!labelIds) return state;
 

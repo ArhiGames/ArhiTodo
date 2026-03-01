@@ -3,10 +3,15 @@ import type {CreateCardPayload} from "../../KanbanAction.ts";
 
 const createCardAction = (state: KanbanState, payload: CreateCardPayload): KanbanState => {
 
-    const cardList: CardList | undefined = state.cardLists.get(payload.cardListId);
-    if (!cardList) return state;
-    if (!cardList.cardIds.includes(payload.cardId)) {
-        cardList.cardIds.push(payload.cardId);
+    const existingCardList: CardList | undefined = state.cardLists.get(payload.cardListId);
+    if (!existingCardList) return state;
+
+    const newCardLists: Map<number, CardList> = new Map(state.cardLists);
+    if (!existingCardList.cardIds.includes(payload.cardId)) {
+        newCardLists.set(payload.cardListId, {
+            ...existingCardList,
+            cardIds: [...existingCardList.cardIds, payload.cardId]
+        });
     }
 
     const newCards: Map<number, Card> = new Map(state.cards);
@@ -24,6 +29,7 @@ const createCardAction = (state: KanbanState, payload: CreateCardPayload): Kanba
 
     return {
         ...state,
+        cardLists: newCardLists,
         cards: newCards,
         cardLabels: newCardLabels
     }

@@ -5,6 +5,7 @@ import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import type {CardListGetDto} from "../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const CreateNewCardListComp = () => {
 
@@ -15,6 +16,7 @@ const CreateNewCardListComp = () => {
     const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
     const { boardId } = useParams();
     const { checkRefresh } = useAuth();
+    const hubConnection = useRealtimeHub();
 
     function onStartCreatingNewCardClicked() {
         setIsCreating(true);
@@ -43,7 +45,11 @@ const CreateNewCardListComp = () => {
 
             fetch(`${API_BASE_URL}/board/${boardId}/cardlist`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
                 body: JSON.stringify({ cardListName: cardListName })
             })
                 .then(res => {

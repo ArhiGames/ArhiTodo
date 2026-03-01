@@ -4,6 +4,7 @@ import {API_BASE_URL} from "../../../config/api.ts";
 import {useParams} from "react-router-dom";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 const ViewCardDescriptionComp = () => {
 
@@ -12,6 +13,7 @@ const ViewCardDescriptionComp = () => {
     const { cardId } = useParams();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const hubConnection = useRealtimeHub();
 
     const currentStateDescription: string = kanbanState.cards.get(Number(cardId))?.cardDescription ?? "";
     const [inputtedDescription, setInputtedDescription] = useState<string>(currentStateDescription);
@@ -48,7 +50,11 @@ const ViewCardDescriptionComp = () => {
 
         fetch(`${API_BASE_URL}/card/${Number(cardId)}/description`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ newCardDescription: inputtedDescription })
         })
             .then(res => {

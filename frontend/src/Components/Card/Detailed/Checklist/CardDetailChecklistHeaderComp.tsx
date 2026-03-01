@@ -9,6 +9,7 @@ import ConfirmationModal from "../../../../lib/Modal/Confirmation/ConfirmationMo
 import * as React from "react";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 import type {Checklist} from "../../../../Models/States/KanbanState.ts";
+import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     checklistId: number;
@@ -24,6 +25,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
     const checklist: Checklist = kanbanState.checklists.get(props.checklistId)!;
     const { boardId, cardId } = useParams();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const [isDeletingChecklist, setIsDeletingChecklist] = useState<boolean>(false);
 
@@ -60,7 +62,11 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ checklistId: props.checklistId, checklistName: inputtedChecklistName })
         })
             .then(res => {

@@ -7,6 +7,7 @@ import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts"
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 const ViewCardLabelsComp = () => {
 
@@ -15,6 +16,7 @@ const ViewCardLabelsComp = () => {
     const permissions = usePermissions();
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
+    const hubConnection = useRealtimeHub();
 
     const currentEditLabelRef = useRef<HTMLElement>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
@@ -33,7 +35,11 @@ const ViewCardLabelsComp = () => {
         fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
             })
             .then(res => {
                 if (!res.ok) {
@@ -60,7 +66,11 @@ const ViewCardLabelsComp = () => {
         fetch(`${API_BASE_URL}/board/${boardId}/card/${Number(cardId)}/label/${labelId}`,
             {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
             })
             .then(res => {
                 if (!res.ok) {

@@ -9,6 +9,7 @@ import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hoo
 import type {Checklist} from "../../../../Models/States/KanbanState.ts";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 
 const CardDetailChecklistsComp = () => {
 
@@ -17,6 +18,7 @@ const CardDetailChecklistsComp = () => {
     const dispatch = useKanbanDispatch();
     const { boardId, cardId } = useParams();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const addChecklistButtonRef = useRef<HTMLButtonElement>(null);
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +46,11 @@ const CardDetailChecklistsComp = () => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}/checklist`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ checklistName: inputtedChecklistName })
         })
             .then(res => {

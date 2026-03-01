@@ -10,12 +10,14 @@ import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.ts
 import {API_BASE_URL} from "../../config/api.ts";
 import "./BoardHeader.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const BoardHeader = (props: { projectId: number, board: Board, isSelected: boolean, dndIndex: number }) => {
 
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const containerDivRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -42,7 +44,11 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ boardId: props.board.boardId, boardName: newName })
         })
             .then(res => {
@@ -76,7 +82,11 @@ const BoardHeader = (props: { projectId: number, board: Board, isSelected: boole
 
         fetch(`${API_BASE_URL}/project/${props.projectId}/board/${props.board.boardId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

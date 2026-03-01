@@ -7,6 +7,7 @@ import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     cardListId: number;
@@ -21,6 +22,7 @@ const CardListEditPopover = (props: Props) => {
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isTryingToDeleteAllCards, setIsTryingToDeleteAllCards] = useState<boolean>(false);
@@ -39,7 +41,11 @@ const CardListEditPopover = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}/cards`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {
@@ -71,7 +77,11 @@ const CardListEditPopover = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist/${props.cardListId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

@@ -9,6 +9,7 @@ import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 import {useParams} from "react-router-dom";
 import CardDetailChecklistHeaderComp from "./CardDetailChecklistHeaderComp.tsx";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     checklistId: number;
@@ -21,6 +22,7 @@ const CardDetailChecklistComp = (props: Props) => {
     const kanbanState = useKanbanState();
     const { boardId, cardId } = useParams();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
     const checklistItems: ChecklistItem[] = [];
@@ -78,7 +80,11 @@ const CardDetailChecklistComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist/${props.checklistId}/item`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ checklistItemName: addingTaskInputValue })
         })
             .then(res => {

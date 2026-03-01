@@ -7,6 +7,7 @@ import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal
 import {API_BASE_URL} from "../../../config/api.ts";
 import {matchPath} from "react-router-dom";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     projectManagers: UserGetDto[];
@@ -17,6 +18,7 @@ const ProjectManagerAddComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
     const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
+    const hubConnection = useRealtimeHub();
 
     const [isAddingProjectManager, setIsAddingProjectManager] = useState<boolean>(false);
     const addProjectManagerDivRef = useRef<HTMLButtonElement | null>(null);
@@ -66,7 +68,11 @@ const ProjectManagerAddComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/project/${match.params.projectId}/managers`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify(updatedProjectManagerStates)
         })
             .then(res => {

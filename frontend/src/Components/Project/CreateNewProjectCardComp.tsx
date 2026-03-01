@@ -6,12 +6,14 @@ import type { ProjectGetDto } from "../../Models/BackendDtos/Kanban/ProjectGetDt
 import { useNavigate } from "react-router-dom";
 import {API_BASE_URL} from "../../config/api.ts";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const CreateNewProjectCardComp = () => {
 
     const { checkRefresh } = useAuth();
     const navigate = useNavigate();
     const dispatch = useKanbanDispatch();
+    const hubConnection = useRealtimeHub();
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [projectName, setProjectName] = useState<string>("");
@@ -37,7 +39,11 @@ const CreateNewProjectCardComp = () => {
 
             fetch(`${API_BASE_URL}/project`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
                 body: JSON.stringify({ projectName: projectName }),
                 signal: abortController.signal
             })

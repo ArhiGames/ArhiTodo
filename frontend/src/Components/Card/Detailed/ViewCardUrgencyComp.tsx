@@ -6,6 +6,7 @@ import {useRef, useState} from "react";
 import Popover from "../../../lib/Popover/Popover.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 const ViewCardUrgencyComp = () => {
 
@@ -13,6 +14,7 @@ const ViewCardUrgencyComp = () => {
     const dispatch = useKanbanDispatch();
     const { boardId, cardId } = useParams();
     const { checkRefresh } = useAuth();
+    const hubConnection = useRealtimeHub();
 
     const urgencyLabelRef = useRef<HTMLDivElement>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -42,7 +44,11 @@ const ViewCardUrgencyComp = () => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/urgency/${newUrgencyLevel}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

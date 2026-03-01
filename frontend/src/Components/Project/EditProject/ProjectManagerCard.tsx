@@ -5,6 +5,7 @@ import {type Dispatch, type SetStateAction, useState} from "react";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     project: Project;
@@ -18,6 +19,7 @@ const ProjectManagerCard = (props: Props) => {
 
     const { appUser, checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
+    const hubConnection = useRealtimeHub();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
@@ -31,7 +33,11 @@ const ProjectManagerCard = (props: Props) => {
 
         fetch(`${API_BASE_URL}/project/${props.project.projectId}/managers/`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify([ { userId: props.projectManager.userId, newManagerState: false } ]),
         })
             .then(res => {

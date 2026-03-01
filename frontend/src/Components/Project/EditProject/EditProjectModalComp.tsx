@@ -10,6 +10,7 @@ import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal
 import "./EditProject.css"
 import EditProjectProjectManagersComp from "./EditProjectProjectManagersComp.tsx";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     onClose: () => void;
@@ -21,6 +22,7 @@ const EditProjectModalComp = (props: Props) => {
     const { checkRefresh } = useAuth();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const [projectName, setProjectName] = useState<string>(props.project.projectName);
     const [isTryingToDelete, setIsTryingToDelete] = useState<boolean>(false);
@@ -39,7 +41,11 @@ const EditProjectModalComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/project`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ projectId: props.project.projectId, projectName: projectName }),
         })
             .then(res => {
@@ -71,7 +77,11 @@ const EditProjectModalComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/project/${props.project.projectId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

@@ -7,6 +7,7 @@ import {type FormEvent, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 import type {ChecklistItem} from "../../../../Models/States/KanbanState.ts";
+import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     checklistId: number;
@@ -20,6 +21,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
     const kanbanState = useKanbanState();
     const { boardId, cardId } = useParams();
     const permission = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const checklistItemInputRef = useRef<HTMLInputElement | null>(null);
@@ -53,7 +55,11 @@ const CardDetailChecklistItemComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist/item/${checklistItemId}/done/${checked}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

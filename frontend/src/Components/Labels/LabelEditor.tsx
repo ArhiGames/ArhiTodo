@@ -6,6 +6,7 @@ import {type Rgb, toInteger, toRgb} from "../../lib/Functions.ts";
 import type {LabelGetDto} from "../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import {useParams} from "react-router-dom";
 import type {Label} from "../../Models/States/KanbanState.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     currentlyEditingLabelId: number | null;
@@ -21,6 +22,7 @@ const LabelEditor = (props: Props) => {
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
+    const hubConnection = useRealtimeHub();
 
     const labelNameInputRef: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement | null>(null);
     const initialLabelName: string = (props.currentlyEditingLabelId ? kanbanState.labels.get(props.currentlyEditingLabelId)?.labelText : "") ?? "";
@@ -90,7 +92,11 @@ const LabelEditor = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/label`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ labelText: labelName, labelColor: toInteger(currentSelectedColor) })
         })
             .then(res => {
@@ -180,7 +186,11 @@ const LabelEditor = (props: Props) => {
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/label/${props.currentlyEditingLabelId}`,
             {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
             })
             .then(res => {
                 if (!res.ok) {

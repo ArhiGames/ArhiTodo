@@ -10,10 +10,12 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
         User?.
         Identity?.
         IsAuthenticated ?? throw new ApplicationException("UserContext unavailable!");
-
+    
     public Guid UserId => Guid.Parse(
         httpContextAccessor.
             HttpContext?
             .User
             .FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new ApplicationException("UserContext unavailable"));
+    
+    public string? ConnectionId => httpContextAccessor.HttpContext?.Request.Headers["SignalR-Connection-Id"];
 }

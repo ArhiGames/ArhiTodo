@@ -9,6 +9,7 @@ import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CardUserIcon from "./CardUserIcon.tsx";
 import CardUrgencyLabel from "./CardUrgencyLabel.tsx";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     cardId: number;
@@ -22,6 +23,7 @@ const CardComp = (props: Props) => {
     const { appUser, checkRefresh } = useAuth();
     const { projectId, boardId } = useParams();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const card: Card | undefined = kanbanState.cards.get(props.cardId);
 
@@ -46,7 +48,11 @@ const CardComp = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${props.cardId}/done/${newState}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

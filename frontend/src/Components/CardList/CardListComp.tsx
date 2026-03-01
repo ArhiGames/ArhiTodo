@@ -10,6 +10,7 @@ import "./CardList.css"
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CardCompWrapper from "../Card/CardCompWrapper.tsx";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
 
@@ -18,6 +19,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     const dispatch = useKanbanDispatch();
     const { boardId } = useParams();
     const permission = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -57,7 +59,11 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/cardlist`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ cardListId: props.cardListId, cardListName: inputtedName })
         })
             .then(res => {
@@ -78,7 +84,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                 }
                 console.error(err);
             })
-    }, [cardList, inputtedName, dispatch, checkRefresh, boardId, props.cardListId])
+    }, [cardList, inputtedName, dispatch, checkRefresh, boardId, hubConnection.hubConnection?.connectionId, props.cardListId])
 
     function onTryEditCardListNameClicked() {
         if (!permission.hasManageCardListsPermission() || !cardList) return;
@@ -138,7 +144,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     }
 
     function scrollDown() {
-        scrollDownElemRef.current?.scrollIntoView({ behavior: "smooth" });
+        scrollDownElemRef.current?.scrollIntoView({ block: "end", inline: "nearest", behavior: "smooth" });
     }
 
     function getCardsScrollerJsx() {
@@ -152,6 +158,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
+                <div ref={scrollDownElemRef} className="scroll-down-shadow-elem"></div>
                 {
                     filteredCards.some((fl: { cardId: number, isDone: boolean }) => fl.isDone) && (
                         <div className="cardlist-un-completed-breaker">
@@ -167,7 +174,6 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
-                <div ref={scrollDownElemRef} className="scroll-down-shadow-elem"></div>
             </div>
         )
     }

@@ -10,6 +10,7 @@ import type {Claim} from "../../../Models/Claim.ts";
 import BoardUserSelectorEditUserClaimsComp from "./BoardUserSelectorEditUserClaimsComp.tsx";
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
 import BoardUserSelectorAddUserComp from "./BoardUserSelectorAddUserComp.tsx";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -20,6 +21,7 @@ const BoardUserSelector = (props: Props) => {
 
     const { checkRefresh } = useAuth();
     const { boardId } = useParams();
+    const hubConnection = useRealtimeHub();
 
     const [boardMembers, setBoardMembers] = useState<UserGetDto[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
@@ -138,7 +140,11 @@ const BoardUserSelector = (props: Props) => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/members`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify(boardMemberStatusUpdateList),
         })
             .then(res => {

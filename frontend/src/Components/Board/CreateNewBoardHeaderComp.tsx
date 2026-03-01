@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type { BoardGetDto } from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
 import {API_BASE_URL} from "../../config/api.ts";
+import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const CreateNewBoardHeaderComp = () => {
 
@@ -17,6 +18,7 @@ const CreateNewBoardHeaderComp = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [boardName, setBoardName] = useState<string>("");
     const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
+    const hubConnection = useRealtimeHub();
 
     function onCreateBoardPressed() {
         setOpen((prev: boolean) => !prev);
@@ -58,7 +60,11 @@ const CreateNewBoardHeaderComp = () => {
 
             await fetch(`${API_BASE_URL}/project/${projectId}/board`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${refreshedToken}`,
+                    "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+                },
                 body: JSON.stringify({ boardName: boardName })
             })
                 .then(res => {

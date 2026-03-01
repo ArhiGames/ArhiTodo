@@ -13,6 +13,7 @@ import ViewCardMembersComp from "./ViewCardMembersComp.tsx";
 import ViewCardDescriptionComp from "./ViewCardDescriptionComp.tsx";
 import ViewCardLabelsComp from "./ViewCardLabelsComp.tsx";
 import ViewCardUrgencyComp from "./ViewCardUrgencyComp.tsx";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 const ViewCardDetailsComp = () => {
 
@@ -22,6 +23,7 @@ const ViewCardDetailsComp = () => {
     const kanbanState: KanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
+    const hubConnection = useRealtimeHub();
 
     const cardInputRef = useRef<HTMLInputElement>(null);
     const [inputtedCardName, setInputtedCardName] = useState<string>(kanbanState.cards.get(Number(cardId))?.cardName ?? "");
@@ -64,7 +66,11 @@ const ViewCardDetailsComp = () => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${Number(cardId)}/done/${newState}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {
@@ -95,7 +101,11 @@ const ViewCardDetailsComp = () => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${Number(cardId)}/name`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
             body: JSON.stringify({ newCardName: newCardName })
         })
             .then(res => {
@@ -117,7 +127,11 @@ const ViewCardDetailsComp = () => {
 
         fetch(`${API_BASE_URL}/board/${Number(boardId)}/card/${cardId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {

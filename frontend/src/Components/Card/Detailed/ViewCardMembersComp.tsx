@@ -9,6 +9,7 @@ import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import CardUserIcon from "../CardUserIcon.tsx";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 const ViewCardMembersComp = () => {
 
@@ -17,6 +18,7 @@ const ViewCardMembersComp = () => {
     const permissions = usePermissions();
     const { boardId, cardId } = useParams();
     const { checkRefresh, appUser } = useAuth();
+    const hubConnection = useRealtimeHub();
 
     const [isEditingMembers, setIsEditingMembers] = useState<boolean>(false);
     const [selectedUsers, setSelectedUsers] = useState<PublicUserGetDto[]>(getCurrentSelectedStateUsers());
@@ -54,7 +56,11 @@ const ViewCardMembersComp = () => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/assign/user/${userId}`, {
             method: "POST",
-            headers: {"Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}`}
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {
@@ -82,7 +88,11 @@ const ViewCardMembersComp = () => {
 
         fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/unassign/user/${userId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
         })
             .then(res => {
                 if (!res.ok) {
