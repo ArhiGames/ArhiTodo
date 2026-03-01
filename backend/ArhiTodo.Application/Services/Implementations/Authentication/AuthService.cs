@@ -95,7 +95,7 @@ public class AuthService(
         string hashedToken = tokenGeneratorService.Hash(byteToken, 32);
         
         UserSession? userSession = user.UserSessions.FirstOrDefault(us => us.TokenHash == hashedToken);
-        if (userSession == null) return Errors.Unauthenticated;
+        if (userSession is null) return Errors.Unauthenticated;
         
         List<Claim> claims = user.GetUserClaimsAsList();
         string jwt = jwtTokenGeneratorService.GenerateToken(userSession.User, claims);

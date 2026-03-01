@@ -110,7 +110,7 @@ public class User
     public Result RemoveUserSession(string userAgent)
     {
         UserSession? foundUserSession = _userSessions.FirstOrDefault(us => us.UserAgent == userAgent);
-        if (foundUserSession == null)
+        if (foundUserSession is null)
         {
             return new Error("NoSessionToRemove", ErrorType.Conflict,
                 "There is now user on this user with the specified user agent, nothing to remove!");

@@ -101,7 +101,7 @@ public class Card : Draggable
     public Result RemoveChecklist(int checklistId)
     {
         Checklist? checklist = _checklists.FirstOrDefault(cl => cl.ChecklistId == checklistId);
-        if (checklist == null)
+        if (checklist is null)
         {
             return new Error("NoChecklistWithId", ErrorType.Conflict,
                 "There is no checklist with the specified id on this card!");
@@ -115,11 +115,13 @@ public class Card : Draggable
         {
             ChecklistItem? checklistItem =
                 checklist.ChecklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
-            if (checklistItem == null) continue;
+            if (checklistItem is null) continue;
             
             checklistItem.UpdateChecklistItemState(isDone);
+            IsDone = isDone && IsChecklistsCompleted();
             return checklistItem;
         }
+        
         return null;
     }
 
@@ -157,5 +159,10 @@ public class Card : Draggable
         
         bool succeeded = _assignedUsers.Remove(assignedCardUser);
         return succeeded ? Result.Success() : Errors.NotFound;
+    }
+
+    private bool IsChecklistsCompleted()
+    {
+        return _checklists.All(c => c.IsCompleted());
     }
 }

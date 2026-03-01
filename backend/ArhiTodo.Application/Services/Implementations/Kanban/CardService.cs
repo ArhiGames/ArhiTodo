@@ -30,7 +30,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!createCardResult.IsSuccess) return createCardResult.Error!;
         
         Card? card = await cardRepository.CreateAsync(createCardResult.Value!);
-        if (card == null) return Errors.Unknown;
+        if (card is null) return Errors.Unknown;
 
         CardGetDto cardGetDto = card.ToGetDto();
         cardNotificationService.CreateCard(boardId, cardListId, cardGetDto);
@@ -138,7 +138,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasEditCardPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
             
         Result renameCardResult = card.RenameCard(patchCardNameDto.NewCardName);
         if (!renameCardResult.IsSuccess) return renameCardResult.Error!;
@@ -155,7 +155,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasEditCardPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
 
         card.UpdateCardState(isDone);
         await unitOfWork.SaveChangesAsync();
@@ -171,7 +171,7 @@ public class CardService(ICardRepository cardRepository, ICardNotificationServic
         if (!hasEditCardPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
 
         card.ChangeCardDescription(patchCardDescriptionDto.NewCardDescription);
         await unitOfWork.SaveChangesAsync();

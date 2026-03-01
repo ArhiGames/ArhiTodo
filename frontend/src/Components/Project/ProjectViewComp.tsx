@@ -223,7 +223,7 @@ const ProjectViewComp = () => {
 
     return (
         <div className="project-view">
-            <div className="board-selectors">
+            <div className="board-selectors scroller">
                 {Array.from(kanbanState.boards.values())
                     .filter(b => b.projectId === Number(projectId))
                     .map((board: Board, index: number) => {

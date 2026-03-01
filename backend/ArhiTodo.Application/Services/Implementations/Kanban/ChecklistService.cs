@@ -65,7 +65,7 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         if (!hasDeleteChecklistPermission) return Errors.Forbidden;
         
         Card? card = await cardRepository.GetDetailedCard(cardId);
-        if (card == null) return Errors.NotFound;
+        if (card is null) return Errors.NotFound;
 
         Result removeChecklistResult = card.RemoveChecklist(checklistId);
         if (removeChecklistResult.IsSuccess)

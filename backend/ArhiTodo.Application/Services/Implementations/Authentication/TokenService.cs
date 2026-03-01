@@ -14,7 +14,7 @@ public class TokenService(IUnitOfWork unitOfWork, ITokenGeneratorService tokenGe
         UserSession? existingSession =
             user.UserSessions.FirstOrDefault(us => us.UserId == user.UserId && us.UserAgent == userAgent);
         
-        if (existingSession == null)
+        if (existingSession is null)
         {
             UserSession userSession = new(user.UserId, hashedToken, userAgent, DateTimeOffset.UtcNow.AddDays(14));
             user.AddUserSession(userSession);

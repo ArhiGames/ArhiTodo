@@ -57,7 +57,7 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
         if (!authorized) return Errors.Forbidden;
         
         InvitationLink? invitationLink = await invitationRepository.GetInvitationLinkById(invitationLinkId);
-        if (invitationLink == null) return Errors.NotFound;
+        if (invitationLink is null) return Errors.NotFound;
         
         invitationLink.Deactivate();
         await unitOfWork.SaveChangesAsync();

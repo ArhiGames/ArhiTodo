@@ -147,7 +147,7 @@ const CardComp = (props: Props) => {
                 <p className="card-name">{card?.cardName}</p>
                 <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
             </div>
-            { (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0 || shouldShowUrgencyLevel()) && (
+            { !card?.isDone && (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0 || shouldShowUrgencyLevel()) && (
                 <div className="card-completion-details">
                     { card && shouldShowUrgencyLevel() && (
                         <div style={{ width: "fit-content" }}>

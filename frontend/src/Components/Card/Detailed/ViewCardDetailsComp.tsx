@@ -199,7 +199,7 @@ const ViewCardDetailsComp = () => {
                         </div>
                     </div>
                     <div className="card-detailed-description-div">
-                        <p className="category-paragraph">Label description</p>
+                        <p className="category-paragraph">Description</p>
                         <ViewCardDescriptionComp/>
                     </div>
                     <CardDetailChecklistsComp/>

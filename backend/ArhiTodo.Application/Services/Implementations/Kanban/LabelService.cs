@@ -65,7 +65,7 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         if (!hasDeleteLabelPermission) return Errors.Forbidden;
         
         Board? board = await boardRepository.GetAsync(boardId, true);
-        if (board == null) return Errors.NotFound;
+        if (board is null) return Errors.NotFound;
         
         Result deleteLabelResult = board.DeleteLabel(labelId);
         await unitOfWork.SaveChangesAsync();

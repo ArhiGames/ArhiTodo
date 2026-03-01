@@ -16,8 +16,8 @@ public class PasswordAuthorizer : IPasswordAuthorizer
     public PasswordAuthorizer(ILogger<PasswordAuthorizer> logger, IConfiguration configuration)
     {
         string? requiredDigitsStr = configuration["Auth:Password:RequiredDigits"];
-        _requiredDigits = requiredDigitsStr == null ? 5 : int.Parse(requiredDigitsStr);
-        if (requiredDigitsStr == null)
+        _requiredDigits = requiredDigitsStr is null ? 5 : int.Parse(requiredDigitsStr);
+        if (requiredDigitsStr is null)
         {
             logger.LogWarning("Did not provide Auth:Password:RequiredDigits in the 'appsettings.json' file! Set the default to five");
         }

@@ -179,7 +179,7 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         if (!hasBoardManageUsersPermission) return Errors.Forbidden;
         
         Board? board = await boardRepository.GetAsync(boardUpdateDto.BoardId);
-        if (board == null) return Errors.NotFound;
+        if (board is null) return Errors.NotFound;
         
         Result changeBoardNameResult = board.ChangeName(boardUpdateDto.BoardName);
         if (!changeBoardNameResult.IsSuccess) return changeBoardNameResult.Error!;

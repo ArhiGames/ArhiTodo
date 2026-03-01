@@ -1,6 +1,8 @@
 .board-selectors {
     display: flex;
     color: var(--text-color);
+    max-width: 100%;
+    overflow: auto;
 }
 
 .board-header {
@@ -14,6 +16,7 @@
     align-items: center;
     gap: 0.35rem;
     max-width: 15rem;
+    text-wrap: nowrap;
     transition: background-color 0.3s, transform 0.3s;
 }
 

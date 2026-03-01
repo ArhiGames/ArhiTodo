@@ -9,7 +9,7 @@ public class ApiControllerBase : ControllerBase
 {
     protected IActionResult HandleFailure(Result result)
     {
-        if (result.Error == null)
+        if (result.Error is null)
         {
             return StatusCode(500, "An unknown error occurred");
         }

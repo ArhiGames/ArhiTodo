@@ -1,4 +1,4 @@
-import {type Dispatch, type FormEvent, useEffect, useRef, useState} from "react";
+import {type Dispatch, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useKanbanDispatch} from "../../Contexts/Kanban/Hooks.ts";
 import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
@@ -19,7 +19,7 @@ const CreateNewCardListComp = () => {
     function onStartCreatingNewCardClicked() {
         setIsCreating(true);
         setCardListName("");
-        cardListNameRef.current?.focus();
+        setTimeout(() => cardListNameRef.current?.focus(), 0);
     }
 
     function closeForm() {
@@ -27,7 +27,7 @@ const CreateNewCardListComp = () => {
         setCardListName("");
     }
 
-    async function onCardlistSubmit(e: FormEvent<HTMLFormElement>) {
+    async function onCardlistSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
         if (dispatch && boardId !== undefined) {
@@ -91,7 +91,7 @@ const CreateNewCardListComp = () => {
         <>
             { isCreating ? (
                 <div className="creation-cardlist" ref={creationCardListRef}>
-                    <form onSubmit={(e: FormEvent<HTMLFormElement>) => onCardlistSubmit(e)}>
+                    <form onSubmit={onCardlistSubmit}>
                         <input ref={cardListNameRef} placeholder="Name of a card list..."
                                type="text" value={cardListName}
                                onChange={(e) => setCardListName(e.target.value)}

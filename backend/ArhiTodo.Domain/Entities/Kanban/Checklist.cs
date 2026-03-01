@@ -62,11 +62,16 @@ public class Checklist : Draggable
     public Result RemoveChecklistItem(int checklistItemId)
     {
         ChecklistItem? checklistItem = _checklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
-        if (checklistItem == null)
+        if (checklistItem is null)
         {
             return new Error("NoChecklistItemWithId", ErrorType.Conflict,
                 "There is no checklist item with the specified id on this checklist!");
         }
         return _checklistItems.Remove(checklistItem) ? Result.Success() : Errors.Unknown;
+    }
+
+    public bool IsCompleted()
+    {
+        return _checklistItems.All(checklistItem => checklistItem.IsDone);
     }
 }

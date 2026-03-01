@@ -87,7 +87,7 @@ public class AccountController(IUserService userService, IAuthService authServic
     public async Task<IActionResult> RefreshJwtToken()
     { 
         string? refreshToken = User.FindFirstValue(ClaimTypes.Authentication);
-        if (refreshToken == null) return Unauthorized();
+        if (refreshToken is null) return Unauthorized();
 
         Result<string> jwt = await authService.RefreshJwtToken(refreshToken);
         return jwt.IsSuccess ? Ok(new { token = jwt.Value }) : HandleFailure(jwt);

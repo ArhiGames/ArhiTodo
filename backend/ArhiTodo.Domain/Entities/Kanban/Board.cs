@@ -146,7 +146,7 @@ public class Board : Draggable
     public Result RemoveCardlist(int cardListId)
     {
         CardList? cardList = _cardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
-        if (cardList == null)
+        if (cardList is null)
         {
             return new Error("NoCardListWithId", ErrorType.Conflict,
                 "There is no cardlist with the specified id on this board!");
@@ -166,7 +166,7 @@ public class Board : Draggable
     public Result DeleteLabel(int labelId)
     {
         Label? label = _labels.FirstOrDefault(l => l.LabelId == labelId);
-        if (label == null)
+        if (label is null)
         {
             return new Error("NoLabelToDelete", ErrorType.Conflict,
                 "There is no label with the specified id on this board!");
