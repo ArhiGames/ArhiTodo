@@ -1,22 +1,24 @@
-﻿services:
+services:
   arhitodo.frontend:
     image: ghcr.io/arhigames/arhitodo.frontend:closedalpha
     container_name: arhitodo.frontend
+    restart: unless-stopped
     ports:
       - "5123:5123"
     depends_on:
       - arhitodo.api
-  
+
   arhitodo.api:
     image: ghcr.io/arhigames/arhitodo.backend:closedalpha
     container_name: arhitodo.api
+    restart: unless-stopped
     environment:
       - ASPNETCORE_HTTP_PORTS=5000;5001
-      - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=boarddb;Username=username;Password=password
-      - FrontendSettings__BaseUrl=
-      - JWT__Issuer=
-      - JWT__Audience=
-      - JWT__SigningKey=344faccb39583f6bfb9c22ac46167f828262165f18ef9cdfb96d34d3fc6e72ef0f32bc46a240a2fc99c496fa1f99e9d4f3195831e78a84e9092cb4e7249d797c
+      - ConnectionStrings__DefaultConnection=Host=arhitodo.database;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - FrontendSettings__BaseUrl=${BASE_URL}
+      - JWT__Issuer=${BASE_URL}
+      - JWT__Audience=${BASE_URL}
+      - JWT__SigningKey=${JWT_KEY}
     ports:
       - "8080:5000"
       - "8081:5001"
@@ -25,22 +27,17 @@
         condition: service_healthy
 
   arhitodo.database:
-    image: postgres:18-alpine
+    image: postgres:18
     container_name: arhitodo.database
-    restart: always
-    ports:
-      - "5432:5432"
+    restart: unless-stopped
     environment:
-      - POSTGRES_DB=boarddb
-      - POSTGRES_USER=username
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d boarddb"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+      - ./db:/var/lib/postgresql
