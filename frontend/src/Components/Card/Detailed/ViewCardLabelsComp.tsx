@@ -19,14 +19,6 @@ const ViewCardLabelsComp = () => {
     const currentEditLabelRef = useRef<HTMLElement>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
 
-    function getPureLabelIds() {
-        const labelIds: number[] = [];
-        for (const labelId of kanbanState.cardLabels.get(Number(cardId))!) {
-            labelIds.push(labelId);
-        }
-        return labelIds;
-    }
-
     async function onLabelSelected(labelId: number) {
         if (!dispatch || !cardId) return;
 
@@ -111,7 +103,7 @@ const ViewCardLabelsComp = () => {
                                                   onClose={() => setIsEditingLabels(false)}
                                                   onLabelSelected={onLabelSelected}
                                                   onLabelUnselected={onLabelUnselected}
-                                                  selectedLabels={getPureLabelIds()}
+                                                  selectedLabels={kanbanState.cardLabels.get(Number(cardId))!}
                                                   selectable={permissions.hasManageCardsPermission()}/>
             }
         </div>

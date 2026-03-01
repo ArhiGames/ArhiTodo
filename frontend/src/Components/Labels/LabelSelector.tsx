@@ -57,11 +57,11 @@ const LabelSelector = ( props: Props ) => {
                             <div className="label-selector-existing scroller">
                                 {
                                     Array.from(kanbanState.labels.values()).map((label: Label) => {
-                                        return ( label.boardId == Number(boardId) && (
+                                        return ( label.boardId === Number(boardId) && (
                                             <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
                                                            isSelected={ props.selectedLabels.includes(label.labelId) }
-                                                           onLabelSelected={(labelId: number) => props.onLabelSelected(labelId)}
-                                                           onLabelUnselected={(labelId: number) => props.onLabelUnselected(labelId)}
+                                                           onLabelSelected={props.onLabelSelected}
+                                                           onLabelUnselected={props.onLabelUnselected}
                                                            selectable={props.selectable}/>
                                         ) )
                                     })

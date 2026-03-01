@@ -3,14 +3,16 @@ import type {ChangeLabelCardRelationPayload} from "../../KanbanAction.ts";
 
 const removeLabelFromCard = (state: KanbanState, payload: ChangeLabelCardRelationPayload) => {
 
-    let labelIds: number[] | undefined = state.cardLabels.get(payload.cardId);
+    console.log(payload.labelId)
+
+    const labelIds: number[] | undefined = state.cardLabels.get(payload.cardId);
     if (!labelIds) return state;
 
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
 
     const labelToRemoveIndex: number = labelIds.findIndex((id: number) => id === payload.labelId);
     if (labelToRemoveIndex !== -1) {
-        labelIds = labelIds.splice(labelToRemoveIndex, 1);
+        labelIds.splice(labelToRemoveIndex, 1);
         newCardLabels.set(payload.cardId, labelIds);
     }
 
