@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Card, Label, KanbanState} from "../../Models/States/KanbanState.ts";
 import { type Rgb, toRgb } from "../../lib/Functions.ts";
-import {useState} from "react";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
@@ -26,8 +25,6 @@ const CardComp = (props: Props) => {
     const hubConnection = useRealtimeHub();
 
     const card: Card | undefined = kanbanState.cards.get(props.cardId);
-
-    const [isHovering, setIsHovering] = useState<boolean>(false);
 
     function openCard() {
         navigate(`/projects/${projectId}/board/${boardId}/card/${props.cardId}`);
@@ -140,8 +137,7 @@ const CardComp = (props: Props) => {
     }
 
     return (
-        <div onClick={openCard} className={`card ${card?.isDone ? "completed" : ""}`}
-             onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
+        <div onClick={openCard} className={`card ${card?.isDone ? "completed" : ""}`}>
             { !card?.isDone && kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
                 <div className="card-labels-div">
                     { getCardLabelsJsx() }
@@ -149,9 +145,9 @@ const CardComp = (props: Props) => {
             ) }
             <div style={{ display: "flex" }}>
                 <button onClick={onStateChange} disabled={!(permissions.hasEditCardStatePermission(props.cardId))}
-                     className={`card-checkmark ${ (card?.isDone || isHovering) ? "visible" : "hidden" }`}>{ card?.isDone ? "✔" : "" }</button>
+                     className={`card-checkmark ${card?.isDone ? "visible" : "hidden" }`}>{ card?.isDone ? "✔" : "" }</button>
                 <p className="card-name">{card?.cardName}</p>
-                <button style={{ opacity: "0" }} className={`card-checkmark ${ (card?.isDone || isHovering) ? "hidden" : "visible" }`}/>
+                <button style={{ opacity: "0" }} className={`ghost-checkmark ${card?.isDone ? "hidden" : "visible" }`}/>
             </div>
             { !card?.isDone && (getTotalTasks() > 0 || (card?.assignedUserIds.length ?? 0) > 0 || shouldShowUrgencyLevel()) && (
                 <div className="card-completion-details">
@@ -160,7 +156,7 @@ const CardComp = (props: Props) => {
                             <CardUrgencyLabel cardUrgencyLevel={card?.cardUrgencyLevel}/>
                         </div>
                     )}
-                    { (getTotalTasks() > 0) && (
+                    {getTotalTasks() > 0 && (
                         <div className="card-checklist-hint">
                             <p>✔ {getTotalTasksCompleted()} / {getTotalTasks()}</p>
                         </div>

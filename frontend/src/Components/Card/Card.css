@@ -63,12 +63,23 @@
     transition: all 0.3s;
 }
 
+.card:hover .card-checkmark,
 .card-checkmark.visible {
     min-width: 22px;
     opacity: 1;
     padding: 4px;
     transform: translateX(0);
     margin-right: 0.35rem;
+}
+
+.ghost-checkmark {
+    min-width: 32px;
+    transition: min-width 0.3s;
+}
+
+.ghost-checkmark.hidden,
+.card:hover .ghost-checkmark {
+    min-width: 0;
 }
 
 .card-checkmark:hover {

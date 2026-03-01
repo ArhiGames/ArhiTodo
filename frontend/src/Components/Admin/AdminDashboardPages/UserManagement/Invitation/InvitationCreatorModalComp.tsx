@@ -14,13 +14,6 @@ interface Props {
 
 const InvitationCreatorModalComp = (props: Props) => {
 
-    /*public enum ExpireType
-    {
-        Never = 0,
-        Minutes = 1,
-        Hours = 2,
-        Days = 3
-    }*/
     type Option = {
         shownOption: string;
         time: number;

@@ -30,11 +30,11 @@ const Dropdown = (props: Props) => {
 
         }
 
-        document.addEventListener("click", handleClicked);
+        document.addEventListener("mouseup", handleClicked);
 
-        return () => document.removeEventListener("click", handleClicked);
+        return () => document.removeEventListener("mouseup", handleClicked)
 
-    }, [props]);
+    }, []);
 
     function onChange(val: string) {
 
