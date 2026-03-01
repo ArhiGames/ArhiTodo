@@ -89,6 +89,11 @@ export type CreateCardlistSucceededPayload = {
     actualCardlistId: number;
 }
 
+export type MoveCardListPayload = {
+    cardListId: number;
+    toIndex: number;
+}
+
 export type UpdateCardlistPayload = {
     cardListId: number;
     cardListName: string;
@@ -204,6 +209,7 @@ export type KanbanAction =
     { type: "CREATE_CARDLIST_OPTIMISTIC", payload: CreateCardlistPayload } |
     { type: "CREATE_CARDLIST_SUCCEEDED", payload: CreateCardlistSucceededPayload } |
     { type: "CREATE_CARDLIST_FAILED", payload: { failedCardlistId: number } } |
+    { type: "MOVE_CARDLIST", payload: MoveCardListPayload } |
     { type: "DELETE_CARDLIST", payload: { cardListId: number } } |
     { type: "DELETE_CARDS_FROM_CARDLIST", payload: { fromCardListId: number } } |
     { type: "UPDATE_CARDLIST", payload: UpdateCardlistPayload } |

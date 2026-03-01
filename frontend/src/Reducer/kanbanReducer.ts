@@ -52,6 +52,7 @@ import addBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boar
 import removeBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/Boards/removeBoardMemberAction.ts";
 import updateCardUrgencyLevelAction
     from "../Contexts/Kanban/Actions/Implementation/Card/updateCardUrgencyLevelAction.ts";
+import moveCardListAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/moveCardListAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -109,6 +110,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return createCardlistSucceededAction(state, action.payload);
         case "CREATE_CARDLIST_FAILED":
             return deleteCardlistAction(state, action.payload.failedCardlistId);
+        case "MOVE_CARDLIST":
+            return moveCardListAction(state, action.payload);
         case "DELETE_CARDLIST":
             return deleteCardlistAction(state, action.payload.cardListId);
         case "DELETE_CARDS_FROM_CARDLIST":

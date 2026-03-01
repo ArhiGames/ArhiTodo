@@ -24,6 +24,7 @@ const CardCompWrapper = (props: Props) => {
     const { ref: droppableRef } = useDroppable({
         id: `cardDroppable-${props.cardId}`,
         type: "card",
+        accept: "card",
         disabled: !permissions.hasManageCardsPermission(),
         collisionPriority: CollisionPriority.Highest,
         data: {
