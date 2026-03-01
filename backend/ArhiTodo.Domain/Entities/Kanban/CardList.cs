@@ -39,6 +39,12 @@ public class CardList : Draggable
         return validateCardListNameResult.IsSuccess ? new CardList(boardId, cardListName, 
             LexicalOrderHelper.GetBetween(prevPosition, null)) : validateCardListNameResult.Error!;
     }
+    
+    public Result MoveCardList(string? prevLocation, string? nextLocation)
+    {
+        Result moveResult = Move(prevLocation, nextLocation);
+        return moveResult.IsSuccess ? Result.Success() : moveResult;
+    }
 
     public Result ChangeCardListName(string cardListName)
     {

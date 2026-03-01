@@ -1,12 +1,33 @@
+.cardlist-wrapper {
+    margin: 1rem 0.5rem;
+    max-height: 95%;
+    position: relative;
+}
+
+.cardlist-draggable {
+    position: absolute;
+    top: 0.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--bg-x-light);
+    border-radius: 10px;
+    height: 0.65rem;
+    width: 5rem;
+    transition: background-color 0.3s;
+}
+
+.cardlist-draggable:hover {
+    background-color: var(--bg-xx-light);
+}
+
 .cardlist-background {
     display: flex;
     flex-direction: column;
     background-color: var(--bg-light);
     border-radius: 10px;
     padding: 1rem;
-    margin: 1rem 0.5rem;
     width: 320px;
-    max-height: 95%;
+    max-height: 100%;
     color: var(--text-color);
 }
 

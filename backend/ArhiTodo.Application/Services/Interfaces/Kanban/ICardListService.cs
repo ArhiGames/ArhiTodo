@@ -8,6 +8,7 @@ public interface ICardListService
 {
     Task<Result<CardListGetDto>> CreateCardList(int boardId, CardListCreateDto cardListCreateDto);
     Task<Result<CardListGetDto>> UpdateCardList(int boardId, CardListUpdateDto cardListUpdateDto);
+    Task<Result> MoveCardList(int boardId, int cardListId, int location);
     Task<Result> DeleteCards(int boardId, int cardListId);
     Task<Result> DeleteCardList(int boardId, int cardListId);
 }

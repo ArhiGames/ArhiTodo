@@ -142,7 +142,7 @@ const CardComp = (props: Props) => {
     return (
         <div onClick={openCard} className={`card ${card?.isDone ? "completed" : ""}`}
              onPointerEnter={() => setIsHovering(true)} onPointerLeave={() => setIsHovering(false)}>
-            { kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
+            { !card?.isDone && kanbanState.cardLabels.get(props.cardId)!.length > 0 && (
                 <div className="card-labels-div">
                     { getCardLabelsJsx() }
                 </div>

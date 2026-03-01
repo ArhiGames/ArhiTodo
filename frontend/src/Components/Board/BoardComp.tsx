@@ -1,11 +1,10 @@
 import {type Dispatch, useEffect, useState} from "react"
-import CardListComp from "../CardList/CardListComp.tsx";
 import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {PublicUserGetDto, CardList, KanbanState} from "../../Models/States/KanbanState.ts";
+import type {PublicUserGetDto, KanbanState} from "../../Models/States/KanbanState.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
 import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
@@ -17,6 +16,7 @@ import "./Board.css"
 import type {Claim} from "../../Models/Claim.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {HubConnectionState} from "@microsoft/signalr";
+import CardListCompWrapper from "../CardList/CardListCompWrapper.tsx";
 
 const BoardComp = () => {
 
@@ -126,7 +126,7 @@ const BoardComp = () => {
 
         return () => abortController.abort();
 
-    }, [boardId, kanbanState.boards]);
+    }, [boardId]);
 
     useEffect(() => {
 
@@ -149,11 +149,10 @@ const BoardComp = () => {
                         <div className="board-content scroller">
                             {
                                 <>
-                                    {Array.from(kanbanState.cardLists.values())
-                                        .filter((cardList: CardList) => cardList.boardId === Number(boardId))
-                                        .map((cardList: CardList) => {
-                                            return <CardListComp cardListId={cardList.cardListId} filteringLabels={currentFilteringLabels}
-                                                                 key={cardList.cardListId}/>;
+                                    {kanbanState.boards.get(Number(boardId))?.cardListIds
+                                        .map((cardListId: number, index: number) => {
+                                            return <CardListCompWrapper cardListId={cardListId} filteringLabels={currentFilteringLabels}
+                                                                        key={cardListId} dndIndex={index}/>;
                                         })}
                                     { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
                                 </>

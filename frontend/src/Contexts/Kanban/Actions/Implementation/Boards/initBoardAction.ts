@@ -1,21 +1,37 @@
 import type { InitBoardPayload } from "../../KanbanAction.ts";
-import type {Card, CardList, Checklist, ChecklistItem, Label, KanbanState} from "../../../../../Models/States/KanbanState.ts";
+import type {
+    Card,
+    CardList,
+    Checklist,
+    ChecklistItem,
+    Label,
+    KanbanState,
+    Board
+} from "../../../../../Models/States/KanbanState.ts";
 import type { CardListGetDto } from "../../../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import type {LabelGetDto} from "../../../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import type {CardGetDto} from "../../../../../Models/BackendDtos/Kanban/CardGetDto.ts";
 
 const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
 
-    const cardLists: Map<number, CardList> = new Map();
-    const cardListsDtos: CardListGetDto[] = payload.boardGetDto.cardLists;
-    const cards: Map<number, Card> = new Map();
-    const labels: Map<number, Label> = new Map();
-    const labelsDtos: LabelGetDto[] = payload.boardGetDto.labels;
-    const cardLabels: Map<number, number[]> = new Map(); // cardId <-> labelIds
-    const checklists: Map<number, Checklist> = new Map();
-    const checklistItems: Map<number, ChecklistItem> = new Map();
+    const existingBoard: Board | undefined = state.boards.get(payload.boardId);
+    if (!existingBoard) return state;
 
-    for (const cardListDto of cardListsDtos) {
+    const boards: Map<number, Board> = new Map(state.boards);
+    const cardLists: Map<number, CardList> = new Map(state.cardLists);
+    const cardListsDtos: CardListGetDto[] = payload.boardGetDto.cardLists;
+    const cards: Map<number, Card> = new Map(state.cards);
+    const labels: Map<number, Label> = new Map(state.labels);
+    const labelsDtos: LabelGetDto[] = payload.boardGetDto.labels;
+    const cardLabels: Map<number, number[]> = new Map(state.cardLabels); // cardId <-> labelIds
+    const checklists: Map<number, Checklist> = new Map(state.checklists);
+    const checklistItems: Map<number, ChecklistItem> = new Map(state.checklistItems);
+
+    const cardListIds: number[] = [];
+
+    for (const cardListDto of cardListsDtos.sort((a: CardListGetDto, b: CardListGetDto) => a.position! > b.position! ? 1 : -1)) {
+        cardListIds.push(cardListDto.cardListId);
+
         const cardIds: number[] = [];
         cardLists.set(cardListDto.cardListId, {
             boardId: payload.boardId,
@@ -60,6 +76,11 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
         }
     }
 
+    boards.set(payload.boardId, {
+        ...existingBoard,
+        cardListIds: cardListIds
+    })
+
     for (const labelDto of labelsDtos) {
         labels.set(labelDto.labelId, {
             ...labelDto,
@@ -69,6 +90,7 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
 
     return {
         ...state,
+        boards: boards,
         cardLists: cardLists,
         cards: cards,
         labels: labels,

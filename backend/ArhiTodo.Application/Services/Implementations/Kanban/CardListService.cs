@@ -1,4 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.CardList;
+using ArhiTodo.Application.Helpers;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
@@ -56,6 +57,27 @@ public class CardListService(IBoardRepository boardRepository, IUnitOfWork unitO
         CardListGetDto cardListGetDto = cardList.ToGetDto();
         cardListNotificationService.UpdateCardList(boardId, cardListGetDto);
         return cardListGetDto;
+    }
+
+    public async Task<Result> MoveCardList(int boardId, int cardListId, int location)
+    {
+        bool hasEditCardListPermission = await cardListAuthorizer.HasEditCardListPermission(cardListId);
+        if (!hasEditCardListPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId, false, true);
+        if (board is null) return Errors.NotFound;
+
+        CardList? cardList = board.CardLists.FirstOrDefault(cl => cl.CardListId == cardListId);
+        if (cardList is null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
+            board.CardLists.Cast<Draggable>().ToList(), cardList, location);
+        cardList.MoveCardList(prevLocation, nextLocation);
+
+        await unitOfWork.SaveChangesAsync();
+        cardListNotificationService.MoveCardList(boardId, cardListId, location);
+        
+        return Result.Success();
     }
 
     public async Task<Result> DeleteCards(int boardId, int cardListId)

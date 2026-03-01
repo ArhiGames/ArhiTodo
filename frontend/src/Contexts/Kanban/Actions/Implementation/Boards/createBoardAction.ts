@@ -9,7 +9,8 @@ const createBoardAction = (state: KanbanState, payload: CreateBoardPayload): Kan
         boardId: payload.boardId,
         boardName: payload.boardName,
         ownedByUserId: payload.ownedByUserId,
-        boardMembers: []
+        boardMembers: [],
+        cardListIds: []
     });
 
     return {

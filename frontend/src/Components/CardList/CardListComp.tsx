@@ -12,7 +12,13 @@ import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CardCompWrapper from "../Card/CardCompWrapper.tsx";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
-const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) => {
+interface Props {
+    cardListId: number;
+    filteringLabels: number[];
+    draggableHandleRef: (ref: HTMLDivElement | null) => void;
+}
+
+const CardListComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
     const kanbanState: KanbanState = useKanbanState();
@@ -96,7 +102,6 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
 
         if (isEditingName) {
             editingNameInputRef.current?.focus();
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsEditing(false);
         }
 
@@ -179,7 +184,8 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
     }
 
     return (
-        <div className="cardlist">
+        <>
+            <div ref={props.draggableHandleRef} className="cardlist-draggable"/>
             <div className="cardlist-background">
                 <div ref={cardListHeaderRef} className="cardlist-header">
                     {
@@ -206,7 +212,7 @@ const CardListComp = (props: { cardListId: number, filteringLabels: number[] }) 
                 { getCardsScrollerJsx() }
                 { permission.hasManageCardsPermission() && <CreateNewCardComp cardListId={props.cardListId} scrollDown={scrollDown}/> }
             </div>
-        </div>
+        </>
     )
 }
 

@@ -26,6 +26,13 @@ public class CardListController(ICardListService cardListService) : ApiControlle
         return cardList.IsSuccess ? Ok(cardList.Value) : HandleFailure(cardList);
     }
 
+    [HttpPatch("board/{boardId:int}/cardlist/{cardListId:int}/move/{location:int}")]
+    public async Task<IActionResult> MoveCardList(int boardId, int cardListId, int location)
+    {
+        Result moveCardListResult = await cardListService.MoveCardList(boardId, cardListId, location);
+        return moveCardListResult.IsSuccess ? Ok() : HandleFailure(moveCardListResult);
+    }
+
     [HttpDelete("board/{boardId:int}/cardlist/{cardListId:int}/cards")]
     public async Task<IActionResult> DeleteCards(int boardId, int cardListId)
     {

@@ -19,6 +19,11 @@ public class CardListNotificationService(IHubContext<BoardHub, IBoardClient> hub
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").UpdateCardList(boardId, cardList);
     }
 
+    public void MoveCardList(int boardId, int cardListId, int toIndex)
+    {
+        hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").MoveCardList(cardListId, toIndex);
+    }
+
     public void DeleteCardsFromCardList(int boardId, int cardListId)
     {
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").DeleteCardsFromCardList(cardListId);

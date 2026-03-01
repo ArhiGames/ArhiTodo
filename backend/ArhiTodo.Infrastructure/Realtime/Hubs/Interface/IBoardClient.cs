@@ -21,6 +21,7 @@ public interface IBoardClient
 
     Task CreateCardList(int boardId, CardListGetDto cardList);
     Task UpdateCardList(int boardId, CardListGetDto cardList);
+    Task MoveCardList(int toCardListId, int toIndex);
     Task DeleteCardsFromCardList(int cardListId);
     Task DeleteCardList(int cardListId);
     

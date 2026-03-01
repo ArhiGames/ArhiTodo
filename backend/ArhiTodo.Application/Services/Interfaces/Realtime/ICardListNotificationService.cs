@@ -6,6 +6,7 @@ public interface ICardListNotificationService
 {
     void CreateCardList(int boardId, CardListGetDto cardList);
     void UpdateCardList(int boardId, CardListGetDto cardList);
+    void MoveCardList(int boardId, int cardListId, int toIndex);
     void DeleteCardsFromCardList(int boardId, int cardListId);
     void DeleteCardList(int boardId, int cardListId);
 }
