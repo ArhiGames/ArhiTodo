@@ -14,6 +14,7 @@ public interface IBoardClient
     
     Task CreateBoard(int projectId, BoardGetDto board);
     Task UpdateBoard(int projectId, BoardGetDto board);
+    Task MoveBoard(int boardId, int toIndex);
     Task DeleteBoard(int boardId);
     Task AddBoardMember(int boardId, PublicUserGetDto publicUserGetDto);
     Task RemoveBoardMember(int boardId, Guid userId);

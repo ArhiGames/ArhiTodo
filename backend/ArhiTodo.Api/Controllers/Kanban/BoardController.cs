@@ -57,6 +57,13 @@ public class BoardController(IBoardService boardService) : ApiControllerBase
         return board.IsSuccess ? Ok(board.Value) : HandleFailure(board);
     }
 
+    [HttpPatch("project/{projectId:int}/board/{boardId:int}/move/{toIndex:int}")]
+    public async Task<IActionResult> MoveBoard(int projectId, int boardId, int toIndex)
+    {
+        Result moveBoardResult = await boardService.MoveBoard(projectId, boardId, toIndex);
+        return moveBoardResult.IsSuccess ? Ok() : HandleFailure(moveBoardResult);
+    }
+
     [HttpDelete("project/{projectId:int}/board/{boardId:int}")]
     public async Task<IActionResult> DeleteBoard(int projectId, int boardId)
     {

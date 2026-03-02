@@ -16,6 +16,7 @@ public interface IBoardService
     
     Task<Result<BoardGetDto>> CreateBoard(int projectId, BoardCreateDto boardCreateDto);
     Task<Result<BoardGetDto>> UpdateBoard(int projectId, BoardUpdateDto boardUpdateDto);
+    Task<Result> MoveBoard(int projectId, int boardId, int location);
     Task<Result> DeleteBoard(int projectId, int boardId);
     
     Task<Result<List<BoardGetDto>>> GetEveryBoard(int projectId);

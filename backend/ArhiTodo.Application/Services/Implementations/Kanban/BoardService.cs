@@ -1,6 +1,7 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.DTOs.Board;
 using ArhiTodo.Application.DTOs.User;
+using ArhiTodo.Application.Helpers;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
@@ -188,6 +189,27 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         BoardGetDto boardGetDto = board.ToGetDto();
         boardNotificationService.UpdateBoard(projectId, boardGetDto);
         return boardGetDto;
+    }
+
+    public async Task<Result> MoveBoard(int projectId, int boardId, int location)
+    {
+        bool hasCreateBoardPermission = await boardAuthorizer.HasCreateBoardPermission(projectId);
+        if (!hasCreateBoardPermission) return Errors.Forbidden;
+
+        Project? project = await projectRepository.GetAsyncIncludingBoards(projectId);
+        if (project is null) return Errors.NotFound;
+
+        Board? board = project.Boards.FirstOrDefault(b => b.BoardId == boardId);
+        if (board is null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
+            project.Boards.Cast<Draggable>().ToList(), board, location);
+        board.MoveBoard(prevLocation, nextLocation);
+
+        await unitOfWork.SaveChangesAsync();
+        boardNotificationService.MoveBoard(projectId, boardId,location);
+        
+        return Result.Success();
     }
 
     public async Task<Result> DeleteBoard(int projectId, int boardId)

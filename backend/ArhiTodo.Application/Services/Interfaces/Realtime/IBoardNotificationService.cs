@@ -8,6 +8,7 @@ public interface IBoardNotificationService
 {
     void CreateBoard(int projectId, BoardGetDto boardGetDto);
     void UpdateBoard(int projectId, BoardGetDto boardGetDto);
+    void MoveBoard(int projectId, int boardId, int toIndex);
     void DeleteBoard(int projectId, int boardId);
     void AddBoardMember(int boardId, PublicUserGetDto publicUserGetDto);
     void RemoveBoardMember(int boardId, Guid userId);

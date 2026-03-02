@@ -21,6 +21,11 @@ public class BoardNotificationService(IHubContext<BoardHub, IBoardClient> hubCon
         hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").UpdateBoard(projectId, boardGetDto);
     }
 
+    public void MoveBoard(int projectId, int boardId, int toIndex)
+    {
+        hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").MoveBoard(boardId, toIndex);
+    }
+
     public void DeleteBoard(int projectId, int boardId)
     {
         hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").DeleteBoard(boardId);

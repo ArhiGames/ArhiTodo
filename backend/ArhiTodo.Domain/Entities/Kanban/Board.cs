@@ -54,6 +54,12 @@ public class Board : Draggable
         return board;
 
     }
+    
+    public Result MoveBoard(string? prevLocation, string? nextLocation)
+    {
+        Result moveResult = Move(prevLocation, nextLocation);
+        return moveResult.IsSuccess ? Result.Success() : moveResult;
+    }
 
     public Result ChangeName(string boardName)
     {

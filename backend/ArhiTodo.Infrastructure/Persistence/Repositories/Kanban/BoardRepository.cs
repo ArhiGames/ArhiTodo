@@ -98,6 +98,7 @@ public class BoardRepository(ProjectDataBase database) : IBoardRepository
                         (b.Project.ProjectManagers.Any(pm => pm.UserId == userId) ||
                          b.BoardUserClaims.Any(buc =>
                              buc.UserId == userId && buc.Type == BoardClaimTypes.ViewBoard && buc.Value)))
+            .OrderBy(b => b.Position)
             .ToListAsync();
 
         return boards;
