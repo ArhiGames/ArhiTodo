@@ -39,6 +39,12 @@ public class Label : Draggable
             ? new Label(boardId, labelText, labelColor, LexicalOrderHelper.GetBetween(prevPosition, null))
             : validateLabelNameResult.Error!;
     }
+    
+    public Result MoveLabel(string? prevLocation, string? nextLocation)
+    {
+        Result moveResult = Move(prevLocation, nextLocation);
+        return moveResult.IsSuccess ? Result.Success() : moveResult;
+    }
 
     public Result RenameLabel(string labelText)
     {

@@ -26,6 +26,13 @@ public class LabelsController(ILabelService labelService) : ApiControllerBase
         return labelGetDto.IsSuccess ? Ok(labelGetDto.Value) : HandleFailure(labelGetDto);
     }
 
+    [HttpPatch("board/{boardId:int}/label/{labelId:int}/move/{location:int}")]
+    public async Task<IActionResult> MoveLabel(int boardId, int labelId, int location)
+    {
+        Result moveLabelResult = await labelService.MoveLabel(boardId, labelId, location);
+        return moveLabelResult.IsSuccess ? Ok() : HandleFailure(moveLabelResult);
+    }
+
     [HttpDelete("board/{boardId:int}/label/{labelId:int}")]
     public async Task<IActionResult> DeleteLabel(int boardId, int labelId)
     {

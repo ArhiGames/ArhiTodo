@@ -19,6 +19,11 @@ public class LabelNotificationService(IHubContext<BoardHub, IBoardClient> hubCon
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").UpdateLabel(boardId, label);
     }
 
+    public void MoveLabel(int boardId, int labelId, int toIndex)
+    {
+        hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").MoveLabel(labelId, toIndex);
+    }
+
     public void DeleteLabel(int boardId, int labelId)
     {
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").DeleteLabel(labelId);

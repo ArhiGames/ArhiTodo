@@ -204,8 +204,9 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
         
         (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
             project.Boards.Cast<Draggable>().ToList(), board, location);
-        board.MoveBoard(prevLocation, nextLocation);
-
+        Result moveBoardResult = board.MoveBoard(prevLocation, nextLocation);
+        if (!moveBoardResult.IsSuccess) return moveBoardResult;
+        
         await unitOfWork.SaveChangesAsync();
         boardNotificationService.MoveBoard(projectId, boardId,location);
         

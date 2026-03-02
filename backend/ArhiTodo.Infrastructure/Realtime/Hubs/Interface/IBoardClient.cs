@@ -45,6 +45,7 @@ public interface IBoardClient
 
     Task CreateLabel(int boardId, LabelGetDto labelGetDto);
     Task UpdateLabel(int boardId, LabelGetDto labelGetDto);
+    Task MoveLabel(int labelId, int toIndex);
     Task DeleteLabel(int labelId);
     Task AddLabelToCard(int cardId, int labelId);
     Task RemoveLabelFromCard(int cardId, int labelId);

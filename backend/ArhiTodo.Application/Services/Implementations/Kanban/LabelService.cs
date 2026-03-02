@@ -1,4 +1,5 @@
 ﻿using ArhiTodo.Application.DTOs.Label;
+using ArhiTodo.Application.Helpers;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
@@ -57,6 +58,28 @@ public class LabelService(IBoardRepository boardRepository, ICardRepository card
         LabelGetDto labelGetDto = label.ToGetDto();
         labelNotificationService.UpdateLabel(boardId, labelGetDto);
         return labelGetDto;
+    }
+
+    public async Task<Result> MoveLabel(int boardId, int labelId, int location)
+    {
+        bool hasEditLabelPermission = await labelAuthorizer.HasEditLabelPermission(labelId);
+        if (!hasEditLabelPermission) return Errors.Forbidden;
+        
+        Board? board = await boardRepository.GetAsync(boardId, true);
+        if (board is null) return Errors.NotFound;
+
+        Label? label = board.Labels.FirstOrDefault(l => l.LabelId == labelId);
+        if (label is null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
+            board.Labels.Cast<Draggable>().ToList(), label, location);
+        Result moveLabelResult = label.MoveLabel(prevLocation, nextLocation);
+        if (!moveLabelResult.IsSuccess) return moveLabelResult;
+        
+        await unitOfWork.SaveChangesAsync();
+        labelNotificationService.MoveLabel(boardId, labelId, location);
+        
+        return Result.Success();
     }
 
     public async Task<Result> DeleteLabel(int boardId, int labelId)
