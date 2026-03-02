@@ -55,7 +55,10 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
                 cardLabels.set(cardDto.cardId, []);
             }
             for (const labelId of cardDto.labelIds) {
-                cardLabels.get(cardDto.cardId)?.push(labelId);
+                const labelIds: number[] | undefined = cardLabels.get(cardDto.cardId);
+                if (labelIds && !labelIds.includes(labelId)) {
+                    labelIds.push(labelId);
+                }
             }
 
             for (const checklist of cardDto.checklists) {

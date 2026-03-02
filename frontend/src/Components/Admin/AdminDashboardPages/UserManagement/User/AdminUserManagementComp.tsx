@@ -134,7 +134,7 @@ const AdminUserManagementComp = () => {
 
         run();
 
-    }, [checkRefresh, userId]);
+    }, []);
 
     function onEditUser(user: UserGetDto) {
         navigate(`/admin/dashboard/users/${user.userId}`);
