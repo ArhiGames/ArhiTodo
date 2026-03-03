@@ -1,12 +1,12 @@
 import Popover from "../../lib/Popover/Popover.tsx";
-import {type RefObject, useEffect, useState} from "react";
+import {type RefObject, useEffect, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type { Label } from "../../Models/States/KanbanState.ts";
 import "./LabelSelector.css"
-import EditableLabel from "./EditableLabel.tsx";
 import LabelEditor from "./LabelEditor.tsx";
 import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import EditableLabelWrapper from "./EditableLabelWrapper.tsx";
 
 interface Props {
     element: RefObject<HTMLElement | null>,
@@ -23,6 +23,9 @@ const LabelSelector = ( props: Props ) => {
     const kanbanState = useKanbanState();
     const { boardId } = useParams();
     const permissions = usePermissions();
+
+    const labelsContainerElem: React.RefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
+    const [isDraggingEditableLabel, setDraggingEditableLabel] = useState<boolean>(false);
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [currentlyEditingLabelId, setCurrentlyEditingLabelId] = useState<number | null>(null);
@@ -45,7 +48,7 @@ const LabelSelector = ( props: Props ) => {
     }
 
     return (
-        <Popover close={props.onClose} element={props.element} triggerElement={props.element}>
+        <Popover close={props.onClose} element={props.element} triggerElement={props.element} keepOpenIfClickedOutside={isDraggingEditableLabel}>
             <div className="label-selector-popover">
                 <p>{ isCreating ? "Creating label" : currentlyEditingLabelId !== null ? "Editing label" : props.actionTitle }</p>
                 {
@@ -54,15 +57,16 @@ const LabelSelector = ( props: Props ) => {
                                      isCreating={isCreating} setIsCreating={setIsCreating} cancelAction={cancelAction}/>
                     ) : (
                         <>
-                            <div className="label-selector-existing scroller">
+                            <div ref={labelsContainerElem} className="label-selector-existing scroller">
                                 {
-                                    Array.from(kanbanState.labels.values()).map((label: Label) => {
-                                        return ( label.boardId === Number(boardId) && (
-                                            <EditableLabel key={label.labelId} label={label} onEditPressed={onLabelEdit}
-                                                           isSelected={ props.selectedLabels.includes(label.labelId) }
-                                                           onLabelSelected={props.onLabelSelected}
-                                                           onLabelUnselected={props.onLabelUnselected}
-                                                           selectable={props.selectable}/>
+                                    Array.from(kanbanState.labels.values()).map((label: Label, index: number) => {
+                                        return (label.boardId === Number(boardId) && (
+                                            <EditableLabelWrapper key={label.labelId} label={label} onEditPressed={onLabelEdit}
+                                                                  setIsDraggingEditableLabel={setDraggingEditableLabel}
+                                                                  dndIndex={index} containerElem={labelsContainerElem}
+                                                                  isSelected={ props.selectedLabels.includes(label.labelId) }
+                                                                  onLabelSelected={props.onLabelSelected} selectable={props.selectable}
+                                                                  onLabelUnselected={props.onLabelUnselected}/>
                                         ) )
                                     })
                                 }

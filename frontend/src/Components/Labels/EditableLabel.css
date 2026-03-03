@@ -5,26 +5,17 @@
     align-items: center;
 }
 
-.editable-label-div img {
-    filter: invert(100%);
-}
-
 .label {
     width: 100%;
     padding: 10px;
     border-radius: 5px;
     border: none;
     color: var(--text-color);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, filter 0.3s;
     font-size: medium;
 }
 
-.edit-label-icon {
-    padding: 2px;
-}
-
-.edit-label-icon:hover {
+.label:hover {
+    filter: brightness(1.25);
     cursor: pointer;
-    background-color: var(--bg-popover);
-    border-radius: 5px;
 }
