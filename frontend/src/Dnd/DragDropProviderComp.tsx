@@ -37,6 +37,11 @@ const DragDropProviderComp = ({children}: Props) => {
             if (newIndex === -1) return;
 
             postCardListMovedChanges(sourceId, newIndex).catch(console.error);
+        } else if (source.type === "board" && target?.type === "board") {
+            const newIndex: number = moveBoardOptimistically(source, target);
+            if (newIndex === -1) return;
+
+            postBoardMovedChanges(sourceId, newIndex).catch(console.error);
         }
     }
 
@@ -49,6 +54,9 @@ const DragDropProviderComp = ({children}: Props) => {
             if (!cardMovedByIndexResult) return;
         } else if (source.type === "cardlist" && (target?.type === "card" || target?.type === "cardlist")) {
             const newIndex: number = moveCardListOptimistically(source, target);
+            if (newIndex === -1) return;
+        } else if (source.type === "board" && target?.type === "board") {
+            const newIndex: number = moveBoardOptimistically(source, target);
             if (newIndex === -1) return;
         }
     }
@@ -92,6 +100,22 @@ const DragDropProviderComp = ({children}: Props) => {
         return newIndex;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function moveBoardOptimistically(source: any, target: any): number {
+        const sourceId: number = extractId(source.id);
+
+        const newIndex: number = target?.data.index ?? -1;
+        if (newIndex === -1) {
+            return -1;
+        }
+
+        if (dispatch) {
+            dispatch({type: "MOVE_BOARD", payload: { boardId: sourceId, toIndex: newIndex }});
+        }
+
+        return newIndex;
+    }
+
     async function postCardMovedChanges(movingCardId: number, cardMovedByIndexResult: CardMoveIndexByIdResult) {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
@@ -128,6 +152,26 @@ const DragDropProviderComp = ({children}: Props) => {
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to move cardlist!");
+                }
+            })
+            .catch(console.error)
+    }
+
+    async function postBoardMovedChanges(movingBoardId: number, toIndex: number) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/project/${match?.params.projectId}/board/${movingBoardId}/move/${toIndex}`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to move board!");
                 }
             })
             .catch(console.error)

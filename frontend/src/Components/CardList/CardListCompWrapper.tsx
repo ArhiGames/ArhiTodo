@@ -30,7 +30,7 @@ const CardListCompWrapper = (props: Props) => {
         data: {
             index: props.dndIndex
         }
-    })
+    });
 
     const setRef = useCallback((ref: HTMLDivElement | null) => {
         draggableRef(ref);

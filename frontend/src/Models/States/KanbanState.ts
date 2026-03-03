@@ -2,6 +2,7 @@ export type Project = {
     projectId: number;
     projectName: string;
     ownedByUserId: string;
+    boardIds: number[];
 }
 
 export interface PublicUserGetDto {

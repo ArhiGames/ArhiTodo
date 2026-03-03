@@ -16,6 +16,10 @@ export function buildBoardConnection(hubConnection: HubConnection, dispatch: Dis
         dispatch({ type: "UPDATE_BOARD", payload: { boardId: board.boardId, boardName: board.boardName } });
     });
 
+    hubConnection.on("MoveBoard", (boardId: number, toIndex: number) => {
+        dispatch({ type: "MOVE_BOARD", payload: { boardId: boardId, toIndex: toIndex } });
+    })
+
     hubConnection.on("DeleteBoard", (boardId: number) => {
         dispatch({ type: "DELETE_BOARD", payload: { boardId: boardId } });
     });

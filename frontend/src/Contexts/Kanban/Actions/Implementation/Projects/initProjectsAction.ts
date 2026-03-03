@@ -8,7 +8,8 @@ const initProjectsAction = (state: KanbanState, payload: InitProjectPayload[]) =
         projects.set(initProjectPayload.projectId, {
             projectId: initProjectPayload.projectId,
             projectName: initProjectPayload.projectName,
-            ownedByUserId: initProjectPayload.ownedByUserId
+            ownedByUserId: initProjectPayload.ownedByUserId,
+            boardIds: []
         })
     }
 

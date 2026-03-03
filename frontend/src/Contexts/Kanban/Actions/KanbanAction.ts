@@ -78,6 +78,11 @@ export type UpdateBoardPayload = {
     boardName: string;
 }
 
+export type MoveBoardPayload = {
+    boardId: number;
+    toIndex: number;
+}
+
 export type CreateCardlistPayload = {
     boardId: number;
     cardListId: number;
@@ -194,6 +199,7 @@ export type KanbanAction =
     { type: "ADD_BOARD_MEMBER", payload: AddBoardMembersPayload } |
     { type: "REMOVE_BOARD_MEMBER", payload: RemoveBoardMembersPayload } |
     { type: "UPDATE_BOARD", payload: UpdateBoardPayload } |
+    { type: "MOVE_BOARD", payload: MoveBoardPayload } |
     { type: "DELETE_BOARD", payload: { boardId: number } } |
 
     { type: "CREATE_LABEL_OPTIMISTIC", payload: CreateLabelPayload } |

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import BoardHeader from "../Board/BoardHeader.tsx";
 import BoardComp from "../Board/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
@@ -20,6 +19,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders/ProjectConnectionBuilder.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import type {Claim} from "../../Models/Claim.ts";
+import BoardHeaderWrapper from "../Board/BoardHeaderWrapper.tsx";
 
 const ProjectViewComp = () => {
 
@@ -224,11 +224,9 @@ const ProjectViewComp = () => {
     return (
         <div className="project-view">
             <div className="board-selectors scroller">
-                {Array.from(kanbanState.boards.values())
-                    .filter(b => b.projectId === Number(projectId))
-                    .map((board: Board, index: number) => {
-                    return <BoardHeader isSelected={board.boardId === Number(boardId)} dndIndex={index}
-                                        key={board.boardId} projectId={Number(projectId)} board={board}/>
+                {kanbanState.projects.get(Number(projectId))?.boardIds
+                    .map((boardId: number, index: number) => {
+                    return <BoardHeaderWrapper boardId={boardId} dndIndex={index} key={boardId}/>
                 })}
                 { permissions.hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
             </div>

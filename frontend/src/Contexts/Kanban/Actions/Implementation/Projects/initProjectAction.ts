@@ -7,7 +7,8 @@ const initProjectAction = (state: KanbanState, payload: InitProjectPayload) => {
     newProjects.set(payload.projectId, {
         projectId: payload.projectId,
         projectName: payload.projectName,
-        ownedByUserId: payload.ownedByUserId
+        ownedByUserId: payload.ownedByUserId,
+        boardIds: []
     })
 
     return {

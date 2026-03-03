@@ -2,7 +2,8 @@
     display: flex;
     color: var(--text-color);
     max-width: 100%;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 .board-header {
@@ -10,12 +11,14 @@
     text-align: center;
     background-color: var(--bg);
     text-decoration: none;
+    border: none;
     color: var(--text-color);
     border-radius: 15px 15px 0 0;
-    padding: 0.85rem;
+    padding: 1rem;
     align-items: center;
     gap: 0.35rem;
     max-width: 15rem;
+    height: 100%;
     text-wrap: nowrap;
     transition: background-color 0.3s, transform 0.3s;
 }
@@ -24,6 +27,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: medium;
 }
 
 .board-header img {

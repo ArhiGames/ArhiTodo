@@ -53,6 +53,7 @@ import removeBoardMemberAction from "../Contexts/Kanban/Actions/Implementation/B
 import updateCardUrgencyLevelAction
     from "../Contexts/Kanban/Actions/Implementation/Card/updateCardUrgencyLevelAction.ts";
 import moveCardListAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/moveCardListAction.ts";
+import moveBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/moveBoardAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -83,6 +84,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return removeBoardMemberAction(state, action.payload);
         case "UPDATE_BOARD":
             return updateBoardAction(state, action.payload);
+        case "MOVE_BOARD":
+            return moveBoardAction(state, action.payload);
         case "DELETE_BOARD":
             return deleteBoardAction(state, action.payload.boardId)
 
