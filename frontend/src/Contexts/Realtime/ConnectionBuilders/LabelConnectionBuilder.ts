@@ -23,6 +23,10 @@ export function buildLabelConnection(hubConnection: HubConnection, dispatch: Dis
         dispatch({ type: "DELETE_LABEL", payload: { labelId: labelId } });
     });
 
+    hubConnection.on("MoveLabel", (labelId: number, toIndex: number) => {
+        dispatch({ type: "MOVE_LABEL", payload: { labelId: labelId, toIndex: toIndex } });
+    })
+
     hubConnection.on("AddLabelToCard", (cardId: number, labelId: number) => {
         dispatch({ type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: { cardId: cardId, labelId: labelId } });
     });
