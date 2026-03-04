@@ -1,7 +1,7 @@
 import type {ChecklistGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
 import "./CardDetailChecklistsComp.css"
 import Popover from "../../../../lib/Popover/Popover.tsx";
-import {type RefObject, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
@@ -23,8 +23,6 @@ const CardDetailChecklistsComp = () => {
     const addChecklistNameInputRef = useRef<HTMLInputElement>(null);
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
     const [inputtedChecklistName, setInputtedChecklistName] = useState<string>("");
-
-    const checklistsRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
 
     async function onCreateChecklistSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
@@ -118,9 +116,9 @@ const CardDetailChecklistsComp = () => {
                     )
                 }
             </div>
-            <div ref={checklistsRef} className="card-detail-checklists">
+            <div className="card-detail-checklists">
                 {kanbanState.cards.get(Number(cardId))?.checklistIds.map((checklistId: number, index: number) => {
-                    return <CardDetailChecklistCompWrapper key={checklistId} containerElement={checklistsRef} checklistId={checklistId} dndIndex={index}/>
+                    return <CardDetailChecklistCompWrapper key={checklistId} checklistId={checklistId} dndIndex={index}/>
                 })}
             </div>
         </div>

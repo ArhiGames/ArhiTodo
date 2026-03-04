@@ -55,6 +55,7 @@ import updateCardUrgencyLevelAction
 import moveCardListAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/moveCardListAction.ts";
 import moveBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/moveBoardAction.ts";
 import moveLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/moveLabelAction.ts";
+import moveChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/moveChecklistAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -154,6 +155,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return createChecklistSucceededAction(state, action.payload);
         case "UPDATE_CHECKLIST":
             return updateChecklistAction(state, action.payload);
+        case "MOVE_CHECKLIST":
+            return moveChecklistAction(state, action.payload);
         case "DELETE_CHECKLIST":
             return deleteChecklistAction(state, action.payload.checklistId);
 

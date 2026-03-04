@@ -32,7 +32,7 @@ const DragDropProviderComp = ({children}: Props) => {
             if (!cardMovedByIndexResult) return;
 
             postCardMovedChanges(sourceId, cardMovedByIndexResult).catch(console.error);
-        } else if (source.type === "cardlist" && (target?.type === "card" || target?.type === "cardlist")) {
+        } else if (source.type === "cardlist" && target?.type === "cardlist") {
             const newIndex: number = moveCardListOptimistically(source, target);
             if (newIndex === -1) return;
 
@@ -56,12 +56,14 @@ const DragDropProviderComp = ({children}: Props) => {
 
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
             moveCardOptimistically(source, target);
-        } else if (source.type === "cardlist" && (target?.type === "card" || target?.type === "cardlist")) {
+        } else if (source.type === "cardlist" && target?.type === "cardlist") {
             moveCardListOptimistically(source, target);
         } else if (source.type === "board" && target?.type === "board") {
             moveBoardOptimistically(source, target);
         } else if (source.type === "label" && target?.type === "label") {
             moveLabelOptimistically(source, target);
+        } else if (source.type === "checklist" && target?.type === "checklist") {
+            moveChecklistOptimistically(source, target);
         }
     }
 
@@ -131,6 +133,22 @@ const DragDropProviderComp = ({children}: Props) => {
 
         if (dispatch) {
             dispatch({type: "MOVE_LABEL", payload: { labelId: sourceId, toIndex: newIndex }});
+        }
+
+        return newIndex;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function moveChecklistOptimistically(source: any, target: any): number {
+        const sourceId: number = extractId(source.id);
+
+        const newIndex: number = target?.data.index ?? -1;
+        if (newIndex === -1) {
+            return -1;
+        }
+
+        if (dispatch) {
+            dispatch({type: "MOVE_CHECKLIST", payload: { checklistId: sourceId, toIndex: newIndex }});
         }
 
         return newIndex;

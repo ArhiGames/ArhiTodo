@@ -167,6 +167,11 @@ export type UpdateChecklistPayload = {
     checklistName: string;
 }
 
+export type MoveChecklistPayload = {
+    checklistId: number;
+    toIndex: number;
+}
+
 export type CreateChecklistItemPayload = {
     checklistItemId: number;
     checklistItemName: string;
@@ -241,6 +246,7 @@ export type KanbanAction =
     { type: "CREATE_CHECKLIST_OPTIMISTIC", payload: CreateChecklistPayload } |
     { type: "CREATE_CHECKLIST_SUCCEEDED", payload: CreateChecklistSucceededPayload } |
     { type: "UPDATE_CHECKLIST", payload: UpdateChecklistPayload } |
+    { type: "MOVE_CHECKLIST", payload: MoveChecklistPayload } |
     { type: "DELETE_CHECKLIST", payload: { checklistId: number } } |
 
     { type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: CreateChecklistItemPayload } |

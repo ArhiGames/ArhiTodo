@@ -1,6 +1,6 @@
 import "./CardDetailChecklistsComp.css"
 import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
-import {type RefObject, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import type { ChecklistItem } from "../../../../Models/States/KanbanState.ts";
@@ -13,7 +13,6 @@ import CardDetailChecklistItemCompWrapper from "./ChecklistItem/CardDetailCheckl
 
 interface Props {
     checklistId: number;
-    containerElement: RefObject<HTMLElement | null>;
 }
 
 const CardDetailChecklistComp = (props: Props) => {
@@ -134,7 +133,7 @@ const CardDetailChecklistComp = (props: Props) => {
             </div>
             <div className="card-detail-checklist-items">
                 {kanbanState.checklists.get(props.checklistId)?.checklistItemIds.map((checklistItemId: number, index: number) => {
-                    return <CardDetailChecklistItemCompWrapper key={checklistItemId} dndIndex={index} containerElement={props.containerElement}
+                    return <CardDetailChecklistItemCompWrapper key={checklistItemId} dndIndex={index}
                                                                checklistItemId={checklistItemId} checklistId={props.checklistId}/>
                 })}
             </div>
