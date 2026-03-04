@@ -9,6 +9,7 @@ public interface IChecklistService
 {
     Task<Result<ChecklistGetDto>> CreateChecklist(int boardId, int cardId, ChecklistCreateDto checklistCreateDto);
     Task<Result<ChecklistGetDto>> UpdateChecklist(int boardId, int cardId, ChecklistUpdateDto checklistUpdateDto);
+    Task<Result> MoveChecklist(int boardId, int cardId, int checklistId, int toIndex);
     Task<Result> DeleteChecklist(int boardId, int cardId, int checklistId);
     
     Task<Result<ChecklistItemGetDto>> CreateChecklistItem(int boardId, int cardId, int checklistId, ChecklistItemCreateDto checklistItemCreateDto);

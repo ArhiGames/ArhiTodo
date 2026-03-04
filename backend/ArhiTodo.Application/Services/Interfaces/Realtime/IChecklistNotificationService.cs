@@ -6,6 +6,7 @@ public interface IChecklistNotificationService
 {
     void CreateChecklist(int boardId, int cardId, ChecklistGetDto checklistGetDto);
     void UpdateChecklist(int boardId, int cardId, ChecklistGetDto checklistGetDto);
+    void MoveChecklist(int boardId, int checklistId, int toIndex);
     void DeleteChecklist(int boardId, int checklistId);
 
     void CreateChecklistItemOnChecklist(int boardId, int checklistId, ChecklistItemGetDto checklistItemGetDto);

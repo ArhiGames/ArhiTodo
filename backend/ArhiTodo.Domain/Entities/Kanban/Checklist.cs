@@ -49,6 +49,12 @@ public class Checklist : Draggable
         ChecklistName = checklistName;
         return Result.Success();
     }
+    
+    public Result MoveChecklist(string? prevLocation, string? nextLocation)
+    {
+        Result moveResult = Move(prevLocation, nextLocation);
+        return moveResult.IsSuccess ? Result.Success() : moveResult;
+    }
 
     public Result<ChecklistItem> AddChecklistItem(string checklistItemName, string? prevPosition)
     {

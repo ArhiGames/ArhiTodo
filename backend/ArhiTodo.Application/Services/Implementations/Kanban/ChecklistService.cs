@@ -1,5 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Checklist;
 using ArhiTodo.Application.DTOs.ChecklistItem;
+using ArhiTodo.Application.Helpers;
 using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Kanban;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
@@ -57,6 +58,27 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         ChecklistGetDto checklistGetDto = checklist.ToGetDto();
         checklistNotificationService.UpdateChecklist(boardId, cardId, checklistGetDto);
         return checklistGetDto;
+    }
+
+    public async Task<Result> MoveChecklist(int boardId, int cardId, int checklistId, int toIndex)
+    {
+        bool hasEditCardListPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardListPermission) return Errors.Forbidden;
+        
+        Card? card = await cardRepository.GetDetailedCard(cardId);
+        if (card is null) return Errors.NotFound;
+
+        Checklist? checklist = card.Checklists.FirstOrDefault(cl => cl.ChecklistId == checklistId);
+        if (checklist is null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
+            card.Checklists.Cast<Draggable>().ToList(), checklist, toIndex);
+        checklist.MoveChecklist(prevLocation, nextLocation);
+
+        await unitOfWork.SaveChangesAsync();
+        checklistNotificationService.MoveChecklist(boardId, checklistId, toIndex);
+        
+        return Result.Success();
     }
 
     public async Task<Result> DeleteChecklist(int boardId, int cardId, int checklistId)

@@ -26,6 +26,13 @@ public class ChecklistController(IChecklistService checklistService) : ApiContro
         Result<ChecklistGetDto> updateChecklistResult = await checklistService.UpdateChecklist(boardId, cardId, checklistUpdateDto);
         return updateChecklistResult.IsSuccess ? Ok(updateChecklistResult.Value) : HandleFailure(updateChecklistResult);
     }
+    
+    [HttpPatch("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}/move/{location:int}")]
+    public async Task<IActionResult> MoveChecklist(int boardId, int cardId, int checklistId, int location)
+    {
+        Result moveChecklistResult = await checklistService.MoveChecklist(boardId, cardId, checklistId, location);
+        return moveChecklistResult.IsSuccess ? Ok() : HandleFailure(moveChecklistResult);
+    }
 
     [HttpDelete("board/{boardId:int}/card/{cardId:int}/checklist/{checklistId:int}")]
     public async Task<IActionResult> DeleteChecklistFromCard(int boardId, int cardId, int checklistId)

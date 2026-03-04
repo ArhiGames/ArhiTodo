@@ -9,6 +9,7 @@ import {useAuth} from "../Contexts/Authentication/useAuth.ts";
 import {DragDropProvider} from "@dnd-kit/react";
 import {extractId} from "./Helpers/DndHelpers.ts";
 import {useRealtimeHub} from "../Contexts/Realtime/Hooks.ts";
+import type {Checklist} from "../Models/States/KanbanState.ts";
 
 interface Props {
     children: React.ReactNode;
@@ -20,7 +21,7 @@ const DragDropProviderComp = ({children}: Props) => {
     const dispatch = useKanbanDispatch();
     const hubConnection = useRealtimeHub();
     const { checkRefresh } = useAuth();
-    const match = matchPath({ path: "/projects/:projectId/board/:boardId" }, location.pathname);
+    const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function doDragEndChecks(event: any) {
@@ -47,6 +48,11 @@ const DragDropProviderComp = ({children}: Props) => {
             if (newIndex === -1) return;
 
             postLabelMovedChanges(sourceId, newIndex).catch(console.error);
+        } else if (source.type === "checklist" && target?.type === "checklist") {
+            const newIndex: number = moveChecklistOptimistically(source, target);
+            if (newIndex === -1) return;
+
+            postChecklistMovedChanges(sourceId, newIndex).catch(console.error);
         }
     }
 
@@ -230,6 +236,29 @@ const DragDropProviderComp = ({children}: Props) => {
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to move label!");
+                }
+            })
+            .catch(console.error)
+    }
+
+    async function postChecklistMovedChanges(movingChecklistId: number, toIndex: number) {
+        const checklist: Checklist | undefined = kanbanState.checklists.get(movingChecklistId);
+        if (!checklist) return;
+
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/board/${match?.params.boardId}/card/${checklist.cardId}/checklist/${movingChecklistId}/move/${toIndex}`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to move checklist!");
                 }
             })
             .catch(console.error)

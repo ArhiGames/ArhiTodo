@@ -19,6 +19,11 @@ public class ChecklistNotificationService(IHubContext<BoardHub, IBoardClient> hu
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").UpdateChecklist(cardId, checklistGetDto);
     }
 
+    public void MoveChecklist(int boardId, int checklistId, int toIndex)
+    {
+        hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").MoveChecklist(checklistId, toIndex);
+    }
+
     public void DeleteChecklist(int boardId, int checklistId)
     {
         hubContext.Clients.GroupExcept($"grp-board-{boardId}", currentUser.ConnectionId ?? "").DeleteChecklist(checklistId);

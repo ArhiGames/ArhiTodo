@@ -37,7 +37,9 @@ public interface IBoardClient
     
     Task CreateChecklist(int cardId, ChecklistGetDto checklistGetDto);
     Task UpdateChecklist(int cardId, ChecklistGetDto checklistGetDto);
+    Task MoveChecklist(int checklistId, int toIndex);
     Task DeleteChecklist(int checklistId);
+    
     Task CreateChecklistItemOnChecklist(int checklistId, ChecklistItemGetDto checklistItemGetDto);
     Task UpdateChecklistItem(int checklistId, ChecklistItemGetDto checklistItemGetDto);
     Task PatchChecklistItemDoneState(int checklistItemId, bool taskDone);
