@@ -17,6 +17,10 @@ export function buildChecklistConnection(hubConnection: HubConnection, dispatch:
         dispatch({ type: "UPDATE_CHECKLIST", payload: { checklistId: checklist.checklistId, checklistName: checklist.checklistName } });
     });
 
+    hubConnection.on("MoveChecklist", (checklistId: number, toIndex: number) => {
+        dispatch({ type: "MOVE_CHECKLIST", payload: { checklistId: checklistId, toIndex: toIndex } });
+    });
+
     hubConnection.on("DeleteChecklist", (checklistId: number) => {
         dispatch({ type: "DELETE_CHECKLIST", payload: { checklistId: checklistId } });
     });
