@@ -54,6 +54,7 @@ import updateCardUrgencyLevelAction
     from "../Contexts/Kanban/Actions/Implementation/Card/updateCardUrgencyLevelAction.ts";
 import moveCardListAction from "../Contexts/Kanban/Actions/Implementation/Cardlists/moveCardListAction.ts";
 import moveBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/moveBoardAction.ts";
+import moveLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/moveLabelAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -97,6 +98,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return deleteLabelAction(state, action.payload.labelToDelete);
         case "UPDATE_LABEL":
             return updateLabelAction(state, action.payload);
+        case "MOVE_LABEL":
+            return moveLabelAction(state, action.payload);
         case "DELETE_LABEL":
             return deleteLabelAction(state, action.payload.labelId);
 

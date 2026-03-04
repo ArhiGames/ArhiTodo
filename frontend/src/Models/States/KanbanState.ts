@@ -18,6 +18,7 @@ export type Board = {
     ownedByUserId: string;
     boardMembers: PublicUserGetDto[];
     cardListIds: number[];
+    labelIds: number[];
 }
 
 export type CardList = {

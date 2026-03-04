@@ -14,7 +14,8 @@ const initBoardsAction = (state: KanbanState, payload: { projectId: number, boar
             boardName: board.boardName,
             ownedByUserId: board.ownedByUserId,
             boardMembers: [],
-            cardListIds: []
+            cardListIds: [],
+            labelIds: []
         });
     }
 

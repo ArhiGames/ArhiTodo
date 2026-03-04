@@ -46,6 +46,11 @@ export type UpdateLabelPayload = {
     labelColor: number;
 }
 
+export type MoveLabelPayload = {
+    labelId: number;
+    toIndex: number;
+}
+
 export type CreateBoardPayload = {
     projectId: number;
     boardId: number;
@@ -206,6 +211,7 @@ export type KanbanAction =
     { type: "CREATE_LABEL_SUCCEEDED", payload: CreateLabelSucceededPayload } |
     { type: "CREATE_LABEL_FAILED", payload: { labelToDelete: number } } |
     { type: "UPDATE_LABEL", payload: UpdateLabelPayload } |
+    { type: "MOVE_LABEL", payload: MoveLabelPayload } |
     { type: "DELETE_LABEL", payload: { labelId: number } } |
 
     { type: "ADD_LABEL_TO_CARD_OPTIMISTIC", payload: ChangeLabelCardRelationPayload } |

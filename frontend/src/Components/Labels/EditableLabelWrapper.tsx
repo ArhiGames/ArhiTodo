@@ -1,4 +1,3 @@
-import type {Label} from "../../Models/States/KanbanState.ts";
 import EditableLabel from "./EditableLabel.tsx";
 import {useDraggable, useDroppable} from "@dnd-kit/react";
 import {RestrictToVerticalAxis} from "@dnd-kit/abstract/modifiers";
@@ -11,7 +10,7 @@ interface Props {
     dndIndex: number;
     containerElem: React.RefObject<HTMLDivElement | null>;
     setIsDraggingEditableLabel: Dispatch<SetStateAction<boolean>>;
-    label: Label;
+    labelId: number;
     isSelected: boolean;
     onLabelSelected: (labelId: number) => void;
     onLabelUnselected: (labelId: number) => void;
@@ -24,7 +23,7 @@ const EditableLabelWrapper = (props: Props) => {
     const permissions = usePermissions();
 
     const { ref: draggableRef, isDragging } = useDraggable({
-        id: `label-${props.label.labelId}`,
+        id: `label-${props.labelId}`,
         type: "label",
         modifiers: [RestrictToVerticalAxis, RestrictToElement.configure({ element: props.containerElem.current })],
         disabled: !permissions.hasManageLabelsPermission(),
@@ -33,7 +32,7 @@ const EditableLabelWrapper = (props: Props) => {
         }
     });
     const { ref: droppableRef } = useDroppable({
-        id: `labelDroppable-${props.label.labelId}`,
+        id: `labelDroppable-${props.labelId}`,
         type: "label",
         disabled: !permissions.hasManageLabelsPermission(),
         collisionPriority: CollisionPriority.Highest,
@@ -53,7 +52,7 @@ const EditableLabelWrapper = (props: Props) => {
 
     return (
         <div ref={setRef} className="editable-label-div-wrapper">
-            <EditableLabel label={props.label} onEditPressed={props.onEditPressed}
+            <EditableLabel labelId={props.labelId} onEditPressed={props.onEditPressed}
                            isSelected={props.isSelected}
                            onLabelSelected={props.onLabelSelected}
                            onLabelUnselected={props.onLabelUnselected}

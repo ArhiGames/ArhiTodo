@@ -81,7 +81,8 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
 
     boards.set(payload.boardId, {
         ...existingBoard,
-        cardListIds: cardListIds
+        cardListIds: cardListIds,
+        labelIds: labelsDtos.sort((a: LabelGetDto, b: LabelGetDto) => a.position! > b.position! ? 1 : -1).map(l => l.labelId)
     })
 
     for (const labelDto of labelsDtos) {

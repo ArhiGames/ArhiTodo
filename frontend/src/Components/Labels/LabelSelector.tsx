@@ -1,7 +1,6 @@
 import Popover from "../../lib/Popover/Popover.tsx";
 import {type RefObject, useEffect, useRef, useState} from "react";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type { Label } from "../../Models/States/KanbanState.ts";
 import "./LabelSelector.css"
 import LabelEditor from "./LabelEditor.tsx";
 import {useParams} from "react-router-dom";
@@ -59,15 +58,15 @@ const LabelSelector = ( props: Props ) => {
                         <>
                             <div ref={labelsContainerElem} className="label-selector-existing scroller">
                                 {
-                                    Array.from(kanbanState.labels.values()).map((label: Label, index: number) => {
-                                        return (label.boardId === Number(boardId) && (
-                                            <EditableLabelWrapper key={label.labelId} label={label} onEditPressed={onLabelEdit}
+                                    kanbanState.boards.get(Number(boardId))?.labelIds.map((labelId: number, index: number) => {
+                                        return (
+                                            <EditableLabelWrapper key={labelId} onEditPressed={onLabelEdit} labelId={labelId}
                                                                   setIsDraggingEditableLabel={setDraggingEditableLabel}
                                                                   dndIndex={index} containerElem={labelsContainerElem}
-                                                                  isSelected={ props.selectedLabels.includes(label.labelId) }
+                                                                  isSelected={props.selectedLabels.includes(labelId)}
                                                                   onLabelSelected={props.onLabelSelected} selectable={props.selectable}
                                                                   onLabelUnselected={props.onLabelUnselected}/>
-                                        ) )
+                                        )
                                     })
                                 }
                             </div>

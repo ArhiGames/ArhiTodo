@@ -42,6 +42,11 @@ const DragDropProviderComp = ({children}: Props) => {
             if (newIndex === -1) return;
 
             postBoardMovedChanges(sourceId, newIndex).catch(console.error);
+        } else if (source.type === "label" && target?.type === "label") {
+            const newIndex: number = moveLabelOptimistically(source, target);
+            if (newIndex === -1) return;
+
+            postLabelMovedChanges(sourceId, newIndex).catch(console.error);
         }
     }
 
@@ -50,14 +55,13 @@ const DragDropProviderComp = ({children}: Props) => {
         const { source, target } = event.operation;
 
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
-            const cardMovedByIndexResult: CardMoveIndexByIdResult | undefined = moveCardOptimistically(source, target);
-            if (!cardMovedByIndexResult) return;
+            moveCardOptimistically(source, target);
         } else if (source.type === "cardlist" && (target?.type === "card" || target?.type === "cardlist")) {
-            const newIndex: number = moveCardListOptimistically(source, target);
-            if (newIndex === -1) return;
+            moveCardListOptimistically(source, target);
         } else if (source.type === "board" && target?.type === "board") {
-            const newIndex: number = moveBoardOptimistically(source, target);
-            if (newIndex === -1) return;
+            moveBoardOptimistically(source, target);
+        } else if (source.type === "label" && target?.type === "label") {
+            moveLabelOptimistically(source, target);
         }
     }
 
@@ -111,6 +115,22 @@ const DragDropProviderComp = ({children}: Props) => {
 
         if (dispatch) {
             dispatch({type: "MOVE_BOARD", payload: { boardId: sourceId, toIndex: newIndex }});
+        }
+
+        return newIndex;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function moveLabelOptimistically(source: any, target: any): number {
+        const sourceId: number = extractId(source.id);
+
+        const newIndex: number = target?.data.index ?? -1;
+        if (newIndex === -1) {
+            return -1;
+        }
+
+        if (dispatch) {
+            dispatch({type: "MOVE_LABEL", payload: { labelId: sourceId, toIndex: newIndex }});
         }
 
         return newIndex;
@@ -172,6 +192,26 @@ const DragDropProviderComp = ({children}: Props) => {
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to move board!");
+                }
+            })
+            .catch(console.error)
+    }
+
+    async function postLabelMovedChanges(movingLabelId: number, toIndex: number) {
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/board/${match?.params.boardId}/label/${movingLabelId}/move/${toIndex}`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to move label!");
                 }
             })
             .catch(console.error)
