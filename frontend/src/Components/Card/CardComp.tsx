@@ -95,10 +95,15 @@ const CardComp = (props: Props) => {
     }
 
     function getCardLabelsJsx() {
+        const boardLabelIds: number[] | undefined = kanbanState.boards.get(Number(boardId))?.labelIds;
+        if (!boardLabelIds) return null;
+
         const labelIds: number[] | undefined = kanbanState.cardLabels.get(props.cardId);
         if (!labelIds) return null;
 
-        return labelIds.map((labelId: number) => {
+        return boardLabelIds.map((labelId: number) => {
+            if (!labelIds.includes(labelId)) return null;
+
             const label: Label | undefined = kanbanState.labels.get(labelId);
             if (!label) return null;
 
