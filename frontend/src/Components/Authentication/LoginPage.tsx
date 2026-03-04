@@ -1,4 +1,4 @@
-import {type ChangeEvent, type FormEvent, useState} from "react";
+import {type ChangeEvent, useState} from "react";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"
@@ -11,7 +11,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
 
-    const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const onFormSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 
         if (userName.length <= 0 || (password.length < 8 && password !== "admin")) return;
 

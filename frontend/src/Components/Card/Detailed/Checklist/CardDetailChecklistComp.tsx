@@ -1,18 +1,19 @@
 import "./CardDetailChecklistsComp.css"
 import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
-import {type FormEvent, useEffect, useRef, useState} from "react";
+import {type RefObject, useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import type { ChecklistItem } from "../../../../Models/States/KanbanState.ts";
 import {API_BASE_URL} from "../../../../config/api.ts";
-import CardDetailChecklistItemComp from "./CardDetailChecklistItemComp.tsx";
 import {useParams} from "react-router-dom";
 import CardDetailChecklistHeaderComp from "./CardDetailChecklistHeaderComp.tsx";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
 import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
+import CardDetailChecklistItemCompWrapper from "./ChecklistItem/CardDetailChecklistItemCompWrapper.tsx";
 
 interface Props {
     checklistId: number;
+    containerElement: RefObject<HTMLElement | null>;
 }
 
 const CardDetailChecklistComp = (props: Props) => {
@@ -24,7 +25,6 @@ const CardDetailChecklistComp = (props: Props) => {
     const permissions = usePermissions();
     const hubConnection = useRealtimeHub();
 
-    const [showingCompletedTasks, setShowingCompletedTasks] = useState<boolean>(true);
     const checklistItems: ChecklistItem[] = [];
     Array.from(kanbanState.checklistItems.values()).forEach((checklistItem: ChecklistItem)=> {
         if (checklistItem.checklistId === props.checklistId) {
@@ -57,7 +57,7 @@ const CardDetailChecklistComp = (props: Props) => {
         return completedTasks / totalTasks;
     }
 
-    async function onAddTaskButtonPressed(e: FormEvent<HTMLFormElement>) {
+    async function onAddTaskButtonPressed(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const predictedChecklistItemId = Date.now() * -1;
@@ -125,8 +125,7 @@ const CardDetailChecklistComp = (props: Props) => {
 
     return (
         <div className="card-detail-checklist">
-            <CardDetailChecklistHeaderComp checklistId={props.checklistId} showingCompletedTasks={showingCompletedTasks}
-                                           setShowingCompletedTasks={setShowingCompletedTasks}/>
+            <CardDetailChecklistHeaderComp checklistId={props.checklistId}/>
             <div className="card-detail-progress-container">
                 <p>{ checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
                 <div className="card-detail-progress-bg">
@@ -134,10 +133,9 @@ const CardDetailChecklistComp = (props: Props) => {
                 </div>
             </div>
             <div className="card-detail-checklist-items">
-                {checklistItems.map((checklistItem: ChecklistItemGetDto) => {
-                    if (!showingCompletedTasks && checklistItem.isDone) return null;
-                    return <CardDetailChecklistItemComp key={checklistItem.checklistItemId} checklistId={props.checklistId}
-                                                        checklistItem={checklistItem}/>
+                {kanbanState.checklists.get(props.checklistId)?.checklistItemIds.map((checklistItemId: number, index: number) => {
+                    return <CardDetailChecklistItemCompWrapper key={checklistItemId} dndIndex={index} containerElement={props.containerElement}
+                                                               checklistItemId={checklistItemId} checklistId={props.checklistId}/>
                 })}
             </div>
             { permissions.hasManageCardsPermission() && (

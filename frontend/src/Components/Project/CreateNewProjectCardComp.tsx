@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Modal from "../../lib/Modal/Default/Modal.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
@@ -27,7 +27,7 @@ const CreateNewProjectCardComp = () => {
         setIsCreating(false);
     }
 
-    function onCreateProjectSubmit(e: FormEvent<HTMLFormElement>) {
+    function onCreateProjectSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
 

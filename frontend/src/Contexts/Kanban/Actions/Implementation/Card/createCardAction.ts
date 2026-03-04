@@ -22,7 +22,8 @@ const createCardAction = (state: KanbanState, payload: CreateCardPayload): Kanba
         isDone: false,
         cardUrgencyLevel: 0,
         cardListId: payload.cardListId,
-        assignedUserIds: []
+        assignedUserIds: [],
+        checklistIds: []
     });
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
     newCardLabels.set(payload.cardId, []);

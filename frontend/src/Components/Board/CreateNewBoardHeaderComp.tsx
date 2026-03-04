@@ -1,5 +1,5 @@
 import Popover from "../../lib/Popover/Popover.tsx";
-import { type Dispatch, type FormEvent, useEffect, useRef, useState } from "react";
+import { type Dispatch, useEffect, useRef, useState } from "react";
 import { useKanbanDispatch } from "../../Contexts/Kanban/Hooks.ts";
 import type { KanbanAction } from "../../Contexts/Kanban/Actions/KanbanAction.ts";
 import { useNavigate, useParams } from "react-router-dom";
@@ -38,7 +38,7 @@ const CreateNewBoardHeaderComp = () => {
         setOpen(false);
     }
 
-    async function onCreateBoardSubmitted(e: FormEvent<HTMLFormElement>) {
+    async function onCreateBoardSubmitted(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         if (!appUser) return;
 

@@ -1,4 +1,4 @@
-import {type FormEvent, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {AUTH_BASE_URL} from "../../../config/api.ts";
 import type {Error} from "../../../Models/BackendDtos/Auth/Error.ts";
@@ -38,7 +38,7 @@ const PasswordManagerPageComp = () => {
 
     }
 
-    function onHandleSubmit(e: FormEvent<HTMLFormElement>) {
+    function onHandleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
 

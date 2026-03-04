@@ -11,6 +11,8 @@ import type {
 import type { CardListGetDto } from "../../../../../Models/BackendDtos/Kanban/CardListGetDto.ts";
 import type {LabelGetDto} from "../../../../../Models/BackendDtos/Kanban/LabelGetDto.ts";
 import type {CardGetDto} from "../../../../../Models/BackendDtos/Kanban/CardGetDto.ts";
+import type {ChecklistGetDto} from "../../../../../Models/BackendDtos/Kanban/ChecklistGetDto.ts";
+import type {ChecklistItemGetDto} from "../../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
 
 const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
 
@@ -42,15 +44,6 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
         for (const cardDto of cardListDto.cards.sort((a: CardGetDto, b: CardGetDto) => a.position! > b.position! ? 1 : -1)) {
             cardIds.push(cardDto.cardId);
 
-            cards.set(cardDto.cardId, {
-                cardListId: cardListDto.cardListId,
-                cardId: cardDto.cardId,
-                cardName: cardDto.cardName,
-                cardDescription: cardDto.cardDescription,
-                isDone: cardDto.isDone,
-                cardUrgencyLevel: cardDto.cardUrgencyLevel,
-                assignedUserIds: cardDto.assignedUserIds
-            });
             if (!cardLabels.get(cardDto.cardId)) {
                 cardLabels.set(cardDto.cardId, []);
             }
@@ -61,13 +54,15 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
                 }
             }
 
-            for (const checklist of cardDto.checklists) {
-                checklists.set(checklist.checklistId, {
-                    checklistId: checklist.checklistId,
-                    checklistName: checklist.checklistName,
-                    cardId: cardDto.cardId
-                });
-                for (const checklistItem of checklist.checklistItems) {
+            const checklistIds: number[] = [];
+            for (const checklist of cardDto.checklists.sort((a: ChecklistGetDto, b: ChecklistGetDto) => a.position! > b.position! ? 1 : -1)) {
+                checklistIds.push(checklist.checklistId);
+
+                const checklistItemIds: number[] = [];
+                for (const checklistItem of
+                    checklist.checklistItems.sort((a: ChecklistItemGetDto, b: ChecklistItemGetDto) => a.position! > b.position! ? 1 : -1))
+                {
+                    checklistItemIds.push(checklistItem.checklistItemId);
                     checklistItems.set(checklistItem.checklistItemId, {
                         checklistItemId: checklistItem.checklistItemId,
                         checklistItemName: checklistItem.checklistItemName,
@@ -75,7 +70,25 @@ const initBoardAction = (state: KanbanState, payload: InitBoardPayload) => {
                         checklistId: checklist.checklistId
                     });
                 }
+
+                checklists.set(checklist.checklistId, {
+                    checklistId: checklist.checklistId,
+                    checklistName: checklist.checklistName,
+                    cardId: cardDto.cardId,
+                    checklistItemIds: checklistItemIds
+                });
             }
+
+            cards.set(cardDto.cardId, {
+                cardListId: cardListDto.cardListId,
+                cardId: cardDto.cardId,
+                cardName: cardDto.cardName,
+                cardDescription: cardDto.cardDescription,
+                isDone: cardDto.isDone,
+                cardUrgencyLevel: cardDto.cardUrgencyLevel,
+                assignedUserIds: cardDto.assignedUserIds,
+                checklistIds: checklistIds
+            });
         }
     }
 

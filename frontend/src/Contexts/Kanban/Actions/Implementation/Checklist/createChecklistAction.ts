@@ -8,6 +8,7 @@ const createChecklistAction = (state: KanbanState, payload: CreateChecklistPaylo
         checklistId: payload.checklistId,
         checklistName: payload.checklistName,
         cardId: payload.cardId,
+        checklistItemIds: []
     })
 
     return {

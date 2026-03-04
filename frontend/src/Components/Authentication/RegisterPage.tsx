@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import {type ChangeEvent, type FormEvent, useState} from "react";
+import {type ChangeEvent, useState} from "react";
 import type { Error } from "../../Models/BackendDtos/Auth/Error.ts"
 import "./Login.css"
 
@@ -17,7 +17,7 @@ const RegisterPage = () => {
 
     const isValidInput = (userName.length >= 3 && userName.length <= 20) && (password.length >= 8 && password === confirmedPassword);
 
-    const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const onFormSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
 
         e.preventDefault();
         if (!invitationKey || !isValidInput) return;

@@ -36,6 +36,7 @@ export type Card = {
     isDone: boolean;
     cardUrgencyLevel: number;
     assignedUserIds: string[];
+    checklistIds: number[];
 }
 
 export type Label = {
@@ -49,6 +50,7 @@ export type Checklist = {
     checklistId: number;
     checklistName: string;
     cardId: number;
+    checklistItemIds: number[];
 }
 
 export type ChecklistItem = {

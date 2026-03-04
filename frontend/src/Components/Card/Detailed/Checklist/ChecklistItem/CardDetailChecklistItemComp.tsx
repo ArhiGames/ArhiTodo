@@ -1,17 +1,17 @@
-import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
-import FancyCheckbox from "../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
-import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
-import {API_BASE_URL} from "../../../../config/api.ts";
-import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
-import {type FormEvent, useEffect, useRef, useState} from "react";
+import type {ChecklistItemGetDto} from "../../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
+import FancyCheckbox from "../../../../../lib/Input/Checkbox/FancyCheckbox.tsx";
+import {useKanbanDispatch, useKanbanState} from "../../../../../Contexts/Kanban/Hooks.ts";
+import {API_BASE_URL} from "../../../../../config/api.ts";
+import {useAuth} from "../../../../../Contexts/Authentication/useAuth.ts";
+import { useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
-import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
-import type {ChecklistItem} from "../../../../Models/States/KanbanState.ts";
-import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
+import {usePermissions} from "../../../../../Contexts/Authorization/usePermissions.ts";
+import type {ChecklistItem} from "../../../../../Models/States/KanbanState.ts";
+import {useRealtimeHub} from "../../../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     checklistId: number;
-    checklistItem: ChecklistItemGetDto;
+    checklistItemId: number;
 }
 
 const CardDetailChecklistItemComp = (props: Props) => {
@@ -23,10 +23,12 @@ const CardDetailChecklistItemComp = (props: Props) => {
     const permission = usePermissions();
     const hubConnection = useRealtimeHub();
 
+    const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(props.checklistItemId);
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const checklistItemInputRef = useRef<HTMLInputElement | null>(null);
     const checklistItemForm = useRef<HTMLFormElement | null>(null);
-    const [checklistItemInput, setChecklistItemInput] = useState<string>(props.checklistItem.checklistItemName);
+    const [checklistItemInput, setChecklistItemInput] = useState<string>(checklistItem?.checklistItemName ?? "");
 
     async function handleCheckboxClick(checklistItemId: number, checked: boolean) {
 
@@ -63,7 +65,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Could update checklist item state with id ${props.checklistItem.checklistItemId}`);
+                    throw new Error(`Could update checklist item state with id ${checklistItem?.checklistItemId}`);
                 }
 
                 return res.json();
@@ -131,21 +133,22 @@ const CardDetailChecklistItemComp = (props: Props) => {
             })
     }
 
-    async function handleChangeChecklistSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleChangeChecklistSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
+        if (!checklistItem) return;
 
         setIsEditing(false);
-        if (checklistItemInput.length <= 0 || checklistItemInput === props.checklistItem.checklistItemName) {
+        if (checklistItemInput.length <= 0 || checklistItemInput === checklistItem.checklistItemName) {
             return;
         }
 
-        const oldChecklistItemName: string = props.checklistItem.checklistItemName;
+        const oldChecklistItemName: string = checklistItem.checklistItemName;
 
         if (dispatch) {
             dispatch({ type: "UPDATE_CHECKLIST_ITEM", payload: {
-                checklistItemId: props.checklistItem.checklistItemId,
+                checklistItemId: props.checklistItemId,
                 checklistItemName: checklistItemInput,
-                isDone: props.checklistItem.isDone
+                isDone: checklistItem.isDone
             }});
         }
 
@@ -153,9 +156,9 @@ const CardDetailChecklistItemComp = (props: Props) => {
         if (!refreshedToken) {
             if (dispatch) {
                 dispatch({ type: "UPDATE_CHECKLIST_ITEM", payload: {
-                    checklistItemId: props.checklistItem.checklistItemId,
+                    checklistItemId: props.checklistItemId,
                     checklistItemName: oldChecklistItemName,
-                    isDone: props.checklistItem.isDone
+                    isDone: checklistItem.isDone
                 }});
             }
             return;
@@ -165,14 +168,14 @@ const CardDetailChecklistItemComp = (props: Props) => {
             method: "PUT",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
             body: JSON.stringify({
-                checklistItemId: props.checklistItem.checklistItemId,
+                checklistItemId: props.checklistItemId,
                 checklistItemName: checklistItemInput,
-                isDone: props.checklistItem.isDone
+                isDone: checklistItem.isDone
             })
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Could not update checklist item with id  ${props.checklistItem.checklistItemId}`);
+                    throw new Error(`Could not update checklist item with id  ${props.checklistItemId}`);
                 }
 
                 return res.json();
@@ -180,7 +183,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
             .then((updatedChecklistItem: ChecklistItemGetDto) => {
                 if (dispatch) {
                     dispatch({ type: "UPDATE_CHECKLIST_ITEM", payload: {
-                        checklistItemId: props.checklistItem.checklistItemId,
+                        checklistItemId: props.checklistItemId,
                         checklistItemName: updatedChecklistItem.checklistItemName,
                         isDone: updatedChecklistItem.isDone
                     }});
@@ -189,9 +192,9 @@ const CardDetailChecklistItemComp = (props: Props) => {
             .catch(err => {
                 if (dispatch) {
                     dispatch({ type: "UPDATE_CHECKLIST_ITEM", payload: {
-                        checklistItemId: props.checklistItem.checklistItemId,
+                        checklistItemId: props.checklistItemId,
                         checklistItemName: oldChecklistItemName,
-                        isDone: props.checklistItem.isDone
+                        isDone: checklistItem.isDone
                     }});
                 }
                 console.error(err);
@@ -200,7 +203,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
 
     function resetChecklistItemUpdate() {
         setIsEditing(false);
-        setChecklistItemInput(props.checklistItem.checklistItemName);
+        setChecklistItemInput(checklistItem?.checklistItemName ?? "");
     }
 
     function tryEditChecklistItemPressed() {
@@ -238,15 +241,15 @@ const CardDetailChecklistItemComp = (props: Props) => {
                     <form ref={checklistItemForm} className="card-detail-checklist-item-info-wrapper"
                           onSubmit={handleChangeChecklistSubmit} onReset={resetChecklistItemUpdate}>
                         <div className="card-detail-checklist-item-info">
-                            <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
-                                handleCheckboxClick(props.checklistItem.checklistItemId, checked)}/>
+                            <FancyCheckbox value={checklistItem?.isDone ?? false}
+                                           onChange={(checked: boolean) => handleCheckboxClick(props.checklistItemId, checked)}/>
                             <input ref={checklistItemInputRef} type="text" className="classic-input small"
                                    minLength={1} maxLength={256} required
                                    value={checklistItemInput} onChange={(e) => setChecklistItemInput(e.target.value)}/>
                         </div>
                         <div className="card-detail-checklist-item-edit-actions">
                             <button type="submit"
-                                    className={`button ${checklistItemInput.length > 0 && checklistItemInput !== props.checklistItem.checklistItemName
+                                    className={`button ${checklistItemInput.length > 0 && checklistItemInput !== checklistItem?.checklistItemName
                                         ? "valid-submit-button" : "standard-button"}`}>Submit</button>
                             <button type="reset" className="button standard-button">Cancel</button>
                         </div>
@@ -254,15 +257,15 @@ const CardDetailChecklistItemComp = (props: Props) => {
                 ) : (
                     <>
                         <div className="card-detail-checklist-item-info">
-                            <FancyCheckbox value={props.checklistItem.isDone} onChange={(checked: boolean) =>
-                                           handleCheckboxClick(props.checklistItem.checklistItemId, checked)}
+                            <FancyCheckbox value={checklistItem?.isDone ?? false}
+                                           onChange={(checked: boolean) => handleCheckboxClick(checklistItem?.checklistItemId ?? -1, checked)}
                                            disabled={!permission.hasEditCardStatePermission(Number(cardId))}/>
-                            <p className={props.checklistItem.isDone ? "checklist-item-name-done" : "checklist-item-name"}>{props.checklistItem.checklistItemName}</p>
+                            <p className={checklistItem?.isDone ? "checklist-item-name-done" : "checklist-item-name"}>{checklistItem?.checklistItemName}</p>
                         </div>
                         { permission.hasManageCardsPermission() && (
                             <div className="card-detail-checklist-item-action">
                                 <img height="32px" src="/trashcan-icon.svg" alt="Remove"
-                                     onClick={() => handleChecklistItemRemovePressed(props.checklistItem.checklistItemId)}></img>
+                                     onClick={() => handleChecklistItemRemovePressed(props.checklistItemId)}></img>
                             </div>
                         )}
                     </>

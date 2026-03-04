@@ -1,4 +1,4 @@
-import {type Dispatch, type FormEvent, type SetStateAction, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {API_BASE_URL} from "../../../../config/api.ts";
 import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
@@ -13,8 +13,6 @@ import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     checklistId: number;
-    showingCompletedTasks: boolean;
-    setShowingCompletedTasks: Dispatch<SetStateAction<boolean>>;
 }
 
 const CardDetailChecklistHeaderComp = (props: Props) => {
@@ -38,7 +36,7 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
         setInputtedChecklistName(checklist.checklistName);
     }
 
-    async function onChecklistUpdateSubmit(e: FormEvent<HTMLFormElement>) {
+    async function onChecklistUpdateSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
 
@@ -115,11 +113,6 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
 
     }
 
-    function onShowCompletedButtonPressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
-        e.stopPropagation();
-        props.setShowingCompletedTasks((prev: boolean) => !prev);
-    }
-
     function onTryDeleteChecklistButtonPressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
         e.stopPropagation();
         setIsDeletingChecklist(true);
@@ -155,9 +148,6 @@ const CardDetailChecklistHeaderComp = (props: Props) => {
                     <>
                         <p>{checklist.checklistName}</p>
                         <div className="card-detail-checklist-header-actions">
-                            <img onClick={onShowCompletedButtonPressed} className="icon" height="38px"
-                                 alt={props.showingCompletedTasks ? "Hide completed" : "Show completed"}
-                                 src={props.showingCompletedTasks ? "/crossed-eye.svg" : "/eye.svg" }/>
                             { permissions.hasManageCardsPermission() && (
                                 <>
                                     <div className="card-detail-checklist-img-container">

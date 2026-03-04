@@ -1,5 +1,5 @@
 import "./ConfirmationModal.css"
-import { type FormEvent, useState } from "react";
+import { useState } from "react";
 
 interface Props {
     onConfirmed: (password?: string) => void;
@@ -13,7 +13,7 @@ const ConfirmationModal = (props: Props) => {
 
     const [currentPassword, setCurrentPassword] = useState<string>("");
 
-    function handleConfirmed(e: FormEvent<HTMLFormElement>) {
+    function handleConfirmed(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         props.onConfirmed(currentPassword);
     }
