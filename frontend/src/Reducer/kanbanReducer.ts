@@ -56,6 +56,7 @@ import moveCardListAction from "../Contexts/Kanban/Actions/Implementation/Cardli
 import moveBoardAction from "../Contexts/Kanban/Actions/Implementation/Boards/moveBoardAction.ts";
 import moveLabelAction from "../Contexts/Kanban/Actions/Implementation/Labels/moveLabelAction.ts";
 import moveChecklistAction from "../Contexts/Kanban/Actions/Implementation/Checklist/moveChecklistAction.ts";
+import moveChecklistItemAction from "../Contexts/Kanban/Actions/Implementation/Checklist/moveChecklistItemAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -168,6 +169,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return deleteChecklistItemAction(state, action.payload);
         case "UPDATE_CHECKLIST_ITEM":
             return updateChecklistItemAction(state, action.payload);
+        case "MOVE_CHECKLIST_ITEM":
+            return moveChecklistItemAction(state, action.payload);
         case "CHANGE_CHECKLIST_ITEM_STATE":
             return changeChecklistItemStateAction(state, action.payload);
     }

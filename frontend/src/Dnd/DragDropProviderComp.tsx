@@ -1,7 +1,7 @@
 import {useKanbanDispatch, useKanbanState} from "../Contexts/Kanban/Hooks.ts";
 import {
-    type CardMoveIndexByIdResult, getCardMoveIndex,
-    getCardOnCardListMoveIndexById,
+    type CardMoveIndexByIdResult, type ChecklistItemMoveIndexByIdResult, getCardMoveIndex,
+    getCardOnCardListMoveIndexById, getChecklistItemOnChecklistItemMoveIndexById, getChecklistMoveIndex,
 } from "./Helpers/DndHelpers.ts";
 import {API_BASE_URL} from "../config/api.ts";
 import {matchPath} from "react-router-dom";
@@ -70,6 +70,8 @@ const DragDropProviderComp = ({children}: Props) => {
             moveLabelOptimistically(source, target);
         } else if (source.type === "checklist" && target?.type === "checklist") {
             moveChecklistOptimistically(source, target);
+        } else if (source.type === "checklistitem" && (target?.type === "checklistitem" || target?.type === "checklist")) {
+            moveChecklistItemOptimistically(source, target);
         }
     }
 
@@ -158,6 +160,29 @@ const DragDropProviderComp = ({children}: Props) => {
         }
 
         return newIndex;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function moveChecklistItemOptimistically(source: any, target: any): ChecklistItemMoveIndexByIdResult | undefined  {
+        const sourceId: number = extractId(source.id);
+        const targetId: number = extractId(target.id);
+
+        const checklistItemMoveByIndexResult: ChecklistItemMoveIndexByIdResult | undefined =
+            target?.type === "checklistitem" ? getChecklistMoveIndex(kanbanState, target) :
+            target?.type === "checklist" ? getChecklistItemOnChecklistItemMoveIndexById(kanbanState, targetId) : undefined;
+        if (!checklistItemMoveByIndexResult) return;
+
+        if (dispatch) {
+            dispatch({
+                type: "MOVE_CHECKLIST_ITEM", payload: {
+                    checklistItemId: sourceId,
+                    toChecklistId: checklistItemMoveByIndexResult.newChecklistId,
+                    toIndex: checklistItemMoveByIndexResult.newIndex
+                }
+            });
+        }
+
+        return checklistItemMoveByIndexResult;
     }
 
     async function postCardMovedChanges(movingCardId: number, cardMovedByIndexResult: CardMoveIndexByIdResult) {

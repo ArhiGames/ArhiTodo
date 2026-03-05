@@ -62,7 +62,6 @@
 .card-detail-checklist-items {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
 }
 
 .card-detail-checklist-item {
