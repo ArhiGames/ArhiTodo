@@ -166,7 +166,7 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
         case "CREATE_CHECKLIST_ITEM_SUCCEEDED":
             return createChecklistItemSucceededAction(state, action.payload);
         case "DELETE_CHECKLIST_ITEM":
-            return deleteChecklistItemAction(state, action.payload);
+            return deleteChecklistItemAction(state, action.checklistItemId);
         case "UPDATE_CHECKLIST_ITEM":
             return updateChecklistItemAction(state, action.payload);
         case "MOVE_CHECKLIST_ITEM":

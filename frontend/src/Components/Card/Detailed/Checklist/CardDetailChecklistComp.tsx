@@ -72,7 +72,7 @@ const CardDetailChecklistComp = (props: Props) => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
             if (dispatch) {
-                dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: predictedChecklistItemId } })
+                dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: predictedChecklistItemId })
             }
             return;
         }
@@ -104,7 +104,7 @@ const CardDetailChecklistComp = (props: Props) => {
             .catch(err => {
                 console.error(err);
                 if (dispatch) {
-                    dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: predictedChecklistItemId } })
+                    dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: predictedChecklistItemId })
                 }
             })
 

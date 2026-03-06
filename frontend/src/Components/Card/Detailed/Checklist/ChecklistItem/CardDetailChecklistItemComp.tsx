@@ -87,47 +87,48 @@ const CardDetailChecklistItemComp = (props: Props) => {
 
     }
 
-    async function handleChecklistItemRemovePressed(checklistItemId: number) {
+    async function handleChecklistItemRemovePressed(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
 
-        if (checklistItemId < 0) return;
+        e.stopPropagation();
+        if (props.checklistItemId < 0) return;
 
-        const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(checklistItemId);
+        const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(props.checklistItemId);
         if (!checklistItem) return;
 
         if (dispatch) {
-            dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: checklistItemId } });
+            dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: props.checklistItemId });
         }
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) {
             if (dispatch) {
                 dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
-                        checklistItemId: checklistItemId,
+                        checklistItemId: props.checklistItemId,
                         checklistItemName: checklistItem.checklistItemName,
                         checklistId: checklistItem.checklistId,
                     }})
-                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
+                dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: props.checklistItemId, newState: checklistItem.isDone } })
             }
             return;
         }
 
-        fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist/${checklistItem.checklistId}/item/${checklistItemId}`, {
+        fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist/${checklistItem.checklistId}/item/${props.checklistItemId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` }
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Could not delete checklist item with id ${checklistItemId}`);
+                    throw new Error(`Could not delete checklist item with id ${props.checklistItemId}`);
                 }
             })
             .catch(err => {
                 if (dispatch) {
                     dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
-                            checklistItemId: checklistItemId,
+                            checklistItemId: props.checklistItemId,
                             checklistItemName: checklistItem.checklistItemName,
                             checklistId: checklistItem.checklistId,
                         }})
-                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: checklistItemId, newState: checklistItem.isDone } })
+                    dispatch({ type: "CHANGE_CHECKLIST_ITEM_STATE", payload: { checklistItemId: props.checklistItemId, newState: checklistItem.isDone } })
                 }
                 console.error(err);
             })
@@ -265,7 +266,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
                         { permission.hasManageCardsPermission() && (
                             <div className="card-detail-checklist-item-action">
                                 <img height="32px" src="/trashcan-icon.svg" alt="Remove"
-                                     onClick={() => handleChecklistItemRemovePressed(props.checklistItemId)}></img>
+                                     onClick={handleChecklistItemRemovePressed}></img>
                             </div>
                         )}
                     </>

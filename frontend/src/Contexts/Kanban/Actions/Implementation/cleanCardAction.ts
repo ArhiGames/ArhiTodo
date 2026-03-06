@@ -1,4 +1,4 @@
-import type {Card, CardList, Checklist, ChecklistItem, KanbanState} from "../../../../Models/States/KanbanState.ts";
+import type {Checklist, ChecklistItem, KanbanState} from "../../../../Models/States/KanbanState.ts";
 import cleanChecklistAction from "./cleanChecklistAction.ts";
 
 interface ReturnType {
@@ -8,19 +8,6 @@ interface ReturnType {
 }
 
 const cleanCardAction = (state: KanbanState, cardIds: number[]): ReturnType => {
-    for (const cardId of cardIds) {
-        const card: Card | undefined = state.cards.get(cardId);
-        if (!card) return { newCardLabels: state.cardLabels, newChecklists: state.checklists, newChecklistItems: state.checklistItems };
-
-        const cardList: CardList | undefined = state.cardLists.get(card.cardListId);
-        if (!cardList) return { newCardLabels: state.cardLabels, newChecklists: state.checklists, newChecklistItems: state.checklistItems };
-
-        const indexToRemove = cardList.cardIds.indexOf(cardId);
-        if (indexToRemove !== -1) {
-            cardList.cardIds.splice(indexToRemove, 1);
-        }
-    }
-
     const newCardLabels: Map<number, number[]> = new Map(state.cardLabels);
     const newChecklists: Map<number, Checklist> = new Map(state.checklists);
 

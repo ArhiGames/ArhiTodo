@@ -257,7 +257,7 @@ export type KanbanAction =
 
     { type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: CreateChecklistItemPayload } |
     { type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: CreateChecklistItemSucceededPayload } |
-    { type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: number } } |
+    { type: "DELETE_CHECKLIST_ITEM", checklistItemId: number } |
     { type: "UPDATE_CHECKLIST_ITEM", payload: UpdateChecklistItemPayload } |
     { type: "MOVE_CHECKLIST_ITEM", payload: MoveChecklistItemPayload } |
     { type: "CHANGE_CHECKLIST_ITEM_STATE", payload: UpdateChecklistItemStateAction }
