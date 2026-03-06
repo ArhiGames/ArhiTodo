@@ -165,4 +165,15 @@ public class Card : Draggable
     {
         return _checklists.All(c => c.IsCompleted());
     }
+
+    public (Checklist? checklist, ChecklistItem? checklistItem) GetChecklistByItemId(int checklistItemId)
+    {
+        Checklist? checklist =
+            _checklists.FirstOrDefault(c => c.ChecklistItems.Any(ci => ci.ChecklistItemId == checklistItemId));
+        if (checklist is null) return (null, null);
+
+        ChecklistItem? checklistItem =
+            checklist.ChecklistItems.FirstOrDefault(ci => ci.ChecklistItemId == checklistItemId);
+        return (checklist, checklistItem);
+    }
 }

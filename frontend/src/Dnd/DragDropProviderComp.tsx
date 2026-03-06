@@ -1,7 +1,7 @@
 import {useKanbanDispatch, useKanbanState} from "../Contexts/Kanban/Hooks.ts";
 import {
     type CardMoveIndexByIdResult, type ChecklistItemMoveIndexByIdResult, getCardMoveIndex,
-    getCardOnCardListMoveIndexById, getChecklistItemOnChecklistItemMoveIndexById, getChecklistMoveIndex,
+    getCardOnCardListMoveIndexById, getChecklistItemOnChecklistItemIndexById, getChecklistMoveIndex,
 } from "./Helpers/DndHelpers.ts";
 import {API_BASE_URL} from "../config/api.ts";
 import {matchPath} from "react-router-dom";
@@ -9,7 +9,7 @@ import {useAuth} from "../Contexts/Authentication/useAuth.ts";
 import {DragDropProvider} from "@dnd-kit/react";
 import {extractId} from "./Helpers/DndHelpers.ts";
 import {useRealtimeHub} from "../Contexts/Realtime/Hooks.ts";
-import type {Checklist} from "../Models/States/KanbanState.ts";
+import type {Checklist, ChecklistItem} from "../Models/States/KanbanState.ts";
 
 interface Props {
     children: React.ReactNode;
@@ -26,6 +26,7 @@ const DragDropProviderComp = ({children}: Props) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function doDragEndChecks(event: any) {
         const { source, target } = event.operation;
+        console.log(source.type, target.type);
 
         const sourceId: number = extractId(source.id);
         if (source.type === "card" && (target?.type === "card" || target?.type === "cardlist")) {
@@ -53,6 +54,11 @@ const DragDropProviderComp = ({children}: Props) => {
             if (newIndex === -1) return;
 
             postChecklistMovedChanges(sourceId, newIndex).catch(console.error);
+        } else if (source.type === "checklistitem" && (target?.type === "checklistitem" || target?.type === "checklist")) {
+            const checklistItemMovedByIndexResult: ChecklistItemMoveIndexByIdResult | undefined = moveChecklistItemOptimistically(source, target);
+            if (!checklistItemMovedByIndexResult) return;
+
+            postChecklistItemMovedChanges(sourceId, checklistItemMovedByIndexResult).catch(console.error);
         }
     }
 
@@ -169,7 +175,7 @@ const DragDropProviderComp = ({children}: Props) => {
 
         const checklistItemMoveByIndexResult: ChecklistItemMoveIndexByIdResult | undefined =
             target?.type === "checklistitem" ? getChecklistMoveIndex(kanbanState, target) :
-            target?.type === "checklist" ? getChecklistItemOnChecklistItemMoveIndexById(kanbanState, targetId) : undefined;
+            target?.type === "checklist" ? getChecklistItemOnChecklistItemIndexById(kanbanState, targetId) : undefined;
         if (!checklistItemMoveByIndexResult) return;
 
         if (dispatch) {
@@ -284,6 +290,33 @@ const DragDropProviderComp = ({children}: Props) => {
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Failed to move checklist!");
+                }
+            })
+            .catch(console.error)
+    }
+
+    async function postChecklistItemMovedChanges(movingChecklistItemId: number, checklistItemMovedByIndexResult: ChecklistItemMoveIndexByIdResult) {
+        const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(movingChecklistItemId);
+        if (!checklistItem) return;
+
+        const checklist: Checklist | undefined = kanbanState.checklists.get(checklistItemMovedByIndexResult.newChecklistId);
+        if (!checklist) return;
+
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/board/${match?.params.boardId}/card/${checklist.cardId}/checklist/item/${movingChecklistItemId}/move`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${refreshedToken}`,
+                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
+            },
+            body: JSON.stringify({ location: checklistItemMovedByIndexResult.newIndex, checklistId: checklistItemMovedByIndexResult.newChecklistId })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to move checklist item!");
                 }
             })
             .catch(console.error)

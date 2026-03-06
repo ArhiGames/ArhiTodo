@@ -23,7 +23,7 @@ public static class DraggableHelper
             movedDown = index < newLocation && existingDraggables.Count != newLocation;
         }
         
-        string? prevLocation = newLocation == 0 ? null : existingDraggables[movedDown ? newLocation : newLocation - 1].Position;
+        string? prevLocation = (newLocation != 0 && newLocation - 1 < existingDraggables.Count) ? existingDraggables[movedDown ? newLocation : newLocation - 1].Position : null;
         int nextLocationIndex = movedDown ? newLocation + 1 : newLocation;
         string? nextLocation = existingDraggables.Count > nextLocationIndex ? existingDraggables[nextLocationIndex].Position : null;
         return (prevLocation, nextLocation);

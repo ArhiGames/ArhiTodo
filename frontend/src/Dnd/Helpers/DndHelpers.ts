@@ -38,7 +38,7 @@ const getChecklistMoveIndex = (state: KanbanState, target: any): ChecklistItemMo
     return { newIndex: target.data.index, newChecklistId: movedToChecklistItem.checklistId }
 }
 
-const getChecklistItemOnChecklistItemMoveIndexById =
+const getChecklistItemOnChecklistItemIndexById =
     (state: KanbanState, movedToChecklistId: number): ChecklistItemMoveIndexByIdResult | undefined => {
     const movedToChecklist: Checklist | undefined = state.checklists.get(movedToChecklistId);
     if (!movedToChecklist) return undefined;
@@ -47,4 +47,4 @@ const getChecklistItemOnChecklistItemMoveIndexById =
     return { newIndex: newIndex, newChecklistId: movedToChecklistId };
 }
 
-export { extractId, getCardMoveIndex, getCardOnCardListMoveIndexById, getChecklistMoveIndex, getChecklistItemOnChecklistItemMoveIndexById };
+export { extractId, getCardMoveIndex, getCardOnCardListMoveIndexById, getChecklistMoveIndex, getChecklistItemOnChecklistItemIndexById };

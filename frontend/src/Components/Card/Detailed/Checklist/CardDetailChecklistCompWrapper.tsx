@@ -25,7 +25,7 @@ const CardDetailChecklistCompWrapper = (props: Props) => {
         id: `checklistDroppable-${props.checklistId}`,
         type: "checklist",
         disabled: !permissions.hasManageCardsPermission(),
-        collisionPriority: CollisionPriority.Low,
+        collisionPriority: CollisionPriority.High,
         data: {
             index: props.dndIndex
         }

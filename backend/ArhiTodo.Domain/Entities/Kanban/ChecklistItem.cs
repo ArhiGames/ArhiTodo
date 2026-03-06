@@ -38,6 +38,14 @@ public class ChecklistItem : Draggable
             : validateChecklistItemNameResult.Error!;
     }
 
+    public Result MoveChecklistItem(int checklistId, string? prevLocation, string? nextLocation)
+    {
+        Result moveResult = Move(prevLocation, nextLocation);
+        if (!moveResult.IsSuccess) return moveResult;
+        ChecklistId = checklistId;
+        return Result.Success();
+    }
+
     public Result RenameChecklistItem(string checklistItemName)
     {
         Result validateChecklistItemNameResult = ValidateChecklistItemName(checklistItemName);

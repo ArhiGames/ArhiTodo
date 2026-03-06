@@ -26,7 +26,7 @@ const CardListCompWrapper = (props: Props) => {
         id: `cardListDroppable-${props.cardListId}`,
         type: "cardlist",
         disabled: !permissions.hasManageCardListsPermission(),
-        collisionPriority: CollisionPriority.Low,
+        collisionPriority: CollisionPriority.Lowest,
         data: {
             index: props.dndIndex
         }

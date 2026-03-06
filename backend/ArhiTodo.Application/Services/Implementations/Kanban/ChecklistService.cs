@@ -167,6 +167,32 @@ public class ChecklistService(ICardRepository cardRepository, IChecklistNotifica
         return checklistItemGetDto;
     }
 
+    public async Task<Result> MoveChecklistItem(int boardId, int cardId, int checklistItemId, 
+        MoveChecklistItemPatchDto moveChecklistItemPatchDto)
+    {
+        bool hasEditCardPermission = await cardAuthorizer.HasEditCardPermission(cardId);
+        if (!hasEditCardPermission) return Errors.Forbidden;
+
+        Card? card = await cardRepository.GetDetailedCard(cardId);
+        if (card is null) return Errors.NotFound;
+        
+        (Checklist? oldChecklist, ChecklistItem? checklistItem) = card.GetChecklistByItemId(checklistItemId);
+        if (oldChecklist is null || checklistItem is null) return Errors.NotFound;
+
+        Checklist? movingToChecklist =
+            card.Checklists.FirstOrDefault(c => c.ChecklistId == moveChecklistItemPatchDto.ChecklistId);
+        if (movingToChecklist is null) return Errors.NotFound;
+        
+        (string? prevLocation, string? nextLocation) = DraggableHelper.GetPrevNextLocation(
+            movingToChecklist.ChecklistItems.Cast<Draggable>().ToList(), checklistItem, 
+            moveChecklistItemPatchDto.Location, oldChecklist.ChecklistId != moveChecklistItemPatchDto.ChecklistId);
+
+        Result moveChecklistItemResult = checklistItem.MoveChecklistItem(moveChecklistItemPatchDto.ChecklistId, prevLocation, nextLocation);
+        await unitOfWork.SaveChangesAsync();
+
+        return moveChecklistItemResult;
+    }
+
     public async Task<Result<ChecklistItemGetDto>> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState)
     {
         bool hasEditChecklistItemPermission = await cardAuthorizer.HasEditCardPermission(cardId, true);

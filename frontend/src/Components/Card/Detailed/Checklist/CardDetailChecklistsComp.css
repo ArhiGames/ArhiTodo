@@ -53,7 +53,6 @@
 }
 
 .card-detail-checklist {
-    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -138,7 +137,6 @@
 
 .card-detail-checklistitem-add input {
     width: 100%;
-    margin-bottom: 0.5rem;
 }
 
 .card-detail-add-task-button {

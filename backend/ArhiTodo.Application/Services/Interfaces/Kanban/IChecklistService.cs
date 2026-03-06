@@ -15,5 +15,7 @@ public interface IChecklistService
     Task<Result<ChecklistItemGetDto>> CreateChecklistItem(int boardId, int cardId, int checklistId, ChecklistItemCreateDto checklistItemCreateDto);
     Task<Result> DeleteChecklistItem(int boardId, int cardId, int checklistId, int checklistItemId);
     Task<Result<ChecklistItemGetDto>> UpdateChecklistItem(int boardId, int cardId, int checklistId, ChecklistItemUpdateDto checklistItemUpdateDto);
+    Task<Result> MoveChecklistItem(int boardId, int cardId, int checklistItemId,
+        MoveChecklistItemPatchDto moveChecklistItemPatchDto);
     Task<Result<ChecklistItemGetDto>> PatchChecklistItemState(int boardId, int cardId, int checklistItemId, bool newState);
 }
