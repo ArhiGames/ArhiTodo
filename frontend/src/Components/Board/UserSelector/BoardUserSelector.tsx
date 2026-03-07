@@ -9,8 +9,8 @@ import {useParams} from "react-router-dom";
 import type {Claim} from "../../../Models/Claim.ts";
 import BoardUserSelectorEditUserClaimsComp from "./BoardUserSelectorEditUserClaimsComp.tsx";
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
-import BoardUserSelectorAddUserComp from "./BoardUserSelectorAddUserComp.tsx";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
+import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -171,9 +171,10 @@ const BoardUserSelector = (props: Props) => {
                     isAddingUser ? (
                         <>
                             <h3>Manage users</h3>
-                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers}
-                                                 child={BoardUserSelectorAddUserComp}
-                                                 onUserSelected={onUserMemberSelected} onUserUnselected={onUserMemberUnselected}/>
+                            <AccountUserSelector<UserGetDto> selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers}
+                                                             child={DefaultUserSelectorUserComp}
+                                                             onUserSelected={onUserMemberSelected} onUserUnselected={onUserMemberUnselected}
+                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true, selfEditable: false }}/>
                         </>
                     ) : currentViewingUser ? (
                         <BoardUserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>

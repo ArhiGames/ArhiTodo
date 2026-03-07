@@ -41,12 +41,6 @@
     border-radius: 15px;
 }
 
-.board-user-selector-user-label {
-    padding: 3px;
-    background-color: var(--bg-xx-light);
-    border-radius: 5px;
-}
-
 .board-user-selector-toggle {
     background-color: var(--bg-x-light);
     border-radius: 15px;

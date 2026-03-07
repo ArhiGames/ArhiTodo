@@ -39,3 +39,9 @@
 .user-selector-pages button:disabled {
     opacity: 50%;
 }
+
+.user-selector-user-label {
+    padding: 3px;
+    background-color: var(--bg-xx-light);
+    border-radius: 5px;
+}

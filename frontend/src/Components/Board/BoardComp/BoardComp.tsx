@@ -1,22 +1,22 @@
 import {type Dispatch, useEffect, useState} from "react"
-import CreateNewCardListComp from "../CardList/CreateNewCardListComp.tsx";
-import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {KanbanAction} from "../../Contexts/Kanban/Actions/KanbanAction.ts";
-import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import type {PublicUserGetDto, KanbanState} from "../../Models/States/KanbanState.ts";
+import CreateNewCardListComp from "../../CardList/CreateNewCardListComp.tsx";
+import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import type {KanbanAction} from "../../../Contexts/Kanban/Actions/KanbanAction.ts";
+import type {BoardGetDto} from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
+import type {PublicUserGetDto, KanbanState} from "../../../Models/States/KanbanState.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {createPortal} from "react-dom";
-import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
-import {API_BASE_URL} from "../../config/api.ts";
-import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
-import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
-import BoardCompHeader from "./BoardComp/BoardCompHeader.tsx";
-import "./Board.css"
-import type {Claim} from "../../Models/Claim.ts";
-import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import ViewCardDetailsComp from "../../Card/Detailed/ViewCardDetailsComp.tsx";
+import {API_BASE_URL} from "../../../config/api.ts";
+import type {HubContextState} from "../../../Contexts/Realtime/HubContextState.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
+import BoardCompHeader from "./BoardCompHeader.tsx";
+import "../Board.css"
+import type {Claim} from "../../../Models/Claim.ts";
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import {HubConnectionState} from "@microsoft/signalr";
-import CardListCompWrapper from "../CardList/CardListCompWrapper.tsx";
+import CardListCompWrapper from "../../CardList/CardListCompWrapper.tsx";
 
 const BoardComp = () => {
 

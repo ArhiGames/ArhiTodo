@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BoardComp from "../Board/BoardComp.tsx";
+import BoardComp from "../Board/BoardComp/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
 import type {Board, KanbanState} from "../../Models/States/KanbanState.ts";

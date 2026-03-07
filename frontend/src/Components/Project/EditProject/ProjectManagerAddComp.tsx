@@ -1,13 +1,13 @@
 import {useEffect, useRef, useState} from "react";
 import Popover from "../../../lib/Popover/Popover.tsx";
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
-import ProjectManagerAddUserComp from "./ProjectManagerAddUserComp.tsx";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
 import type {Project, PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
+import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
 
 interface Props {
     project: Project;
@@ -123,8 +123,9 @@ const ProjectManagerAddComp = (props: Props) => {
             { isAddingProjectManager && (
                 <Popover element={addProjectManagerDivRef} triggerElement={addProjectManagerDivRef} close={() => setIsAddingProjectManager(false)}>
                     <>
-                        <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}
-                                             onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}/>
+                        <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={DefaultUserSelectorUserComp}
+                                             onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}
+                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: false, selfEditable: false }}/>
                         <div className="add-project-manager-footer">
                             <button disabled={updatedProjectManagerStates.size <= 0} onClick={() => {
                                 setIsAddingProjectManager(false);

@@ -61,12 +61,6 @@
     background-color: var(--bg-xx-light);
 }
 
-.project-manager-add-user-label {
-    padding: 3px;
-    background-color: var(--bg-xx-light);
-    border-radius: 5px;
-}
-
 .add-project-manager-footer {
     margin-top: 0.5rem;
     display: flex;

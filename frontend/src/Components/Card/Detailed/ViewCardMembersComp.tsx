@@ -166,7 +166,8 @@ const ViewCardMembersComp = () => {
                         <div className="card-members-selector scroller">
                             {boardMembers.map((user: PublicUserGetDto) => (
                                 <DefaultUserSelectorUserComp key={user.userId} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}
-                                                             onUserSelected={onUserSelected} onUserUnselected={onUserUnselected} />
+                                                             onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}
+                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true, selfEditable: true }}/>
                             ))}
                         </div>
                     </div>
