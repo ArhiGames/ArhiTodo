@@ -1,0 +1,8 @@
+footer {
+    position: absolute;
+    display: flex;
+    top: calc(100vh - 25px);
+    gap: 0.5rem;
+    color: var(--text-color);
+    opacity: .25;
+}

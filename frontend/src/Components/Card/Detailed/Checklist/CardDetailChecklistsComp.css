@@ -116,7 +116,6 @@
 .card-detail-checklist-item-action img {
     display: block;
     opacity: 0;
-    filter: invert(1);
     padding: 0.25rem;
     border-radius: 10px;
     transition: background-color 0.2s, opacity 0.2s;
@@ -124,10 +123,6 @@
 
 .card-detail-checklist-item:hover .card-detail-checklist-item-action img {
     opacity: 100%;
-}
-
-.card-detail-checklist-item-action:hover img:hover {
-    background-color: var(--bg-xx-light);
 }
 
 .card-detail-checklistitem-add {

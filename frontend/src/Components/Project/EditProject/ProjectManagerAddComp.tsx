@@ -1,100 +1,106 @@
-import {type Dispatch, type SetStateAction, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Popover from "../../../lib/Popover/Popover.tsx";
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
-import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import ProjectManagerAddUserComp from "./ProjectManagerAddUserComp.tsx";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
-import {matchPath} from "react-router-dom";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
+import {useKanbanDispatch} from "../../../Contexts/Kanban/Hooks.ts";
+import type {Project, PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 interface Props {
-    projectManagers: UserGetDto[];
-    setProjectManagers: Dispatch<SetStateAction<UserGetDto[]>>
+    project: Project;
 }
 
 const ProjectManagerAddComp = (props: Props) => {
 
     const { checkRefresh } = useAuth();
-    const match = matchPath({ path: "/projects/:projectId/*" }, location.pathname);
     const hubConnection = useRealtimeHub();
+    const dispatch = useKanbanDispatch();
 
     const [isAddingProjectManager, setIsAddingProjectManager] = useState<boolean>(false);
     const addProjectManagerDivRef = useRef<HTMLButtonElement | null>(null);
 
-    const [addingSelectedUsers, setAddingSelectedUsers] = useState<UserGetDto[]>(props.projectManagers);
-    const [updatedProjectManagerStates, setUpdatedProjectManagerStates] = useState<{ userId: string, newManagerState: boolean }[]>([]);
+    const [addingSelectedUsers, setAddingSelectedUsers] = useState<PublicUserGetDto[]>(props.project.projectManagers);
+    const [updatedProjectManagerStates, setUpdatedProjectManagerStates] = useState<Map<string, boolean>>(new Map());
     const [isSavingProjectManagerChanges, setIsSavingProjectManagerChanges] = useState<boolean>(false);
-
-    useEffect(() => {
-
-        // Looping over every current project manager, if the manager isn't in the selected ones, it must be unselected.
-        const newUpdatedManagerStates: { userId: string, newManagerState: boolean }[] = [];
-        for (const projectManager of props.projectManagers) {
-            if (addingSelectedUsers.findIndex(user => user.userId === projectManager.userId) === -1) {
-                newUpdatedManagerStates.push({ userId: projectManager.userId, newManagerState: false });
-            }
-        }
-
-        // Looping over the currently selected adding users, if the adding user currently isn't a manager, it must be selected.
-        for (const addingUser of addingSelectedUsers) {
-            if (props.projectManagers.findIndex(pm => pm.userId === addingUser.userId) === -1) {
-                newUpdatedManagerStates.push({ userId: addingUser.userId, newManagerState: true });
-            }
-        }
-
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUpdatedProjectManagerStates(newUpdatedManagerStates);
-
-    }, [props.projectManagers, addingSelectedUsers]);
 
     useEffect(() => {
 
         if (!isAddingProjectManager && !isSavingProjectManagerChanges) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setAddingSelectedUsers(props.projectManagers);
-            setUpdatedProjectManagerStates([]);
+            setAddingSelectedUsers(props.project.projectManagers);
+            setUpdatedProjectManagerStates(new Map());
         }
 
-    }, [isAddingProjectManager, isSavingProjectManagerChanges, props.projectManagers]);
+    }, [isAddingProjectManager, isSavingProjectManagerChanges, props.project.projectManagers]);
 
     async function saveChangesConfirmed() {
-
-        if (!match) return;
 
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        fetch(`${API_BASE_URL}/project/${match.params.projectId}/managers`, {
+        const body: {userId: string, newManagerState: boolean}[] = [];
+        for (const [userId, newManagerState] of updatedProjectManagerStates.entries()) {
+            body.push({ userId: userId, newManagerState: newManagerState });
+        }
+
+        fetch(`${API_BASE_URL}/project/${props.project.projectId}/managers`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${refreshedToken}`,
                 "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
             },
-            body: JSON.stringify(updatedProjectManagerStates)
+            body: JSON.stringify(body)
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error(`Failed to update project managers of project ${match.params.projectId}`);
+                    throw new Error(`Failed to update project managers of project ${props.project.projectId}`);
                 }
 
                 return res.json();
             })
-            .then((projectManagers: UserGetDto[]) => {
-                props.setProjectManagers(projectManagers);
+            .then((projectManagers: PublicUserGetDto[]) => {
+                if (dispatch) {
+                    dispatch({
+                        type: "INIT_PROJECT_MANAGERS",
+                        payload: { projectId: props.project.projectId, projectManagers: projectManagers }
+                    })
+                }
             })
             .catch(console.error)
             .finally(() => setIsSavingProjectManagerChanges(false))
 
     }
 
+    function onUserSelected(user: PublicUserGetDto) {
+        setAddingSelectedUsers((prev: PublicUserGetDto[]) => [...prev, user]);
+        if (props.project.projectManagers.some((projectManager: PublicUserGetDto) => user.userId === projectManager.userId)) {
+            updatedProjectManagerStates.delete(user.userId);
+        } else {
+            updatedProjectManagerStates.set(user.userId, true);
+        }
+    }
+
+    function onUserUnselected(user: PublicUserGetDto) {
+        setAddingSelectedUsers((prev: PublicUserGetDto[]) => {
+            return prev.filter((addingSelectedUser: PublicUserGetDto) => addingSelectedUser.userId !== user.userId);
+        });
+
+        if (props.project.projectManagers.some((projectManager: PublicUserGetDto) => user.userId === projectManager.userId)) {
+            updatedProjectManagerStates.set(user.userId, false);
+        } else {
+            updatedProjectManagerStates.delete(user.userId);
+        }
+    }
+
     function getConfirmSavingProjectManagerChangesJsx() {
         let newManagers = 0;
         let removedManagers = 0;
-        for (const updatedProjectManagerState of updatedProjectManagerStates) {
-            if (updatedProjectManagerState.newManagerState) {
+        for (const isManagerState of updatedProjectManagerStates.values()) {
+            if (isManagerState) {
                 newManagers++;
             } else {
                 removedManagers++;
@@ -117,12 +123,13 @@ const ProjectManagerAddComp = (props: Props) => {
             { isAddingProjectManager && (
                 <Popover element={addProjectManagerDivRef} triggerElement={addProjectManagerDivRef} close={() => setIsAddingProjectManager(false)}>
                     <>
-                        <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}/>
+                        <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={ProjectManagerAddUserComp}
+                                             onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}/>
                         <div className="add-project-manager-footer">
-                            <button disabled={updatedProjectManagerStates.length <= 0} onClick={() => {
+                            <button disabled={updatedProjectManagerStates.size <= 0} onClick={() => {
                                 setIsAddingProjectManager(false);
                                 setIsSavingProjectManagerChanges(true);
-                            }} className={`button ${updatedProjectManagerStates.length > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button>
+                            }} className={`button ${updatedProjectManagerStates.size > 0 ? "valid-submit-button" : "standard-button"}`}>Save</button>
                             <button onClick={() => setIsAddingProjectManager(false)} className="button standard-button">Cancel</button>
                         </div>
                     </>

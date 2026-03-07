@@ -1,16 +1,16 @@
 import {useNavigate, useParams} from "react-router-dom";
-import type { Board } from "../../Models/States/KanbanState.ts";
+import type { Board } from "../../../Models/States/KanbanState.ts";
 import {useEffect, useRef, useState} from "react";
-import Popover from "../../lib/Popover/Popover.tsx";
-import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {BoardGetDto} from "../../Models/BackendDtos/Kanban/BoardGetDto.ts";
-import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
+import Popover from "../../../lib/Popover/Popover.tsx";
+import { useAuth } from "../../../Contexts/Authentication/useAuth.ts";
+import type {BoardGetDto} from "../../../Models/BackendDtos/Kanban/BoardGetDto.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import { createPortal } from "react-dom";
-import ConfirmationModal from "../../lib/Modal/Confirmation/ConfirmationModal.tsx";
-import {API_BASE_URL} from "../../config/api.ts";
-import "./BoardHeader.css"
-import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
+import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
+import {API_BASE_URL} from "../../../config/api.ts";
+import "../BoardHeader.css"
+import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
+import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     boardId: number;

@@ -1,6 +1,7 @@
 .board-user-selector-popover {
     min-width: 300px;
     max-width: 400px;
+    max-height: 600px;
     display: flex;
     flex-direction: column;
     gap: 1rem;

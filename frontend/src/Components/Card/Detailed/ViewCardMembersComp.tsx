@@ -7,7 +7,7 @@ import {useParams} from "react-router-dom";
 import type {Board, PublicUserGetDto, Card} from "../../../Models/States/KanbanState.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import CardUserIcon from "../CardUserIcon.tsx";
+import CardUserIcon from "../../User/CardUserIcon.tsx";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
@@ -143,8 +143,11 @@ const ViewCardMembersComp = () => {
 
         return (
             <>
-                { sortedUserIds.map((userId: string) => {
-                    return <CardUserIcon onClick={onOpenCardMembersClicked} key={userId} cardMemberId={userId}/>
+                {sortedUserIds.map((userId: string) => {
+                    const user: PublicUserGetDto | undefined =
+                        kanbanState.boards.get(Number(boardId))?.boardMembers.find(bm => bm.userId === userId);
+                    if (!user) return null;
+                    return <CardUserIcon onClick={onOpenCardMembersClicked} size="small" key={userId} user={user}/>
                 })}
             </>
         )
@@ -154,13 +157,13 @@ const ViewCardMembersComp = () => {
         <>
             <div className="card-detail-members">
                 { getSortedAssignedUsersJsx() }
-                { permissions.hasManageCardsPermission() && <div onClick={onOpenCardMembersClicked} className="card-member-card" ref={addCardMemberRef}>+</div> }
+                { permissions.hasManageCardsPermission() && <div onClick={onOpenCardMembersClicked} className="card-member-card small" ref={addCardMemberRef}>+</div> }
             </div>
             { isEditingMembers && (
                 <Popover close={() => setIsEditingMembers(false)} element={addCardMemberRef} triggerElement={addCardMemberRef}>
                     <div className="view-card-members-popover">
                         <h3>Assign users</h3>
-                        <div className="card-members-selector">
+                        <div className="card-members-selector scroller">
                             {boardMembers.map((user: PublicUserGetDto) => (
                                 <DefaultUserSelectorUserComp key={user.userId} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}
                                                              onUserSelected={onUserSelected} onUserUnselected={onUserUnselected} />

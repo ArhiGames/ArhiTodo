@@ -38,27 +38,6 @@ public class ProjectRepository(ProjectDataBase database) : IProjectRepository
         return project;
     }
 
-    public async Task<Project?> GetAsync(int projectId, Guid userId)
-    {
-        Project? project = await database.Projects
-            .Include(p => p.Owner)
-            .Include(p => p.ProjectManagers)
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId &&
-                                      (p.OwnerId == userId ||
-                                      p.ProjectManagers.Any(pm => pm.UserId == userId) ||
-                                      p.Boards.Any(b => b.BoardUserClaims.Any(buc =>
-                                          buc.UserId == userId &&
-                                          buc.Type == BoardClaimTypes.ViewBoard &&
-                                          buc.Value))));
-        return project;
-    }
-
-    public async Task<List<Project>> GetAllAsync()
-    {
-        List<Project> projects = await database.Projects.ToListAsync();
-        return projects;
-    }
-
     public async Task<List<Project>> GetAllAsync(Guid userId)
     {
         List<Project> projects = await database.Projects

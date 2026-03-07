@@ -10,15 +10,17 @@ using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
 using ArhiTodo.Domain.Entities.Kanban;
 using ArhiTodo.Domain.Repositories.Authentication;
+using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
-    IProjectNotificationService projectNotificationService, ICurrentUser currentUser, IAuthorizationService authorizationService) : IProjectService
+    IProjectNotificationService projectNotificationService, ICurrentUser currentUser, IAuthorizationService authorizationService,
+    IProjectAuthorizer projectAuthorizer) : IProjectService
 {
-    public async Task<Result<List<UserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
+    public async Task<Result<List<PublicUserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
         if (projectManagerStatusUpdateDtos.Any(pm => pm.UserId == currentUser.UserId))
         {
@@ -58,16 +60,13 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         return await GetProjectManagers(project);
     }
 
-    public async Task<Result<List<UserGetDto>>> GetProjectManagers(int projectId)
+    public async Task<Result<List<PublicUserGetDto>>> GetProjectManagers(int projectId)
     {
+        bool mayViewProject = await projectAuthorizer.HasViewProjectPermissions(projectId);
+        if (!mayViewProject) return Errors.Forbidden;
+        
         Project? project = await projectRepository.GetAsync(projectId);
         if (project is null) return Errors.NotFound;
-        
-        if (!project.IsProjectMember(currentUser.UserId))
-        {
-            return new Error("GetProjectManagers", ErrorType.Forbidden, 
-                "Only the project owner and project managers can retrieve the project managers!");
-        }
         
         return await GetProjectManagers(project);
     }
@@ -81,11 +80,11 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         return isProjectManager ? ProjectPermission.Manager : ProjectPermission.None;
     }
 
-    private async Task<List<UserGetDto>> GetProjectManagers(Project project)
+    private async Task<List<PublicUserGetDto>> GetProjectManagers(Project project)
     {
         List<Guid> userIds = project.ProjectManagers.Select(pm => pm.UserId).ToList();
         List<User> projectManagers = await accountRepository.GetUsersByGuidsAsync(userIds);
-        return projectManagers.Select(pm => pm.ToGetDto()).ToList();
+        return projectManagers.Select(pm => pm.ToPublicGetDto()).ToList();
     }
 
     public async Task<Result<ProjectGetDto>> CreateProject(ProjectCreateDto projectCreateDto)
@@ -143,7 +142,10 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
 
     public async Task<Result<ProjectGetDto>> GetProject(int projectId)
     {
-        Project? checkedProject = await projectRepository.GetAsync(projectId, currentUser.UserId);
+        bool mayViewProject = await projectAuthorizer.HasViewProjectPermissions(projectId);
+        if (!mayViewProject) return Errors.Forbidden;
+        
+        Project? checkedProject = await projectRepository.GetAsync(projectId);
         if (checkedProject is null) return Errors.NotFound;
         return checkedProject.ToGetDto();
     }

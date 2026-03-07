@@ -68,6 +68,7 @@
     width: 100%;
     display: block;
     padding: 1rem;
+    overflow: hidden;
 }
 
 body {

@@ -51,6 +51,7 @@
 .current-board-header {
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 1rem;
     padding: 10px;
     color: var(--text-color);
@@ -59,4 +60,15 @@
 
 .current-board-header .button {
     max-width: 200px;
+}
+
+.current-board-header section {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.board-members {
+    display: flex;
+    gap: 0.25rem;
 }

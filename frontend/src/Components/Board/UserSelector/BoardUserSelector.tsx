@@ -171,18 +171,21 @@ const BoardUserSelector = (props: Props) => {
                     isAddingUser ? (
                         <>
                             <h3>Manage users</h3>
-                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers} child={BoardUserSelectorAddUserComp}
+                            <AccountUserSelector selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers}
+                                                 child={BoardUserSelectorAddUserComp}
                                                  onUserSelected={onUserMemberSelected} onUserUnselected={onUserMemberUnselected}/>
                         </>
                     ) : currentViewingUser ? (
                         <BoardUserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>
                     ) : (
-                        <div className="user-selector-users scroller">
+                        <>
                             <h3>Members</h3>
-                            {boardMembers.map((user: UserGetDto) => {
-                                return <BoardUserSelectorUserCard key={user.userId} onSelected={setCurrentViewingUser} user={user}/>
-                            })}
-                        </div>
+                            <div className="user-selector-users scroller">
+                                {boardMembers.map((user: UserGetDto) => {
+                                    return <BoardUserSelectorUserCard key={user.userId} onSelected={setCurrentViewingUser} user={user}/>
+                                })}
+                            </div>
+                        </>
                     )
                 }
 

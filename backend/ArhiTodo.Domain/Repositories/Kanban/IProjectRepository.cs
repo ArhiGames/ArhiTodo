@@ -8,7 +8,5 @@ public interface IProjectRepository
     Task RemoveAsync(Project project);
     Task<Project?> GetAsync(int projectId);
     Task<Project?> GetAsyncIncludingBoards(int projectId);
-    Task<Project?> GetAsync(int projectId, Guid userId);
-    Task<List<Project>> GetAllAsync();
     Task<List<Project>> GetAllAsync(Guid userId);
 }

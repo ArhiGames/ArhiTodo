@@ -9,7 +9,8 @@ const initProjectsAction = (state: KanbanState, payload: InitProjectPayload[]) =
             projectId: initProjectPayload.projectId,
             projectName: initProjectPayload.projectName,
             ownedByUserId: initProjectPayload.ownedByUserId,
-            boardIds: []
+            boardIds: [],
+            projectManagers: []
         })
     }
 

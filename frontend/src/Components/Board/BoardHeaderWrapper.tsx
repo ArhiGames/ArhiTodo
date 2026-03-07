@@ -1,4 +1,4 @@
-import BoardHeader from "./BoardHeader.tsx";
+import BoardHeader from "./BoardComp/BoardHeader.tsx";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {useDraggable, useDroppable} from "@dnd-kit/react";
 import {CollisionPriority} from "@dnd-kit/abstract";

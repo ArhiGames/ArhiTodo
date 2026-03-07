@@ -12,6 +12,16 @@ export type UpdateProjectPayload = {
     projectName: string;
 }
 
+export type InitProjectManagersPayload = {
+    projectId: number;
+    projectManagers: PublicUserGetDto[];
+}
+
+export type RemoveProjectManagerPayload = {
+    projectId: number;
+    projectManagerId: string;
+}
+
 export type InitBoardsPayload = {
     boardId: number;
     boardName: string;
@@ -203,6 +213,8 @@ export type MoveChecklistItemPayload = {
 export type KanbanAction =
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
+    { type: "INIT_PROJECT_MANAGERS", payload: InitProjectManagersPayload } |
+    { type: "REMOVE_PROJECT_MANAGER", payload: RemoveProjectManagerPayload } |
     { type: "UPDATE_PROJECT", payload: UpdateProjectPayload } |
     { type: "DELETE_PROJECT", payload: { projectId: number } } |
 

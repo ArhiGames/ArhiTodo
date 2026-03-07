@@ -32,6 +32,7 @@ public static class InfrastructureInjection
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddScoped<IProjectAuthorizer, ProjectAuthorizer>();
         builder.Services.AddScoped<IBoardAuthorizer, BoardAuthorizer>();
         builder.Services.AddScoped<ICardListAuthorizer, CardListAuthorizer>();
         builder.Services.AddScoped<ICardAuthorizer, CardAuthorizer>();

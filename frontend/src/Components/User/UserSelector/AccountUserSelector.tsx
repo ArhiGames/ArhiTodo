@@ -1,29 +1,29 @@
 import {type Dispatch, type SetStateAction, useEffect, useState} from "react";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {AUTH_BASE_URL} from "../../../config/api.ts";
-import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import "./UserSelector.css"
+import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
-interface Props {
+interface Props<T extends PublicUserGetDto> {
     child: React.FunctionComponent<{
-        user: UserGetDto,
-        selectedUsers: UserGetDto[],
-        setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>,
-        onUserSelected?: (user: UserGetDto) => void,
-        onUserUnselected?: (user: UserGetDto) => void
+        user: T,
+        selectedUsers: T[],
+        setSelectedUsers: Dispatch<SetStateAction<T[]>>,
+        onUserSelected?: (user: T) => void,
+        onUserUnselected?: (user: T) => void
     }>;
-    selectedUsers: UserGetDto[];
-    setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>;
-    onUserSelected?: (user: UserGetDto) => void;
-    onUserUnselected?: (user: UserGetDto) => void;
+    selectedUsers: T[];
+    setSelectedUsers: Dispatch<SetStateAction<T[]>>;
+    onUserSelected?: (user: T) => void;
+    onUserUnselected?: (user: T) => void;
 }
 
-const AccountUserSelector = (props: Props) => {
+const AccountUserSelector = <T extends PublicUserGetDto>(props: Props<T>) => {
 
     const { checkRefresh } = useAuth();
 
     const [totalUserAccountsCount, setTotalUserAccountsCount] = useState<number>(0);
-    const [userAccounts, setUserAccounts] = useState<UserGetDto[]>([]);
+    const [userAccounts, setUserAccounts] = useState<T[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
 
     const pages: number = Math.floor((totalUserAccountsCount / 5) + 1);
@@ -78,8 +78,8 @@ const AccountUserSelector = (props: Props) => {
 
                     return res.json();
                 })
-                .then((accounts: UserGetDto[]) => {
-                    setUserAccounts((prev: UserGetDto[]) => {
+                .then((accounts: T[]) => {
+                    setUserAccounts((prev: T[]) => {
                         const newUserAccounts = [...prev];
                         for (const account of accounts) {
                             if (!newUserAccounts.some(a => a.userId === account.userId)) {
@@ -99,7 +99,7 @@ const AccountUserSelector = (props: Props) => {
     return (
         <div className="user-selector">
             <div className="user-selector-users">
-                {userAccounts.slice(currentPage * 5, (currentPage * 5) + 5).map((user: UserGetDto) => {
+                {userAccounts.slice(currentPage * 5, (currentPage * 5) + 5).map((user: T) => {
                     return <props.child key={user.userId} user={user} selectedUsers={props.selectedUsers} setSelectedUsers={props.setSelectedUsers}
                                         onUserSelected={props.onUserSelected} onUserUnselected={props.onUserUnselected}/>
                 })}

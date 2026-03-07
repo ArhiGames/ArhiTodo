@@ -82,17 +82,17 @@ public class Project
 
     public Result RemoveProjectManager(Guid projectManagerId)
     {
+        if (OwnerId == projectManagerId)
+        {
+            return new Error("TryingToDeleteOwner", ErrorType.Conflict,
+                "Cannot remove the owner of the project from the project manager list!");
+        }
+        
         ProjectManager? projectManager = _projectManagers.FirstOrDefault(pm => pm.UserId == projectManagerId);
         if (projectManager is null)
         {
             return new Error("NoProjectManagerWithId", ErrorType.Conflict,
                 "There is no user (project manager) with the specified id on this project!");
-        }
-
-        if (OwnerId == projectManagerId)
-        {
-            return new Error("TryingToDeleteOwner", ErrorType.Conflict,
-                "Cannot remove the owner of the project from the project manager list!");
         }
         
         return _projectManagers.Remove(projectManager) ? Result.Success() : Errors.Unknown;

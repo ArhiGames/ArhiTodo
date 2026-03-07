@@ -17,14 +17,14 @@ public class ProjectController(IProjectService projectService) : ApiControllerBa
     [HttpPut("{projectId:int}/managers")]
     public async Task<IActionResult> UpdateProjectManagers(int projectId, [FromBody] List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
-        Result<List<UserGetDto>> projectManagers = await projectService.UpdateProjectManagerStates(projectId, projectManagerStatusUpdateDtos);
+        Result<List<PublicUserGetDto>> projectManagers = await projectService.UpdateProjectManagerStates(projectId, projectManagerStatusUpdateDtos);
         return projectManagers.IsSuccess ? Ok(projectManagers.Value) : HandleFailure(projectManagers);
     }
 
-    [HttpGet("{projectId:int}/managers")]
+    [HttpGet("{projectId:int}/managers/public")]
     public async Task<IActionResult> GetProjectManagers(int projectId)
     {
-        Result<List<UserGetDto>> projectManagers = await projectService.GetProjectManagers(projectId);
+        Result<List<PublicUserGetDto>> projectManagers = await projectService.GetProjectManagers(projectId);
         return projectManagers.IsSuccess ? Ok(projectManagers.Value) : HandleFailure(projectManagers);
     }
     

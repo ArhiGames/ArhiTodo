@@ -265,7 +265,7 @@ const CardDetailChecklistItemComp = (props: Props) => {
                         </div>
                         { permission.hasManageCardsPermission() && (
                             <div className="card-detail-checklist-item-action">
-                                <img height="32px" src="/trashcan-icon.svg" alt="Remove"
+                                <img height="32px" src="/trashcan-icon.svg" alt="Remove" className="icon"
                                      onClick={handleChecklistItemRemovePressed}></img>
                             </div>
                         )}

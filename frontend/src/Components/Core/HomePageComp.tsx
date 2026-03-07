@@ -7,6 +7,7 @@ import type {Project} from "../../Models/States/KanbanState.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
+import FooterComp from "./FooterComp.tsx";
 
 const HomePageComp = () => {
 
@@ -56,14 +57,17 @@ const HomePageComp = () => {
     }, [checkRefresh, dispatch, token]);
 
     return (
-        <div className="projects-container">
-            {Array.from(kanbanState.projects.values()).map((project: Project) => {
-                return (
-                    <ProjectCardComp key={project.projectId} project={project}/>
-                )
-            })}
-            { permissions.hasCreateProjectPermission() && <CreateNewProjectCardComp/> }
-        </div>
+        <>
+            <div className="projects-container">
+                {Array.from(kanbanState.projects.values()).map((project: Project) => {
+                    return (
+                        <ProjectCardComp key={project.projectId} project={project}/>
+                    )
+                })}
+                { permissions.hasCreateProjectPermission() && <CreateNewProjectCardComp/> }
+            </div>
+            <FooterComp/>
+        </>
     )
 }
 

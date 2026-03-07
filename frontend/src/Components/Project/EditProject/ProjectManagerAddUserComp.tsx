@@ -1,13 +1,15 @@
-import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import {type Dispatch, type SetStateAction} from "react";
 import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {matchPath} from "react-router-dom";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
+import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 interface Props {
-    user: UserGetDto;
-    selectedUsers: UserGetDto[];
-    setSelectedUsers: Dispatch<SetStateAction<UserGetDto[]>>;
+    user: PublicUserGetDto;
+    selectedUsers: PublicUserGetDto[];
+    setSelectedUsers: Dispatch<SetStateAction<PublicUserGetDto[]>>;
+    onUserSelected?: (user: PublicUserGetDto) => void;
+    onUserUnselected?: (user: PublicUserGetDto) => void;
 }
 
 const ProjectManagerAddUserComp = (props: Props) => {
@@ -18,14 +20,20 @@ const ProjectManagerAddUserComp = (props: Props) => {
 
     const isProjectOwner: boolean = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === props.user.userId;
     const isSelf: boolean = props.user.userId === appUser?.id;
-    const isSelected: boolean = props.selectedUsers.some((selectedUser: UserGetDto) => selectedUser.userId === props.user.userId);
+    const isSelected: boolean = props.selectedUsers.some((selectedUser: PublicUserGetDto) => selectedUser.userId === props.user.userId);
 
     function onUserCompClicked() {
         if (isProjectOwner || isSelf) return;
         if (isSelected) {
-            props.setSelectedUsers(props.selectedUsers.filter((user: UserGetDto) => user.userId !== props.user.userId));
+            props.setSelectedUsers((prev: PublicUserGetDto[]) => prev.filter((user: PublicUserGetDto) => user.userId !== props.user.userId));
+            if (props.onUserUnselected) {
+                props.onUserUnselected(props.user);
+            }
         } else {
-            props.setSelectedUsers([...props.selectedUsers, props.user]);
+            props.setSelectedUsers((prev: PublicUserGetDto[]) => [...prev, props.user]);
+            if (props.onUserSelected) {
+                props.onUserSelected(props.user);
+            }
         }
     }
 

@@ -8,7 +8,8 @@ const initProjectAction = (state: KanbanState, payload: InitProjectPayload) => {
         projectId: payload.projectId,
         projectName: payload.projectName,
         ownedByUserId: payload.ownedByUserId,
-        boardIds: []
+        boardIds: [],
+        projectManagers: []
     })
 
     return {

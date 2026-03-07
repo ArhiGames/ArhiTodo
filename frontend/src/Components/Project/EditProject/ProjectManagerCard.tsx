@@ -1,7 +1,6 @@
-import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
-import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
-import type {Project} from "../../../Models/States/KanbanState.ts";
-import {type Dispatch, type SetStateAction, useState} from "react";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import type {Project, PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
+import {useState} from "react";
 import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal.tsx";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
@@ -9,9 +8,7 @@ import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 
 interface Props {
     project: Project;
-    projectManager: UserGetDto;
-    projectManagers: UserGetDto[];
-    setProjectManagers: Dispatch<SetStateAction<UserGetDto[]>>;
+    projectManager: PublicUserGetDto;
     editable: boolean;
 }
 
@@ -19,6 +16,7 @@ const ProjectManagerCard = (props: Props) => {
 
     const { appUser, checkRefresh } = useAuth();
     const kanbanState = useKanbanState();
+    const dispatch = useKanbanDispatch();
     const hubConnection = useRealtimeHub();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -45,7 +43,12 @@ const ProjectManagerCard = (props: Props) => {
                     throw new Error("Failed to delete project manager");
                 }
 
-                props.setProjectManagers(props.projectManagers.filter(pm => pm.userId !== props.projectManager.userId));
+                if (dispatch) {
+                    dispatch({
+                        type: "REMOVE_PROJECT_MANAGER",
+                        payload: { projectId: props.project.projectId, projectManagerId: props.projectManager.userId }
+                    })
+                }
             })
             .catch(console.error);
 

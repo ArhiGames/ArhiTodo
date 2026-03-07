@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
-import type {Card, Label, KanbanState} from "../../Models/States/KanbanState.ts";
+import type {Card, Label, KanbanState, PublicUserGetDto} from "../../Models/States/KanbanState.ts";
 import {getRgbContrastTextColor, type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
-import CardUserIcon from "./CardUserIcon.tsx";
+import CardUserIcon from "../User/CardUserIcon.tsx";
 import CardUrgencyLabel from "./CardUrgencyLabel.tsx";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
@@ -132,10 +132,13 @@ const CardComp = (props: Props) => {
         return (
             <div className="card-members">
                 {showingCardMemberIds.map((cardMemberId: string) => {
-                    return <CardUserIcon key={cardMemberId} cardMemberId={cardMemberId}/>
+                    const user: PublicUserGetDto | undefined =
+                        kanbanState.boards.get(Number(boardId))?.boardMembers.find(bm => bm.userId === cardMemberId);
+                    if (!user) return null;
+                    return <CardUserIcon size="small" key={cardMemberId} user={user}/>
                 })}
                 { remainingCardMembersCount > 0 && (
-                    <div className="card-member-card">+{remainingCardMembersCount}</div>
+                    <div style={{ opacity: ".75" }} className="card-member-card small">+{remainingCardMembersCount}</div>
                 )}
             </div>
         )

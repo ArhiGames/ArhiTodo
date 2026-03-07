@@ -11,7 +11,7 @@ import ViewCardDetailsComp from "../Card/Detailed/ViewCardDetailsComp.tsx";
 import {API_BASE_URL} from "../../config/api.ts";
 import type {HubContextState} from "../../Contexts/Realtime/HubContextState.ts";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
-import BoardCompHeader from "./BoardCompHeader.tsx";
+import BoardCompHeader from "./BoardComp/BoardCompHeader.tsx";
 import "./Board.css"
 import type {Claim} from "../../Models/Claim.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";

@@ -11,7 +11,7 @@ import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 import {buildBoardConnection} from "../../Contexts/Realtime/ConnectionBuilders/BoardConnectionBuilder.ts";
 import {buildCardListConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardListConnectionBuilder.ts";
 import {buildCardConnection} from "../../Contexts/Realtime/ConnectionBuilders/CardConnectionBuilder.ts";
-import NoBoardComp from "../Board/NoBoardComp.tsx";
+import NoBoardComp from "../Board/BoardComp/NoBoardComp.tsx";
 import {buildChecklistConnection} from "../../Contexts/Realtime/ConnectionBuilders/ChecklistConnectionBuilder.ts";
 import {buildLabelConnection} from "../../Contexts/Realtime/ConnectionBuilders/LabelConnectionBuilder.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";

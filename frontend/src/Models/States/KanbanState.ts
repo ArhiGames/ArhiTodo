@@ -1,14 +1,15 @@
-export type Project = {
-    projectId: number;
-    projectName: string;
-    ownedByUserId: string;
-    boardIds: number[];
-}
-
 export interface PublicUserGetDto {
     userId: string;
     userName: string;
     email: string;
+}
+
+export type Project = {
+    projectId: number;
+    projectName: string;
+    ownedByUserId: string;
+    projectManagers: PublicUserGetDto[];
+    boardIds: number[];
 }
 
 export type Board = {
