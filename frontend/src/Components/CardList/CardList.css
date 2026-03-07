@@ -29,6 +29,7 @@
     width: 320px;
     max-height: 100%;
     color: var(--text-color);
+    transition: background-color 0.3s;
 }
 
 .cardlist-header {
@@ -133,4 +134,5 @@
     width: 100%;
     background-color: var(--bg-x-light);
     height: 6px;
+    transition: background-color 0.3s;
 }

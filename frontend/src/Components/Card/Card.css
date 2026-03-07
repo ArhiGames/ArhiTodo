@@ -22,11 +22,11 @@
     border-radius: 5px;
     padding: 0.5rem;
     color: var(--text-color);
-    transition: border-color 0.3s;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     margin: 0.30rem 0;
+    transition: border-color 0.3s, background-color 0.3s;
 }
 
 .card.completed {
@@ -100,6 +100,7 @@
     font-size: smaller;
     display: flex;
     align-items: center;
+    transition: background-color 0.3s;
 }
 
 .creation-card {
@@ -201,7 +202,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s;
 }
 
 .card-member-card:hover {
@@ -222,7 +223,7 @@
     display: flex;
     gap: 0.25rem;
     align-items: center;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s;
 }
 
 .card-urgency-label.clickable:hover {

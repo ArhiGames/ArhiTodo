@@ -17,6 +17,7 @@ import KanbanProvider from "./Contexts/Kanban/KanbanProvider.tsx";
 import HubProvider from "./Contexts/Realtime/HubProvider.tsx";
 import PermissionProvider from "./Contexts/Authorization/PermissionProvider.tsx";
 import DragDropProviderComp from "./Dnd/DragDropProviderComp.tsx";
+import ThemeProvider from "./Contexts/Theme/ThemeProvider.tsx";
 
 function AppContent() {
 
@@ -64,17 +65,19 @@ function App() {
 
     return (
         <BrowserRouter>
-            <KanbanProvider>
-                <AuthProvider>
-                    <PermissionProvider>
-                        <HubProvider>
-                            <DragDropProviderComp>
-                                <AppContent/>
-                            </DragDropProviderComp>
-                        </HubProvider>
-                    </PermissionProvider>
-                </AuthProvider>
-            </KanbanProvider>
+            <ThemeProvider>
+                <KanbanProvider>
+                    <AuthProvider>
+                        <PermissionProvider>
+                            <HubProvider>
+                                <DragDropProviderComp>
+                                    <AppContent/>
+                                </DragDropProviderComp>
+                            </HubProvider>
+                        </PermissionProvider>
+                    </AuthProvider>
+                </KanbanProvider>
+            </ThemeProvider>
         </BrowserRouter>
     )
 

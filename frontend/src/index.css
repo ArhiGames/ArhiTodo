@@ -7,6 +7,34 @@
 }
 
 :root {
+    --bg: hsl(220, 20%, 97%);
+    --bg-dark: hsl(220, 15%, 93%);
+    --bg-light: hsl(0, 0%, 100%);
+
+    --bg-x-light: hsl(220, 17%, 93%);
+    --bg-xx-light: hsl(220, 12%, 84%);
+    --bg-xxx-light: hsl(231, 12%, 89%);
+    --bg-xxxx-light: hsl(220, 13%, 82%);
+
+    --bg-popover: hsl(0, 0%, 100%);
+
+    --scrollbar-background: var(--bg-dark);
+    --scrollbar-foreground: var(--bg-xxx-light);
+
+    --primary: hsl(211, 95%, 69%);
+    --primary-hover: hsl(212, 100%, 75%);
+    --warning: hsl(0, 75%, 55%);
+
+    --text-color: hsl(220, 25%, 15%);
+    --text-color-shaded: hsl(220, 12%, 45%);
+
+    --highlight-selection: hsl(212, 100%, 92%);
+
+    --shadow-m: 0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="dark"] {
     --bg-dark: hsl(220, 15%, 5%);
     --bg: hsl(220, 15%, 8%);
     --bg-light: hsl(220, 12%, 14%);
@@ -45,6 +73,7 @@
 body {
     background-color: var(--bg-dark);
     font-family: Arial, serif;
+    transition: background-color 0.3s;
 }
 
 @supports (scrollbar-width: auto) {
@@ -77,6 +106,7 @@ body {
     background-color: var(--bg);
     border: 1px solid var(--bg-light);
     border-radius: 15px;
+    transition: background-color 0.3s, border 0.3s;
 }
 
 .settings-sidebar a {

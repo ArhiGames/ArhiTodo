@@ -46,6 +46,6 @@ export function buildChecklistConnection(hubConnection: HubConnection, dispatch:
     })
 
     hubConnection.on("DeleteChecklistItemFromChecklist", (checklistItemId: number) => {
-        dispatch({ type: "DELETE_CHECKLIST_ITEM", payload: { checklistItemId: checklistItemId } })
+        dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: checklistItemId })
     })
 }

@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import EditProjectModalComp from "../Project/EditProject/EditProjectModalComp.tsx";
 import "./Navbar.css"
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
+import ThemeSwitcher from "../Miscellaneous/ThemeSwitcher.tsx";
 
 const NavbarHeaderComp = () => {
 
@@ -49,8 +50,12 @@ const NavbarHeaderComp = () => {
     return (
         <nav className="navbar-header">
             { getNavigationJsx() }
-            { appUser && <LoggedInUserCardComp appUser={appUser}/> }
-            { isEditingProject && project && permissions.hasEditProjectPermission() && <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
+            <div className="navbar-right">
+                <ThemeSwitcher/>
+                { appUser && <LoggedInUserCardComp appUser={appUser}/> }
+            </div>
+            { isEditingProject && project && permissions.hasEditProjectPermission() &&
+                <EditProjectModalComp onClose={() => setIsEditingProject(false)} project={project}/> }
         </nav>
     )
 }
