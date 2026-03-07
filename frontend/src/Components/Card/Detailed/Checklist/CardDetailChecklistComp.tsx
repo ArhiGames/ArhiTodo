@@ -1,15 +1,10 @@
 import "./CardDetailChecklistsComp.css"
-import type {ChecklistItemGetDto} from "../../../../Models/BackendDtos/Kanban/ChecklistItemGetDto.ts";
-import {useEffect, useRef, useState} from "react";
-import {useAuth} from "../../../../Contexts/Authentication/useAuth.ts";
-import {useKanbanDispatch, useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
-import type { ChecklistItem } from "../../../../Models/States/KanbanState.ts";
-import {API_BASE_URL} from "../../../../config/api.ts";
-import {useParams} from "react-router-dom";
+import {useKanbanState} from "../../../../Contexts/Kanban/Hooks.ts";
 import CardDetailChecklistHeaderComp from "./CardDetailChecklistHeaderComp.tsx";
 import {usePermissions} from "../../../../Contexts/Authorization/usePermissions.ts";
-import {useRealtimeHub} from "../../../../Contexts/Realtime/Hooks.ts";
 import CardDetailChecklistItemCompWrapper from "./ChecklistItem/CardDetailChecklistItemCompWrapper.tsx";
+import CardDetailAddChecklistItemComp from "./CardDetailAddChecklistItemComp.tsx";
+import type {Checklist, ChecklistItem} from "../../../../Models/States/KanbanState.ts";
 
 interface Props {
     checklistId: number;
@@ -17,33 +12,20 @@ interface Props {
 
 const CardDetailChecklistComp = (props: Props) => {
 
-    const { checkRefresh } = useAuth();
-    const dispatch = useKanbanDispatch();
     const kanbanState = useKanbanState();
-    const { boardId, cardId } = useParams();
     const permissions = usePermissions();
-    const hubConnection = useRealtimeHub();
 
-    const checklistItems: ChecklistItem[] = [];
-    Array.from(kanbanState.checklistItems.values()).forEach((checklistItem: ChecklistItem)=> {
-        if (checklistItem.checklistId === props.checklistId) {
-            checklistItems.push(checklistItem);
-        }
-    })
+    const checklist: Checklist | undefined = kanbanState.checklists.get(props.checklistId);
 
-    const addingTaskInputRef = useRef<HTMLInputElement>(null);
-    const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
-    const [addingTaskInputValue, setAddingTaskInputValue] = useState<string>("");
-
-
-    function getTotalTasks() {
-        return checklistItems.length;
+    function getTotalTasks(): number {
+        return checklist?.checklistItemIds.length ?? 0;
     }
 
     function getCompletedTasks() {
         let completedTasks = 0;
-        for (const checklistItem of checklistItems) {
-            if (checklistItem.isDone) {
+        for (const checklistItemId of checklist?.checklistItemIds ?? []) {
+            const checklistItem: ChecklistItem | undefined = kanbanState.checklistItems.get(checklistItemId);
+            if (checklistItem && checklistItem.isDone) {
                 completedTasks++;
             }
         }
@@ -56,77 +38,13 @@ const CardDetailChecklistComp = (props: Props) => {
         return completedTasks / totalTasks;
     }
 
-    async function onAddTaskButtonPressed(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault();
 
-        const predictedChecklistItemId = Date.now() * -1;
-
-        if (dispatch) {
-            dispatch({ type: "CREATE_CHECKLIST_ITEM_OPTIMISTIC", payload: {
-                    checklistItemId: predictedChecklistItemId,
-                    checklistItemName: addingTaskInputValue,
-                    checklistId: props.checklistId
-                }})
-        }
-
-        const refreshedToken: string | null = await checkRefresh();
-        if (!refreshedToken) {
-            if (dispatch) {
-                dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: predictedChecklistItemId })
-            }
-            return;
-        }
-
-        fetch(`${API_BASE_URL}/board/${boardId}/card/${cardId}/checklist/${props.checklistId}/item`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${refreshedToken}`,
-                "SignalR-Connection-Id": hubConnection.hubConnection?.connectionId ?? ""
-            },
-            body: JSON.stringify({ checklistItemName: addingTaskInputValue })
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Could not create checklist item id on ${props.checklistId}`);
-                }
-
-                return res.json();
-            })
-            .then((checklistItem: ChecklistItemGetDto) => {
-                if (dispatch) {
-                    dispatch({ type: "CREATE_CHECKLIST_ITEM_SUCCEEDED", payload: {
-                        predictedChecklistItemId: predictedChecklistItemId,
-                        actualChecklistItemId: checklistItem.checklistItemId
-                    }})
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                if (dispatch) {
-                    dispatch({ type: "DELETE_CHECKLIST_ITEM", checklistItemId: predictedChecklistItemId })
-                }
-            })
-
-        setAddingTaskInputValue("");
-    }
-
-    function cancelTaskAddition() {
-        setIsAddingTask(false);
-        setAddingTaskInputValue("");
-    }
-
-    useEffect(() => {
-        if (isAddingTask) {
-            addingTaskInputRef.current?.focus();
-        }
-    }, [isAddingTask]);
 
     return (
         <div className="card-detail-checklist">
             <CardDetailChecklistHeaderComp checklistId={props.checklistId}/>
             <div className="card-detail-progress-container">
-                <p>{ checklistItems.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
+                <p>{checklist && checklist?.checklistItemIds.length > 0 ? Math.floor(getCompletedTasksPercentage() * 100) : 0}%</p>
                 <div className="card-detail-progress-bg">
                     <div className="card-detail-progress-fg" style={{ width: `${getCompletedTasksPercentage() * 100}%` }}/>
                 </div>
@@ -138,25 +56,7 @@ const CardDetailChecklistComp = (props: Props) => {
                 })}
             </div>
             { permissions.hasManageCardsPermission() && (
-                <div className="card-detail-checklistitem-add">
-                {
-                    isAddingTask ? (
-                        <form onSubmit={onAddTaskButtonPressed} onReset={cancelTaskAddition}>
-                            <input ref={addingTaskInputRef} placeholder="Task name..." className="classic-input small"
-                                   minLength={1} maxLength={256} required
-                                   value={addingTaskInputValue}
-                                   onChange={(e) => setAddingTaskInputValue(e.target.value)}/>
-                            <div style={{ display: "flex", gap: "0.5rem" }}>
-                                <button className={`button ${addingTaskInputValue.length > 0 ? "valid-submit-button" : "standard-button"}`}
-                                        type="submit">Add task</button>
-                                <button type="reset" className="button standard-button">Cancel</button>
-                            </div>
-                        </form>
-                    ) : (
-                        <button onClick={() => setIsAddingTask(true)} className="card-detail-add-task-button">Add task</button>
-                    )
-                }
-                </div>
+                <CardDetailAddChecklistItemComp checklistId={props.checklistId}/>
             )}
         </div>
     )

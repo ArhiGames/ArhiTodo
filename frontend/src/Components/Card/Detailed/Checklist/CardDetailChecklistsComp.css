@@ -141,13 +141,13 @@
 }
 
 .card-detail-add-task-button {
-    width: fit-content;
-    padding: 11px;
+    width: 100%;
+    padding: 8px;
     background-color: var(--bg-xx-light);
     opacity: 60%;
     border: none;
     color: var(--text-color);
-    border-radius: 15px;
+    border-radius: 5px;
     transition: filter 0.3s;
 }
 
