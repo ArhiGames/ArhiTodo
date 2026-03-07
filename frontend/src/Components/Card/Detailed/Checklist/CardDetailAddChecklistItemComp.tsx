@@ -24,7 +24,7 @@ const CardDetailAddChecklistItemComp = (props: Props) => {
     const scrollTarget = useRef<HTMLDivElement>(null);
 
     function scrollIntoView() {
-        scrollTarget.current?.scrollIntoView({ behavior: "smooth" });
+        scrollTarget.current?.scrollIntoView({ block: "end", inline: "nearest", behavior: "smooth" });
     }
 
     useEffect(() => {
