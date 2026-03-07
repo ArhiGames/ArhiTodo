@@ -9,19 +9,25 @@ import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
 
 const CreateNewCardListComp = () => {
 
-    const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [cardListName, setCardListName] = useState<string>("");
-    const cardListNameRef = useRef<HTMLInputElement>(null);
-    const creationCardListRef = useRef<HTMLDivElement>(null)
     const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
     const { boardId } = useParams();
     const { checkRefresh } = useAuth();
     const hubConnection = useRealtimeHub();
 
+    const [isCreating, setIsCreating] = useState<boolean>(false);
+    const [cardListName, setCardListName] = useState<string>("");
+    const cardListNameRef = useRef<HTMLInputElement>(null);
+    const creationCardListRef = useRef<HTMLDivElement>(null)
+
+    const scrollIntoViewRef = useRef<HTMLDivElement>(null);
+
     function onStartCreatingNewCardClicked() {
         setIsCreating(true);
         setCardListName("");
-        setTimeout(() => cardListNameRef.current?.focus(), 0);
+        setTimeout(() => {
+            scrollIntoViewRef.current?.scrollIntoView({ behavior: "smooth" });
+            cardListNameRef.current?.focus()
+        }, 0);
     }
 
     function closeForm() {
@@ -87,9 +93,7 @@ const CreateNewCardListComp = () => {
 
         document.addEventListener("mousedown", handleClickOutside);
 
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside)
-        }
+        return () => document.removeEventListener("mousedown", handleClickOutside)
 
     }, [isCreating]);
 
@@ -110,6 +114,7 @@ const CreateNewCardListComp = () => {
             ) : (
                 <button className="add-cardlist-button" onClick={() => onStartCreatingNewCardClicked()}>Create new card list...</button>
             )}
+            <div ref={scrollIntoViewRef}></div>
         </>
     )
 }

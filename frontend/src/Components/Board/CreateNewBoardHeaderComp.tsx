@@ -30,7 +30,8 @@ const CreateNewBoardHeaderComp = () => {
 
         setTimeout(() => {
             setOpen(true);
-        })
+            createBoardHeaderRef.current?.scrollIntoView({ behavior: "smooth" });
+        }, 0)
     }
 
     function closePopover(e: MouseEvent) {

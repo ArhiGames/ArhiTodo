@@ -114,7 +114,7 @@ const CardDetailAddChecklistItemComp = (props: Props) => {
                 ) : (
                     <button onClick={() => setIsAddingTask(true)} className="card-detail-add-task-button">Add task</button>
                 )}
-            <div className="card-detail-checklistitem-add-scroll-target" ref={scrollTarget}></div>
+            <div ref={scrollTarget}/>
         </div>
     )
 

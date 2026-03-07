@@ -42,7 +42,7 @@ const BoardHeader = (props: Props) => {
     }, [isEditing]);
 
     function onEditBoardClicked(e: React.MouseEvent<HTMLImageElement, MouseEvent>) {
-        e.preventDefault();
+        e.stopPropagation();
         setIsEditing((prev: boolean) => !prev);
     }
 

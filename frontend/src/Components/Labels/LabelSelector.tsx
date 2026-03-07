@@ -29,6 +29,12 @@ const LabelSelector = ( props: Props ) => {
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [currentlyEditingLabelId, setCurrentlyEditingLabelId] = useState<number | null>(null);
 
+    const scrollIntoViewRef = useRef<HTMLDivElement>(null);
+
+    function scrollIntoView() {
+        setTimeout(() => scrollIntoViewRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
+    }
+
     function cancelAction() {
         setIsCreating(false);
         setCurrentlyEditingLabelId(null);
@@ -53,7 +59,7 @@ const LabelSelector = ( props: Props ) => {
                 {
                     (isCreating || currentlyEditingLabelId !== null) ? (
                         <LabelEditor currentlyEditingLabelId={currentlyEditingLabelId} setCurrentlyEditingLabelId={setCurrentlyEditingLabelId}
-                                     isCreating={isCreating} setIsCreating={setIsCreating} cancelAction={cancelAction}/>
+                                     isCreating={isCreating} setIsCreating={setIsCreating} cancelAction={cancelAction} onCreateLabel={scrollIntoView}/>
                     ) : (
                         <>
                             <div ref={labelsContainerElem} className="label-selector-existing scroller">
@@ -69,6 +75,7 @@ const LabelSelector = ( props: Props ) => {
                                         )
                                     })
                                 }
+                                <div ref={scrollIntoViewRef}/>
                             </div>
                             { permissions.hasManageLabelsPermission() && <button
                                 onClick={() => setIsCreating(true)}
@@ -76,7 +83,6 @@ const LabelSelector = ( props: Props ) => {
                         </>
                     )
                 }
-
             </div>
         </Popover>
     )

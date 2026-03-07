@@ -24,6 +24,8 @@ const CardDetailChecklistsComp = () => {
     const [isAddingChecklist, setIsAddingChecklist] = useState<boolean>(false);
     const [inputtedChecklistName, setInputtedChecklistName] = useState<string>("");
 
+    const scrollIntoRef = useRef<HTMLDivElement>(null);
+
     async function onCreateChecklistSubmit(e: React.SubmitEvent<HTMLFormElement>) {
 
         e.preventDefault();
@@ -76,6 +78,7 @@ const CardDetailChecklistsComp = () => {
 
         setIsAddingChecklist(false);
         setInputtedChecklistName("");
+        setTimeout(() => scrollIntoRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
 
     }
 
@@ -121,6 +124,7 @@ const CardDetailChecklistsComp = () => {
                     return <CardDetailChecklistCompWrapper key={checklistId} checklistId={checklistId} dndIndex={index}/>
                 })}
             </div>
+            <div ref={scrollIntoRef}/>
         </div>
     )
 

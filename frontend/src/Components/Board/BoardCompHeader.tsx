@@ -66,11 +66,9 @@ const BoardCompHeader = (props: Props) => {
             {
                 props.currentFilteringLabels.length > 0 ? (
                     <div className="board-labels">
-                        {
-                            props.currentFilteringLabels.map((labelId: number) => {
+                        {props.currentFilteringLabels.map((labelId: number) => {
                                 return getLabelJsxFor(labelId);
-                            })
-                        }
+                            })}
                     </div>
                 ) : (
                     <button className="button standard-button"

@@ -14,6 +14,7 @@ interface Props {
     isCreating: boolean;
     setIsCreating: Dispatch<SetStateAction<boolean>>;
     cancelAction: () => void;
+    onCreateLabel: () => void;
 }
 
 const LabelEditor = (props: Props) => {
@@ -65,6 +66,7 @@ const LabelEditor = (props: Props) => {
         e.preventDefault();
         if (props.isCreating) {
             await createLabel();
+            props.onCreateLabel();
         } else if (props.currentlyEditingLabelId !== null) {
             await editLabel();
         } else {
