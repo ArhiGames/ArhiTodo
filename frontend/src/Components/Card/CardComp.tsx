@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 import type {Card, Label, KanbanState} from "../../Models/States/KanbanState.ts";
-import { type Rgb, toRgb } from "../../lib/Functions.ts";
+import {getRgbContrastTextColor, type Rgb, toRgb} from "../../lib/Functions.ts";
 import {useAuth} from "../../Contexts/Authentication/useAuth.ts";
 import {API_BASE_URL} from "../../config/api.ts";
 import "./Card.css"
@@ -109,7 +109,7 @@ const CardComp = (props: Props) => {
 
             const color: Rgb = toRgb(label.labelColor);
             return (
-                <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                <div key={labelId} style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})`, color: getRgbContrastTextColor(label.labelColor) }}
                      className="card-label">{label.labelText}</div>
             )
         })

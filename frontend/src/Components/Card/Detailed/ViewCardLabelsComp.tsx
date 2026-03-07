@@ -1,5 +1,5 @@
 import LabelSelector from "../../Labels/LabelSelector.tsx";
-import {type Rgb, toRgb} from "../../../lib/Functions.ts";
+import {getRgbContrastTextColor, type Rgb, toRgb} from "../../../lib/Functions.ts";
 import type {Label} from "../../../Models/States/KanbanState.ts";
 import {useParams} from "react-router-dom";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
@@ -97,7 +97,7 @@ const ViewCardLabelsComp = () => {
                         if (!label) return null;
                         const color: Rgb = toRgb(label.labelColor);
                         return (
-                            <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})` }}
+                            <div style={{ backgroundColor: `rgb(${color.red},${color.green},${color.blue})`, color: getRgbContrastTextColor(label.labelColor) }}
                                  key={label.labelId} className="detailed-card-label"
                                  onClick={onLabelSelectedClicked}>
                                 {label.labelText}

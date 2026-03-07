@@ -1,6 +1,6 @@
 import type { Label } from "../../Models/States/KanbanState.ts";
 import "./EditableLabel.css"
-import { type Rgb, toRgb } from "../../lib/Functions.ts";
+import {getRgbContrastTextColor, type Rgb, toRgb} from "../../lib/Functions.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import {useKanbanState} from "../../Contexts/Kanban/Hooks.ts";
 
@@ -39,7 +39,8 @@ const EditableLabel = (props: Props) => {
     return (
         <div className="editable-label-div" onClick={onEditableLabelDivPressed}>
             <div style={{ position: "relative", width: "100%" }}>
-                <div style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})` }} className="label">{label?.labelText ?? ""}</div>
+                <div style={{ backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})`,
+                    color: getRgbContrastTextColor(label?.labelColor ?? 0) }} className="label">{label?.labelText ?? ""}</div>
                 { props.isSelected && <span style={{ position: "absolute", right: 6, top: 9 }}>✔</span> }
             </div>
             { permissions.hasManageLabelsPermission() && <img className="edit-label-icon icon clickable" height="24x" onClick={onButtonEditPressed} src="/edit-icon.svg" alt="Edit"/> }

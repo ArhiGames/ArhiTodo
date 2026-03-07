@@ -9,7 +9,7 @@ const ThemeSwitcher = () => {
     }
 
     return (
-        <img height="48px" src={theme === "light" ? "/darkmode-switcher.svg" : "/lightmode-switcher.svg" } alt={ theme === "light" ? "Dark mode" : "Light mode" }
+        <img height="40px" src={theme === "light" ? "/darkmode-switcher.svg" : "/lightmode-switcher.svg" } alt={ theme === "light" ? "Dark mode" : "Light mode" }
              className="icon clickable theme-switcher" onClick={onClicked}/>
     )
 

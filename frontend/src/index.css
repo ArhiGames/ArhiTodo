@@ -11,10 +11,10 @@
     --bg-dark: hsl(220, 15%, 93%);
     --bg-light: hsl(0, 0%, 100%);
 
-    --bg-x-light: hsl(220, 17%, 93%);
-    --bg-xx-light: hsl(220, 12%, 84%);
-    --bg-xxx-light: hsl(231, 12%, 89%);
-    --bg-xxxx-light: hsl(220, 13%, 82%);
+    --bg-x-light: hsl(0, 0%, 95%);
+    --bg-xx-light: hsl(210, 13%, 88%);
+    --bg-xxx-light: hsl(230, 14%, 91%);
+    --bg-xxxx-light: hsl(220, 17%, 86%);
 
     --bg-popover: hsl(0, 0%, 100%);
 

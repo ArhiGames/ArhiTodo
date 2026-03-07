@@ -18,14 +18,23 @@ export type Rgb = {
 }
 
 export function toRgb(color: number): Rgb {
-    const blueNumber: number = color & 255;
-    const greenNumber: number = (color >> 8) & 255;
-    const redNumber: number = (color >> 16) & 255;
+    const b: number = color & 255;
+    const g: number = (color >> 8) & 255;
+    const r: number = (color >> 16) & 255;
     return {
-        red: redNumber,
-        green: greenNumber,
-        blue: blueNumber,
+        red: r,
+        green: g,
+        blue: b,
     }
+}
+
+export function getRgbContrastTextColor(color: number): string {
+    const b: number = color & 255;
+    const g: number = (color >> 8) & 255;
+    const r: number = (color >> 16) & 255;
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 128 ? '#000000' : '#FFFFFF';
 }
 
 export function toInteger(color: Rgb) {
