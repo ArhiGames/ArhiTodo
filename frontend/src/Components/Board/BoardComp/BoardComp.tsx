@@ -126,7 +126,7 @@ const BoardComp = () => {
 
         return () => abortController.abort();
 
-    }, [boardId]);
+    }, [boardId, kanbanState.projects]);
 
     useEffect(() => {
 

@@ -34,7 +34,7 @@ const ProjectViewComp = () => {
     const [activeBoardId, setActiveBoardId] = useState<number | null>(null);
     const [hasLoadedProject, setHasLoadedProject] = useState<boolean>(false);
     const [hasLoadedBoards, setHasLoadedBoards] = useState<boolean>(false);
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function loadDefaultBoard() {
 
@@ -58,9 +58,6 @@ const ProjectViewComp = () => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
-        navigate(`/projects/${projectId}/board`);
-        setHasLoadedBoards(false);
-
         fetch(`${API_BASE_URL}/project/${projectId}/board`,
             {
                 method: "GET",
@@ -82,7 +79,9 @@ const ProjectViewComp = () => {
                 navigate("/");
                 console.error(err);
             })
-            .finally(() => setHasLoadedBoards(true));
+            .finally(() => {
+                if (!hasLoadedBoards) setHasLoadedBoards(true)
+            });
     }
 
     useEffect(() => {
@@ -252,7 +251,7 @@ const ProjectViewComp = () => {
         if (hasLoadedBoards) {
             loadDefaultBoard();
         }
-    }, [hasLoadedBoards, loadDefaultBoard, kanbanState.boards]);
+    }, [hasLoadedBoards, loadDefaultBoard]);
 
     useEffect(() => {
         if (boardId) {
