@@ -1,39 +1,27 @@
 import type {Dispatch, SetStateAction} from "react";
 import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
-import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import {matchPath} from "react-router-dom";
+import GeneralUserViewerComp, {type UserViewerOptions} from "../GeneralUserViewerComp.tsx";
 
 interface Props<T extends PublicUserGetDto> {
     user: T,
     selectedUsers: T[],
     setSelectedUsers: Dispatch<SetStateAction<T[]>>,
-    userSelectorOptions: UserSelectorOptions,
+    userSelectorOptions: UserViewerOptions,
+    selfEditable?: boolean,
     onUserSelected?: (user: T) => void,
     onUserUnselected?: (user: T) => void
-}
-
-export type UserSelectorOptions = {
-    showProjectOwner: boolean;
-    showBoardOwner: boolean;
-    selfEditable: boolean;
 }
 
 const DefaultUserSelectorUserComp = <T extends PublicUserGetDto>(props: Props<T>) => {
 
     const { appUser } = useAuth();
-    const kanbanState = useKanbanState();
-    const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
-    const isProjectOwner: boolean = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === props.user.userId;
-    const isProjectManager: boolean = kanbanState.projects.get(Number(match?.params.projectId))
-        ?.projectManagers.some((projectManager: PublicUserGetDto) => projectManager.userId === props.user.userId) ?? false;
-    const isBoardOwner: boolean = kanbanState.boards.get(Number(match?.params.boardId))?.ownedByUserId === props.user.userId;
     const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: T) => selectedUser.userId === props.user.userId);
 
     function onUserCompClicked() {
-        if (!props.userSelectorOptions.selfEditable && isSelf) return;
+        if (!props.selfEditable && isSelf) return;
         if (isSelected) {
             props.setSelectedUsers((prev: T[]) => prev.filter((user: T) => user.userId !== props.user.userId));
             if (props.onUserUnselected) {
@@ -49,19 +37,7 @@ const DefaultUserSelectorUserComp = <T extends PublicUserGetDto>(props: Props<T>
 
     return (
         <div onClick={onUserCompClicked} className="default-user-selector">
-            <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                    { isProjectOwner && props.userSelectorOptions.showProjectOwner ? (
-                        <p className="user-selector-user-label">Project owner</p>
-                    ) : isProjectManager && props.userSelectorOptions.showProjectOwner ? (
-                        <p className="user-selector-user-label">Project manager</p>
-                    ) : isBoardOwner && props.userSelectorOptions.showBoardOwner ? (
-                        <p className="user-selector-user-label">Board owner</p>
-                    ) : null}
-                    <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
-                </div>
-                <p style={{ opacity: "75%" }}>{props.user.email}</p>
-            </div>
+            <GeneralUserViewerComp user={props.user} options={props.userSelectorOptions}/>
             { isSelected && <p>✔</p> }
         </div>
     )

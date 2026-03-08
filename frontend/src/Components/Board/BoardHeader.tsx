@@ -122,7 +122,7 @@ const BoardHeader = (props: Props) => {
             <div ref={containerDivRef} className={`board-header ${isBoardSelected ? " selected-board-header" : ""}`}
                  onClick={onOpenBoardClicked}>
                 <p>{board?.boardName}</p>
-                { (permissions.hasEditBoardPermission() || permissions.hasDeleteBoardPermission())
+                { (permissions.hasEditBoardPermission(props.boardId) || permissions.hasDeleteBoardPermission(props.boardId))
                     && <img ref={editBoardButtonRef} className="icon" onClick={onEditBoardClicked} height="16px" src="/edit-icon.svg" alt="Edit"/> }
             </div>
             {
@@ -130,7 +130,7 @@ const BoardHeader = (props: Props) => {
                     <Popover element={containerDivRef} close={() => setIsEditing(false)} triggerElement={editBoardButtonRef}>
                         <div className="edit-board-popup">
                             <form onSubmit={onEditBoardNameSubmit}>
-                                { permissions.hasEditBoardPermission() && (
+                                { permissions.hasEditBoardPermission(props.boardId) && (
                                     <>
                                         <label>Title</label>
                                         <input ref={inputRef} className="classic-input" maxLength={35} required
@@ -138,7 +138,7 @@ const BoardHeader = (props: Props) => {
                                     </>
                                 )}
                                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    { permissions.hasEditBoardPermission() && <button type="submit" className={`button ${board?.boardName !== newName ? 
+                                    { permissions.hasEditBoardPermission(props.boardId) && <button type="submit" className={`button ${board?.boardName !== newName ? 
                                         "valid-submit-button" : "standard-button"}`}>Change</button> }
                                     { permissions.hasDeleteBoardPermission() && (
                                         <button onClick={tryDeleteBoard} type="button" className="button standard-button button-with-icon">
@@ -153,13 +153,12 @@ const BoardHeader = (props: Props) => {
                 )
             }
             {
-                isTryingToDelete && permissions.hasDeleteBoardPermission() && (
+                isTryingToDelete && permissions.hasDeleteBoardPermission(props.boardId) && (
                     createPortal(
                         <ConfirmationModal title={`Delete board: ${board?.boardName}`}
                             actionDescription="If you confirm this action, the board will be irrevocably deleted."
                             onClosed={() => setIsTryingToDelete(false)}
-                            onConfirmed={deleteBoard}/>
-                    , document.body)
+                            onConfirmed={deleteBoard}/>, document.body)
                 )
             }
         </>

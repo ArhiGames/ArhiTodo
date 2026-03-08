@@ -125,7 +125,7 @@ const ProjectManagerAddComp = (props: Props) => {
                     <>
                         <AccountUserSelector selectedUsers={addingSelectedUsers} setSelectedUsers={setAddingSelectedUsers} child={DefaultUserSelectorUserComp}
                                              onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}
-                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: false, selfEditable: false }}/>
+                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: false }}/>
                         <div className="add-project-manager-footer">
                             <button disabled={updatedProjectManagerStates.size <= 0} onClick={() => {
                                 setIsAddingProjectManager(false);

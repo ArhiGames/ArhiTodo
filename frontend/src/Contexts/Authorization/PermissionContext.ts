@@ -11,8 +11,8 @@ export type PermissionContextType = {
 
     hasCreateBoardPermission: () => boolean;
     hasManageBoardUsersPermission: () => boolean;
-    hasEditBoardPermission: () => boolean;
-    hasDeleteBoardPermission: () => boolean;
+    hasEditBoardPermission: (boardId?: number) => boolean;
+    hasDeleteBoardPermission: (boardId?: number) => boolean;
 
     hasManageCardListsPermission: () => boolean;
     hasManageCardsPermission: () => boolean;
@@ -32,8 +32,10 @@ export const PermissionContext = createContext<PermissionContextType>({
 
     hasCreateBoardPermission: () => false,
     hasManageBoardUsersPermission: () => false,
-    hasEditBoardPermission: () => false,
-    hasDeleteBoardPermission: () => false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    hasEditBoardPermission: (_boardId?: number) => false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    hasDeleteBoardPermission: (_boardId?: number) => false,
 
     hasManageCardListsPermission: () => false,
     hasManageCardsPermission: () => false,

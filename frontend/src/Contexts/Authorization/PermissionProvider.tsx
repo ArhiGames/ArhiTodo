@@ -52,20 +52,20 @@ const PermissionProvider = ({ children }: Props) => {
         return hasModifyProjectPermission();
     }
 
-    function hasBoardPermission(boardClaim: string): boolean {
+    function hasBoardPermission(boardClaim: string, boardId?: number): boolean {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
-        const hasBoardPermission = state.boardPermissions.get(Number(match?.params.boardId))?.boardUserClaims.some(
+        const hasBoardPermission = state.boardPermissions.get(boardId ?? Number(match?.params.boardId))?.boardUserClaims.some(
             (buc: Claim) => buc.claimType === boardClaim && buc.claimValue === "True") ?? false;
         return isProjectManager || hasBoardPermission;
     }
 
-    function isBoardOwner(): boolean {
+    function isBoardOwner(boardId?: number): boolean {
         const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
         const isProjectManager = state.projectPermission.get(Number(match?.params.projectId))?.isManager ?? false;
-        const isOwner = state.boardPermissions.get(Number(match?.params.boardId))?.isBoardOwner ?? false;
+        const isOwner = state.boardPermissions.get(boardId ?? Number(match?.params.boardId))?.isBoardOwner ?? false;
         return isProjectManager || isOwner;
     }
 
@@ -73,12 +73,12 @@ const PermissionProvider = ({ children }: Props) => {
         return hasBoardPermission("ManageUsers");
     }
 
-    function hasEditBoardPermission(): boolean {
-        return hasBoardPermission("ManageBoard");
+    function hasEditBoardPermission(boardId?: number): boolean {
+        return hasBoardPermission("ManageBoard", boardId);
     }
 
-    function hasDeleteBoardPermission(): boolean {
-        return isBoardOwner();
+    function hasDeleteBoardPermission(boardId?: number): boolean {
+        return isBoardOwner(boardId);
     }
 
     function hasManageCardListsPermission(): boolean {

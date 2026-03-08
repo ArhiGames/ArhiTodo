@@ -169,7 +169,7 @@ const ViewCardMembersComp = () => {
                             {getAddableCardMembers().map((user: PublicUserGetDto) => (
                                 <DefaultUserSelectorUserComp key={user.userId} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}
                                                              onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}
-                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true, selfEditable: true }}/>
+                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true }} selfEditable/>
                             ))}
                         </div>
                     </div>

@@ -3,20 +3,22 @@ import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {AUTH_BASE_URL} from "../../../config/api.ts";
 import "./UserSelector.css"
 import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
-import type {UserSelectorOptions} from "./DefaultUserSelectorUserComp.tsx";
+import type {UserViewerOptions} from "../GeneralUserViewerComp.tsx";
 
 interface Props<T extends PublicUserGetDto> {
     child: React.FunctionComponent<{
         user: T,
         selectedUsers: T[],
         setSelectedUsers: Dispatch<SetStateAction<T[]>>,
-        userSelectorOptions: UserSelectorOptions,
+        userSelectorOptions: UserViewerOptions,
+        selfEditable?: boolean,
         onUserSelected?: (user: T) => void,
         onUserUnselected?: (user: T) => void
     }>;
     selectedUsers: T[];
     setSelectedUsers: Dispatch<SetStateAction<T[]>>;
-    userSelectorOptions: UserSelectorOptions,
+    userSelectorOptions: UserViewerOptions,
+    selfEditable?: boolean,
     onUserSelected?: (user: T) => void;
     onUserUnselected?: (user: T) => void;
 }
@@ -104,7 +106,8 @@ const AccountUserSelector = <T extends PublicUserGetDto>(props: Props<T>) => {
             <div className="user-selector-users">
                 {userAccounts.slice(currentPage * 5, (currentPage * 5) + 5).map((user: T) => {
                     return <props.child key={user.userId} user={user} selectedUsers={props.selectedUsers} setSelectedUsers={props.setSelectedUsers}
-                                        onUserSelected={props.onUserSelected} onUserUnselected={props.onUserUnselected} userSelectorOptions={props.userSelectorOptions}/>
+                                        onUserSelected={props.onUserSelected} onUserUnselected={props.onUserUnselected}
+                                        userSelectorOptions={props.userSelectorOptions} selfEditable/>
                 })}
             </div>
             {

@@ -3,7 +3,6 @@ import {type RefObject, useEffect, useState} from "react";
 import type {UserGetDto} from "../../../Models/BackendDtos/Auth/UserGetDto.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import BoardUserSelectorUserCard from "./BoardUserSelectorUserCard.tsx";
 import "./BoardUserSelector.css"
 import {useParams} from "react-router-dom";
 import type {Claim} from "../../../Models/Claim.ts";
@@ -13,6 +12,7 @@ import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
+import GeneralUserViewerComp from "../../User/GeneralUserViewerComp.tsx";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -21,7 +21,7 @@ interface Props {
 
 const BoardUserSelector = (props: Props) => {
 
-    const { checkRefresh } = useAuth();
+    const { appUser, checkRefresh } = useAuth();
     const { boardId } = useParams();
     const hubConnection = useRealtimeHub();
     const kanbanState = useKanbanState();
@@ -189,7 +189,7 @@ const BoardUserSelector = (props: Props) => {
                             <AccountUserSelector<UserGetDto> selectedUsers={selectedAddingUsers} setSelectedUsers={setSelectedAddingUsers}
                                                              child={DefaultUserSelectorUserComp}
                                                              onUserSelected={onUserMemberSelected} onUserUnselected={onUserMemberUnselected}
-                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true, selfEditable: false }}/>
+                                                             userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true }}/>
                         </>
                     ) : currentViewingUser ? (
                         <BoardUserSelectorEditUserClaimsComp updatedClaims={updatedClaims} setUpdatedClaims={setUpdatedClaims} currentViewingUser={currentViewingUser}/>
@@ -198,7 +198,17 @@ const BoardUserSelector = (props: Props) => {
                             <h3>Members</h3>
                             <div className="user-selector-users scroller">
                                 {boardMembers.map((user: UserGetDto) => {
-                                    return <BoardUserSelectorUserCard key={user.userId} onSelected={setCurrentViewingUser} user={user}/>
+                                    const isBoardOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === user.userId;
+                                    const isSelf: boolean = appUser?.id === user.userId;
+                                    return (
+                                        <div className="board-user-selector-user">
+                                            <GeneralUserViewerComp user={user} options={{ showProjectOwner: true, showBoardOwner: true }}/>
+                                            { !isBoardOwner && !isSelf && (
+                                                <img onClick={() => setCurrentViewingUser(user)} src="/edit-icon.svg"
+                                                     alt="Edit" height="22px" className="icon clickable"/>
+                                            )}
+                                        </div>
+                                    )
                                 })}
                             </div>
                         </>
