@@ -45,3 +45,26 @@
     background-color: var(--bg-xx-light);
     border-radius: 5px;
 }
+
+.default-user-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-x-light);
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.default-user-selector:hover {
+    cursor: pointer;
+    background-color: var(--bg-xx-light);
+}
+
+.default-user-selector p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

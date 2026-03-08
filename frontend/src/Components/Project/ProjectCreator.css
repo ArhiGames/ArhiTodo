@@ -1,7 +1,7 @@
 .projects-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-auto-rows: minmax(100px, auto);
     margin-left: auto;
     margin-right: auto;
     width: 1127px;
@@ -12,27 +12,35 @@
     background-color: var(--bg-light);
     color: var(--text-color);
     padding: 1rem;
+    min-width: 0;
     min-height: 150px;
-    width: 23%;
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: end;
     border-radius: 15px;
     text-decoration: none;
-    transition: transform 0.3s, filter 0.3s, background-color 0.3s;
+    transition: transform 0.3s, filter 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 
 .project-card:hover {
     cursor: pointer;
     filter: brightness(1.25);
     transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.project-card span {
+    font-size: x-large;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .create-project-card {
     opacity: 60%;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
 }
 
 .create-new-project-modal form {

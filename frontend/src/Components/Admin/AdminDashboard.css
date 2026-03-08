@@ -24,6 +24,7 @@
 
 .admin-editable-user {
     display: flex;
+    justify-content: space-between;
     background-color: var(--bg-light);
     width: 100%;
     margin-top: 1rem;
@@ -31,8 +32,15 @@
     border-radius: 15px;
 }
 
-.admin-editable-user button {
-    margin-left: auto;
+.admin-editable-user-information {
+    width: 75%;
+}
+
+.admin-editable-user-information p,
+.admin-editable-user-information h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .admin-editable-user button, .invite-user button {

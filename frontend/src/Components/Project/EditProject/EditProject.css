@@ -40,25 +40,20 @@
     opacity: 75%;
 }
 
+.edit-project-modal-manager-information {
+    max-width: 50%;
+}
+
+.edit-project-modal-manager-information p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .project-manager-label {
     padding: 3px;
     background-color: var(--bg-xx-light);
     border-radius: 5px;
-}
-
-.project-manager-add-user-user {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--bg-x-light);
-    padding: 10px;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-}
-
-.project-manager-add-user-user:hover {
-    cursor: pointer;
-    background-color: var(--bg-xx-light);
 }
 
 .add-project-manager-footer {

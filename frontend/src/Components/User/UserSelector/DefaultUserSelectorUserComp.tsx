@@ -48,7 +48,7 @@ const DefaultUserSelectorUserComp = <T extends PublicUserGetDto>(props: Props<T>
     }
 
     return (
-        <div onClick={onUserCompClicked} className="project-manager-add-user-user">
+        <div onClick={onUserCompClicked} className="default-user-selector">
             <div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                     { isProjectOwner && props.userSelectorOptions.showProjectOwner ? (

@@ -56,7 +56,7 @@ const ProjectManagerCard = (props: Props) => {
 
     return (
         <div className="edit-project-modal-manager">
-            <div>
+            <div className="edit-project-modal-manager-information">
                 <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                     { isOwner && <p className="project-manager-label">Project owner</p> }
                     <h4>{props.projectManager.userName}</h4>

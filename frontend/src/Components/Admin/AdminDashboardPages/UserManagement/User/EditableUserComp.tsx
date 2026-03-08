@@ -5,7 +5,7 @@ const EditableUserComp = (props: { user: UserGetDto, onEdit: (user: UserGetDto) 
 
     return (
         <div className="admin-editable-user">
-            <span>
+            <span className="admin-editable-user-information">
                 <h2>{props.user.userName}</h2>
                 <p style={{ fontStyle: "italic", opacity: "60%" }}>({props.user.email})</p>
             </span>
