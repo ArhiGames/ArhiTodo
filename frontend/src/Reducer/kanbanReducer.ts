@@ -60,6 +60,7 @@ import moveChecklistItemAction from "../Contexts/Kanban/Actions/Implementation/C
 import initProjectManagersAction from "../Contexts/Kanban/Actions/Implementation/Projects/initProjectManagersAction.ts";
 import removeProjectManagerAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/removeProjectManagerAction.ts";
+import addProjectManagerAction from "../Contexts/Kanban/Actions/Implementation/Projects/addProjectManagerAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -71,6 +72,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return updateProjectAction(state, action.payload);
         case "INIT_PROJECT_MANAGERS":
             return initProjectManagersAction(state, action.payload);
+        case "ADD_PROJECT_MANAGER":
+            return addProjectManagerAction(state, action.payload);
         case "REMOVE_PROJECT_MANAGER":
             return removeProjectManagerAction(state, action.payload);
         case "DELETE_PROJECT":

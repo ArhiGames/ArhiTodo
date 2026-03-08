@@ -72,7 +72,7 @@ const BoardComp = () => {
                         return;
                     }
 
-                    navigate(`/projects/${Number(projectId)}/board/`);
+                    navigate(`/`);
                     console.error(err);
                 });
 

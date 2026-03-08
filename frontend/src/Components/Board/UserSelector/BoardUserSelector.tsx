@@ -11,7 +11,7 @@ import BoardUserSelectorEditUserClaimsComp from "./BoardUserSelectorEditUserClai
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
-import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 interface Props {
@@ -25,6 +25,7 @@ const BoardUserSelector = (props: Props) => {
     const { boardId } = useParams();
     const hubConnection = useRealtimeHub();
     const kanbanState = useKanbanState();
+    const dispatch = useKanbanDispatch();
 
     const [boardMembers, setBoardMembers] = useState<UserGetDto[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
@@ -167,6 +168,9 @@ const BoardUserSelector = (props: Props) => {
             })
             .then((members: UserGetDto[]) => {
                 setBoardMembers(members);
+                if (dispatch) {
+                    dispatch({ type: "INIT_BOARD_MEMBERS", payload: { boardId: Number(boardId), boardMembers: members }});
+                }
             })
             .catch(console.error)
             .finally(() => {

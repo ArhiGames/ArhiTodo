@@ -58,6 +58,9 @@ const ProjectViewComp = () => {
         const refreshedToken: string | null = await checkRefresh();
         if (!refreshedToken) return;
 
+        navigate(`/projects/${projectId}/board`);
+        setHasLoadedBoards(false);
+
         fetch(`${API_BASE_URL}/project/${projectId}/board`,
             {
                 method: "GET",
@@ -72,14 +75,11 @@ const ProjectViewComp = () => {
             })
             .then((fetchedBoards: Board[]) => {
                 if (dispatch) {
-                    dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});}
-
+                    dispatch({ type: "INIT_BOARDS", payload: { projectId: Number(projectId), boards: fetchedBoards }});
+                }
             })
             .catch(err => {
-                if (err.name === "AbortError") {
-                    return;
-                }
-
+                navigate("/");
                 console.error(err);
             })
             .finally(() => setHasLoadedBoards(true));
@@ -115,6 +115,10 @@ const ProjectViewComp = () => {
                     if (dispatch) {
                         dispatch({type: "INIT_PROJECT", payload: projectGetDto});
                     }
+                })
+                .catch(err => {
+                    navigate("/");
+                    console.error(err);
                 })
                 .finally(() => setHasLoadedProject(true))
 
@@ -182,25 +186,43 @@ const ProjectViewComp = () => {
         buildChecklistConnection(connection, dispatch);
         buildLabelConnection(connection, dispatch);
 
-        connection.on("UpdateProjectManager", (projectId: number, isManager: boolean) => {
-            loadBoards();
-            if (permissions.userDispatch) {
-                const isOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === appUser?.id;
-                permissions.userDispatch({
-                    type: "SET_PROJECT_PERMISSION",
-                    payload: { projectId: Number(projectId), isManager: isManager, isOwner }
-                });
+        connection.on("AddProjectManager", async (projectId: number, projectManager: PublicUserGetDto) => {
+            if (projectManager.userId === appUser?.id) {
+                await loadBoards()
             }
+            dispatch({ type: "ADD_PROJECT_MANAGER", payload: { projectId: projectId, projectManager: projectManager } });
+
+            if (!permissions.userDispatch || projectManager.userId !== appUser?.id) return;
+            const isOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === appUser?.id;
+            permissions.userDispatch({
+                type: "SET_PROJECT_PERMISSION",
+                payload: { projectId: Number(projectId), isManager: true, isOwner }
+            });
+        });
+
+        connection.on("RemoveProjectManager", async (projectId: number, projectManagerId: string) => {
+            if (projectManagerId === appUser?.id) {
+                await loadBoards()
+            }
+            dispatch({ type: "REMOVE_PROJECT_MANAGER", payload: { projectId: projectId, projectManagerId: projectManagerId } });
+
+            if (!permissions.userDispatch || projectManagerId !== appUser?.id) return;
+            const isOwner: boolean = kanbanState.projects.get(Number(projectId))?.ownedByUserId === appUser?.id;
+            permissions.userDispatch({
+                type: "SET_PROJECT_PERMISSION",
+                payload: { projectId: Number(projectId), isManager: false, isOwner }
+            });
         })
-        connection.on("UpdateUserBoardPermissions", (boardId: number, claims: Claim[]) => {
-            loadBoards();
-            if (permissions.userDispatch) {
-                const isOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === appUser?.id;
-                permissions.userDispatch({
-                    type: "SET_BOARD_PERMISSION",
-                    payload: { boardId: boardId, boardUserClaims: claims, isOwner }
-                })
-            }
+
+        connection.on("UpdateUserBoardPermissions", async (boardId: number, claims: Claim[]) => {
+            await loadBoards();
+            if (!permissions.userDispatch) return;
+
+            const isOwner: boolean = kanbanState.boards.get(Number(boardId))?.ownedByUserId === appUser?.id;
+            permissions.userDispatch({
+                type: "SET_BOARD_PERMISSION",
+                payload: { boardId: boardId, boardUserClaims: claims, isOwner }
+            })
         });
 
         const startConnection = async () => {

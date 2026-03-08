@@ -5,33 +5,39 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
-public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
+public class CardRepository(ProjectDataBase database) : ICardRepository
 {
     public async Task<Card?> CreateAsync(Card card)
     {
-        EntityEntry<Card> entityEntry = projectDataBase.Cards.Add(card);
-        await projectDataBase.SaveChangesAsync();
+        EntityEntry<Card> entityEntry = database.Cards.Add(card);
+        await database.SaveChangesAsync();
         return entityEntry.Entity;
     }
 
     public async Task<bool> DeleteAsync(int cardId)
     {
-        int deletedRows = await projectDataBase.Cards
-            .Where(c => c.CardId == cardId)
-            .ExecuteDeleteAsync();
-        await projectDataBase.SaveChangesAsync();
-        return deletedRows == 1;
+        Card? card = await database.Cards.FindAsync(cardId);
+        if (card is null) return false;
+        EntityEntry<Card> entityEntry = database.Cards.Remove(card);
+        
+        await database.SaveChangesAsync();
+        return entityEntry.State == EntityState.Deleted;
+    }
+    
+    public async Task RemoveAssignedCardUsers(List<int> boardIds, List<Guid> userIds)
+    {
+
     }
 
     public async Task<Card?> GetCard(int cardId)
     {
-        Card? card = await projectDataBase.Cards.FindAsync(cardId);    
+        Card? card = await database.Cards.FindAsync(cardId);    
         return card;
     }
 
     public async Task<Card?> GetDetailedCard(int cardId)
     {
-        Card? card = await projectDataBase.Cards
+        Card? card = await database.Cards
             .Include(c => c.AssignedUsers)
             .Include(c => c.Labels)
             .Include(c => c.Checklists)
@@ -42,9 +48,41 @@ public class CardRepository(ProjectDataBase projectDataBase) : ICardRepository
 
     public async Task<List<Card>> GetCardsFromCardList(int cardListId)
     {
-        List<Card> cards = await projectDataBase.Cards
+        List<Card> cards = await database.Cards
             .Where(c => c.CardListId == cardListId)
             .ToListAsync();
         return cards;
+    }
+
+    public async Task RemoveAssignedCardUsersFromBoard(int boardId, List<Guid> userIds)
+    {
+        await database.AssignedCardUsers
+            .Where(acu => acu.Card.CardList.BoardId == boardId && userIds.Contains(acu.UserId))
+            .ExecuteDeleteAsync();
+        
+        List<EntityEntry<AssignedCardUser>> trackedEntries = database.ChangeTracker.Entries<AssignedCardUser>()
+            .Where(e => e.Entity.Card.CardList.BoardId == boardId && userIds.Contains(e.Entity.UserId))
+            .ToList();
+
+        foreach (EntityEntry<AssignedCardUser> entry in trackedEntries)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
+
+    public async Task RemoveAssignedCardUsersFromProject(int projectId, List<Guid> userIds)
+    {
+        await database.AssignedCardUsers
+            .Where(acu => acu.Card.CardList.Board.ProjectId == projectId && userIds.Contains(acu.UserId))
+            .ExecuteDeleteAsync();
+        
+        List<EntityEntry<AssignedCardUser>> trackedEntries = database.ChangeTracker.Entries<AssignedCardUser>()
+            .Where(e => e.Entity.Card.CardList.Board.ProjectId == projectId && userIds.Contains(e.Entity.UserId))
+            .ToList();
+
+        foreach (EntityEntry<AssignedCardUser> entry in trackedEntries)
+        {
+            entry.State = EntityState.Detached;
+        }
     }
 }

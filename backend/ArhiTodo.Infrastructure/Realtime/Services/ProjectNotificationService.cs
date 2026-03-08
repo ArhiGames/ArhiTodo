@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Application.DTOs.Project;
+﻿using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.DTOs.Project;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Realtime;
 using ArhiTodo.Infrastructure.Realtime.Hubs.Implementation;
@@ -19,8 +20,13 @@ public class ProjectNotificationService(IHubContext<BoardHub, IBoardClient> hubC
         hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").DeleteProject(projectId);
     }
 
-    public void UpdateProjectManagerState(Guid userId, int projectId, bool isManager)
+    public void AddProjectManager(int projectId, PublicUserGetDto publicUserGetDto)
     {
-        hubContext.Clients.User(userId.ToString()).UpdateProjectManager(projectId, isManager);
+        hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").AddProjectManager(projectId, publicUserGetDto);
+    }
+
+    public void RemoveProjectManager(int projectId, Guid projectManagerId)
+    {
+        hubContext.Clients.GroupExcept($"grp-project-{projectId}", currentUser.ConnectionId ?? "").RemoveProjectManager(projectId, projectManagerId);
     }
 }

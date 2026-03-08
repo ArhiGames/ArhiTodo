@@ -20,7 +20,7 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class BoardService(IBoardNotificationService boardNotificationService, IBoardRepository boardRepository, 
     IBoardAuthorizer boardAuthorizer, IUnitOfWork unitOfWork, IAccountRepository accountRepository, 
-    ICurrentUser currentUser, IProjectRepository projectRepository) : IBoardService
+    ICurrentUser currentUser, IProjectRepository projectRepository, ICardRepository cardRepository) : IBoardService
 {
     public async Task<Result<List<ClaimGetDto>>> UpdateBoardUserClaim(int boardId, Guid userId, List<ClaimPostDto> claimPostDtos)
     {
@@ -124,8 +124,8 @@ public class BoardService(IBoardNotificationService boardNotificationService, IB
             if (!removeMemberResult.IsSuccess) return removeMemberResult.Error!;
         }
 
+        await cardRepository.RemoveAssignedCardUsersFromBoard(boardId, removingUserIds);
         await unitOfWork.SaveChangesAsync();
-        await boardRepository.RemoveAssignedCardUsers(boardId, removingUserIds);
 
         List<User> addedUsers =
             await accountRepository.GetUsersByGuidsAsync(addingUserIds);

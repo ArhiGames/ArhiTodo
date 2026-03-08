@@ -8,13 +8,6 @@ namespace ArhiTodo.Infrastructure.Persistence.Repositories.Kanban;
 
 public class BoardRepository(ProjectDataBase database) : IBoardRepository
 {
-    public async Task RemoveAssignedCardUsers(int boardId, List<Guid> userIds)
-    {
-        await database.AssignedCardUsers
-            .Where(acu => acu.Card.CardList.BoardId == boardId && userIds.Contains(acu.UserId))
-            .ExecuteDeleteAsync();
-    }
-
     public async Task<BoardGetDto?> GetReadModelAsync(int boardId)
     {
         BoardGetDto? boardGetDto = await database.Boards

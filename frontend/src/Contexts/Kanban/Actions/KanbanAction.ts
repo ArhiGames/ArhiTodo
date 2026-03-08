@@ -17,6 +17,11 @@ export type InitProjectManagersPayload = {
     projectManagers: PublicUserGetDto[];
 }
 
+export type AddProjectManagerPayload = {
+    projectId: number;
+    projectManager: PublicUserGetDto;
+}
+
 export type RemoveProjectManagerPayload = {
     projectId: number;
     projectManagerId: string;
@@ -214,6 +219,7 @@ export type KanbanAction =
     { type: "INIT_PROJECT", payload: InitProjectPayload } |
     { type: "INIT_PROJECTS", payload: InitProjectPayload[] } |
     { type: "INIT_PROJECT_MANAGERS", payload: InitProjectManagersPayload } |
+    { type: "ADD_PROJECT_MANAGER", payload: AddProjectManagerPayload } |
     { type: "REMOVE_PROJECT_MANAGER", payload: RemoveProjectManagerPayload } |
     { type: "UPDATE_PROJECT", payload: UpdateProjectPayload } |
     { type: "DELETE_PROJECT", payload: { projectId: number } } |

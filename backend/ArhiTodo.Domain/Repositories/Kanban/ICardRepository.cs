@@ -9,4 +9,6 @@ public interface ICardRepository
     Task<Card?> GetCard(int cardId);
     Task<Card?> GetDetailedCard(int cardId);
     Task<List<Card>> GetCardsFromCardList(int cardListId);
+    Task RemoveAssignedCardUsersFromBoard(int boardId, List<Guid> userIds);
+    Task RemoveAssignedCardUsersFromProject(int projectId, List<Guid> userIds);
 }

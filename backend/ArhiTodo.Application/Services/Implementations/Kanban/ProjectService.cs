@@ -18,7 +18,7 @@ namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
     IProjectNotificationService projectNotificationService, ICurrentUser currentUser, IAuthorizationService authorizationService,
-    IProjectAuthorizer projectAuthorizer) : IProjectService
+    IProjectAuthorizer projectAuthorizer, ICardRepository cardRepository) : IProjectService
 {
     public async Task<Result<List<PublicUserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
@@ -35,6 +35,11 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
         {
             return new Error("UpdateProjectManagers", ErrorType.Forbidden, "Only the project owner can edit the project managers!");
         }
+
+        List<Guid> addingUserIds = projectManagerStatusUpdateDtos.Where(pm => pm.NewManagerState)
+            .Select(pm => pm.UserId).ToList();
+        List<Guid> removingUserIds = projectManagerStatusUpdateDtos.Where(pm => !pm.NewManagerState)
+            .Select(pm => pm.UserId).ToList();
         
         foreach (ProjectManagerStatusUpdateDto projectManagerStatusUpdateDto in projectManagerStatusUpdateDtos)
         {
@@ -49,12 +54,23 @@ public class ProjectService(IAccountRepository accountRepository, IUnitOfWork un
                 if (!removeProjectManagerResult.IsSuccess) return removeProjectManagerResult.Error!;
             }
         }
-
+        
         await unitOfWork.SaveChangesAsync();
+        await cardRepository.RemoveAssignedCardUsersFromProject(projectId, removingUserIds);
+
+        List<User> addingUsers = await accountRepository.GetUsersByGuidsAsync(addingUserIds);
 
         foreach (ProjectManagerStatusUpdateDto projectManagerStatusUpdateDto in projectManagerStatusUpdateDtos)
         {
-            projectNotificationService.UpdateProjectManagerState(projectManagerStatusUpdateDto.UserId, projectId, projectManagerStatusUpdateDto.NewManagerState);
+            if (projectManagerStatusUpdateDto.NewManagerState)
+            {
+                projectNotificationService.AddProjectManager(projectId, 
+                    addingUsers.FirstOrDefault(au => au.UserId == projectManagerStatusUpdateDto.UserId)!.ToPublicGetDto());
+            }
+            else
+            {
+                projectNotificationService.RemoveProjectManager(projectId, projectManagerStatusUpdateDto.UserId);
+            }
         }
         
         return await GetProjectManagers(project);
