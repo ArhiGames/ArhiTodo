@@ -128,14 +128,14 @@ const CardListEditPopover = (props: Props) => {
                 { permissions.hasManageCardsPermission() && (
                     <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteAllCards(true)}>
-                        <img src="/trashcan-icon.svg" alt="" height="20px"/>
+                        <img src="/trashcan-icon.svg" alt="" height="20px" className="icon"/>
                         <p>Delete all cards from list</p>
                     </button>
                 )}
                 { permissions.hasManageCardListsPermission() && (
                     <button className="button standard-button iconized-button"
                         onClick={() => setIsTryingToDeleteCardList(true)}>
-                        <img src="/trashcan-icon.svg" alt="" height="20px"/>
+                        <img src="/trashcan-icon.svg" alt="" height="20px" className="icon"/>
                         <p>Delete</p>
                     </button>
                 )}

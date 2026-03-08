@@ -26,6 +26,8 @@ const DefaultUserSelectorUserComp = <T extends PublicUserGetDto>(props: Props<T>
     const match = matchPath({ path: "/projects/:projectId/board/:boardId/*" }, location.pathname);
 
     const isProjectOwner: boolean = kanbanState.projects.get(Number(match?.params.projectId))?.ownedByUserId === props.user.userId;
+    const isProjectManager: boolean = kanbanState.projects.get(Number(match?.params.projectId))
+        ?.projectManagers.some((projectManager: PublicUserGetDto) => projectManager.userId === props.user.userId) ?? false;
     const isBoardOwner: boolean = kanbanState.boards.get(Number(match?.params.boardId))?.ownedByUserId === props.user.userId;
     const isSelf: boolean = props.user.userId === appUser?.id;
     const isSelected: boolean = props.selectedUsers.some((selectedUser: T) => selectedUser.userId === props.user.userId);
@@ -51,6 +53,8 @@ const DefaultUserSelectorUserComp = <T extends PublicUserGetDto>(props: Props<T>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                     { isProjectOwner && props.userSelectorOptions.showProjectOwner ? (
                         <p className="user-selector-user-label">Project owner</p>
+                    ) : isProjectManager && props.userSelectorOptions.showProjectOwner ? (
+                        <p className="user-selector-user-label">Project manager</p>
                     ) : isBoardOwner && props.userSelectorOptions.showBoardOwner ? (
                         <p className="user-selector-user-label">Board owner</p>
                     ) : null}

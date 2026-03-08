@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BoardComp from "../Board/BoardComp/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {Board, KanbanState} from "../../Models/States/KanbanState.ts";
+import type {Board, KanbanState, PublicUserGetDto} from "../../Models/States/KanbanState.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
@@ -117,6 +117,23 @@ const ProjectViewComp = () => {
                     }
                 })
                 .finally(() => setHasLoadedProject(true))
+
+            fetch(`${API_BASE_URL}/project/${projectId}/managers/public`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch project");
+                    }
+
+                    return res.json();
+                })
+                .then((projectManagers: PublicUserGetDto[]) => {
+                    if (dispatch) {
+                        dispatch({ type: "INIT_PROJECT_MANAGERS", payload: { projectId: Number(projectId), projectManagers: projectManagers } });
+                    }
+                })
 
             fetch(`${API_BASE_URL}/project/${projectId}/permissions`, {
                 method: "GET",

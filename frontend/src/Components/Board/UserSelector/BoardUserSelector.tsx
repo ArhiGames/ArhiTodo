@@ -11,6 +11,8 @@ import BoardUserSelectorEditUserClaimsComp from "./BoardUserSelectorEditUserClai
 import AccountUserSelector from "../../User/UserSelector/AccountUserSelector.tsx";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
 import DefaultUserSelectorUserComp from "../../User/UserSelector/DefaultUserSelectorUserComp.tsx";
+import {useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
+import type {PublicUserGetDto} from "../../../Models/States/KanbanState.ts";
 
 interface Props {
     element: RefObject<HTMLElement | null>;
@@ -22,6 +24,7 @@ const BoardUserSelector = (props: Props) => {
     const { checkRefresh } = useAuth();
     const { boardId } = useParams();
     const hubConnection = useRealtimeHub();
+    const kanbanState = useKanbanState();
 
     const [boardMembers, setBoardMembers] = useState<UserGetDto[]>([]);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
@@ -68,14 +71,22 @@ const BoardUserSelector = (props: Props) => {
 
     function onUserMemberSelected(user: UserGetDto) {
         setUpdatedMemberStates((prev: Map<string, boolean>) => {
-            prev.set(user.userId, true);
+            if (kanbanState.boards.get(Number(boardId))?.boardMembers.some((boardMember: PublicUserGetDto) => user.userId === boardMember.userId)) {
+                prev.delete(user.userId);
+            } else {
+                prev.set(user.userId, true);
+            }
             return prev;
         });
     }
 
     function onUserMemberUnselected(user: UserGetDto) {
         setUpdatedMemberStates((prev: Map<string, boolean>) => {
-            prev.set(user.userId, false);
+            if (kanbanState.boards.get(Number(boardId))?.boardMembers.some((boardMember: PublicUserGetDto) => user.userId === boardMember.userId)) {
+                prev.set(user.userId, false);
+            } else {
+                prev.delete(user.userId);
+            }
             return prev;
         });
     }

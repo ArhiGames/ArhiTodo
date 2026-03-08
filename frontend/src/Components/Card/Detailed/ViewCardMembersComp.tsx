@@ -4,26 +4,25 @@ import Popover from "../../../lib/Popover/Popover.tsx";
 import "./DetailedCard.css"
 import {useKanbanDispatch, useKanbanState} from "../../../Contexts/Kanban/Hooks.ts";
 import {useParams} from "react-router-dom";
-import type {Board, PublicUserGetDto, Card} from "../../../Models/States/KanbanState.ts";
+import type {Board, PublicUserGetDto, Card, Project} from "../../../Models/States/KanbanState.ts";
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
-import CardUserIcon from "../../User/CardUserIcon.tsx";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
+import CardMembersListComp from "../CardMembersListComp.tsx";
 
 const ViewCardMembersComp = () => {
 
     const kanbanState = useKanbanState();
     const dispatch = useKanbanDispatch();
     const permissions = usePermissions();
-    const { boardId, cardId } = useParams();
-    const { checkRefresh, appUser } = useAuth();
+    const { projectId, boardId, cardId } = useParams();
+    const { checkRefresh } = useAuth();
     const hubConnection = useRealtimeHub();
 
     const [isEditingMembers, setIsEditingMembers] = useState<boolean>(false);
     const [selectedUsers, setSelectedUsers] = useState<PublicUserGetDto[]>(getCurrentSelectedStateUsers());
 
-    const boardMembers: PublicUserGetDto[]= kanbanState.boards.get(Number(boardId))?.boardMembers ?? [];
     const addCardMemberRef = useRef<HTMLDivElement>(null);
 
     function onOpenCardMembersClicked(e: React.MouseEvent<HTMLDivElement>) {
@@ -32,15 +31,25 @@ const ViewCardMembersComp = () => {
         setIsEditingMembers((prev: boolean) => !prev);
     }
 
-    function getCurrentSelectedStateUsers() {
-        const card: Card | undefined = kanbanState.cards.get(Number(cardId));
+    function getCurrentSelectedStateUsers(): PublicUserGetDto[] {
+        const project: Project | undefined = kanbanState.projects.get(Number(projectId));
         const board: Board | undefined = kanbanState.boards.get(Number(boardId));
+        const card: Card | undefined = kanbanState.cards.get(Number(cardId));
+        if (!project || !board || !card) return [];
 
-        if (!card || !board) return [];
-
-        return card.assignedUserIds
-            .map(assignedUserId => board.boardMembers.find(bm => bm.userId === assignedUserId))
-            .filter((bm): bm is PublicUserGetDto => !!bm);
+        const publicUserGetDtos: PublicUserGetDto[] = [];
+        for (const assignedUserId of card.assignedUserIds) {
+            const foundProjectManager: PublicUserGetDto | undefined = project.projectManagers.find((pm: PublicUserGetDto) => pm.userId === assignedUserId);
+            if (foundProjectManager) {
+                publicUserGetDtos.push(foundProjectManager)
+            } else {
+                const foundBoardMember: PublicUserGetDto | undefined = board.boardMembers.find((bm: PublicUserGetDto) => bm.userId === assignedUserId);
+                if (foundBoardMember) {
+                    publicUserGetDtos.push(foundBoardMember)
+                }
+            }
+        }
+        return publicUserGetDtos;
     }
 
     async function postAssignCardMember(userId: string) {
@@ -131,32 +140,25 @@ const ViewCardMembersComp = () => {
         }
     }
 
-    function getSortedAssignedUsersJsx() {
-        const card: Card | undefined = kanbanState.cards.get(Number(cardId));
-        if (!card) return null;
+    function getAddableCardMembers(): PublicUserGetDto[] {
+        const members: PublicUserGetDto[] = [];
+        for (const boardMember of kanbanState.boards.get(Number(boardId))?.boardMembers ?? []) {
+            members.push(boardMember);
+        }
 
-        const sortedUserIds: string[] = [...card.assignedUserIds].sort((a: string, b: string) => {
-            if (a === appUser?.id) return -1;
-            if (b === appUser?.id) return 1;
-            return 0;
-        });
+        for (const projectManager of kanbanState.projects.get(Number(projectId))?.projectManagers ?? []) {
+            if (!members.some((member: PublicUserGetDto) => member.userId === projectManager.userId)) {
+                members.push(projectManager);
+            }
+        }
 
-        return (
-            <>
-                {sortedUserIds.map((userId: string) => {
-                    const user: PublicUserGetDto | undefined =
-                        kanbanState.boards.get(Number(boardId))?.boardMembers.find(bm => bm.userId === userId);
-                    if (!user) return null;
-                    return <CardUserIcon onClick={onOpenCardMembersClicked} size="small" key={userId} user={user}/>
-                })}
-            </>
-        )
+        return members;
     }
 
     return (
         <>
             <div className="card-detail-members">
-                { getSortedAssignedUsersJsx() }
+                <CardMembersListComp cardId={Number(cardId)} onClicked={onOpenCardMembersClicked} maxUserIconsToShow={10}/>
                 { permissions.hasManageCardsPermission() && <div onClick={onOpenCardMembersClicked} className="card-member-card small" ref={addCardMemberRef}>+</div> }
             </div>
             { isEditingMembers && (
@@ -164,7 +166,7 @@ const ViewCardMembersComp = () => {
                     <div className="view-card-members-popover">
                         <h3>Assign users</h3>
                         <div className="card-members-selector scroller">
-                            {boardMembers.map((user: PublicUserGetDto) => (
+                            {getAddableCardMembers().map((user: PublicUserGetDto) => (
                                 <DefaultUserSelectorUserComp key={user.userId} user={user} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}
                                                              onUserSelected={onUserSelected} onUserUnselected={onUserUnselected}
                                                              userSelectorOptions={{ showProjectOwner: true, showBoardOwner: true, selfEditable: true }}/>

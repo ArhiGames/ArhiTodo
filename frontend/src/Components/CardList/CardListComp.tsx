@@ -198,7 +198,7 @@ const CardListComp = (props: Props) => {
                                 <h3 onClick={onTryEditCardListNameClicked}>{cardList?.cardListName}</h3>
                                 { (permission.hasManageCardsPermission() || permission.hasManageCardListsPermission()) && (
                                     <div className="cardlist-actions">
-                                        <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px"
+                                        <img ref={editIconRef} src="/edit-icon.svg" alt="Edit" height="24px" className="icon clickable"
                                              onClick={() => setIsEditing((prev: boolean) => !prev)}/>
                                         { isEditing && <CardListEditPopover cardListId={props.cardListId} startEditNameAction={onRenameCardListActionPressed}
                                                                             editIconRef={editIconRef} onClose={() => setIsEditing(false)}/>
