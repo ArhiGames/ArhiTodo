@@ -65,7 +65,7 @@ const BoardCompHeader = (props: Props) => {
         return (
             <div className="board-members">
                 {members.slice(0, 6).map((boardMember: PublicUserGetDto) => {
-                    return <CardUserIcon key={boardMember.userId} size="medium" onClick={() => console.log("clicked")} user={boardMember}/>;
+                    return <CardUserIcon key={boardMember.userId} canViewDetails size="medium" user={boardMember}/>;
                 })}
                 { remainingBoardMembers > 0 && <div style={{ opacity: ".55" }} className="card-member-card medium">+{remainingBoardMembers}</div> }
             </div>

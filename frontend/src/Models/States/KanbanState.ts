@@ -1,7 +1,7 @@
 export interface PublicUserGetDto {
     userId: string;
     userName: string;
-    email: string;
+    email?: string;
 }
 
 export type Project = {

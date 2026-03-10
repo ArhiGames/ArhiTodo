@@ -35,7 +35,7 @@ const GeneralUserViewerComp = (props: Props) => {
                 ) : null}
                 <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
             </div>
-            <p style={{ opacity: "75%" }}>{props.user.email}</p>
+            { props.user.email && <p style={{ opacity: "75%" }}>{props.user.email}</p> }
         </div>
     )
 

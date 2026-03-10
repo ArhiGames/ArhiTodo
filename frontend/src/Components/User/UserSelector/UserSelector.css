@@ -40,10 +40,17 @@
     opacity: 50%;
 }
 
+.user-viewer-information p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .user-selector-user-label {
     padding: 3px;
     background-color: var(--bg-xx-light);
     border-radius: 5px;
+    min-width: fit-content;
 }
 
 .default-user-selector {

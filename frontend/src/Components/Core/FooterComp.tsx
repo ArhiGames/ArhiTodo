@@ -4,7 +4,7 @@ const FooterComp = () => {
 
     return (
         <footer>
-            <p>v0.2.3.0a</p>
+            <p>v0.2.3.1a</p>
         </footer>
     )
 
