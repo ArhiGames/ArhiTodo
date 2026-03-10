@@ -168,10 +168,12 @@ body {
 
 .icon {
     filter: invert(0.75);
+    transition: filter 0.3s;
 }
 
 .icon.clickable:hover {
     cursor: pointer;
+    filter: invert(0.75) brightness(1.25);
 }
 
 .valid-submit-button {

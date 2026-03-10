@@ -21,12 +21,7 @@ public class CardRepository(ProjectDataBase database) : ICardRepository
         EntityEntry<Card> entityEntry = database.Cards.Remove(card);
         
         await database.SaveChangesAsync();
-        return entityEntry.State == EntityState.Deleted;
-    }
-    
-    public async Task RemoveAssignedCardUsers(List<int> boardIds, List<Guid> userIds)
-    {
-
+        return entityEntry.State is EntityState.Deleted or EntityState.Detached;
     }
 
     public async Task<Card?> GetCard(int cardId)

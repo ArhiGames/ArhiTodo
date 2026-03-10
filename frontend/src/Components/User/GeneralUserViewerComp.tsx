@@ -24,7 +24,7 @@ const GeneralUserViewerComp = (props: Props) => {
     const isBoardOwner: boolean = kanbanState.boards.get(Number(match?.params.boardId))?.ownedByUserId === props.user.userId;
 
     return (
-        <div>
+        <div className="user-viewer-information">
             <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
                 { isProjectOwner && props.options.showProjectOwner ? (
                     <p className="user-selector-user-label">Project owner</p>
