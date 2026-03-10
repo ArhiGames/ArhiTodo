@@ -11,6 +11,7 @@ import {useParams} from "react-router-dom";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CardCompWrapper from "../Card/CardCompWrapper.tsx";
 import {useRealtimeHub} from "../../Contexts/Realtime/Hooks.ts";
+import {useCardsSearch} from "../../Contexts/Kanban/Cards/SearchCardsContexts.ts";
 
 interface Props {
     cardListId: number;
@@ -26,6 +27,7 @@ const CardListComp = (props: Props) => {
     const { boardId } = useParams();
     const permission = usePermissions();
     const hubConnection = useRealtimeHub();
+    const searchCards = useCardsSearch();
 
     const cardList: CardList | undefined = kanbanState.cardLists.get(props.cardListId);
     const cardListHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -128,7 +130,7 @@ const CardListComp = (props: Props) => {
     }
 
     function getCardsFilteredCards() {
-        const cardIds: { cardId: number, isDone: boolean }[] = [];
+        const cardIds: { cardId: number, isDone: boolean, card: Card }[] = [];
         kanbanState.cardLists.get(props.cardListId)?.cardIds.forEach((cardId: number) => {
             const card: Card | undefined = kanbanState.cards.get(cardId);
             if (!card) return;
@@ -138,11 +140,11 @@ const CardListComp = (props: Props) => {
 
             if (props.filteringLabels.length > 0) {
                 if (labelIds.some((labelId: number) => props.filteringLabels.includes(labelId))) {
-                    cardIds.push({ cardId, isDone: card.isDone });
+                    cardIds.push({ cardId, isDone: card.isDone, card });
                     return;
                 }
             } else {
-                cardIds.push({ cardId, isDone: card.isDone });
+                cardIds.push({ cardId, isDone: card.isDone, card });
             }
         })
         return cardIds;
@@ -153,13 +155,14 @@ const CardListComp = (props: Props) => {
     }
 
     function getCardsScrollerJsx() {
-        const filteredCards: { cardId: number, isDone: boolean }[] = getCardsFilteredCards();
+        const filteredCards: { cardId: number, isDone: boolean, card: Card }[] = getCardsFilteredCards();
 
         return (
             <div className="cards scroller">
                 <div>
-                    {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
+                    {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
                         if (isDone) return null;
+                        if (!card.cardName.includes(searchCards.searchString)) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
@@ -174,8 +177,9 @@ const CardListComp = (props: Props) => {
                     )
                 }
                 <div>
-                    {filteredCards.map(({ cardId, isDone }: { cardId: number, isDone: boolean }, index: number) => {
+                    {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
                         if (!isDone) return null;
+                        if (!card.cardName.includes(searchCards.searchString)) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>

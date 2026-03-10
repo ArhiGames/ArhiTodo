@@ -8,6 +8,7 @@ import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts"
 import {useParams} from "react-router-dom";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import CardUserIcon from "../../User/CardUserIcon.tsx";
+import {useCardsSearch} from "../../../Contexts/Kanban/Cards/SearchCardsContexts.ts";
 
 interface Props {
     currentFilteringLabels: number[];
@@ -20,6 +21,7 @@ const BoardCompHeader = (props: Props) => {
     const permissions = usePermissions();
     const { appUser } = useAuth();
     const { projectId, boardId } = useParams();
+    const searchCards = useCardsSearch();
 
     const seeLabelsButtonRef = useRef<HTMLElement | null>(null);
     const [isEditingLabels, setIsEditingLabels] = useState<boolean>(false);
@@ -123,6 +125,14 @@ const BoardCompHeader = (props: Props) => {
                                                     onLabelSelected={onFilteringLabelSelected} onLabelUnselected={onFilteringLabelUnselected}
                                                     selectable/>
                 }
+            </section>
+
+            <section>
+                <div className="cards-search-bar">
+                    <input type="text" className="classic-input small" placeholder="Search cards..."
+                           value={searchCards.searchString} onChange={(e) => searchCards.setSearchString(e.target.value)}/>
+                    <img src="/search-icon.svg" alt="" className="icon" height="24px"/>
+                </div>
             </section>
         </div>
     )

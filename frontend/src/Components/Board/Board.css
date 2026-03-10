@@ -52,7 +52,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 1rem;
+    gap: 1.5rem;
     padding: 10px;
     color: var(--text-color);
     font-size: large;
@@ -66,6 +66,18 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+.cards-search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-xx-light);
+    border-radius: 8px;
+}
+
+.cards-search-bar img {
+    margin-right: 0.5rem;
 }
 
 .board-members {

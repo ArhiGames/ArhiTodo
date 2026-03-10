@@ -5,6 +5,7 @@ import ConfirmationModal from "../../../lib/Modal/Confirmation/ConfirmationModal
 import {API_BASE_URL} from "../../../config/api.ts";
 import {useAuth} from "../../../Contexts/Authentication/useAuth.ts";
 import {useRealtimeHub} from "../../../Contexts/Realtime/Hooks.ts";
+import GeneralUserViewerComp from "../../User/GeneralUserViewerComp.tsx";
 
 interface Props {
     project: Project;
@@ -57,11 +58,7 @@ const ProjectManagerCard = (props: Props) => {
     return (
         <div className="edit-project-modal-manager">
             <div className="edit-project-modal-manager-information">
-                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                    { isOwner && <p className="project-manager-label">Project owner</p> }
-                    <h4>{props.projectManager.userName}</h4>
-                </div>
-                <p style={{ opacity: "75%" }}>{props.projectManager.email}</p>
+                <GeneralUserViewerComp user={props.projectManager} options={{ showProjectOwner: true, showBoardOwner: false }}/>
             </div>
             {
                 props.editable && !isOwner && !isSelf && (

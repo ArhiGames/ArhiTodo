@@ -194,7 +194,6 @@ body {
     color: var(--text-color);
     background-color: var(--bg-xx-light);
     font-size: medium;
-
     transition: box-shadow 0.3s;
 }
 
