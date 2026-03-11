@@ -89,3 +89,20 @@
 .card-user-icon-viewer {
     max-width: 320px;
 }
+
+.filters-urgencies {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.filter-urgency {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filtered-for-urgencies {
+    display: flex;
+    align-items: center;
+}

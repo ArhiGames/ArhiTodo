@@ -162,6 +162,8 @@ const CardListComp = (props: Props) => {
                     {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
                         if (isDone) return null;
                         if (!card.cardName.includes(searchCards.searchString)) return null;
+                        if (searchCards.filteringUrgencyLevels.length !== 0 &&
+                            !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>
@@ -179,6 +181,8 @@ const CardListComp = (props: Props) => {
                     {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
                         if (!isDone) return null;
                         if (!card.cardName.includes(searchCards.searchString)) return null;
+                        if (searchCards.filteringUrgencyLevels.length !== 0 &&
+                            !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return null;
                         return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
                     })}
                 </div>

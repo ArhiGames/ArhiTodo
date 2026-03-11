@@ -211,19 +211,3 @@
     background-color: var(--bg-xxx-light);
     cursor: pointer;
 }
-
-.card-urgency-imgsvg.low {
-    filter: invert(63%) sepia(7%) saturate(4447%) hue-rotate(187deg) brightness(105%) contrast(101%);
-}
-
-.card-urgency-imgsvg.medium {
-    filter: invert(69%) sepia(57%) saturate(495%) hue-rotate(2deg) brightness(108%) contrast(105%);
-}
-
-.card-urgency-imgsvg.high {
-    filter: invert(49%) sepia(54%) saturate(4434%) hue-rotate(3deg) brightness(107%) contrast(103%);
-}
-
-.card-urgency-imgsvg.urgent {
-    filter: invert(17%) sepia(78%) saturate(5981%) hue-rotate(2deg) brightness(100%) contrast(102%);
-}

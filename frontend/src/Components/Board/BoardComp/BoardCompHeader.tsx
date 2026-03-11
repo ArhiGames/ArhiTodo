@@ -71,7 +71,6 @@ const BoardCompHeader = () => {
             </section>
             <BoardCompHeaderFilteringLabelsComp/>
             <UrgencyFilterComp/>
-
             <section>
                 <div className="cards-search-bar">
                     <input type="text" className="classic-input small" placeholder="Search cards..."

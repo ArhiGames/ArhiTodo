@@ -11,7 +11,7 @@ const CardUrgencyLabel = ({ cardUrgencyLevel, onClick, ref } : Props) => {
 
     return (
         <div ref={ref} onClick={onClick} className={`card-urgency-label ${onClick ? "clickable" : ""}`}>
-            <img className={`card-urgency-imgsvg ${cardUrgencyString.toLowerCase()}`}
+            <img className={`urgency-imgsvg ${cardUrgencyString.toLowerCase()}`}
                  src={`/urgency-${cardUrgencyString.replace(" ", "-").toLowerCase()}.svg`} alt="" height="18px"/>
             <p>{cardUrgencyString}</p>
         </div>

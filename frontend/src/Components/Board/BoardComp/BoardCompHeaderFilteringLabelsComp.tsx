@@ -21,8 +21,8 @@ const BoardCompHeaderFilteringLabelsComp = () => {
         searchCards.setFilteringLabels((prev: number[]) => prev.filter(filteringLabelId => filteringLabelId !== labelId));
     }
 
-    function startEditingLabels(onTarget: HTMLElement) {
-        seeLabelsButtonRef.current = onTarget;
+    function startEditingLabels(e: React.MouseEvent<HTMLElement>) {
+        seeLabelsButtonRef.current = e.currentTarget;
         setIsEditingLabels((prev: boolean) => !prev);
     }
 
@@ -32,7 +32,7 @@ const BoardCompHeaderFilteringLabelsComp = () => {
 
         const rgb: Rgb = toRgb(label.labelColor);
         return (
-            <div key={labelId} onClick={(e) => startEditingLabels(e.currentTarget)} className="board-label"
+            <div key={labelId} onClick={startEditingLabels} className="board-label"
                  style={{ backgroundColor: `rgb(${rgb.red},${rgb.green},${rgb.blue})`, color: getRgbContrastTextColor(label.labelColor) }}>
                 <p>{label.labelText}</p>
             </div>
@@ -41,7 +41,7 @@ const BoardCompHeaderFilteringLabelsComp = () => {
 
     return (
         <section>
-            <p>Labels</p>
+            <p onClick={startEditingLabels}>Labels</p>
             {searchCards.filteringLabels.length > 0 ? (
                 <div className="board-labels">
                     {searchCards.filteringLabels.map((labelId: number) => {
@@ -49,8 +49,8 @@ const BoardCompHeaderFilteringLabelsComp = () => {
                     })}
                 </div>
             ) : (
-                <button className="button standard-button" style={{ width: "12rem" }}
-                        onClick={(e) => startEditingLabels(e.currentTarget)}>All</button>
+                <button className="button standard-button" style={{ width: "8rem" }}
+                        onClick={startEditingLabels}>All</button>
             )}
 
             { isEditingLabels && <LabelSelector element={seeLabelsButtonRef} onClose={() => setIsEditingLabels(false)}
