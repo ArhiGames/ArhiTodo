@@ -6,7 +6,6 @@ import {useCallback} from "react";
 
 interface Props {
     cardListId: number;
-    filteringLabels: number[];
     dndIndex: number;
 }
 
@@ -39,7 +38,7 @@ const CardListCompWrapper = (props: Props) => {
 
     return (
         <div ref={setRef} className="cardlist-wrapper">
-            <CardListComp cardListId={props.cardListId} filteringLabels={props.filteringLabels} draggableHandleRef={draggableHandleRef}/>
+            <CardListComp cardListId={props.cardListId} draggableHandleRef={draggableHandleRef}/>
         </div>
     )
 

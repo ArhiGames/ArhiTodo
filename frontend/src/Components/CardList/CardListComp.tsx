@@ -15,7 +15,6 @@ import {useCardsSearch} from "../../Contexts/Kanban/Cards/SearchCardsContexts.ts
 
 interface Props {
     cardListId: number;
-    filteringLabels: number[];
     draggableHandleRef: (ref: HTMLDivElement | null) => void;
 }
 
@@ -138,8 +137,8 @@ const CardListComp = (props: Props) => {
             const labelIds: number[] | undefined = kanbanState.cardLabels.get(cardId);
             if (!labelIds) return;
 
-            if (props.filteringLabels.length > 0) {
-                if (labelIds.some((labelId: number) => props.filteringLabels.includes(labelId))) {
+            if (searchCards.filteringLabels.length > 0) {
+                if (labelIds.some((labelId: number) => searchCards.filteringLabels.includes(labelId))) {
                     cardIds.push({ cardId, isDone: card.isDone, card });
                     return;
                 }

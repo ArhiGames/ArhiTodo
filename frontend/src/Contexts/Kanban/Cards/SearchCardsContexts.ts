@@ -3,11 +3,15 @@ import {createContext, type Dispatch, type SetStateAction, useContext} from "rea
 export type SearchContextType = {
     searchString: string;
     setSearchString: Dispatch<SetStateAction<string>>;
+    filteringLabels: number[];
+    setFilteringLabels: Dispatch<SetStateAction<number[]>>;
 }
 
 export const SearchCardsContext = createContext<SearchContextType>({
     searchString: "",
-    setSearchString: () => ""
+    setSearchString: () => "",
+    filteringLabels: [],
+    setFilteringLabels: () => [],
 });
 
 export function useCardsSearch() { return useContext<SearchContextType>(SearchCardsContext); }

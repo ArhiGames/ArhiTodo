@@ -74,6 +74,7 @@
     justify-content: space-between;
     background-color: var(--bg-xx-light);
     border-radius: 8px;
+    transition: background-color 0.3s;
 }
 
 .cards-search-bar img {

@@ -8,12 +8,12 @@ interface Props {
 const ThemeProvider = (props: Props) => {
 
     const [theme, setTheme] = useState<Theme>(() => {
-        const savedTheme = localStorage.getItem("theme");
+        const savedTheme: string | null = localStorage.getItem("theme");
         if (savedTheme) return savedTheme as Theme;
-        const prefersDark = window.matchMedia(
+        const prefersDark: boolean = window.matchMedia(
             "(prefers-color-scheme: dark)"
         ).matches;
-        return prefersDark ? "dark" : "light" as Theme;
+        return (prefersDark ? "dark" : "light") as Theme;
     });
 
     useEffect(() => {

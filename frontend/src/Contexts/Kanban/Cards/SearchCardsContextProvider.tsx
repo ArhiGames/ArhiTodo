@@ -8,9 +8,10 @@ interface Props {
 const SearchCardsContextProvider = ({ children }: Props) => {
 
     const [searchString, setSearchString] = useState<string>("");
+    const [filteringLabels, setFilteringLabels] = useState<number[]>([]);
 
     return (
-        <SearchCardsContext.Provider value={{ searchString, setSearchString }}>
+        <SearchCardsContext.Provider value={{ searchString, setSearchString, filteringLabels, setFilteringLabels }}>
             {children}
         </SearchCardsContext.Provider>
     )

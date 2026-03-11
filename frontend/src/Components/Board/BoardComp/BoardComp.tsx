@@ -17,6 +17,8 @@ import type {Claim} from "../../../Models/Claim.ts";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import {HubConnectionState} from "@microsoft/signalr";
 import CardListCompWrapper from "../../CardList/CardListCompWrapper.tsx";
+import SearchCardsContextProvider from "../../../Contexts/Kanban/Cards/SearchCardsContextProvider.tsx";
+import {useCardsSearch} from "../../../Contexts/Kanban/Cards/SearchCardsContexts.ts";
 
 const BoardComp = () => {
 
@@ -27,8 +29,8 @@ const BoardComp = () => {
     const dispatch: Dispatch<KanbanAction> | undefined = useKanbanDispatch();
     const kanbanState: KanbanState = useKanbanState();
     const permissions = usePermissions();
+    const searchCards = useCardsSearch();
 
-    const [currentFilteringLabels, setCurrentFilteringLabels] = useState<number[]>([]);
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
@@ -41,8 +43,8 @@ const BoardComp = () => {
 
         if (boardId == null) return;
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setCurrentFilteringLabels([]);
+        searchCards.setFilteringLabels([]);
+        searchCards.setSearchString("");
 
         const abortController = new AbortController();
         const run = async () => {
@@ -141,29 +143,29 @@ const BoardComp = () => {
     }, [boardId, hubState.hubConnection]);
 
     return (
-        <div className="board-body">
-            <BoardCompHeader currentFilteringLabels={currentFilteringLabels} setCurrentFilteringLabels={setCurrentFilteringLabels}/>
-            {
-                isLoaded && (
-                    <>
-                        <div className="board-content scroller">
-                            {
-                                <>
-                                    {kanbanState.boards.get(Number(boardId))?.cardListIds
-                                        .map((cardListId: number, index: number) => {
-                                            return <CardListCompWrapper cardListId={cardListId} filteringLabels={currentFilteringLabels}
-                                                                        key={cardListId} dndIndex={index}/>;
-                                        })}
-                                    { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
-                                </>
-                            }
-                        </div>
-                        { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
-                    </>
-                )
-            }
-
-        </div>
+        <SearchCardsContextProvider>
+            <div className="board-body">
+                <BoardCompHeader/>
+                {
+                    isLoaded && (
+                        <>
+                            <div className="board-content scroller">
+                                {
+                                    <>
+                                        {kanbanState.boards.get(Number(boardId))?.cardListIds
+                                            .map((cardListId: number, index: number) => {
+                                                return <CardListCompWrapper cardListId={cardListId} key={cardListId} dndIndex={index}/>;
+                                            })}
+                                        { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
+                                    </>
+                                }
+                            </div>
+                            { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
+                        </>
+                    )
+                }
+            </div>
+        </SearchCardsContextProvider>
     )
 }
 
