@@ -110,3 +110,18 @@
 .user-viewer-filter-footer-div {
     margin-top: 0.5rem;
 }
+
+.remaining-members-filter-popover-div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 250px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.remaining-member-filter-comp {
+    padding: 10px;
+    background-color: var(--bg-x-light);
+    border-radius: 10px;
+}
