@@ -17,7 +17,6 @@ import type {Claim} from "../../../Models/Claim.ts";
 import {usePermissions} from "../../../Contexts/Authorization/usePermissions.ts";
 import {HubConnectionState} from "@microsoft/signalr";
 import CardListCompWrapper from "../../CardList/CardListCompWrapper.tsx";
-import SearchCardsContextProvider from "../../../Contexts/Kanban/Cards/SearchCardsContextProvider.tsx";
 import {useCardsSearch} from "../../../Contexts/Kanban/Cards/SearchCardsContexts.ts";
 
 const BoardComp = () => {
@@ -41,10 +40,12 @@ const BoardComp = () => {
 
     useEffect(() => {
 
-        if (boardId == null) return;
-
         searchCards.setFilteringLabels([]);
         searchCards.setSearchString("");
+        searchCards.setFilteringUrgencyLevels([]);
+        searchCards.setFilteringUserIds([]);
+
+        if (boardId === null) return;
 
         const abortController = new AbortController();
         const run = async () => {
@@ -143,29 +144,27 @@ const BoardComp = () => {
     }, [boardId, hubState.hubConnection]);
 
     return (
-        <SearchCardsContextProvider>
-            <div className="board-body">
-                <BoardCompHeader/>
-                {
-                    isLoaded && (
-                        <>
-                            <div className="board-content scroller">
-                                {
-                                    <>
-                                        {kanbanState.boards.get(Number(boardId))?.cardListIds
-                                            .map((cardListId: number, index: number) => {
-                                                return <CardListCompWrapper cardListId={cardListId} key={cardListId} dndIndex={index}/>;
-                                            })}
-                                        { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
-                                    </>
-                                }
-                            </div>
-                            { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
-                        </>
-                    )
-                }
-            </div>
-        </SearchCardsContextProvider>
+        <div className="board-body">
+            <BoardCompHeader/>
+            {
+                isLoaded && (
+                    <>
+                        <div className="board-content scroller">
+                            {
+                                <>
+                                    {kanbanState.boards.get(Number(boardId))?.cardListIds
+                                        .map((cardListId: number, index: number) => {
+                                            return <CardListCompWrapper cardListId={cardListId} key={cardListId} dndIndex={index}/>;
+                                        })}
+                                    { permissions.hasManageCardListsPermission() && <CreateNewCardListComp/> }
+                                </>
+                            }
+                        </div>
+                        { cardId !== undefined && createPortal(<ViewCardDetailsComp/>, document.body) }
+                    </>
+                )
+            }
+        </div>
     )
 }
 

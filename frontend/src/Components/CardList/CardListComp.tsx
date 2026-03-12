@@ -128,48 +128,38 @@ const CardListComp = (props: Props) => {
         onTryEditCardListNameClicked();
     }
 
-    function getCardsFilteredCards() {
-        const cardIds: { cardId: number, isDone: boolean, card: Card }[] = [];
-        kanbanState.cardLists.get(props.cardListId)?.cardIds.forEach((cardId: number) => {
-            const card: Card | undefined = kanbanState.cards.get(cardId);
-            if (!card) return;
-
-            const labelIds: number[] | undefined = kanbanState.cardLabels.get(cardId);
-            if (!labelIds) return;
-
-            if (searchCards.filteringLabels.length > 0) {
-                if (labelIds.some((labelId: number) => searchCards.filteringLabels.includes(labelId))) {
-                    cardIds.push({ cardId, isDone: card.isDone, card });
-                    return;
-                }
-            } else {
-                cardIds.push({ cardId, isDone: card.isDone, card });
-            }
-        })
-        return cardIds;
-    }
-
     function scrollDown() {
         scrollDownElemRef.current?.scrollIntoView({ block: "end", inline: "nearest", behavior: "smooth" });
     }
 
     function getCardsScrollerJsx() {
-        const filteredCards: { cardId: number, isDone: boolean, card: Card }[] = getCardsFilteredCards();
+        const cards: Card[] | undefined = kanbanState.cardLists.get(props.cardListId)?.cardIds.map((cardId: number) => {
+            return kanbanState.cards.get(cardId)!;
+        });
+        if (!cards) return null;
+
+        function checkFilter(card: Card): boolean {
+            if (!card.cardName.includes(searchCards.searchString)) return false;
+            if (searchCards.filteringUrgencyLevels.length !== 0 &&
+                !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return false;
+            if (searchCards.filteringLabels.length !== 0 &&
+                !kanbanState.cardLabels.get(card.cardId)!.some((labelId: number) => searchCards.filteringLabels.includes(labelId))) return false;
+            if (searchCards.filteringUserIds.length !== 0 &&
+                !card.assignedUserIds.some((userId: string) => searchCards.filteringUserIds.includes(userId))) return false;
+            return true;
+        }
 
         return (
             <div className="cards scroller">
                 <div>
-                    {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
-                        if (isDone) return null;
-                        if (!card.cardName.includes(searchCards.searchString)) return null;
-                        if (searchCards.filteringUrgencyLevels.length !== 0 &&
-                            !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return null;
-                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
+                    {cards.map((card: Card, index: number) => {
+                        if (card.isDone || !checkFilter(card)) return null;
+                        return <CardCompWrapper key={card.cardId} cardId={card.cardId} dndIndex={index}/>
                     })}
                 </div>
                 <div ref={scrollDownElemRef} className="scroll-down-shadow-elem"></div>
                 {
-                    filteredCards.some((fl: { cardId: number, isDone: boolean }) => fl.isDone) && (
+                    cards.some((card: Card) => card.isDone) && (
                         <div className="cardlist-un-completed-breaker">
                             <div className="cardlist-un-completed-breaker-filler"/>
                             <p>Completed</p>
@@ -178,12 +168,9 @@ const CardListComp = (props: Props) => {
                     )
                 }
                 <div>
-                    {filteredCards.map(({ cardId, isDone, card }: { cardId: number, isDone: boolean, card: Card }, index: number) => {
-                        if (!isDone) return null;
-                        if (!card.cardName.includes(searchCards.searchString)) return null;
-                        if (searchCards.filteringUrgencyLevels.length !== 0 &&
-                            !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return null;
-                        return <CardCompWrapper key={cardId} cardId={cardId} dndIndex={index}/>
+                    {cards.map((card: Card, index: number) => {
+                        if (!card.isDone || !checkFilter(card)) return null;
+                        return <CardCompWrapper key={card.cardId} cardId={card.cardId} dndIndex={index}/>
                     })}
                 </div>
             </div>

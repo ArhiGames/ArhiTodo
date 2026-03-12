@@ -5,7 +5,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, outline-color 0.1s, outline-width 0.1s;
+}
+
+.card-member-card.selected {
+    outline: 3px solid var(--bg-xxxx-light);
 }
 
 .card-member-card.small {

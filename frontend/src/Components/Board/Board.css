@@ -83,7 +83,7 @@
 
 .board-members {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.35rem;
 }
 
 .card-user-icon-viewer {
@@ -105,4 +105,8 @@
 .filtered-for-urgencies {
     display: flex;
     align-items: center;
+}
+
+.user-viewer-filter-footer-div {
+    margin-top: 0.5rem;
 }

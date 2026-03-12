@@ -8,8 +8,10 @@ import GeneralUserViewerComp from "./GeneralUserViewerComp.tsx";
 interface Props {
     user: PublicUserGetDto;
     size: "small" | "medium" | "large";
-    canViewDetails?: boolean;
+    selected?: boolean;
+    canViewDetails?: (user: PublicUserGetDto) => boolean;
     onClick?: (element: React.MouseEvent<HTMLDivElement>) => void;
+    footer?: React.FunctionComponent<{user: PublicUserGetDto, close: () => void}>;
 }
 
 const CardUserIcon = (props: Props) => {
@@ -19,7 +21,7 @@ const CardUserIcon = (props: Props) => {
     const popoverRef = useRef<HTMLDivElement>(null);
 
     function onCardUserIconClick(e: React.MouseEvent<HTMLDivElement>) {
-        if (props.canViewDetails) {
+        if (props.canViewDetails && props.canViewDetails(props.user)) {
             setIsShowingDetails((prev: boolean) => !prev);
         }
 
@@ -30,13 +32,14 @@ const CardUserIcon = (props: Props) => {
 
     return (
         <>
-            <div onClick={onCardUserIconClick} ref={popoverRef} className={`card-member-card ${props.size} ${appUser?.id === props.user.userId ? "self" : ""}`}>
+            <div onClick={onCardUserIconClick} ref={popoverRef} className={`card-member-card ${props.selected ? "selected" : ""} ${props.size} ${appUser?.id === props.user.userId ? "self" : ""}`}>
                 {props.user.userName.slice(0, 2)}
             </div>
             {isShowingDetails && (
                 <Popover close={() => setIsShowingDetails(false)} element={popoverRef} triggerElement={popoverRef}>
                     <div className="card-user-icon-viewer">
-                        <GeneralUserViewerComp user={props.user} options={{ showProjectOwner: true, showBoardOwner: true }}/>
+                        <GeneralUserViewerComp user={props.user} options={{ showProjectOwner: true, showBoardOwner: true }}
+                                               footer={props.footer} close={() => setIsShowingDetails(false)}/>
                     </div>
                 </Popover>
             )}

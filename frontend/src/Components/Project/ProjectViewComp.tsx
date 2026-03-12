@@ -20,6 +20,7 @@ import {buildProjectConnection} from "../../Contexts/Realtime/ConnectionBuilders
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import type {Claim} from "../../Models/Claim.ts";
 import BoardHeaderWrapper from "../Board/BoardHeaderWrapper.tsx";
+import SearchCardsContextProvider from "../../Contexts/Kanban/Cards/SearchCardsContextProvider.tsx";
 
 const ProjectViewComp = () => {
 
@@ -260,16 +261,18 @@ const ProjectViewComp = () => {
     }, [boardId]);
 
     return (
-        <div className="project-view">
-            <div className="board-selectors scroller">
-                {kanbanState.projects.get(Number(projectId))?.boardIds
-                    .map((boardId: number, index: number) => {
-                        return <BoardHeaderWrapper boardId={boardId} dndIndex={index} key={boardId}/>
-                    })}
-                { permissions.hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
+        <SearchCardsContextProvider>
+            <div className="project-view">
+                <div className="board-selectors scroller">
+                    {kanbanState.projects.get(Number(projectId))?.boardIds
+                        .map((boardId: number, index: number) => {
+                            return <BoardHeaderWrapper boardId={boardId} dndIndex={index} key={boardId}/>
+                        })}
+                    { permissions.hasCreateBoardPermission() && <CreateNewBoardHeaderComp/> }
+                </div>
+                { activeBoardId && hasLoadedBoards ? <BoardComp/> : <NoBoardComp/> }
             </div>
-            { activeBoardId && hasLoadedBoards ? <BoardComp/> : <NoBoardComp/> }
-        </div>
+        </SearchCardsContextProvider>
     )
 }
 

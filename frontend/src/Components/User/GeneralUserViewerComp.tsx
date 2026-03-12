@@ -5,6 +5,8 @@ import {matchPath} from "react-router-dom";
 interface Props {
     user: PublicUserGetDto;
     options: UserViewerOptions;
+    close?: () => void;
+    footer?: React.FunctionComponent<{user: PublicUserGetDto, close: () => void}>;
 }
 
 export type UserViewerOptions = {
@@ -36,6 +38,7 @@ const GeneralUserViewerComp = (props: Props) => {
                 <p style={{ fontWeight: "bold" }}>{props.user.userName}</p>
             </div>
             { props.user.email && <p style={{ opacity: "75%" }}>{props.user.email}</p> }
+            { props.footer && props.close && <props.footer user={props.user} close={props.close}/> }
         </div>
     )
 
