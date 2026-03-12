@@ -79,12 +79,14 @@ const BoardCompHeaderMembersComp = () => {
     }
 
     function getMembersJsx() {
-        const members: PublicUserGetDto[] = getMembers();
-        const remainingBoardMembers: number = members.length - 5;
+        const originalUsers: PublicUserGetDto[] = getMembers();
+        const members: PublicUserGetDto[] = originalUsers.filter((boardMember: PublicUserGetDto, index: number) => {
+            return index < 5 || searchCards.filteringUserIds.includes(boardMember.userId);
+        });
+        const remainingBoardMembers: number = originalUsers.length - members.length;
         return (
             <div className="board-members">
-                {members.map((boardMember: PublicUserGetDto, index: number) => {
-                    if (index >= 5 && !searchCards.filteringUserIds.includes(boardMember.userId)) return null;
+                {members.map((boardMember: PublicUserGetDto) => {
                     return (
                         <CardUserIcon key={boardMember.userId} canViewDetails={canViewDetails} size="medium" user={boardMember}
                                       onClick={() => onUserIconPressed(boardMember)}
@@ -114,7 +116,7 @@ const BoardCompHeaderMembersComp = () => {
             </section>
             { isViewingRemainingMembers && (
                 <Popover close={() => setIsViewingRemainingMembers(false)} element={viewRemainingUsersDiv} triggerElement={viewRemainingUsersDiv}>
-                    <div className="remaining-members-filter-popover-div">
+                    <div className="remaining-members-filter-popover-div scroller">
                         {getMembers().slice(5).map((member: PublicUserGetDto) => {
                             if (searchCards.filteringUserIds.includes(member.userId)) return null;
                             return (
