@@ -149,17 +149,19 @@ const CardListComp = (props: Props) => {
             return true;
         }
 
+        const filteredCards: Card[] = cards.filter((card: Card) => checkFilter(card));
+
         return (
             <div className="cards scroller">
                 <div>
-                    {cards.map((card: Card, index: number) => {
-                        if (card.isDone || !checkFilter(card)) return null;
+                    {filteredCards.map((card: Card, index: number) => {
+                        if (card.isDone) return null;
                         return <CardCompWrapper key={card.cardId} cardId={card.cardId} dndIndex={index}/>
                     })}
                 </div>
                 <div ref={scrollDownElemRef} className="scroll-down-shadow-elem"></div>
                 {
-                    cards.some((card: Card) => card.isDone) && (
+                    filteredCards.some((card: Card) => card.isDone) && (
                         <div className="cardlist-un-completed-breaker">
                             <div className="cardlist-un-completed-breaker-filler"/>
                             <p>Completed</p>
@@ -168,8 +170,8 @@ const CardListComp = (props: Props) => {
                     )
                 }
                 <div>
-                    {cards.map((card: Card, index: number) => {
-                        if (!card.isDone || !checkFilter(card)) return null;
+                    {filteredCards.map((card: Card, index: number) => {
+                        if (!card.isDone) return null;
                         return <CardCompWrapper key={card.cardId} cardId={card.cardId} dndIndex={index}/>
                     })}
                 </div>
