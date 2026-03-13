@@ -9,6 +9,8 @@ export type SearchContextType = {
     setFilteringUrgencyLevels: Dispatch<SetStateAction<number[]>>;
     filteringUserIds: string[];
     setFilteringUserIds: Dispatch<SetStateAction<string[]>>;
+    showCompletedCards: boolean;
+    setShowCompletedCards: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SearchCardsContext = createContext<SearchContextType>({
@@ -20,6 +22,8 @@ export const SearchCardsContext = createContext<SearchContextType>({
     setFilteringUrgencyLevels: () => [],
     filteringUserIds: [],
     setFilteringUserIds: () => [],
+    showCompletedCards: true,
+    setShowCompletedCards: () => [],
 });
 
 export function useCardsSearch() { return useContext<SearchContextType>(SearchCardsContext); }

@@ -29,6 +29,7 @@
     --text-color-shaded: hsl(220, 12%, 45%);
 
     --highlight-selection: hsl(212, 100%, 92%);
+    --icon-brightness-filter: brightness(0.75);
 
     --shadow-m: 0 1px 3px rgba(0, 0, 0, 0.04),
     0 4px 8px rgba(0, 0, 0, 0.06);
@@ -57,6 +58,7 @@
     --text-color-shaded: hsl(220, 10%, 70%);
 
     --highlight-selection: hsl(209, 100%, 93%);
+    --icon-brightness-filter: brightness(1.25);
 
     --shadow-m: inset 0 1px 2px hsl(0, 0%, 30%),
     0 1px 2px hsl(0, 0%, 30%),
@@ -193,7 +195,7 @@ body {
 
 .icon.clickable:hover {
     cursor: pointer;
-    filter: invert(0.75) brightness(1.25);
+    filter: invert(0.75) var(--icon-brightness-filter);
 }
 
 .valid-submit-button {

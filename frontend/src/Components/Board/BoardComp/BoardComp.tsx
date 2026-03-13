@@ -44,6 +44,7 @@ const BoardComp = () => {
         searchCards.setSearchString("");
         searchCards.setFilteringUrgencyLevels([]);
         searchCards.setFilteringUserIds([]);
+        searchCards.setShowCompletedCards(true);
 
         if (boardId === null) return;
 

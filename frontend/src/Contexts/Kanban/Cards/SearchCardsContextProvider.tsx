@@ -11,13 +11,15 @@ const SearchCardsContextProvider = ({ children }: Props) => {
     const [filteringLabels, setFilteringLabels] = useState<number[]>([]);
     const [filteringUrgencyLevels, setFilteringUrgencyLevels] = useState<number[]>([]);
     const [filteringUserIds, setFilteringUserIds] = useState<string[]>([]);
+    const [showCompletedCards, setShowCompletedCards] = useState<boolean>(false);
 
     return (
         <SearchCardsContext.Provider value={{
             searchString, setSearchString,
             filteringLabels, setFilteringLabels,
             filteringUrgencyLevels, setFilteringUrgencyLevels,
-            filteringUserIds, setFilteringUserIds
+            filteringUserIds, setFilteringUserIds,
+            showCompletedCards, setShowCompletedCards,
         }}>
             {children}
         </SearchCardsContext.Provider>

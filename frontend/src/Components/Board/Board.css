@@ -126,3 +126,9 @@
     background-color: var(--bg-x-light);
     border-radius: 10px;
 }
+
+.filter-completed-cards-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}

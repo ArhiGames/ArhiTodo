@@ -139,6 +139,7 @@ const CardListComp = (props: Props) => {
         if (!cards) return null;
 
         function checkFilter(card: Card): boolean {
+            if (card.isDone && !searchCards.showCompletedCards) return false;
             if (!card.cardName.includes(searchCards.searchString)) return false;
             if (searchCards.filteringUrgencyLevels.length !== 0 &&
                 !searchCards.filteringUrgencyLevels.includes(card.cardUrgencyLevel)) return false;
