@@ -13,7 +13,7 @@ public class ProjectManagerConfiguration : IEntityTypeConfiguration<ProjectManag
         builder.HasOne(pm => pm.User)
             .WithMany()
             .HasForeignKey(pm => pm.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(pm => pm.Project)
             .WithMany(p => p.ProjectManagers)

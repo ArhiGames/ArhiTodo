@@ -6,6 +6,7 @@ namespace ArhiTodo.Application.Services.Interfaces.Kanban;
 
 public interface IProjectService
 {
+    Task<Result> MakeProjectOwner(int projectId, Guid userId, RequiredPasswordActionDto requiredPasswordActionDto);
     Task<Result<List<PublicUserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos);
     Task<Result<List<PublicUserGetDto>>> GetProjectManagers(int projectId);
     Task<Result<ProjectPermission>> GetUserPermission(int projectId);

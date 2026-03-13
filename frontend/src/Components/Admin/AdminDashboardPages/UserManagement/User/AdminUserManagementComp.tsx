@@ -54,7 +54,7 @@ const AdminUserManagementComp = () => {
     }
 
     async function onLoadMoreButtonPressed() {
-        const nextPage = (Math.floor(users.length / 5) - 1) + Math.floor(usersCount / 5);
+        const nextPage = Math.floor(users.length / 5);
         await loadUsers(nextPage);
     }
 
@@ -168,11 +168,9 @@ const AdminUserManagementComp = () => {
                 </>
             )}
 
-            {
-                currentViewingUser && (
-                    createPortal(<UserDetailsModalComp setCurrentViewingUser={setCurrentViewingUser} currentViewingUser={currentViewingUser}/>, document.body)
-                )
-            }
+            {currentViewingUser && (
+                createPortal(<UserDetailsModalComp setCurrentViewingUser={setCurrentViewingUser} currentViewingUser={currentViewingUser}/>, document.body)
+            )}
 
         </div>
     )

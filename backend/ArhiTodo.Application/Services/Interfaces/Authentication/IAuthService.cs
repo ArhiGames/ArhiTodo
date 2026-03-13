@@ -8,7 +8,7 @@ public interface IAuthService
     Task<Result> CreateAccount(CreateAccountDto createAccountDto);
     Task<Result<LoginGetDto>> Login(LoginDto loginDto, string userAgent);
     Task<Result> ChangePassword(UpdatePasswordDto updatePasswordDto);
-    Task<Result> DeleteAccount(Guid userId);
+    Task<Result> DeleteAccount(Guid userId, RequiredPasswordActionDto requiredPasswordActionDto);
     
     Task<Result<string>> RefreshJwtToken(string refreshToken);
     Task<Result> Logout(string userAgent);

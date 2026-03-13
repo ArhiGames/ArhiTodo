@@ -448,7 +448,7 @@ namespace ArhiTodo.Infrastructure.Migrations
                     b.HasOne("ArhiTodo.Domain.Entities.Auth.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Project");
@@ -582,7 +582,7 @@ namespace ArhiTodo.Infrastructure.Migrations
                     b.HasOne("ArhiTodo.Domain.Entities.Auth.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Owner");

@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using ArhiTodo.Application.DTOs.Auth;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
-using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 using ArhiTodo.Domain.Entities.Auth;
@@ -15,7 +14,7 @@ namespace ArhiTodo.Application.Services.Implementations.Authentication;
 public class AuthService(
     IAccountRepository accountRepository, ITokenService tokenService, IJwtTokenGeneratorService jwtTokenGeneratorService, 
     IPasswordHashService passwordHashService, ITokenGeneratorService tokenGeneratorService, IInvitationRepository invitationRepository, 
-    IPasswordAuthorizer passwordAuthorizer, ICurrentUser currentUser, IAuthorizationService authorizationService, IUnitOfWork unitOfWork) : IAuthService
+    IPasswordAuthorizer passwordAuthorizer, ICurrentUser currentUser, IUnitOfWork unitOfWork) : IAuthService
 {
     public async Task<Result> CreateAccount(CreateAccountDto createAccountDto)
     {
@@ -77,10 +76,14 @@ public class AuthService(
         return Result.Success();
     }
 
-    public async Task<Result> DeleteAccount(Guid userId)
+    public async Task<Result> DeleteAccount(Guid userId, RequiredPasswordActionDto requiredPasswordActionDto)
     {
-        bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.DeleteUsers));
-        if (!authorized) return Errors.Forbidden;
+        User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
+        if (user is null) return Errors.Unauthenticated;
+
+        if ((user.UserClaims & (int)UserClaimTypes.DeleteUsers) == 0) return Errors.Forbidden;
+        bool correctPassword = passwordHashService.Verify(requiredPasswordActionDto.Password, user.HashedPassword);
+        if (!correctPassword) return Errors.Forbidden;
         
         bool succeeded = await accountRepository.DeleteUserAsync(userId);
         return succeeded ? Result.Success() : Errors.Unknown;

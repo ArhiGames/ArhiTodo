@@ -21,9 +21,15 @@ const ProjectManagerCard = (props: Props) => {
     const hubConnection = useRealtimeHub();
 
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isMakingOwner, setIsMakingOwner] = useState<boolean>(false);
 
     const isOwner: boolean = kanbanState.projects.get(props.project.projectId)?.ownedByUserId === props.projectManager.userId;
     const isSelf: boolean = appUser?.id === props.projectManager.userId;
+    const isSelfOwner: boolean = kanbanState.projects.get(props.project.projectId)?.ownedByUserId === appUser?.id;
+
+    async function onMakeProjectOwnerConfirmed(password?: string) {
+
+    }
 
     async function onDeleteProjectManagerConfirmed() {
 
@@ -63,9 +69,19 @@ const ProjectManagerCard = (props: Props) => {
             {
                 props.editable && !isOwner && !isSelf && (
                     <>
-                        <button onClick={() => setIsDeleting(true)} className="button standard-button">Remove</button>
+                        <div style={{ display: "flex", gap: "0.2rem" }}>
+                            { isSelfOwner && <button onClick={() => setIsMakingOwner(true)}
+                                                     className="button standard-button">Make owner</button> }
+                            <button onClick={() => setIsDeleting(true)} className="button standard-button">Remove</button>
+                        </div>
+                        { isMakingOwner && <ConfirmationModal title="Confirm your action!"
+                                                              actionDescription={`If you confirm this action, ${props.projectManager.userName} will be the new owner of this project. You will remain project manager, but the new owner could technically remove you as project manager`}
+                                                              onClosed={() => setIsMakingOwner(false)}
+                                                              onConfirmed={onMakeProjectOwnerConfirmed}
+                                                              requirePassword
+                        /> }
                         { isDeleting && <ConfirmationModal title="Confirm your action!"
-                                                           actionDescription="If you confirm this action, this user will be removed as the project manager for this project. You can make them the project manager again at any time."
+                                                           actionDescription={`If you confirm this action, ${props.projectManager.userName} will be removed as the project manager for this project. You can make them the project manager again at any time.`}
                                                            onClosed={() => setIsDeleting(false)}
                                                            onConfirmed={onDeleteProjectManagerConfirmed}/> }
                     </>

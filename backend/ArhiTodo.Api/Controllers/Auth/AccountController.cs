@@ -113,9 +113,9 @@ public class AccountController(IUserService userService, IAuthService authServic
 
     [Authorize(Policy = nameof(UserClaimTypes.DeleteUsers))]
     [HttpDelete("accounts/user/{userId:guid}")]
-    public async Task<IActionResult> DeleteAccount(Guid userId)
+    public async Task<IActionResult> DeleteAccount(Guid userId, [FromBody] RequiredPasswordActionDto requiredPasswordActionDto)
     {
-        Result deleteAccountResult = await authService.DeleteAccount(userId);
+        Result deleteAccountResult = await authService.DeleteAccount(userId, requiredPasswordActionDto);
         return deleteAccountResult.IsSuccess ? NoContent() : HandleFailure(deleteAccountResult);
     }
 }

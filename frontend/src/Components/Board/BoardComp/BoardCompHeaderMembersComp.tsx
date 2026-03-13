@@ -121,7 +121,7 @@ const BoardCompHeaderMembersComp = () => {
                             if (searchCards.filteringUserIds.includes(member.userId)) return null;
                             return (
                                 <div className="remaining-member-filter-comp">
-                                    <GeneralUserViewerComp user={member} options={{ showProjectOwner: true, showBoardOwner: true }}
+                                    <GeneralUserViewerComp user={member} options={{ showProjectOwner: true, showBoardOwner: true }} key={member.userId}
                                                            close={() => setIsViewingRemainingMembers(false)} footer={UserViewerCompFooter}/>
                                 </div>
                             )

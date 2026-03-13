@@ -13,13 +13,36 @@ using ArhiTodo.Domain.Repositories.Authentication;
 using ArhiTodo.Domain.Repositories.Authorization;
 using ArhiTodo.Domain.Repositories.Common;
 using ArhiTodo.Domain.Repositories.Kanban;
+using ArhiTodo.Domain.Services.Auth;
 
 namespace ArhiTodo.Application.Services.Implementations.Kanban;
 
 public class ProjectService(IAccountRepository accountRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, 
     IProjectNotificationService projectNotificationService, ICurrentUser currentUser, IAuthorizationService authorizationService,
-    IProjectAuthorizer projectAuthorizer, ICardRepository cardRepository) : IProjectService
+    IProjectAuthorizer projectAuthorizer, ICardRepository cardRepository, IPasswordHashService passwordHashService) : IProjectService
 {
+    public async Task<Result> MakeProjectOwner(int projectId, Guid userId, RequiredPasswordActionDto requiredPasswordActionDto)
+    {
+        User? user = await accountRepository.GetUserByGuidAsync(currentUser.UserId);
+        if (user is null) return Errors.Unauthenticated;
+
+        bool passwordVerified = passwordHashService.Verify(requiredPasswordActionDto.Password, user.HashedPassword);
+        if (!passwordVerified) return Errors.Forbidden;
+        
+        Project? project = await projectRepository.GetAsync(projectId);
+        if (project is null) return Errors.NotFound;
+
+        if (project.OwnerId != currentUser.UserId)
+        {
+            return new Error("BeOwnerToEditOwner", ErrorType.Forbidden, "You have be the owner to make other's the owner!");
+        }
+
+        Result updateProjectOwnerResult = project.UpdateProjectOwner(userId);
+        await unitOfWork.SaveChangesAsync();
+
+        return updateProjectOwnerResult;
+    }
+
     public async Task<Result<List<PublicUserGetDto>>> UpdateProjectManagerStates(int projectId, List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
         if (projectManagerStatusUpdateDtos.Any(pm => pm.UserId == currentUser.UserId))

@@ -13,7 +13,7 @@ public class Project
     private readonly List<Board> _boards = [];
     public IReadOnlyCollection<Board> Boards => _boards.AsReadOnly();
 
-    public Guid OwnerId { get; }
+    public Guid OwnerId { get; private set; }
     public User Owner { get; } = null!;
 
     private readonly List<ProjectManager> _projectManagers = [];
@@ -35,6 +35,13 @@ public class Project
             return new Error("InvalidProjectName", ErrorType.BadRequest, "The project name must contain between 1-32 characters!");
         }
 
+        return Result.Success();
+    }
+
+    public Result UpdateProjectOwner(Guid newOwnerId)
+    {
+        AddProjectManager(OwnerId);
+        OwnerId = newOwnerId;
         return Result.Success();
     }
     

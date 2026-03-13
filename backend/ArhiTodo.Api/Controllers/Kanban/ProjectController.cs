@@ -14,6 +14,13 @@ namespace ArhiTodo.Controllers.Kanban;
 [Route("api/project")]
 public class ProjectController(IProjectService projectService) : ApiControllerBase
 {
+    [HttpPatch("{projectId:int}/owner/{userId:guid}")]
+    public async Task<IActionResult> MakeProjectOwner(int projectId, Guid userId, [FromBody] RequiredPasswordActionDto requiredPasswordActionDto)
+    {
+        Result updateProjectOwnerResult = await projectService.MakeProjectOwner(projectId, userId, requiredPasswordActionDto);
+        return updateProjectOwnerResult.IsSuccess ? Ok() : HandleFailure(updateProjectOwnerResult);
+    }
+    
     [HttpPut("{projectId:int}/managers")]
     public async Task<IActionResult> UpdateProjectManagers(int projectId, [FromBody] List<ProjectManagerStatusUpdateDto> projectManagerStatusUpdateDtos)
     {
