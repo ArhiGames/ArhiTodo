@@ -29,6 +29,25 @@ const ProjectManagerCard = (props: Props) => {
 
     async function onMakeProjectOwnerConfirmed(password?: string) {
 
+        const refreshedToken: string | null = await checkRefresh();
+        if (!refreshedToken) return;
+
+        fetch(`${API_BASE_URL}/project/${props.project.projectId}/owner/${props.projectManager.userId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
+            body: JSON.stringify({ password: password })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Could not make other user the owner of this project!");
+                }
+
+                if (dispatch) {
+                    dispatch({ type: "UPDATE_PROJECT_OWNER", payload: { projectId: props.project.projectId, userId: props.projectManager.userId } })
+                }
+            })
+            .catch(console.error);
+
     }
 
     async function onDeleteProjectManagerConfirmed() {

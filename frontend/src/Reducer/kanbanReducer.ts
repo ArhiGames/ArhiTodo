@@ -61,6 +61,7 @@ import initProjectManagersAction from "../Contexts/Kanban/Actions/Implementation
 import removeProjectManagerAction
     from "../Contexts/Kanban/Actions/Implementation/Projects/removeProjectManagerAction.ts";
 import addProjectManagerAction from "../Contexts/Kanban/Actions/Implementation/Projects/addProjectManagerAction.ts";
+import updateProjectOwnerAction from "../Contexts/Kanban/Actions/Implementation/Projects/updateProjectOwnerAction.ts";
 
 function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
     switch (action.type) {
@@ -70,6 +71,8 @@ function kanbanReducer(state: KanbanState, action: KanbanAction): KanbanState {
             return initProjectAction(state, action.payload);
         case "UPDATE_PROJECT":
             return updateProjectAction(state, action.payload);
+        case "UPDATE_PROJECT_OWNER":
+            return updateProjectOwnerAction(state, action.payload);
         case "INIT_PROJECT_MANAGERS":
             return initProjectManagersAction(state, action.payload);
         case "ADD_PROJECT_MANAGER":
