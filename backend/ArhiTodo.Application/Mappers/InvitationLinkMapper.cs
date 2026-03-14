@@ -14,7 +14,7 @@ public static class InvitationLinkMapper
             InvitationLinkName = invitationLink.InvitationLinkName,
             CreatedDate = invitationLink.CreatedDate,
             ExpiresDate = invitationLink.ExpiresDate,
-            DefaultInvitationClaims = invitationLink.DefaultInvitationClaims,
+            DefaultInvitationClaims = invitationLink.GetUserClaimsAsList(),
             MaxUses = invitationLink.MaxUses,
             Uses = invitationLink.Uses,
             IsActive = invitationLink.IsActive,

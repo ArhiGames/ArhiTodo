@@ -1,4 +1,5 @@
-﻿using ArhiTodo.Domain.Common.Errors;
+﻿using ArhiTodo.Application.DTOs.User;
+using ArhiTodo.Domain.Common.Errors;
 using ArhiTodo.Domain.Common.Result;
 
 namespace ArhiTodo.Domain.Entities.Auth;
@@ -62,6 +63,20 @@ public class InvitationLink
     {
         DefaultInvitationClaims |= (int)userClaimType;
         return Result.Success();
+    }
+    
+    public List<ClaimGetDto> GetUserClaimsAsList()
+    {
+        List<ClaimGetDto> claims = [];
+        foreach (UserClaimTypes userClaimType in Enum.GetValuesAsUnderlyingType<UserClaimTypes>())
+        {
+            bool hasClaim = (DefaultInvitationClaims & (int)userClaimType) != 0;
+            if (hasClaim)
+            {
+                claims.Add(new ClaimGetDto(userClaimType.ToString(), true.ToString()));
+            }
+        }
+        return claims;
     }
 
     public Result Use()

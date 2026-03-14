@@ -14,7 +14,7 @@ namespace ArhiTodo.Application.Services.Implementations.Authentication;
 public class InvitationService(IInvitationRepository invitationRepository, ITokenGeneratorService tokenGeneratorService,
     ICurrentUser currentUser, IUnitOfWork unitOfWork, IAuthorizationService authorizationService) : IInvitationService
 {
-    public async Task<Result<InvitationLink>> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto)
+    public async Task<Result<InvitationLinkGetDto>> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto)
     {
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.InviteOtherUsers));
         if (!authorized) return Errors.Forbidden;
@@ -38,7 +38,7 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
             generateInvitationDto.MaxUses,
             expireDate,
             currentUser.UserId);
-        if (!createInvitationLinkResult.IsSuccess || createInvitationLinkResult.Value is null) return createInvitationLinkResult;
+        if (!createInvitationLinkResult.IsSuccess || createInvitationLinkResult.Value is null) return createInvitationLinkResult.Error!;
         foreach (ClaimPostDto defaultPermission in generateInvitationDto.DefaultClaims)
         {
             bool parsedSuccessfully = Enum.TryParse(defaultPermission.ClaimType, true, out UserClaimTypes userClaimType);
@@ -49,7 +49,7 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
         }
         
         InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(createInvitationLinkResult.Value!);
-        return generatedInvitationLink is null ? Errors.Unknown : generatedInvitationLink;
+        return generatedInvitationLink is null ? Errors.Unknown : generatedInvitationLink.ToGetDto();
     }
 
     public async Task<Result<List<InvitationLinkGetDto>>> GetInvitationLinks()

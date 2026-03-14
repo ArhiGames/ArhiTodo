@@ -15,7 +15,7 @@ public class InvitationController(IInvitationService invitationService) : ApiCon
     [HttpPost("generate")]
     public async Task<IActionResult> GenerateInvitationLink([FromBody] GenerateInvitationDto generateInvitationDto)
     {
-        Result<InvitationLink> createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
+        Result<InvitationLinkGetDto> createdInvitationLink = await invitationService.GenerateInvitationLink(generateInvitationDto);
         return createdInvitationLink.IsSuccess ? Ok(createdInvitationLink.Value) : HandleFailure(createdInvitationLink);
     }
 

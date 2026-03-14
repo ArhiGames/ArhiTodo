@@ -1,9 +1,12 @@
 import type { InvitationLink } from "../../../../../Models/InvitationLink.ts";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { useAuth } from "../../../../../Contexts/Authentication/useAuth.ts";
 import { formatRemainingTime } from "../../../../../lib/Functions.ts";
 import TagComp from "../../../../../lib/Tags/TagComp.tsx";
 import {API_BASE_URL} from "../../../../../config/api.ts";
+import Popover from "../../../../../lib/Popover/Popover.tsx";
+import GeneralUserViewerComp from "../../../../User/GeneralUserViewerComp.tsx";
+import type {Claim} from "../../../../../Models/Claim.ts";
 
 interface Props {
     invitationLink: InvitationLink;
@@ -14,9 +17,12 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
     const origin = window.location.origin;
     const finalUrl = `${origin}/register/${invitationLink.invitationKey}`;
     const { checkRefresh } = useAuth();
+
     // eslint-disable-next-line react-hooks/purity
     const [remainingMs, setRemainingMs] = useState<number>(new Date(invitationLink.expiresDate).getTime() - Date.now());
     const [copied, setCopied] = useState<boolean>(false);
+    const [isHovering, setIsHovering] = useState<boolean>(false);
+    const userNameRef = useRef<HTMLParagraphElement>(null);
 
     // eslint-disable-next-line react-hooks/purity
     const isExpired: boolean = new Date(invitationLink.expiresDate).getTime() !== 0 && Date.now() > new Date(invitationLink.expiresDate).getTime();
@@ -80,6 +86,16 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                     Expires in: { new Date(invitationLink.expiresDate).getTime() === 0 ? "Never" : formatRemainingTime(remainingMs)}</p>
                 <p>Max uses: {invitationLink.maxUses === 0 ? "Infinite" : invitationLink.maxUses}</p>
                 <p>Uses: {invitationLink.uses}</p>
+                <p ref={userNameRef} onPointerEnter={() => setIsHovering(true)}
+                   onPointerLeave={() => setIsHovering(false)}>Created by: {invitationLink.createdByUser.userName}</p>
+                {isHovering && (
+                    <Popover close={() => setIsHovering(false)} element={userNameRef} triggerElement={userNameRef}>
+                        <GeneralUserViewerComp user={invitationLink.createdByUser} options={{ showProjectOwner: false, showBoardOwner: false }}/>
+                    </Popover>
+                )}
+                {invitationLink.defaultInvitationClaims.length > 0 && (
+                    <p>Permissions: {invitationLink.defaultInvitationClaims.map((permissionClaim: Claim) => permissionClaim.claimType).toString()}</p>
+                )}
             </div>
             { invitationLink.isActive &&
                 <div className="invitation-actions">

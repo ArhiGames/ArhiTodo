@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.User;
+
+namespace ArhiTodo.Application.DTOs.Auth;
 
 public class InvitationLinkGetDto
 {
@@ -10,13 +12,12 @@ public class InvitationLinkGetDto
 
     public DateTimeOffset CreatedDate { get; init; }
     public DateTimeOffset ExpiresDate { get; init; }
-
-    public int DefaultInvitationClaims { get; init; }
     
     public int MaxUses { get; init; }
     public int Uses { get; init; }
     
     public bool IsActive { get; init; }
-    
-    public PublicUserGetDto CreatedByUser { get; init; }
+
+    public PublicUserGetDto CreatedByUser { get; init; } = null!;
+    public List<ClaimGetDto> DefaultInvitationClaims { get; init; } = [];
 }
