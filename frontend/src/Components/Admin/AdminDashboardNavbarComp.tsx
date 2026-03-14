@@ -14,8 +14,10 @@ const AdminDashboardNavbarComp = () => {
 
         if (jwtPayload?.UpdateAppSettings === "True") {
             navigate("/admin/dashboard/appsettings");
-        } else if (jwtPayload?.ManageUsers === "True" || jwtPayload?.InviteOtherUsers === "True") {
+        } else if (jwtPayload?.ManageUsers === "True") {
             navigate("/admin/dashboard/users");
+        } else if (jwtPayload?.InviteOtherUsers === "True") {
+            navigate("/admin/dashboard/invitations");
         } else {
             navigate("/");
         }
@@ -25,7 +27,8 @@ const AdminDashboardNavbarComp = () => {
         <div className="admin-dashboard-page">
             <nav className="settings-sidebar admin-dashboard-navbar">
                 { jwtPayload?.UpdateAppSettings === "True" && <Link to="/admin/dashboard/appsettings">App settings</Link> }
-                { (jwtPayload?.ManageUsers === "True" || jwtPayload?.InviteOtherUsers === "True") && <Link to="/admin/dashboard/users">Manage users</Link> }
+                { (jwtPayload?.ManageUsers === "True") && <Link to="/admin/dashboard/users">Manage users</Link> }
+                { (jwtPayload?.InviteOtherUsers === "True") && <Link to="/admin/dashboard/invitations">Invitations</Link> }
                 { /*jwtPayload.ManageUsers === "True" && <Link to="/admin/dashboard/usergroups">User groups</Link>*/ }
             </nav>
 

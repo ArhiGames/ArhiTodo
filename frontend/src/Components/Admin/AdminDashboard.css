@@ -119,3 +119,7 @@
     margin-top: auto;
     text-align: center
 }
+
+.admin-invitations-comp {
+    margin: 0 min(10%, 15rem);
+}

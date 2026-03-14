@@ -1,25 +1,22 @@
 import { useState } from "react";
 import InvitationCreatorModalComp from "./InvitationCreatorModalComp.tsx";
+import type {InvitationLink} from "../../../../../Models/InvitationLink.ts";
 
-const InviteUserComp = (props: { onInvitationViewClicked: () => void }) => {
+interface Props {
+    onInvitationLinkGenerated: (invitationLink: InvitationLink) => void;
+}
+
+const InviteUserComp = (props: Props) => {
 
     const [isCreatingInvitationLink, setIsCreatingInvitationLink] = useState<boolean>(false);
 
-    function onCurrentLinksClicked() {
-
-        props.onInvitationViewClicked();
-
-    }
-
     return (
         <>
-            <div className="invite-user">
-                <button onClick={() => setIsCreatingInvitationLink(true)}>Create invitation</button>
-                <button onClick={onCurrentLinksClicked}>View invitations</button>
-            </div>
+            <button className="button standard-button" style={{ minHeight: "2.5rem" }} onClick={() => setIsCreatingInvitationLink(true)}>Invite</button>
             {
                 isCreatingInvitationLink && (
-                    <InvitationCreatorModalComp onClose={() => setIsCreatingInvitationLink(false)}/>
+                    <InvitationCreatorModalComp onInvitationLinkGenerated={props.onInvitationLinkGenerated}
+                                                onClose={() => setIsCreatingInvitationLink(false)}/>
                 )
             }
         </>

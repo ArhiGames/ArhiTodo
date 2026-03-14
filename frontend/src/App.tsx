@@ -18,6 +18,8 @@ import HubProvider from "./Contexts/Realtime/HubProvider.tsx";
 import PermissionProvider from "./Contexts/Authorization/PermissionProvider.tsx";
 import DragDropProviderComp from "./Dnd/DragDropProviderComp.tsx";
 import ThemeProvider from "./Contexts/Theme/ThemeProvider.tsx";
+import AdminInvitationManagementComp
+    from "./Components/Admin/AdminDashboardPages/UserManagement/Invitation/AdminInvitationManagementComp.tsx";
 
 function AppContent() {
 
@@ -51,6 +53,8 @@ function AppContent() {
                                    { claimType: "InviteOtherUsers", claimValue: "True" } ]}>
                                    <AdminUserManagementComp/>
                                </ProtectedRoute>}></Route>
+                        <Route path="invitations"
+                               element={<ProtectedRoute requiredClaims={[ { claimType: "InviteOtherUsers", claimValue: "True" } ]}><AdminInvitationManagementComp/></ProtectedRoute>}></Route>
                         <Route path="usergroups"
                                element={<ProtectedRoute requiredClaims={[ { claimType: "ManageUsers", claimValue: "True" } ]}><AdminUserGroupsSettingsComp/></ProtectedRoute>}></Route>
                     </Route>

@@ -4,8 +4,6 @@ import EditableUserComp from "./EditableUserComp.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import UserDetailsModalComp from "./UserDetailsModalComp.tsx";
-import InviteUserComp from "../Invitation/InviteUserComp.tsx";
-import ViewInvitationLinksComp from "../Invitation/ViewInvitationLinksComp.tsx";
 import {AUTH_BASE_URL} from "../../../../../config/api.ts";
 import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 
@@ -17,7 +15,6 @@ const AdminUserManagementComp = () => {
     const [users, setUsers] = useState<UserGetDto[]>([]);
     const [usersCount, setUsersCount] = useState<number>(0);
     const [currentViewingUser, setCurrentViewingUser] = useState<UserGetDto | null>(null);
-    const [isViewingCreatedInvitationsLinks, setIsViewingCreatedInvitationsLinks] = useState<boolean>(false);
 
     const loadUsers = async (page: number) => {
         if (jwtPayload?.ManageUsers !== "True") return;
@@ -153,19 +150,6 @@ const AdminUserManagementComp = () => {
                 </div>
             ) : (
                 <h2 className="user-management-users-unsufficient-permissions">Permissions insufficient to view users!</h2>
-            )}
-
-            {jwtPayload?.InviteOtherUsers === "True" && (
-                <>
-                    <nav className="user-management-nav">
-                        <InviteUserComp onInvitationViewClicked={() => setIsViewingCreatedInvitationsLinks(true)}/>
-                    </nav>
-                    {
-                        (!currentViewingUser && isViewingCreatedInvitationsLinks) && (
-                            <ViewInvitationLinksComp onClosed={() => setIsViewingCreatedInvitationsLinks(false)}/>
-                        )
-                    }
-                </>
             )}
 
             {currentViewingUser && (

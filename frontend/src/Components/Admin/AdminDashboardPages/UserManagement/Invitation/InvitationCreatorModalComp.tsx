@@ -9,6 +9,7 @@ import type {InvitationLink} from "../../../../../Models/InvitationLink.ts";
 import {API_BASE_URL} from "../../../../../config/api.ts";
 
 interface Props {
+    onInvitationLinkGenerated: (invitationLink: InvitationLink) => void;
     onClose: () => void;
 }
 
@@ -33,6 +34,7 @@ const InvitationCreatorModalComp = (props: Props) => {
     ];
 
     const { checkRefresh } = useAuth();
+
     const [maxUses, setMaxUses] = useState<number>(0);
     const [submitBlocked, setSubmitBlocked] = useState<boolean>(false);
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
@@ -68,6 +70,7 @@ const InvitationCreatorModalComp = (props: Props) => {
                 })
                 .then((res: InvitationLink) => {
                     setGeneratedInvitationLink(res);
+                    props.onInvitationLinkGenerated(res);
                 })
                 .catch(err => {
                     if (err.name === "AbortError") {
