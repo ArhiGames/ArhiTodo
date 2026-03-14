@@ -1,4 +1,6 @@
-﻿namespace ArhiTodo.Application.DTOs.Auth;
+﻿using ArhiTodo.Application.DTOs.User;
+
+namespace ArhiTodo.Application.DTOs.Auth;
 
 public enum ExpireType
 {
@@ -17,4 +19,6 @@ public class GenerateInvitationDto
     public int ExpireNum { get; set; }
 
     public int MaxUses { get; set; } = 0;
+
+    public List<ClaimPostDto> DefaultClaims { get; set; } = [];
 }

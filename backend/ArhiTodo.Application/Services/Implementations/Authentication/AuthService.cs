@@ -33,7 +33,11 @@ public class AuthService(
 
         Result<User> createUserResult = User.Create(createAccountDto.Username, email.Value!, 
             hashedPassword, invitationLink.InvitationKey);
-        if (!createUserResult.IsSuccess) return createUserResult;
+        if (!createUserResult.IsSuccess || createUserResult.Value is null) return createUserResult;
+        
+        Result overrideUserClaimsResult =
+            createUserResult.Value.OverrideClaimValues(invitationLink.DefaultInvitationClaims);
+        if (!overrideUserClaimsResult.IsSuccess) return overrideUserClaimsResult.Error!;
         
         User? createdUser = await accountRepository.CreateUserAsync(invitationLink, createUserResult.Value!);
 

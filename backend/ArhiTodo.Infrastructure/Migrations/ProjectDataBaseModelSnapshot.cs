@@ -61,6 +61,9 @@ namespace ArhiTodo.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("DefaultInvitationClaims")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("ExpiresDate")
                         .HasColumnType("timestamp with time zone");
 

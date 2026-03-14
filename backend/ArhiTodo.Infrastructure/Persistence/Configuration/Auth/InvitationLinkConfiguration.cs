@@ -25,7 +25,7 @@ public class InvitationLinkConfiguration : IEntityTypeConfiguration<InvitationLi
         builder.Property(il => il.ExpiresDate)
             .IsRequired();
 
-        builder.HasOne<User>()
+        builder.HasOne(il => il.CreatedByUser)
             .WithMany()
             .HasForeignKey(il => il.CreatedByUserId)
             .OnDelete(DeleteBehavior.Cascade);

@@ -12,8 +12,9 @@ public class InvitationLink
     public string InvitationLinkName { get; private set; } = string.Empty;
 
     public DateTimeOffset CreatedDate { get; init; } = DateTimeOffset.UtcNow;
-    
     public DateTimeOffset ExpiresDate { get; private set; }
+
+    public int DefaultInvitationClaims { get; private set; }
     
     // 0 => infinite
     public int MaxUses { get; init; }
@@ -25,7 +26,8 @@ public class InvitationLink
     public bool IsActive { get; private set; } = true;
     
     public Guid CreatedByUserId { get; private set; }
-
+    public User CreatedByUser { get; } = null!;
+ 
     private InvitationLink() { }
     
     private InvitationLink(string invitationKey, string invitationLinkName, int maxUses, DateTimeOffset expiresDate, Guid createdByUserId)
@@ -54,6 +56,12 @@ public class InvitationLink
         return validateInvitationLinkNameResult.IsSuccess
             ? new InvitationLink(invitationKey, invitationLinkName, maxUses, expiresDate, createdByUserId)
             : validateInvitationLinkNameResult.Error!;
+    }
+
+    public Result SetDefaultClaim(UserClaimTypes userClaimType)
+    {
+        DefaultInvitationClaims |= (int)userClaimType;
+        return Result.Success();
     }
 
     public Result Use()

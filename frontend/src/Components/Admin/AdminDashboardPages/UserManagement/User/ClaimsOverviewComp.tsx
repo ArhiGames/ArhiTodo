@@ -1,6 +1,6 @@
 import {type DefaultClaim, defaultGlobalClaims} from "../../../../../lib/Claims.ts"
 import type { Claim } from "../../../../../Models/Claim.ts";
-import EditableClaimsComp from "./EditableClaimsComp.tsx";
+import EditableClaimsComp from "../EditableClaimsComp.tsx";
 import {useAuth} from "../../../../../Contexts/Authentication/useAuth.ts";
 import type {UserGetDto} from "../../../../../Models/BackendDtos/Auth/UserGetDto.ts";
 

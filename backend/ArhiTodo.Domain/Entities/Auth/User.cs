@@ -91,6 +91,12 @@ public class User
         return Result.Success();
     }
 
+    public Result OverrideClaimValues(int claimValues)
+    {
+        UserClaims = claimValues;
+        return Result.Success();
+    }
+    
     public void ChangePassword(string hashedPassword)
     {
         HashedPassword = hashedPassword;

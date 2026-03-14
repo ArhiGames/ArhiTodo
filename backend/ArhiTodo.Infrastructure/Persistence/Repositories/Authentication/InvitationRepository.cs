@@ -30,7 +30,9 @@ public class InvitationRepository(ProjectDataBase database) : IInvitationReposit
 
     public async Task<List<InvitationLink>> GetInvitationLinksAsync()
     {
-        List<InvitationLink> invitationLinks = await database.InvitationLinks.ToListAsync();
+        List<InvitationLink> invitationLinks = await database.InvitationLinks
+            .Include(il => il.CreatedByUser)
+            .ToListAsync();
         return invitationLinks;
     }
 }

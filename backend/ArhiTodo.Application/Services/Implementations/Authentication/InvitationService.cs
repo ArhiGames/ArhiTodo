@@ -1,4 +1,6 @@
 ﻿using ArhiTodo.Application.DTOs.Auth;
+using ArhiTodo.Application.DTOs.User;
+using ArhiTodo.Application.Mappers;
 using ArhiTodo.Application.Services.Interfaces.Authentication;
 using ArhiTodo.Application.Services.Interfaces.Authorization;
 using ArhiTodo.Domain.Common.Errors;
@@ -36,19 +38,27 @@ public class InvitationService(IInvitationRepository invitationRepository, IToke
             generateInvitationDto.MaxUses,
             expireDate,
             currentUser.UserId);
-        if (!createInvitationLinkResult.IsSuccess) return createInvitationLinkResult;
+        if (!createInvitationLinkResult.IsSuccess || createInvitationLinkResult.Value is null) return createInvitationLinkResult;
+        foreach (ClaimPostDto defaultPermission in generateInvitationDto.DefaultClaims)
+        {
+            bool parsedSuccessfully = Enum.TryParse(defaultPermission.ClaimType, true, out UserClaimTypes userClaimType);
+            if (!parsedSuccessfully || defaultPermission.ClaimValue != "True") continue;
+            
+            Result updateClaimResult = createInvitationLinkResult.Value.SetDefaultClaim(userClaimType);
+            if (!updateClaimResult.IsSuccess) return updateClaimResult.Error!;
+        }
         
         InvitationLink? generatedInvitationLink = await invitationRepository.AddInvitationLinkAsync(createInvitationLinkResult.Value!);
         return generatedInvitationLink is null ? Errors.Unknown : generatedInvitationLink;
     }
 
-    public async Task<Result<List<InvitationLink>>> GetInvitationLinks()
+    public async Task<Result<List<InvitationLinkGetDto>>> GetInvitationLinks()
     {
         bool authorized = await authorizationService.CheckPolicy(nameof(UserClaimTypes.InviteOtherUsers));
         if (!authorized) return Errors.Forbidden;
         
         List<InvitationLink> invitationLinks = await invitationRepository.GetInvitationLinksAsync();
-        return invitationLinks;
+        return invitationLinks.Select(il => il.ToGetDto()).ToList();
     }
     
     public async Task<Result> InvalidateInvitationLink(int invitationLinkId)

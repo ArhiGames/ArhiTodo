@@ -7,6 +7,9 @@ import {createPortal} from "react-dom";
 import GeneratedLinkInfoComp from "./GeneratedLinkInfoComp.tsx";
 import type {InvitationLink} from "../../../../../Models/InvitationLink.ts";
 import {API_BASE_URL} from "../../../../../config/api.ts";
+import {type DefaultClaim, defaultGlobalClaims} from "../../../../../lib/Claims.ts";
+import EditableClaimsComp from "../EditableClaimsComp.tsx";
+import type {Claim} from "../../../../../Models/Claim.ts";
 
 interface Props {
     onInvitationLinkGenerated: (invitationLink: InvitationLink) => void;
@@ -40,6 +43,7 @@ const InvitationCreatorModalComp = (props: Props) => {
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
     const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>(options[0]);
     const [invitationName, setInvitationName] = useState<string>("");
+    const [selectedClaims, setSelectedClaims] = useState<Claim[]>([]);
     const invitationDescriptionRef = useRef<HTMLInputElement>(null);
 
     function requestInvitationLink() {
@@ -56,10 +60,13 @@ const InvitationCreatorModalComp = (props: Props) => {
             fetch(`${API_BASE_URL}/invitation/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${refreshedToken}` },
-                body: JSON.stringify( { invitationLinkName: invitationName,
+                body: JSON.stringify({
+                    invitationLinkName: invitationName,
                     expireType: currentSelectedOption.expireType,
                     expireNum: currentSelectedOption.time,
-                    maxUses: maxUses } ),
+                    maxUses: maxUses,
+                    defaultClaims: selectedClaims
+                }),
                 signal: abortController.signal
             })
                 .then(res => {
@@ -95,7 +102,7 @@ const InvitationCreatorModalComp = (props: Props) => {
         <>
             <Modal
                 header={<h2>Creating an invitation link...</h2>}
-                modalSize="modal-medium"
+                modalSize="modal-large"
                 onClosed={props.onClose}
                 footer={
                     <>
@@ -114,17 +121,28 @@ const InvitationCreatorModalComp = (props: Props) => {
                         <p>Controls how long the invitation link remains valid and how often it can be used</p>
                         <div style={{ display: "flex", flexDirection: "column" }}>
                             <p>Expire in</p>
+                            <p style={{ opacity: "75%" }}>How long does the invitation link remain valid</p>
                             <Dropdown onChange={(val: string) => setCurrentSelectedOption(options.find(option => option.shownOption === val))}
                                       values={options.map((option: Option) => option.shownOption)}
                                       defaultValue={options[0].shownOption}/>
-                            <p style={{ opacity: "75%" }}>How long does the invitation link remain valid</p>
                         </div>
                         <div>
-                            <div>
-                                <p>Max uses</p>
-                                <NumberInput onChange={(value: number) => setMaxUses(value)} defaultValue={1} step={1} min={0} max={50} numberForInfinite={0}/>
-                            </div>
+                            <p>Max uses</p>
                             <p style={{ opacity: "75%" }}>Number of accounts that can be created using this link</p>
+                            <NumberInput onChange={(value: number) => setMaxUses(value)} defaultValue={1} step={1} min={0} max={50} numberForInfinite={0}/>
+                        </div>
+                        <div className="default-invitation-claims">
+                            <div>
+                                <p>Default claims</p>
+                                <p style={{ opacity: "75%" }}>Default permissions the invited user will have</p>
+                            </div>
+                            {defaultGlobalClaims.map((defaultClaim: DefaultClaim) => {
+                                return (
+                                    <EditableClaimsComp defaultClaim={defaultClaim} canEdit key={defaultClaim.claimType}
+                                                        claim={selectedClaims.find((selectedClaim: Claim) => selectedClaim.claimType === defaultClaim.claimType)}
+                                                        updatedClaims={selectedClaims} setUpdatedClaims={setSelectedClaims}/>
+                                )
+                            })}
                         </div>
                     </div>
                 </div>

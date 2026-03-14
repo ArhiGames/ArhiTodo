@@ -31,7 +31,7 @@ public class InvitationController(IInvitationService invitationService) : ApiCon
     [HttpGet]
     public async Task<IActionResult> GetInvitationLinks()
     {
-        Result<List<InvitationLink>> invitationLinks = await invitationService.GetInvitationLinks();
+        Result<List<InvitationLinkGetDto>> invitationLinks = await invitationService.GetInvitationLinks();
         return invitationLinks.IsSuccess ? Ok(invitationLinks.Value) : HandleFailure(invitationLinks);
     }
 }

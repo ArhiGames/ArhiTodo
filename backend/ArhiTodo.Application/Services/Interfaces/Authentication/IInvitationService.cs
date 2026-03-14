@@ -7,6 +7,6 @@ namespace ArhiTodo.Application.Services.Interfaces.Authentication;
 public interface IInvitationService
 {
     Task<Result<InvitationLink>> GenerateInvitationLink(GenerateInvitationDto generateInvitationDto);
-    Task<Result<List<InvitationLink>>> GetInvitationLinks();
+    Task<Result<List<InvitationLinkGetDto>>> GetInvitationLinks();
     Task<Result> InvalidateInvitationLink(int invitationLinkId);
 }
