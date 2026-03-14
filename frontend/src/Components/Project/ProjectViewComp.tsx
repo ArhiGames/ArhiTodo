@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import BoardComp from "../Board/BoardComp/BoardComp.tsx";
 import CreateNewBoardHeaderComp from "../Board/CreateNewBoardHeaderComp.tsx";
 import { useAuth } from "../../Contexts/Authentication/useAuth.ts";
-import type {Board, KanbanState, PublicUserGetDto} from "../../Models/States/KanbanState.ts";
+import type {Board, KanbanState, Project, PublicUserGetDto} from "../../Models/States/KanbanState.ts";
 import { useKanbanDispatch, useKanbanState } from "../../Contexts/Kanban/Hooks.ts";
 import {API_BASE_URL, HUB_BASE_URL} from "../../config/api.ts";
 import * as signalR from "@microsoft/signalr";
@@ -91,6 +91,23 @@ const ProjectViewComp = () => {
             navigate("/");
         }
     }, [navigate, projectId, kanbanState.projects, hasLoadedProject]);
+
+    useEffect(() => {
+
+        let newTitle = "";
+
+        const project: Project | undefined = kanbanState.projects.get(Number(projectId));
+        if (project) newTitle += project.projectName
+
+        const board: Board | undefined = kanbanState.boards.get(Number(boardId));
+        if (board) newTitle += ` - ${board.boardName}`
+
+        document.title = newTitle;
+
+        return () => {
+            document.title = "ArhiTodo"
+        }
+    }, [projectId, boardId, kanbanState.projects, kanbanState.boards]);
 
     useEffect(() => {
 

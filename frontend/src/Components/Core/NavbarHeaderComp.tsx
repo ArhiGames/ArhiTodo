@@ -29,7 +29,12 @@ const NavbarHeaderComp = () => {
     function getNavigationJsx() {
 
         if (!match || !projectId || !project) {
-            return <Link to="/">ArhiTodo</Link>;
+            return (
+                <Link to="/">
+                    <img src="/logo.svg" alt="" height="28px" style={{ marginRight: "0.35rem" }}/>
+                    <p>ArhiTodo</p>
+                </Link>
+            );
         }
 
         return (

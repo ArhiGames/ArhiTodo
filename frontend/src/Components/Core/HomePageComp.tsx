@@ -7,7 +7,6 @@ import type {Project} from "../../Models/States/KanbanState.ts";
 import type {ProjectGetDto} from "../../Models/BackendDtos/Kanban/ProjectGetDto.ts";
 import {usePermissions} from "../../Contexts/Authorization/usePermissions.ts";
 import CreateNewProjectCardComp from "../Project/CreateNewProjectCardComp.tsx";
-import FooterComp from "./FooterComp.tsx";
 
 const HomePageComp = () => {
 
@@ -66,7 +65,6 @@ const HomePageComp = () => {
                 })}
                 { permissions.hasCreateProjectPermission() && <CreateNewProjectCardComp/> }
             </div>
-            <FooterComp/>
         </>
     )
 }
