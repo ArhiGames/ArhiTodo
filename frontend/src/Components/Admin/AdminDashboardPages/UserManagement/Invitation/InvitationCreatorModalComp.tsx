@@ -1,6 +1,6 @@
 import Modal from "../../../../../lib/Modal/Default/Modal.tsx";
 import NumberInput from "../../../../../lib/Input/Number/NumberInput.tsx";
-import { useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import {useAuth} from "../../../../../Contexts/Authentication/useAuth.ts";
 import Dropdown from "../../../../../lib/Input/Dropdown/Dropdown.tsx";
 import {createPortal} from "react-dom";
@@ -40,6 +40,7 @@ const InvitationCreatorModalComp = (props: Props) => {
     const [generatedInvitationLink, setGeneratedInvitationLink] = useState<InvitationLink | null>(null);
     const [currentSelectedOption, setCurrentSelectedOption] = useState<Option | undefined>(options[0]);
     const [invitationName, setInvitationName] = useState<string>("");
+    const invitationDescriptionRef = useRef<HTMLInputElement>(null);
 
     function requestInvitationLink() {
 
@@ -86,6 +87,10 @@ const InvitationCreatorModalComp = (props: Props) => {
 
     }
 
+    useEffect(() => {
+        setTimeout(() => invitationDescriptionRef.current?.focus(), 0);
+    }, []);
+
     return (
         <>
             <Modal
@@ -103,7 +108,7 @@ const InvitationCreatorModalComp = (props: Props) => {
                 <div className="invitation-creator">
                     <div className="invitation-settings">
                         <h3>Link settings</h3>
-                        <input className="classic-input" placeholder="Description..." required minLength={1} maxLength={32}
+                        <input className="classic-input" placeholder="Description..." required minLength={1} maxLength={32} ref={invitationDescriptionRef}
                                value={invitationName} onChange={(e) => setInvitationName(e.target.value)}/>
                         <h3>Expire</h3>
                         <p>Controls how long the invitation link remains valid and how often it can be used</p>

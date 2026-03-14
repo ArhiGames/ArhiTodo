@@ -1,5 +1,6 @@
 .admin-dashboard-page {
-    display: flex;
+    display: grid;
+    grid-template-columns: 20% 80%;
 }
 
 .admin-dashboard-detailed {
@@ -7,7 +8,6 @@
     border: 1px solid var(--bg-light);
     margin: 0.6rem 0 0 0;
     height: calc(100vh - 150px);
-    width: 100vw;
     border-radius: 15px;
     padding: 10px;
     color: var(--text-color);
@@ -121,5 +121,9 @@
 }
 
 .admin-invitations-comp {
-    margin: 0 min(10%, 15rem);
+    margin: 0 10%;
+}
+
+.admin-usermanagement-page {
+    margin: 0 10%;
 }

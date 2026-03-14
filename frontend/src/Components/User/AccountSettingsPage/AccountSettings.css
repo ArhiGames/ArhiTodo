@@ -1,5 +1,6 @@
 .account-settings-page {
-    display: flex;
+    display: grid;
+    grid-template-columns: 20% 80%;
 }
 
 .detailed-settings-panel {
@@ -7,7 +8,6 @@
     height: calc(100vh - 150px);
     background-color: var(--bg);
     border: 1px solid var(--bg-light);
-    width: 100vw;
     border-radius: 15px;
     padding: 10px;
     color: var(--text-color);

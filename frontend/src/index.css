@@ -105,7 +105,6 @@ body {
     margin: 0.6rem 1rem 0 0;
     gap: 0.6rem;
     height: calc(100vh - 150px);
-    min-width: 20vw;
     background-color: var(--bg);
     border: 1px solid var(--bg-light);
     border-radius: 15px;

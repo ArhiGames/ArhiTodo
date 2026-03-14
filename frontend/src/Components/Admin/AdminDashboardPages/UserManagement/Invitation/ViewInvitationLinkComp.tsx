@@ -71,7 +71,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
 
     return (
         <div className="view-invitation-link-div">
-            <div>
+            <div className="invitation-information">
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <TagComp tag={keyStatus.tag} color={keyStatus.color}/>
                     <h3 style={{ marginLeft: "0.5rem" }}>Description: {invitationLink.invitationLinkName}</h3>
@@ -82,8 +82,7 @@ const ViewInvitationLinkComp = ( { invitationLink }: Props ) => {
                 <p>Uses: {invitationLink.uses}</p>
             </div>
             { invitationLink.isActive &&
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem",
-                    height: "fit-content", width: "fit-content", marginTop: "auto", marginLeft: "auto" }}>
+                <div className="invitation-actions">
                     <button onClick={onCopyLinkPressed} className="button standard-button">{ copied ? "Copied" : "Copy" }</button>
                     <button onClick={onInvalidateButtonPressed} className="button standard-button">Remove</button>
                 </div>
