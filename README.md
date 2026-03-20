@@ -6,15 +6,15 @@ Free and Open Source Kanban Style Todo App, perfect for your projects!
 # Features
 - Kanban Boards: Create projects, boards, cardlists & cards. Design your cards by adding labels, description and subtasks!
 - Realtime Updates: Work with your colleges together on a single project / board and see what the other's are doing without refreshing
-- Multiple boards in a single project! Enhance your workflow by further categoryzing projects!
+- Multiple boards in a single project! Enhance your workflow by further categorizing projects!
 - Needed features directly built-in: Urgency, card members, labels, descriptions, checklists. But no unnecessary features which only make the app complexer but don't add any value to it 
-- Excellent management tools for admins: Specify exactly what other's user may do and what not
-- Invitations: Invitate other user's to use the app just by generating a simple invitation link!
+- Excellent management tools for admins: Specify exactly what other users may do and what not
+- Invitations: Invite other user's to use the app just by generating a simple invitation link!
 - Easy to-deploy via docker-compose
 There are a lot more features planned, which I'm going to add later in the development of the App, some of those features are: Image uploading, due dates & some QOL stuff (keyboard shortcuts, quick actions...)
 
 # Why?
-Altough there are a lot of Kanban-Projects, no one really fitted for me. Either it lacked some features I wanted to use or it was just to overwhelming. Because of that (and to further practice my coding skills) I decided to make my own Kanban-Todo Applicaction for the Web.
+Although there are a lot of Kanban-Projects, no one really fitted for me. Either it lacked some features I wanted to use or it was just too overwhelming. Because of that (and to further practice my coding skills) I decided to make my own Kanban-Todo Application for the Web.
 
 # The experience
 Firstly, I mainly develop games with Unreal Engine 5 and C++ [(Download Ultima Nex for free)](https://store.steampowered.com/app/3608430/Ultima_Nex/), I rarely touch the Web Development Space, but already did several times for small projects. But what I always think when programming for the web, especially when using React, I just remember how much I hate it sometimes. My game-dev-performance heart dies if I only think a bit further into how React works, that it rerenders almost everything when changing state variables, that I have to completely reinstantiate a complex object for React to even know that the object has changed... is just bad...
