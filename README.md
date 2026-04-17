@@ -1,7 +1,7 @@
 # Arhi Todo
 Free and Open Source Kanban Style Todo App, perfect for your projects!
-<img width="3809" height="1803" alt="grafik" src="https://github.com/user-attachments/assets/83b3bd4b-854e-4f7b-83a6-58c89599f543" />
-<img width="3788" height="1813" alt="grafik" src="https://github.com/user-attachments/assets/7507a269-e67d-4ea7-aa9e-767712ae5954" />
+<img width="100%" alt="ArhiTodo Dark Mode" src="https://github.com/user-attachments/assets/83b3bd4b-854e-4f7b-83a6-58c89599f543" />
+<img width="100%" alt="ArhiTodo White Mode" src="https://github.com/user-attachments/assets/7507a269-e67d-4ea7-aa9e-767712ae5954" />
 
 # Features
 - Kanban Boards: Create projects, boards, cardlists & cards. Design your cards by adding labels, description and subtasks!
